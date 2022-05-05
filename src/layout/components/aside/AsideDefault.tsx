@@ -4,9 +4,13 @@ import Image from 'next/image'
 
 import { useLayout } from '../../core'
 import { AsideMenu } from './AsideMenu'
+import { KTSVG } from '../../../helpers'
+
+import { BiUserCircle } from 'react-icons/bi'
 
 function AsideDefault() {
-  const { classes } = useLayout()
+  const { classes, config } = useLayout()
+  const { aside } = config
 
   return (
     <div
@@ -31,11 +35,37 @@ function AsideDefault() {
             objectFit='contain'
           />
         </Link>
+
+        {aside.minimize && (
+          <div
+            id='kt_aside_toggle'
+            className='btn btn-icon w-auto px-0 btn-active-color-primary aside-toggle'
+            data-kt-toggle='true'
+            data-kt-toggle-state='active'
+            data-kt-toggle-target='body'
+            data-kt-toggle-name='aside-minimize'
+          >
+            <KTSVG path={'/icons/arr080.svg'} className={'svg-icon-1 rotate-180'} />
+          </div>
+        )}
       </div>
 
       <div className='aside-footer flex-column-auto pt-5 px-5' id='kt_aside_footer'>
-        <h3 className='text-white'>Usuário xxx</h3>
-        <span className='text-gray-500'>usuário-xxx@email.com</span>
+        <div
+          className='btn btn-custom btn-primary w-100'
+          data-bs-toggle='tooltip'
+          data-bs-trigger='hover'
+          data-bs-dismiss-='click'
+        >
+          <div className='btn-label'>
+            <h3 className='text-white'>Usuário xxx</h3>
+            <span className='text-gray-500'>usuário-xxx@email.com</span>
+          </div>
+
+          <span className='svg-icon btn-icon svg-icon-2'>
+            <BiUserCircle />
+          </span>
+        </div>
       </div>
 
       <div className='aside-menu flex-column-fluid'>
