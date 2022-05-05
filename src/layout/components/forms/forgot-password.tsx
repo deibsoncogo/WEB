@@ -1,5 +1,4 @@
 import { useRef } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import * as Yup from 'yup'
@@ -8,7 +7,7 @@ import { FormHandles } from '@unform/core'
 
 import { Input } from '../inputs'
 
-export function FormLogin() {
+export function FormForgotPassword() {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -19,11 +18,10 @@ export function FormLogin() {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         email: Yup.string().email('Insira um email válido.').required('Email é nescessário.'),
-        password: Yup.string().required('Senha é nescessária'),
       })
       await schema.validate(data, { abortEarly: false })
 
-      router.push('/dashboard')
+      router.push('/')
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -39,22 +37,22 @@ export function FormLogin() {
   return (
     <Form className='form w-100' ref={formRef} onSubmit={handleFormSubmit}>
       <Input name='email' label='E-mail' placeholder='E-mail' type='email' />
-      <Input name='password' label='Senha' placeholder='Senha' type='password' />
 
       <div className='mb-10 d-flex justify-content-between '>
-        <div className='form-check form-check-custom form-check-solid'>
-          <input className='form-check-input' type='checkbox' value='' id='flexCheckDefault' />
-          <label className='form-check-label' htmlFor='flexCheckDefault'>
-            Manter conectado
-          </label>
-        </div>
+        <button
+          type='button'
+          onClick={() => {
+            router.push('/')
+          }}
+          className='btn btn-lg btn-secondary w-150px mb-5'
+        >
+          Cancelar
+        </button>
 
-        <Link href='/password'>Esqueceu a senha?</Link>
+        <button type='submit' className='btn btn-lg btn-primary w-100px mb-5'>
+          Save
+        </button>
       </div>
-
-      <button type='submit' className='btn btn-lg btn-primary w-100 mb-5'>
-        Save
-      </button>
     </Form>
   )
 }

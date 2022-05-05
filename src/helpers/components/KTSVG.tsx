@@ -1,5 +1,4 @@
-import React from 'react'
-import { toAbsoluteUrl } from '../AssetHelpers'
+import SVG from 'react-inlinesvg'
 type Props = {
   className?: string
   path: string
@@ -9,7 +8,7 @@ type Props = {
 const KTSVG: React.FC<Props> = ({ className = '', path, svgClassName = 'mh-50px' }) => {
   return (
     <span className={`svg-icon ${className}`}>
-      <img src={toAbsoluteUrl(path)} className={svgClassName} />
+      <SVG src={path} className={svgClassName} />
     </span>
   )
 }
