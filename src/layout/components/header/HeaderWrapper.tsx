@@ -4,7 +4,11 @@ import Link from 'next/link'
 import { useLayout } from '../../core'
 import Image from 'next/image'
 
-export function HeaderWrapper() {
+interface HeaderWrapper {
+  title: string
+}
+
+export function HeaderWrapper({ title }: HeaderWrapper) {
   const { config, classes, attributes } = useLayout()
   const { aside } = config
 
@@ -53,7 +57,7 @@ export function HeaderWrapper() {
         )}
 
         <div className='d-flex align-items-center ms-5'>
-          <h1 className='m-0'>Usuários</h1>
+          <h1 className='m-0'>{title}</h1>
         </div>
       </div>
     </div>

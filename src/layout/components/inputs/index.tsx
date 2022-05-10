@@ -26,7 +26,7 @@ export function Input({ name, label, ...rest }: IInputProps) {
   }, [fieldName, registerField])
 
   return (
-    <div className='fv-row mb-10'>
+    <div className='fv-row mb-7'>
       {label && (
         <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
           {label}
@@ -34,7 +34,7 @@ export function Input({ name, label, ...rest }: IInputProps) {
       )}
 
       <input
-        className='form-control form-control-lg form-control-solid'
+        className='form-control form-control-lg form-control-solid bg-secondary'
         name={name}
         ref={inputRef}
         type='text'

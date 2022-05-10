@@ -1,24 +1,26 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
+import { FormCreateUer } from '../../layout/components/forms/create-user'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
-import { UsersTable } from '../../layout/components/tables/users-list'
 
 const Users: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Usuários</title>
+        <title>Criar Usuário</title>
       </Head>
 
       <div className='page d-flex flex-row flex-column-fluid'>
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Usuários' />
+          <HeaderWrapper title='Novo Usuário' />
 
           <div id='kt_content_container' className='container'>
-            <UsersTable />
+            <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
+              <FormCreateUer />
+            </div>
           </div>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { RiFileExcel2Line } from 'react-icons/ri'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
@@ -38,10 +39,12 @@ export function UsersTable() {
           <Search />
         </h3>
         <div className='card-toolbar'>
-          <a href='#' className='btn btn-sm btn-light-primary'>
-            <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-            Novo Usuário
-          </a>
+          <Link href='/users/create'>
+            <a className='btn btn-sm btn-light-primary'>
+              <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+              Novo Usuário
+            </a>
+          </Link>
         </div>
       </div>
 
