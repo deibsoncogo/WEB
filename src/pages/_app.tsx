@@ -1,11 +1,13 @@
 import '../styles/sass/style.scss'
 import type { AppProps } from 'next/app'
-import { LayoutProvider, LayoutSplashScreen } from '../layout/core'
+import { LayoutProvider, LayoutSplashScreen, PageDataProvider } from '../layout/core'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <LayoutProvider>
-      <Component {...pageProps} />
+      <PageDataProvider>
+        <Component {...pageProps} />
+      </PageDataProvider>
     </LayoutProvider>
   )
 }

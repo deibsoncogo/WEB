@@ -48,8 +48,8 @@ $header-config: (
 $toolbar-config: (
   z-index: 99,
   height: (
-    desktop: 75px,
-    tablet-and-mobile: 60px,
+    desktop: 0,
+    tablet-and-mobile: 0,
   ),
   padding: 0.5rem 0,
   bg-color: if(isDarkMode(), darken(#1e1e2d, 2%), $white),

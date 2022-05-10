@@ -27,9 +27,12 @@ export function Input({ name, label, ...rest }: IInputProps) {
 
   return (
     <div className='fv-row mb-10'>
-      <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
-        {label}
-      </label>
+      {label && (
+        <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
+          {label}
+        </label>
+      )}
+
       <input
         className='form-control form-control-lg form-control-solid'
         name={name}
