@@ -17,6 +17,7 @@ type Props = {
   utilityP?: number
   utilityPY?: number
   utilityPX?: number
+  children?: any
 }
 
 const KTCard: FC<Props> = (props) => {

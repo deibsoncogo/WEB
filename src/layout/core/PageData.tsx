@@ -45,6 +45,7 @@ function usePageData() {
 type Props = {
   description?: string
   breadcrumbs?: Array<PageLink>
+  children?: any
 }
 
 const PageTitle: FC<Props> = ({ children, description, breadcrumbs }) => {
@@ -79,7 +80,7 @@ const PageTitle: FC<Props> = ({ children, description, breadcrumbs }) => {
   return <></>
 }
 
-const PageDescription: React.FC = ({ children }) => {
+const PageDescription: React.FC = ({ children }: any) => {
   const { setPageDescription } = usePageData()
   useEffect(() => {
     if (children) {
