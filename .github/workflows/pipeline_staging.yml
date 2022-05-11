@@ -60,7 +60,7 @@ jobs:
           REGISTRY_URL=655389356257.dkr.ecr.us-west-1.amazonaws.com
           TAG=$(aws ecr describe-images --repository-name tf-atpalex-web --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text)
           TAG_IMAGE=`echo $TAG + 1 | bc`
-          IMAGE="$REGISTRY_URL/tf-atpalex-web:1.0"
+          IMAGE="$REGISTRY_URL/tf-atpalex-web:$TAG_IMAGE"
            
           aws ecr get-login-password --region ${{ steps.secrets.outputs.AWS_ZONE_WEST_1 }} | docker login --username AWS --password-stdin $REGISTRY_URL
           
