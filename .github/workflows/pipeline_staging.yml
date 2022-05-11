@@ -70,15 +70,15 @@ jobs:
 
           sed -i -e "s#IMAGE_VERSION#${IMAGE}#" ./eks/staging/0_deployment.yaml
 
-#      - name: "Deploy Kubernetes"
-#        run: |
-#          EKS_PATH=./eks/staging
-#          
-#          curl -LO https://dl.k8s.io/release/v1.23.6/bin/linux/amd64/kubectl
-#          sudo apt-get update
-#          sudo apt-get install -y apt-transport-https ca-certificates curl
-#          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-#          aws eks --region ${{ steps.secrets.outputs.AWS_ZONE_WEST_1 }} update-kubeconfig --name ${{ steps.secrets.outputs.CLUSTER_NAME }}
-#          kubectl apply -f $EKS_PATH/0_deployment.yaml
-#          kubectl apply -f $EKS_PATH/1_service.yaml
-#          kubectl apply -f $EKS_PATH/2_hpa.yaml
+      - name: "Deploy Kubernetes"
+        run: |
+          EKS_PATH=./eks/staging
+          
+          curl -LO https://dl.k8s.io/release/v1.23.6/bin/linux/amd64/kubectl
+          sudo apt-get update
+          sudo apt-get install -y apt-transport-https ca-certificates curl
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          aws eks --region ${{ steps.secrets.outputs.AWS_ZONE_WEST_1 }} update-kubeconfig --name ${{ steps.secrets.outputs.CLUSTER_NAME }}
+          kubectl apply -f $EKS_PATH/0_deployment.yaml
+          kubectl apply -f $EKS_PATH/1_service.yaml
+          kubectl apply -f $EKS_PATH/2_hpa.yaml
