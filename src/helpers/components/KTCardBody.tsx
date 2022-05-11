@@ -5,6 +5,7 @@ type Props = {
   className?: string
   scroll?: boolean
   height?: number
+  children?: any
 }
 
 const KTCardBody: FC<Props> = (props) => {
