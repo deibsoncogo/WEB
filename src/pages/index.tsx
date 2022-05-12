@@ -14,7 +14,7 @@ const Home: NextPage = () => {
       <div className='d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20 h-100'>
         <div className='mb-10'>
           <Image
-            src='/images/ativocor_logo_new.png'
+            src="/images/ativocor_logo_new.png"
             alt='At Palex'
             width={196.15}
             height={77.6}
