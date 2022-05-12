@@ -46,12 +46,16 @@ export function FormLogin() {
       const response = await api.post('/auth/login', data)
       router.push('/dashboard')
     } catch (err: any) {
+      console.log(err)
       setHasError(true)
       if (err.response.status === 500) {
         setMessage(err.message)
         return
       }
-      setMessage(err.response.data.message[0])
+      if (Array.isArray(err.response.data.message))
+        setMessage(err.response.data.message[0])
+      else
+        setMessage(err.response.data.message)
     }
   }
 
