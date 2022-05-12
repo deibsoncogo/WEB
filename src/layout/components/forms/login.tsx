@@ -43,10 +43,9 @@ export function FormLogin() {
   async function handleSignIn(data: any) {
     setHasError(false)
     try {
-      const response = await api.post('/auth/login', data)
+      const response = await api.post('/auth/admin/login', data)
       router.push('/dashboard')
     } catch (err: any) {
-      console.log(err)
       setHasError(true)
       if (err.response.status === 500) {
         setMessage(err.message)
