@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {api} from '../services/axios'
+import {api} from '../services/api'
 
 const loadData = (url: string) => {
     
