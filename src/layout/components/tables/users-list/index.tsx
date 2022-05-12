@@ -1,38 +1,18 @@
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
 import { Row } from './row'
-
+import loadData from '../../../../hooks/load-list-data'
+import {dateMask} from '../../../formatters/dateFormatter'
+import {cpfMask} from '../../../formatters/cpfFormatter'
+import {addressMask} from '../../../formatters/addressFormatter'
 export function UsersTable() {
-  const fakeArray = [
-    {
-      id: '1',
-      name: 'Victor Vaconcelos',
-      email: 'victor.vasconcelos@luby.software',
-      birthDate: '01/09/2002',
-      cpf: '000.000.000-00',
-      address: 'Rua Ficticia',
-    },
-    {
-      id: '2',
-      name: 'Ricardo Mendonça',
-      email: 'ricardo.mendonça@gmail.com',
-      birthDate: '01/09/2002',
-      cpf: '000.000.000-00',
-      address: 'Rua Ficticia',
-    },
-    {
-      id: '3',
-      name: 'Cleber Machado',
-      email: 'cleber.machado@hotmal.com',
-      birthDate: '01/09/2002',
-      cpf: '000.000.000-00',
-      address: 'Rua Ficticia',
-    },
-  ]
 
-  return (
+  const {users, error, loading} = loadData('user');
+
+   return (
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
@@ -63,17 +43,16 @@ export function UsersTable() {
             </thead>
 
             <tbody>
-              {fakeArray.length !== 0 &&
-                fakeArray.map((item) => (
+            {!loading && (users?.map((item) => (
                   <Row
                     key={item.id}
                     name={item.name}
                     email={item.email}
-                    birthDate={item.birthDate}
-                    cpf={item.cpf}
-                    address={item.address}
+                    birthDate={dateMask(item.birthDate)}
+                    cpf={cpfMask(item.cpf)}
+                    address={addressMask(item.address[0])}
                   />
-                ))}
+                )))}              
             </tbody>
           </table>
         </div>

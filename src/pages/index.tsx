@@ -1,6 +1,5 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 
 import { FormLogin } from '../layout/components/forms/login'
 
@@ -13,12 +12,14 @@ const Home: NextPage = () => {
 
       <div className='d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20 h-100'>
         <div className='mb-10'>
-          <Image
-            src="/images/ativocor_logo_new.png"
+          <img
+            src='/images/ativocor_logo_new.png'
             alt='At Palex'
             width={196.15}
             height={77.6}
-            objectFit='contain'
+            style={{
+              objectFit: 'contain'
+            }}
           />
         </div>
 
