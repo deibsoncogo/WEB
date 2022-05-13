@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
-import { MakeUserTable } from '../../main/factories/components/userTable-factory'
+import { MakeUserTable } from '../../application/factories/components/userTable-factory'
 
 const Users: NextPage = () => {
   return (
