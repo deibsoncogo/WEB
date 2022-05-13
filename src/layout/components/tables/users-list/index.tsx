@@ -8,7 +8,7 @@ import {dateMask} from '../../../formatters/dateFormatter'
 import {cpfMask} from '../../../formatters/cpfFormatter'
 import {addressMask} from '../../../formatters/addressFormatter'
 import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAllUsers'
-import { IUserResponse } from '../../../../interfaces/forms/api-response'
+import { IUserResponse } from '../../../../interfaces/api-response'
 
 
 type Props = {

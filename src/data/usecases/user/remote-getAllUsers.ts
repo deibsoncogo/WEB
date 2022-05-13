@@ -1,6 +1,6 @@
 import { InvalidParamsError, UnexpectedError } from "../../../domain/errors";
 import { IGetAllUsers } from "../../../domain/usecases/interfaces/user/getAllUsers";
-import { IUserResponse } from "../../../interfaces/forms/api-response";
+import { IUserResponse } from "../../../interfaces/api-response";
 import { HttpClient, HttpStatusCode } from "../../protocols";
 
 export class RemoteGetAllUsers implements IGetAllUsers{
