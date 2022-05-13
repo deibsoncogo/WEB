@@ -1,18 +1,19 @@
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import { RiFileExcel2Line } from 'react-icons/ri'
+
+import { Row } from './row'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
-import { Row } from './row'
-import loadData from '../../../../hooks/load-list-data'
-import {dateMask} from '../../../formatters/dateFormatter'
-import {cpfMask} from '../../../formatters/cpfFormatter'
-import {addressMask} from '../../../formatters/addressFormatter'
+
+import { RiFileExcel2Line } from 'react-icons/ri'
+import { useLoadData } from '../../../../hooks/load-list-data'
+import { cpfMask } from '../../../formatters/cpfFormatter'
+import { dateMask } from '../../../formatters/dateFormatter'
+import { addressMask } from '../../../formatters/addressFormatter'
+
 export function UsersTable() {
+  const { users, error, loading } = useLoadData('user')
 
-  const {users, error, loading} = loadData('user');
-
-   return (
+  return (
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
@@ -43,7 +44,8 @@ export function UsersTable() {
             </thead>
 
             <tbody>
-            {!loading && (users?.map((item) => (
+              {!loading &&
+                users?.map((item) => (
                   <Row
                     key={item.id}
                     name={item.name}
@@ -52,7 +54,7 @@ export function UsersTable() {
                     cpf={cpfMask(item.cpf)}
                     address={addressMask(item.address[0])}
                   />
-                )))}              
+                ))}
             </tbody>
           </table>
         </div>

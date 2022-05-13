@@ -4,11 +4,12 @@ import { useField } from '@unform/core'
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   label?: string
+  onChange?: () => Promise<void>
 }
 
-export function Input({ name, label, ...rest }: IInputProps) {
+export function Input({ name, label, onChange, ...rest }: IInputProps) {
   const inputRef = useRef(null)
-  const { fieldName, registerField, error } = useField(name)
+  const { fieldName, defaultValue = '', registerField, error } = useField(name)
   useEffect(() => {
     registerField({
       name: fieldName,
@@ -38,6 +39,8 @@ export function Input({ name, label, ...rest }: IInputProps) {
         name={name}
         ref={inputRef}
         type='text'
+        defaultValue={defaultValue}
+        onChange={onChange}
         {...rest}
       />
 
