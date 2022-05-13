@@ -4,14 +4,31 @@ import { RiFileExcel2Line } from 'react-icons/ri'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
 import { Row } from './row'
-import loadData from '../../../../hooks/load-list-data'
 import {dateMask} from '../../../formatters/dateFormatter'
 import {cpfMask} from '../../../formatters/cpfFormatter'
 import {addressMask} from '../../../formatters/addressFormatter'
-export function UsersTable() {
+import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAllUsers'
+import { IUserResponse } from '../../../../interfaces/forms/api-response'
 
-  const {users, error, loading} = loadData('user');
 
+type Props = {
+  getAllUsers: IGetAllUsers;
+};
+
+export default function UsersTable({getAllUsers}: Props) {
+
+  const [users, setUsers] = useState<IUserResponse[]>([])
+  const [error, setError] = useState<any>()
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {          
+    getAllUsers.getAll()
+    .then((data) =>{setUsers(data); })
+    .catch((error) => setError(error))
+    .finally(() => setLoading(false))
+      
+    }, []); 
+  
    return (
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
@@ -52,7 +69,7 @@ export function UsersTable() {
                     cpf={cpfMask(item.cpf)}
                     address={addressMask(item.address[0])}
                   />
-                )))}              
+                )))}  
             </tbody>
           </table>
         </div>
