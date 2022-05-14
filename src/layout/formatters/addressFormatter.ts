@@ -1,4 +1,4 @@
-import { IAddressResponse } from "../../interfaces/forms/api-response/address-response";
+import { IAddressResponse } from "../../interfaces/api-response/addressResponse";
 
 export function addressMask (value: IAddressResponse) {
     let address:string = ''
