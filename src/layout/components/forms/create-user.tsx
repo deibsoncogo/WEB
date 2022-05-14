@@ -7,7 +7,7 @@ import { FormHandles } from '@unform/core'
 
 import { Input, InputMasked, Select } from '../inputs'
 import axios from 'axios'
-import { api } from '../../../services/api'
+import { api } from '../../../application/services/api'
 
 export function FormCreateUer() {
   const router = useRouter()

@@ -7,7 +7,7 @@ import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
 import { Input } from '../inputs'
-import { api } from '../../../services/api'
+import { api } from '../../../application/services/api'
 
 export function FormLogin() {
   const router = useRouter()
@@ -43,7 +43,7 @@ export function FormLogin() {
   async function handleSignIn(data: any) {
     setHasError(false)
     try {
-      const response = await api.post('/auth/login', data)
+      const response = await api.post('/auth/admin/login', data)
       router.push('/dashboard')
     } catch (err: any) {
       setHasError(true)
@@ -51,7 +51,10 @@ export function FormLogin() {
         setMessage(err.message)
         return
       }
-      setMessage(err.response.data.message[0])
+      if (Array.isArray(err.response.data.message))
+        setMessage(err.response.data.message[0])
+      else
+        setMessage(err.response.data.message)
     }
   }
 

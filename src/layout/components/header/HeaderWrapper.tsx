@@ -2,7 +2,6 @@ import clsx from 'clsx'
 import Link from 'next/link'
 
 import { useLayout } from '../../core'
-import Image from 'next/image'
 
 interface HeaderWrapper {
   title: string
@@ -30,7 +29,7 @@ export function HeaderWrapper({ title }: HeaderWrapper) {
               className='btn btn-icon btn-active-light-primary w-30px h-30px w-md-40px h-md-40px'
               id='kt_aside_mobile_toggle'
             >
-              <Image
+              <img
                 src='/images/logo_palex.png'
                 alt='Alt'
                 className='svg-icon-2x'
@@ -44,9 +43,9 @@ export function HeaderWrapper({ title }: HeaderWrapper) {
           <div className='d-flex align-items-center flex-grow-1 flex-lg-grow-0'>
             <Link href='/dashboard' className='d-lg-none'>
               <a>
-                <Image
+                <img
                   alt='Logo'
-                  src={'/images/logo_palex.png'}
+                  src='/images/logo_palex.png'
                   className='h-30px'
                   height='50'
                   width='50'

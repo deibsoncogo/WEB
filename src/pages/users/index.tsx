@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
-import { UsersTable } from '../../layout/components/tables/users-list'
+import { MakeUserTable } from '../../application/factories/components/userTable-factory'
 
 const Users: NextPage = () => {
   return (
@@ -18,7 +18,7 @@ const Users: NextPage = () => {
           <HeaderWrapper title='Usuários' />
 
           <div id='kt_content_container' className='container'>
-            <UsersTable />
+           {MakeUserTable()}
           </div>
         </div>
       </div>

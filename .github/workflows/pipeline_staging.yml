@@ -1,0 +1,84 @@
+name: publish
+
+on:
+  push:
+    branches:
+      - staging
+jobs:
+  build:
+    name: Deploy Staging
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: "export variables"
+        run: |
+          echo "URL_VAULT=https://vault.luby.me" >> $GITHUB_ENV
+      - name: Import Secrets
+        uses: hashicorp/vault-action@v2.3.1
+        id: secrets
+        with:
+          url: ${{ env.URL_VAULT }}
+          method: token
+          token: ${{ secrets.VaultToken }}
+          secrets: |
+            staging/data/sonar TOKEN_ATPALEX_WEB | SONAR_TOKEN ;
+            staging/data/sonar NEW_SHOST | SONAR_HOST_URL ;
+            staging/data/west-1 AWS_ACCESS_KEY_ID ;
+            staging/data/west-1 AWS_SECRET_ACCESS_KEY ;
+            staging/data/west-1 AWS_ZONE_WEST_1 ;
+            staging/data/west-1 CLUSTER_NAME ;
+            
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ steps.secrets.outputs.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ steps.secrets.outputs.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ steps.secrets.outputs.AWS_ZONE_WEST_1 }}
+
+      - name: 'Code Quality and Security Analysis'
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ steps.secrets.outputs.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ steps.secrets.outputs.SONAR_HOST_URL }}
+
+
+      - name: "Create env file local"
+        id: env
+        run: |
+          cp ./eks/staging/Dockerfile .
+          chmod a+x ./eks/staging/script_env.sh
+          ./eks/staging/script_env.sh ${{ secrets.VaultToken }} ${{ env.URL_VAULT }} staging/data/atpalex-web
+
+      - name: "Push Docker image to registry"
+        run: |
+          REGISTRY_URL=655389356257.dkr.ecr.us-west-1.amazonaws.com
+          TAG=$(aws ecr describe-images --repository-name tf-atpalex-web --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text)
+          TAG_IMAGE=`echo $TAG + 1 | bc`
+          IMAGE="$REGISTRY_URL/tf-atpalex-web:$TAG_IMAGE"
+           
+          aws ecr get-login-password --region ${{ steps.secrets.outputs.AWS_ZONE_WEST_1 }} | docker login --username AWS --password-stdin $REGISTRY_URL
+          
+          docker build -t docker-image-local .
+          docker tag docker-image-local:latest $IMAGE
+          docker push $IMAGE
+
+          sed -i -e "s#IMAGE_VERSION#${IMAGE}#" ./eks/staging/0_deployment.yaml
+
+      - name: "Deploy Kubernetes"
+        run: |
+          EKS_PATH=./eks/staging
+          
+          curl -LO https://dl.k8s.io/release/v1.23.6/bin/linux/amd64/kubectl
+          sudo apt-get update
+          sudo apt-get install -y apt-transport-https ca-certificates curl
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          aws eks --region ${{ steps.secrets.outputs.AWS_ZONE_WEST_1 }} update-kubeconfig --name ${{ steps.secrets.outputs.CLUSTER_NAME }}
+          kubectl apply -f $EKS_PATH/0_deployment.yaml
+          kubectl apply -f $EKS_PATH/1_service.yaml
+          kubectl apply -f $EKS_PATH/2_hpa.yaml
