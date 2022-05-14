@@ -1,6 +1,5 @@
 import clsx from 'clsx'
 import Link from 'next/link'
-import Image from 'next/image'
 
 import { useLayout } from '../../core'
 import { AsideMenu } from './AsideMenu'
@@ -26,13 +25,15 @@ function AsideDefault() {
     >
       <div className='aside-logo flex-column-auto' id='kt_aside_logo'>
         <Link href='/dashboard'>
-          <Image
+          <img
             alt='At Palex'
             className='h-25px logo'
-            src='/images/ativonew logo.png'
+            src='/images/ativonew_logo.png'
             height={40}
             width={101}
-            objectFit='contain'
+            style={{
+              objectFit: 'contain'
+            }}
           />
         </Link>
 
