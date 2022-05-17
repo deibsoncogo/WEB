@@ -6,7 +6,7 @@ import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
 import { Input } from '../inputs'
-import { api } from '../../../services/api'
+import { api } from '../../../application/services/api'
 
 export function FormResetPassword() {
   const router = useRouter()
