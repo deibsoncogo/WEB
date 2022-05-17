@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -9,7 +9,13 @@ import { FormHandles } from '@unform/core'
 import { Input } from '../inputs'
 import { api } from '../../../application/services/api'
 
+import useAuth from '../../../application/hooks/useAuth'
+import { IAuthResponse } from '../../../interfaces/api-response/authResponse'
+import jwtDecode from 'jwt-decode'
+import { IToken } from '../../../interfaces/application/token'
+
 export function FormLogin() {
+ 
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -44,6 +50,13 @@ export function FormLogin() {
     setHasError(false)
     try {
       const response = await api.post('/auth/admin/login', data)
+      const result: IAuthResponse = response.data.data;
+      localStorage.setItem('access_token', result.access_token)  
+      localStorage.setItem('name', result.name)    
+      localStorage.setItem('email', result.email)
+      localStorage.setItem('expiration', jwtDecode<IToken>(result.access_token).exp)
+      localStorage.setItem('role', jwtDecode<IToken>(result.access_token).role)
+      
       router.push('/dashboard')
     } catch (err: any) {
       setHasError(true)
