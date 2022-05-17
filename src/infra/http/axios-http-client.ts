@@ -1,4 +1,4 @@
-import {HttpRequest, HttpResponse, HttpClient} from '../../data/protocols/http';
+import {HttpRequest, HttpResponse, HttpClient} from '../../data/protocols/http-client';
 
 import axios, {AxiosResponse} from 'axios';
 
