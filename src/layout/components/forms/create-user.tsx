@@ -87,6 +87,7 @@ export function FormCreateUer() {
 
     try {
       await api.post('/user', userData)
+      router.push('/users')
     } catch (err) {
       console.log(err)
     }
@@ -177,7 +178,7 @@ export function FormCreateUer() {
         <button
           type='button'
           onClick={() => {
-            router.push('/')
+            router.push('/users')
           }}
           className='btn btn-lg btn-secondary w-150px mb-5'
         >
