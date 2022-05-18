@@ -9,10 +9,11 @@ import { FormHandles } from '@unform/core'
 import { Input } from '../inputs'
 import { api } from '../../../application/services/api'
 
-import useAuth from '../../../application/hooks/useAuth'
+
 import { IAuthResponse } from '../../../interfaces/api-response/authResponse'
 import jwtDecode from 'jwt-decode'
 import { IToken } from '../../../interfaces/application/token'
+
 
 export function FormLogin() {
  
@@ -29,7 +30,7 @@ export function FormLogin() {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         email: Yup.string().email('Insira um email válido.').required('Email é nescessário.'),
-        password: Yup.string().required('Senha é nescessária'),
+        password: Yup.string().required('Senha é necessária'),
       })
       await schema.validate(data, { abortEarly: false })
 
@@ -49,15 +50,15 @@ export function FormLogin() {
   async function handleSignIn(data: any) {
     setHasError(false)
     try {
+      
       const response = await api.post('/auth/admin/login', data)
       const result: IAuthResponse = response.data.data;
       localStorage.setItem('access_token', result.access_token)  
       localStorage.setItem('name', result.name)    
       localStorage.setItem('email', result.email)
-      localStorage.setItem('expiration', jwtDecode<IToken>(result.access_token).exp)
-      localStorage.setItem('role', jwtDecode<IToken>(result.access_token).role)
-      
-      router.push('/dashboard')
+      localStorage.setItem('expiration', jwtDecode<IToken>(result.access_token).exp)      
+      router.push("/dashboard")
+
     } catch (err: any) {
       setHasError(true)
       if (err.response.status === 500) {
