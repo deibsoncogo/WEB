@@ -27,7 +27,7 @@ export class AxiosHttpClient implements HttpClient {
     // return authorization header with basic auth credentials
     let token = localStorage.getItem("access_token");  
     if (token) {
-        return { 'Authorization': `Bearer ${token}`};
+        return { 'authorization': `Bearer ${token}`};
     } else {
         return {};
     }
