@@ -63,12 +63,12 @@ export function AsideMenuMain() {
         </div>
       </div>
       <AsideMenuItem
-        to='/planos'
+        to='/planns'
         title='Planos'
         icon={<MdViewList size={20} className='svg-icon-2 mh-50px' />}
       />
       <AsideMenuItem
-        to='/curses'
+        to='/courses'
         title='Cursos'
         icon={<MdOndemandVideo size={20} className='svg-icon-2 mh-50px' />}
       />
@@ -88,7 +88,7 @@ export function AsideMenuMain() {
         icon={<RiArtboardFill size={20} className='svg-icon-2 mh-50px' />}
       />
       <AsideMenuItem
-        to='/cupons'
+        to='/coupons'
         title='Cupons de Desconto'
         icon={<HiReceiptTax size={20} className='svg-icon-2 mh-50px' />}
       />
@@ -112,7 +112,7 @@ export function AsideMenuMain() {
         icon={<MdPeopleAlt size={20} className='svg-icon-2 mh-50px' />}
       />
       <AsideMenuItem
-        to='/'
+        to='/logout'
         title='Sair'
         icon={<FiLogOut size={20} className='svg-icon-2 mh-50px' />}
       />

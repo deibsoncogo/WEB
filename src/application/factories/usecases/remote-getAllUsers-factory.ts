@@ -3,4 +3,4 @@ import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUse
 import { makeApiUrl, makeAxiosHttpClient } from '../http'
 
 export const makeRemoteGetAllUsers = (): IGetAllUsers =>
-  new RemoteGetAllUsers(makeApiUrl('/user'), makeAxiosHttpClient())
+  new RemoteGetAllUsers(makeApiUrl('/user'), makeAxiosHttpClient());
