@@ -16,6 +16,9 @@ $mode: default;
 @import 'layout/layout';
 @import './core/layout/docs/layout';
 
+// Custom
+@import 'custom/custom.scss';
+
 body {
   & > div {
     height: 100%;

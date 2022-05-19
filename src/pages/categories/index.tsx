@@ -4,6 +4,7 @@ import { MakeCategoriesTable } from '../../application/factories/components/cate
 import { MakeUserTable } from '../../application/factories/components/userTable-factory'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
+import CategoriesTemplate from '../../layout/templates/categories'
 
 function Categories() {
   return (
@@ -19,7 +20,7 @@ function Categories() {
           <HeaderWrapper title='Usuários' />
 
           <div id='kt_content_container' className='container'>
-            {MakeCategoriesTable()}
+            <CategoriesTemplate />
           </div>
         </div>
       </div>

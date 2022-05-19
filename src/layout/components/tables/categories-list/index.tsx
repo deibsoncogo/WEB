@@ -3,32 +3,17 @@ import { useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
 import { KTSVG } from '../../../../helpers'
 import { Category } from '../../../../interfaces/model/Category'
+import Pagination from '../../pagination/Pagination'
 import { Search } from '../../search/Search'
 import { Row } from './row'
 
-type Props = {}
+type Props = {
+  categories: Category[]
+}
 
-export default function CategoriesTable({}: Props) {
-  const [categories, setCategories] = useState<Category[]>([])
-  const [error, setError] = useState<any>()
-  const [loading, setLoading] = useState(true)
-
+export default function CategoriesTable({ categories = [] }: Props) {
   return (
-    <div className='card mb-5 mb-xl-8'>
-      <div className='card-header border-0 pt-5'>
-        <h3 className='card-title align-items-start flex-column'>
-          <Search />
-        </h3>
-        <div className='card-toolbar'>
-          <Link href='/categories/create'>
-            <a className='btn btn-sm btn-light-primary'>
-              <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-              Nova Categoria
-            </a>
-          </Link>
-        </div>
-      </div>
-
+    <>
       {categories.length > 0 && (
         <div className='card-body py-3'>
           <div className='table-responsive'>
@@ -41,7 +26,9 @@ export default function CategoriesTable({}: Props) {
               </thead>
 
               <tbody className='w-100'>
-                {!loading && categories?.map((category) => <Row key={category.id} {...category} />)}
+                {categories?.map((category) => (
+                  <Row key={category.id} {...category} />
+                ))}
               </tbody>
             </table>
           </div>
@@ -62,36 +49,8 @@ export default function CategoriesTable({}: Props) {
           </button>
         </div>
 
-        <div className='card-toolbar'>
-          <ul className='pagination'>
-            <li className='page-item previous disabled'>
-              <a href='#' className='page-link'>
-                <i className='previous'></i>
-              </a>
-            </li>
-            <li className='page-item'>
-              <a href='#' className='page-link'>
-                1
-              </a>
-            </li>
-            <li className='page-item active'>
-              <a href='#' className='page-link'>
-                2
-              </a>
-            </li>
-            <li className='page-item'>
-              <a href='#' className='page-link'>
-                3
-              </a>
-            </li>
-            <li className='page-item next'>
-              <a href='#' className='page-link'>
-                <i className='next'></i>
-              </a>
-            </li>
-          </ul>
-        </div>
+        <Pagination />
       </div>
-    </div>
+    </>
   )
 }
