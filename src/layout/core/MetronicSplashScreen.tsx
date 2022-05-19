@@ -1,16 +1,12 @@
-import React, {
-  FC,
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  SetStateAction,
-  Dispatch,
-} from 'react'
+import { createContext, useContext, useState, useEffect, SetStateAction, Dispatch } from 'react'
 
 const MetronicSplashScreenContext = createContext<Dispatch<SetStateAction<number>> | undefined>(
   undefined
 )
+
+interface ILayoutSplashScreen {
+  visible?: boolean
+}
 
 function MetronicSplashScreenProvider({ children }: any) {
   const [count, setCount] = useState(0)
@@ -48,8 +44,7 @@ function MetronicSplashScreenProvider({ children }: any) {
   )
 }
 
-const LayoutSplashScreen: FC<{ visible?: boolean }> = ({ visible = true }) => {
-  // Everything are ready - remove splashscreen
+function LayoutSplashScreen({ visible = true }: ILayoutSplashScreen) {
   const setCount = useContext(MetronicSplashScreenContext)
 
   useEffect(() => {
