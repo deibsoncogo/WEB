@@ -4,15 +4,23 @@ type ErrorObject = {
   [key: string]: string
 }
 
+interface ApplyType<T> {
+  success: T | undefined
+  error: ErrorObject | undefined
+}
+
 export async function applyYupValidation<SchemaType, Data = {}>(
   schema: Yup.AnySchema,
   data: Data
-): Promise<Data | ErrorObject> {
+): Promise<ApplyType<Data>> {
+  const verification: ApplyType<Data> = { error: undefined, success: undefined }
+
   try {
     await schema.validate(data, { abortEarly: false })
-    return data
+    verification.success = data
   } catch (err) {
     const validationErrors: ErrorObject = {}
+
     if (err instanceof Yup.ValidationError) {
       err.inner.forEach((error) => {
         if (error.path) {
@@ -20,6 +28,9 @@ export async function applyYupValidation<SchemaType, Data = {}>(
         }
       })
     }
-    return validationErrors
+
+    verification.error = validationErrors
   }
+
+  return verification
 }

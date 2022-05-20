@@ -17,11 +17,12 @@ export class RemoteCreateCategory implements ICreateCategory {
       method: 'post',
       body: params,
     })
+
     switch (httpResponse.statusCode) {
-      case HttpStatusCode.ok:
+      case HttpStatusCode.created:
         return httpResponse.body
       case HttpStatusCode.badRequest:
-        throw new InvalidParamsError(httpResponse.body?.message)
+        throw new InvalidParamsError(['Categoria já cadastrada'])
       default:
         throw new UnexpectedError()
     }

@@ -21,6 +21,7 @@
     transform: translateX(100%);
     transition: 0.5s;
     max-height: 100vh;
+    min-width: 450px;
 }
 
 .draw-active {
