@@ -34,9 +34,9 @@ export function FormCreateUser({userRegister}: Props) {
         birthDate: Yup.string().required('Data de nascimento é necessária'),
         cpf: Yup.string().required('CPF é necessário'),
         phoneNumber: Yup.string().required('Telefone é necessário'),
-        level: Yup.string().optional(),
+        level: Yup.string().required('Nível de conhecimento é necessário'),
         password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é necessária'),
-        role: Yup.string().optional(),
+        role: Yup.string().required('Permissão é necessária'),
         zipCode: Yup.string().required('CEP é necessário'),
         street: Yup.string().required('Rua é necessário'),
         neighborhood: Yup.string().required('Bairro é necessário'),
@@ -76,7 +76,7 @@ export function FormCreateUser({userRegister}: Props) {
                       cpf, data.birthDate, phoneNumber, data.role, data.level,
                       address)   
     
-    userRegister.signUp(user).then(()=>router.push('/users'))
+    userRegister.signUp(user).then(()=> router.push('/users'))
                               .catch((error) => console.log(error))
    
   }
