@@ -13,7 +13,7 @@ export class UserSignUp{
     phoneNumber: string
     role: string
     level: string
-    address: Address
+    address : Address []
 
     constructor(name: string, email: string, 
                 password: string, passwordConfirmation: string,
@@ -29,7 +29,8 @@ export class UserSignUp{
         this.phoneNumber = phoneNumber
         this.role = role
         this.level = level
-        this.address = address
+        this.address = new Array()
+        this.address.push(address);
     }
     
 }
