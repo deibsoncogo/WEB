@@ -1,11 +1,18 @@
-import Link from 'next/link'
 import React, { useState } from 'react'
+import {
+  CreateCategoryParams,
+  ICreateCategory,
+} from '../../../domain/usecases/interfaces/category/createCategory'
 import { KTSVG } from '../../../helpers'
-import CreateCategory from '../../components/forms/create-category'
+import { CreateCategoryDrawer } from '../../components/forms/create-category'
 import { Search } from '../../components/search/Search'
 import CategoriesTable from '../../components/tables/categories-list'
 
-function CategoriesTemplate() {
+type Props = {
+  remoteCreateCategory: ICreateCategory
+}
+
+function CategoriesTemplate({}: Props) {
   const [modalCreateCategoryActive, setModalCreateCategoryActive] = useState(false)
 
   const openModalCreateCategory = () => {
@@ -15,9 +22,17 @@ function CategoriesTemplate() {
   const closeModalCreateCategory = () => {
     setModalCreateCategoryActive(false)
   }
+
+  const createCategory = async (params: CreateCategoryParams) => {}
+
   return (
     <>
-      <CreateCategory visible={modalCreateCategoryActive} close={closeModalCreateCategory} />
+      <CreateCategoryDrawer
+        visible={modalCreateCategoryActive}
+        close={closeModalCreateCategory}
+        createCategory={createCategory}
+      />
+
       <div className='card mb-5 mb-xl-8'>
         <div className='card-header border-0 pt-5'>
           <h3 className='card-title align-items-start flex-column'>
