@@ -10,14 +10,16 @@ interface IRow {
   birthDate: string
   cpf: string
   address: string
+  deleteUser: IDeleteUser
 }
 
-export function Row({ id, name, email, birthDate, cpf, address }: IRow) {
+export function Row({ id, name, email, birthDate, cpf, address, deleteUser }: IRow) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  async function deleteUser() {
+  async function handleDeleteUser() {
     try {
-      await api.delete(`/user/${id}`)
+      const resp = await deleteUser.deleteUser()
+      setIsModalOpen(false)
     } catch (err) {
       console.log(err)
     }
@@ -61,7 +63,7 @@ export function Row({ id, name, email, birthDate, cpf, address }: IRow) {
 
       <DeleteUserModal
         isOpen={isModalOpen}
-        action={deleteUser}
+        action={handleDeleteUser}
         onRequestClose={() => {
           setIsModalOpen(false)
         }}

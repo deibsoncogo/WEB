@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Row } from './row'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
 import { dateMask } from '../../../formatters/dateFormatter'
@@ -9,6 +8,7 @@ import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAll
 import { IUserResponse } from '../../../../interfaces/api-response'
 import { useEffect, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
+import { MakeUserRow } from '../../../../application/factories/components/deleteModal-factory'
 
 type Props = {
   getAllUsers: IGetAllUsers
@@ -62,7 +62,7 @@ export default function UsersTable({ getAllUsers }: Props) {
             <tbody>
               {!loading &&
                 users?.map((item) => (
-                  <Row
+                  <MakeUserRow
                     key={item.id}
                     id={item.id}
                     name={item.name}
