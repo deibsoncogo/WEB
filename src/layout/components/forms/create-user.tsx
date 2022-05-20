@@ -29,20 +29,20 @@ export function FormCreateUser({userRegister}: Props) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é Nescessário'),
-        email: Yup.string().email('Insira um email válido.').required('Email é nescessário'),
-        birthDate: Yup.string().required('Data de nascimento é nescessária'),
-        cpf: Yup.string().required('CPF é nescessário'),
-        phoneNumber: Yup.string().required('Telefone é nescessário'),
-        level: Yup.string().required('Nível de conhecimento é nescessário'),
-        password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é nescessária'),
-        role: Yup.string().required('Premissão é nescessária'),
-        zipCode: Yup.string().required('CEP é nescessário'),
-        street: Yup.string().required('Rua é nescessário'),
-        neighborhood: Yup.string().required('Bairro é nescessário'),
-        city: Yup.string().required('Cidade é nescessária'),
-        state: Yup.string().required('Estado é nescessário'),
-        number: Yup.string().required('Número é nescessário'),
+        name: Yup.string().required('Nome é necessário'),
+        email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
+        birthDate: Yup.string().required('Data de nascimento é necessária'),
+        cpf: Yup.string().required('CPF é necessário'),
+        phoneNumber: Yup.string().required('Telefone é necessário'),
+        level: Yup.string().optional(),
+        password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é necessária'),
+        role: Yup.string().optional(),
+        zipCode: Yup.string().required('CEP é necessário'),
+        street: Yup.string().required('Rua é necessário'),
+        neighborhood: Yup.string().required('Bairro é necessário'),
+        city: Yup.string().required('Cidade é necessária'),
+        state: Yup.string().required('Estado é necessário'),
+        number: Yup.string().required('Número é necessário'),
       })
       await schema.validate(data, { abortEarly: false })
 
