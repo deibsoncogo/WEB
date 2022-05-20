@@ -1,11 +1,8 @@
 import Head from 'next/head'
 import React from 'react'
-import { MakeCategoriesTable } from '../../application/factories/components/categoriesTable-factory'
-import { MakeUserTable } from '../../application/factories/components/userTable-factory'
 import { MakeCategoriesPage } from '../../application/factories/pages/categories/categories-factory'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
-import CategoriesTemplate from '../../layout/templates/categories'
 
 function Categories() {
   return (

@@ -1,8 +1,4 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import {
-  CreateCategoryParams,
-  ICreateCategory,
-} from '../../../domain/usecases/interfaces/category/createCategory'
 import { IGetCategories } from '../../../domain/usecases/interfaces/category/createGetCategories'
 import { Category } from '../../../interfaces/model/Category'
 import { HttpClient, HttpStatusCode } from '../../protocols'

@@ -3,9 +3,6 @@ import {
   CreateCategoryParams,
   ICreateCategory,
 } from '../../../domain/usecases/interfaces/category/createCategory'
-import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
-import { keys } from '../../../helpers/KeyConstants'
-import { IUserResponse } from '../../../interfaces/api-response'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteCreateCategory implements ICreateCategory {

@@ -1,10 +1,6 @@
-import Link from 'next/link'
-import { useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
-import { KTSVG } from '../../../../helpers'
 import { Category } from '../../../../interfaces/model/Category'
 import Pagination from '../../pagination/Pagination'
-import { Search } from '../../search/Search'
 import { Row } from './row'
 
 type Props = {
