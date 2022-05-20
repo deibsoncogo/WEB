@@ -69,13 +69,13 @@ export function FormCreateUser({userRegister}: Props) {
     const matchesCEP = data.zipCode.match(/\d*/g)
     const zipCode = matchesCEP?.join('')
 
-    const address = new Address(data.zipCode, data.street, data.neighborhood,
-                      data.city, data.state, data.numer, data.complement)
+    const address = new Address(zipCode, data.street, data.neighborhood,
+                      data.city, data.state, data.number, data.complement)
 
     const user = new UserSignUp(data.name, data.email, data.password, data.password,
-                      data.cpf, data.birthDate, data.phoneNumber, data.role, data.level,
-                      address)    
-
+                      cpf, data.birthDate, phoneNumber, data.role, data.level,
+                      address)   
+    
     userRegister.signUp(user).then(()=>router.push('/users'))
                               .catch((error) => console.log(error))
    
