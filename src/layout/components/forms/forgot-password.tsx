@@ -69,12 +69,12 @@ export function FormForgotPassword() {
           onClick={() => {
             router.push('/')
           }}
-          className='btn btn-lg btn-secondary button-size mb-5'
+          className='btn btn-lg btn-secondary button-size-sm mb-5'
         >
           Cancelar
         </button>
 
-        <button type='submit' className='btn btn-lg btn-primary button-size mb-5'>
+        <button type='submit' className='btn btn-lg btn-primary button-size-sm mb-5'>
           Enviar
         </button>
       </div>
