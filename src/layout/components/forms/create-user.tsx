@@ -8,8 +8,15 @@ import { FormHandles } from '@unform/core'
 import { Input, InputMasked, Select } from '../inputs'
 import axios from 'axios'
 import { api } from '../../../application/services/api'
+import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUP'
+import { Address } from '../../../domain/models/address'
+import { UserSignUp } from '../../../domain/models/userSignUp'
 
-export function FormCreateUer() {
+type Props = {
+  userRegister: IUserSignUp;
+};
+
+export function FormCreateUser({userRegister}: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -62,37 +69,19 @@ export function FormCreateUer() {
     const matchesCEP = data.zipCode.match(/\d*/g)
     const zipCode = matchesCEP?.join('')
 
-    const userData = {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      passwordConfirm: data.password,
-      cpf: cpf,
-      photo: data.photo,
-      birthDate: data.birthDate,
-      phoneNumber: phoneNumber,
-      role: data.role,
-      address: [
-        {
-          zipCode: zipCode,
-          street: data.street,
-          neighborhood: data.neighborhood,
-          city: data.city,
-          state: data.state,
-          number: data.number,
-          complement: data.complement,
-        },
-      ],
-    }
+    const address = new Address(data.zipCode, data.street, data.neighborhood,
+                      data.city, data.state, data.numer, data.complement)
 
-    try {
-      await api.post('/user', userData)
-      router.push('/users')
-    } catch (err) {
-      console.log(err)
-    }
+    const user = new UserSignUp(data.name, data.email, data.password, data.password,
+                      data.cpf, data.birthDate, data.phoneNumber, data.role, data.level,
+                      address)    
+
+    userRegister.signUp(user).then(()=>router.push('/users'))
+                              .catch((error) => console.log(error))
+   
   }
 
+  
   async function findCEP() {
     const cep = formRef.current?.getData().zipCode
     const matches = cep.match(/\d*/g)
@@ -116,14 +105,16 @@ export function FormCreateUer() {
   }
 
   const levelOptions = [
-    { value: 'basic', label: 'Básico' },
-    { value: 'intermediary', label: 'Intermediário' },
+    { value: 'begginer', label: 'Básico' },
+    { value: 'intermediate', label: 'Intermediário' },
     { value: 'advanced', label: 'Avançado' },
   ]
 
   const roleOptions = [
-    { value: 'user', label: 'Usuário' },
+    {value: 'user', label: 'Usuário' },
+    {value: 'teacher', label: 'Professor'},
     { value: 'admin', label: 'Administrador' },
+   
   ]
 
   return (
