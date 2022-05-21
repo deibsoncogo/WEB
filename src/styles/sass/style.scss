@@ -15,9 +15,3 @@ $mode: default;
 // Layout
 @import 'layout/layout';
 @import './core/layout/docs/layout';
-
-body {
-  & > div {
-    height: 100%;
-  }
-}

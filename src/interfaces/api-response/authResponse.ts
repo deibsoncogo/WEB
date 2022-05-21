@@ -1,6 +1,5 @@
 export interface IAuthResponse {
-    access_token: string;
-    name: string;
-    email: string;
- 
+  accessToken: string
+  name: string
+  email: string
 }

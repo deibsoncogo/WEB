@@ -1,34 +1,35 @@
 import Link from 'next/link'
-import { Row } from './row'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
-import {dateMask} from '../../../formatters/dateFormatter'
-import {cpfMask} from '../../../formatters/cpfFormatter'
-import {addressMask} from '../../../formatters/addressFormatter'
+import { dateMask } from '../../../formatters/dateFormatter'
+import { cpfMask } from '../../../formatters/cpfFormatter'
+import { addressMask } from '../../../formatters/addressFormatter'
 import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAllUsers'
 import { IUserResponse } from '../../../../interfaces/api-response'
 import { useEffect, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
+import { MakeUserRow } from '../../../../application/factories/components/deleteModal-factory'
 
 type Props = {
-  getAllUsers: IGetAllUsers;
-};
+  getAllUsers: IGetAllUsers
+}
 
-export default function UsersTable({getAllUsers}: Props) {
-
+export default function UsersTable({ getAllUsers }: Props) {
   const [users, setUsers] = useState<IUserResponse[]>([])
   const [error, setError] = useState<any>()
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {          
-    getAllUsers.getAll()
-    .then((data) =>{setUsers(data); })
-    .catch((error) => setError(error))
-    .finally(() => setLoading(false))
-      
-    }, []); 
-  
-   return (
+  useEffect(() => {
+    getAllUsers
+      .getAll()
+      .then((data) => {
+        setUsers(data)
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false))
+  }, [])
+
+  return (
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
@@ -61,8 +62,9 @@ export default function UsersTable({getAllUsers}: Props) {
             <tbody>
               {!loading &&
                 users?.map((item) => (
-                  <Row
+                  <MakeUserRow
                     key={item.id}
+                    id={item.id}
                     name={item.name}
                     email={item.email}
                     birthDate={dateMask(item.birthDate)}
