@@ -80,12 +80,12 @@ export function FormResetPassword() {
           onClick={() => {
             router.push('/')
           }}
-          className='btn btn-lg btn-secondary w-150px mb-5'
+          className='btn btn-lg btn-secondary button-size-lg mb-5'
         >
           Cancelar
         </button>
 
-        <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
+        <button type='submit' className='btn btn-lg btn-primary button-size-lg mb-5'>
           Redefinir senha
         </button>
       </div>
