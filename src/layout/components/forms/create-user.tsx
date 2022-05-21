@@ -8,8 +8,15 @@ import { FormHandles } from '@unform/core'
 import { Input, InputMasked, Select } from '../inputs'
 import axios from 'axios'
 import { api } from '../../../application/services/api'
+import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUP'
+import { Address } from '../../../domain/models/address'
+import { UserSignUp } from '../../../domain/models/userSignUp'
 
-export function FormCreateUer() {
+type Props = {
+  userRegister: IUserSignUp;
+};
+
+export function FormCreateUser({userRegister}: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -22,20 +29,20 @@ export function FormCreateUer() {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é Nescessário'),
-        email: Yup.string().email('Insira um email válido.').required('Email é nescessário'),
-        birthDate: Yup.string().required('Data de nascimento é nescessária'),
-        cpf: Yup.string().required('CPF é nescessário'),
-        phoneNumber: Yup.string().required('Telefone é nescessário'),
-        level: Yup.string().required('Nível de conhecimento é nescessário'),
-        password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é nescessária'),
-        role: Yup.string().required('Premissão é nescessária'),
-        zipCode: Yup.string().required('CEP é nescessário'),
-        street: Yup.string().required('Rua é nescessário'),
-        neighborhood: Yup.string().required('Bairro é nescessário'),
-        city: Yup.string().required('Cidade é nescessária'),
-        state: Yup.string().required('Estado é nescessário'),
-        number: Yup.string().required('Número é nescessário'),
+        name: Yup.string().required('Nome é necessário'),
+        email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
+        birthDate: Yup.string().required('Data de nascimento é necessária'),
+        cpf: Yup.string().required('CPF é necessário'),
+        phoneNumber: Yup.string().required('Telefone é necessário'),
+        level: Yup.string().required('Nível de conhecimento é necessário'),
+        password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é necessária'),
+        role: Yup.string().required('Permissão é necessária'),
+        zipCode: Yup.string().required('CEP é necessário'),
+        street: Yup.string().required('Rua é necessário'),
+        neighborhood: Yup.string().required('Bairro é necessário'),
+        city: Yup.string().required('Cidade é necessária'),
+        state: Yup.string().required('Estado é necessário'),
+        number: Yup.string().required('Número é necessário'),
       })
       await schema.validate(data, { abortEarly: false })
 
@@ -62,37 +69,19 @@ export function FormCreateUer() {
     const matchesCEP = data.zipCode.match(/\d*/g)
     const zipCode = matchesCEP?.join('')
 
-    const userData = {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      passwordConfirm: data.password,
-      cpf: cpf,
-      photo: data.photo,
-      birthDate: data.birthDate,
-      phoneNumber: phoneNumber,
-      role: data.role,
-      address: [
-        {
-          zipCode: zipCode,
-          street: data.street,
-          neighborhood: data.neighborhood,
-          city: data.city,
-          state: data.state,
-          number: data.number,
-          complement: data.complement,
-        },
-      ],
-    }
+    const address = new Address(zipCode, data.street, data.neighborhood,
+                      data.city, data.state, data.number, data.complement)
 
-    try {
-      await api.post('/user', userData)
-      router.push('/users')
-    } catch (err) {
-      console.log(err)
-    }
+    const user = new UserSignUp(data.name, data.email, data.password, data.password,
+                      cpf, data.birthDate, phoneNumber, data.role, data.level,
+                      address)   
+    
+    userRegister.signUp(user).then(()=> router.push('/users'))
+                              .catch((error) => console.log(error))
+   
   }
 
+  
   async function findCEP() {
     const cep = formRef.current?.getData().zipCode
     const matches = cep.match(/\d*/g)
@@ -116,14 +105,16 @@ export function FormCreateUer() {
   }
 
   const levelOptions = [
-    { value: 'basic', label: 'Básico' },
-    { value: 'intermediary', label: 'Intermediário' },
+    { value: 'begginer', label: 'Básico' },
+    { value: 'intermediate', label: 'Intermediário' },
     { value: 'advanced', label: 'Avançado' },
   ]
 
   const roleOptions = [
-    { value: 'user', label: 'Usuário' },
+    {value: 'user', label: 'Usuário' },
+    {value: 'teacher', label: 'Professor'},
     { value: 'admin', label: 'Administrador' },
+   
   ]
 
   return (
