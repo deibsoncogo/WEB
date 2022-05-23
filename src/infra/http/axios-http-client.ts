@@ -10,6 +10,7 @@ export class AxiosHttpClient implements HttpClient {
         method: data.method,
         data: data.body,
         headers: this.getAuthHeaders(),
+        params: data.params,
       })
     } catch (error: any) {
       axiosResponse = error.response

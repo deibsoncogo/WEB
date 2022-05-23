@@ -5,7 +5,11 @@ import {
   CreateCategoryParams,
   ICreateCategory,
 } from '../../../domain/usecases/interfaces/category/createCategory'
-import { IGetCategories } from '../../../domain/usecases/interfaces/category/createGetCategories'
+import {
+  GetCategoriesParams,
+  IGetCategories,
+  OutputPagination,
+} from '../../../domain/usecases/interfaces/category/getCategories'
 import { KTSVG } from '../../../helpers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { Category } from '../../../interfaces/model/Category'
@@ -24,6 +28,7 @@ const schema = Yup.object().shape({
 })
 
 function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props) {
+  const [pagination, setPagination] = useState({ take: 2, skip: 0, page: 1 })
   const [categories, setCategories] = useState<Category[]>([])
   const [modalCreateCategoryActive, setModalCreateCategoryActive] = useState(false)
 
@@ -35,6 +40,12 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
     error: createCategoryError,
     data: categoryCreated,
   } = useRequest<void, CreateCategoryParams>(remoteCreateCategory.create)
+
+  const {
+    makeRequest: getCategories,
+    error: getCategoriesError,
+    data: paginatedCategories,
+  } = useRequest<OutputPagination, GetCategoriesParams>(remoteGetCategories.get)
 
   const openModalCreateCategory = () => {
     setModalCreateCategoryActive(true)
@@ -58,14 +69,16 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
     }
   }
 
-  const getCategories = async () => {
-    const categories = await remoteGetCategories.get()
-    setCategories(categories)
-  }
+  useEffect(() => {
+    getCategories(pagination)
+  }, [])
 
   useEffect(() => {
-    getCategories()
-  }, [])
+    if (paginatedCategories) {
+      const { data } = paginatedCategories
+      setCategories(data)
+    }
+  }, [paginatedCategories])
 
   useEffect(() => {
     if (createCategoryError) {
@@ -75,6 +88,7 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
 
   useEffect(() => {
     if (categoryCreated) {
+      getCategories(pagination)
       closeModalCreateCategory()
     }
   }, [categoryCreated])

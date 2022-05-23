@@ -1,15 +1,19 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { IGetCategories } from '../../../domain/usecases/interfaces/category/createGetCategories'
+import {
+  GetCategoriesParams,
+  IGetCategories,
+} from '../../../domain/usecases/interfaces/category/getCategories'
 import { Category } from '../../../interfaces/model/Category'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteGetCategories implements IGetCategories {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<Category[]>) {}
 
-  get = async () => {
+  get = async (params: GetCategoriesParams) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',
+      params,
     })
 
     switch (httpResponse.statusCode) {
