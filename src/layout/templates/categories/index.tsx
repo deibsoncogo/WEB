@@ -17,6 +17,7 @@ import { CreateCategoryDrawer } from '../../components/forms/create-category'
 import { Search } from '../../components/search/Search'
 import CategoriesTable from '../../components/tables/categories-list'
 import * as Yup from 'yup'
+import { usePagination } from '../../../application/hooks/usePagination'
 
 type Props = {
   remoteCreateCategory: ICreateCategory
@@ -28,11 +29,15 @@ const schema = Yup.object().shape({
 })
 
 function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props) {
-  const [pagination, setPagination] = useState({ take: 2, skip: 0, page: 1 })
   const [categories, setCategories] = useState<Category[]>([])
   const [modalCreateCategoryActive, setModalCreateCategoryActive] = useState(false)
 
-  const formRef = useRef<FormHandles>(null)
+  const paginationHook = usePagination()
+  const { pagination, setTotalPage } = paginationHook
+  const { take, currentPage } = pagination
+  const paginationParams: GetCategoriesParams = { page: currentPage, take, filters: {} }
+
+  const createCategoryFormRef = useRef<FormHandles>(null)
 
   const {
     makeRequest: createCategory,
@@ -52,8 +57,8 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
   }
 
   const closeModalCreateCategory = () => {
-    formRef.current?.reset()
-    formRef.current?.setErrors({})
+    createCategoryFormRef.current?.reset()
+    createCategoryFormRef.current?.setErrors({})
     setModalCreateCategoryActive(false)
   }
 
@@ -65,30 +70,31 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
     }
 
     if (error) {
-      formRef?.current?.setErrors(error)
+      createCategoryFormRef?.current?.setErrors(error)
     }
   }
 
   useEffect(() => {
-    getCategories(pagination)
-  }, [])
+    getCategories(paginationParams)
+  }, [pagination])
 
   useEffect(() => {
     if (paginatedCategories) {
-      const { data } = paginatedCategories
+      const { data, total } = paginatedCategories
+      setTotalPage(total)
       setCategories(data)
     }
   }, [paginatedCategories])
 
   useEffect(() => {
     if (createCategoryError) {
-      formRef.current?.setErrors({ name: createCategoryError })
+      createCategoryFormRef.current?.setErrors({ name: createCategoryError })
     }
   }, [createCategoryError])
 
   useEffect(() => {
     if (categoryCreated) {
-      getCategories(pagination)
+      getCategories(paginationParams)
       closeModalCreateCategory()
     }
   }, [categoryCreated])
@@ -100,7 +106,7 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
         close={closeModalCreateCategory}
         createCategory={handleCreateCategory}
         loading={loadingCategoryCreation}
-        ref={formRef}
+        ref={createCategoryFormRef}
       />
 
       <div className='card mb-5 mb-xl-8'>
@@ -116,7 +122,7 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
           </div>
         </div>
 
-        <CategoriesTable categories={categories} />
+        <CategoriesTable categories={categories} paginationHook={paginationHook} />
       </div>
     </>
   )

@@ -1,13 +1,15 @@
 import { RiFileExcel2Line } from 'react-icons/ri'
+import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { Category } from '../../../../interfaces/model/Category'
 import Pagination from '../../pagination/Pagination'
 import { Row } from './row'
 
 type Props = {
   categories: Category[]
+  paginationHook: usePaginationType
 }
 
-export default function CategoriesTable({ categories = [] }: Props) {
+export default function CategoriesTable({ categories = [], paginationHook }: Props) {
   return (
     <>
       {categories.length > 0 && (
@@ -45,7 +47,7 @@ export default function CategoriesTable({ categories = [] }: Props) {
           </button>
         </div>
 
-        <Pagination />
+        <Pagination paginationHook={paginationHook} />
       </div>
     </>
   )

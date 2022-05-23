@@ -1,46 +1,18 @@
 import React, { ChangeEvent, ChangeEventHandler, useState } from 'react'
+import { usePaginationType } from '../../../application/hooks/usePagination'
 
 const ranges = ['5', '10', '15', '20']
 
-function Pagination() {
-  const [{ currentPage, totalPages }, setPagination] = useState({
-    totalPages: 4,
-    currentPage: 1,
-    take: 5,
-  })
+type PaginationProps = {
+  paginationHook: usePaginationType
+}
+function Pagination({ paginationHook }: PaginationProps) {
+  const { goBack, goNext, rangeChange, setCurrentPage, pagination } = paginationHook
+
+  const { currentPage, totalPages } = pagination
 
   const first = currentPage - 1
   const third = currentPage + 1
-
-  const handleSetCurrentPage = (page: number) => {
-    setPagination((oldState) => {
-      return { ...oldState, currentPage: page }
-    })
-  }
-
-  const handleGoNext = () => {
-    setPagination((oldState) => {
-      const { totalPages, currentPage } = oldState
-
-      const nextPage = currentPage + 1
-
-      return { ...oldState, currentPage: nextPage > totalPages ? totalPages : nextPage }
-    })
-  }
-
-  const handleGoBack = () => {
-    setPagination((oldState) => {
-      const { currentPage } = oldState
-
-      const previousPage = currentPage - 1
-
-      return { ...oldState, currentPage: previousPage < 1 ? 1 : previousPage }
-    })
-  }
-
-  const handleRangeChange = (value: ChangeEvent<HTMLSelectElement>) => {
-    setPagination((oldState) => ({ ...oldState, take: Number(value.target.value) }))
-  }
 
   return (
     <div className='card-toolbar d-flex align-items-center'>
@@ -49,7 +21,11 @@ function Pagination() {
           <p className='m-0'>Linhas por página</p>
         </div>
 
-        <select onChange={handleRangeChange} className='my-4 p-1 px-4 cursor-pointer border-gray'>
+        <select
+          onChange={rangeChange}
+          className='my-4 p-1 px-4 cursor-pointer'
+          style={{ outline: 0 }}
+        >
           {ranges.map((value) => (
             <option key={value}>{value}</option>
           ))}
@@ -57,35 +33,35 @@ function Pagination() {
       </div>
       <ul className='pagination'>
         <li className='page-item previous cursor-pointer'>
-          <button className='page-link' onClick={handleGoBack}>
+          <button className='page-link btn-primary' onClick={goBack}>
             <i className='previous'></i>
           </button>
         </li>
 
         {currentPage > 1 && (
           <li className='page-item'>
-            <button className='page-link' onClick={() => handleSetCurrentPage(first)}>
+            <button className='page-link' onClick={() => setCurrentPage(first)}>
               {first}
             </button>
           </li>
         )}
 
         <li className='page-item active'>
-          <button disabled className='page-link'>
+          <button disabled className='page-link' style={{ color: 'white' }}>
             {currentPage}
           </button>
         </li>
 
         {third <= totalPages && (
           <li className='page-item'>
-            <button className='page-link' onClick={() => handleSetCurrentPage(third)}>
+            <button className='page-link' onClick={() => setCurrentPage(third)}>
               {third}
             </button>
           </li>
         )}
 
         <li className='page-item next'>
-          <button className='page-link' onClick={handleGoNext}>
+          <button className='page-link btn-primary' onClick={goNext}>
             <i className='next'></i>
           </button>
         </li>

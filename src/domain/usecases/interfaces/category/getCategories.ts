@@ -3,7 +3,6 @@ import { Category } from '../../../../interfaces/model/Category'
 export interface GetCategoriesParams {
   filters?: Partial<Category>
   take: number
-  skip: number
   page: number
 }
 

@@ -25,7 +25,7 @@
       &:hover,
       &.active {
         .page-link {
-          border-color: white;
+          border-color: $primary-light;
         }
       }
     }
