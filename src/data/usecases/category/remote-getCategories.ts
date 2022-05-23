@@ -12,8 +12,8 @@ export class RemoteGetCategories implements IGetCategories {
   get = async (params: GetCategoriesParams) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
-      method: 'get',
-      params,
+      method: 'post',
+      body: params,
     })
 
     switch (httpResponse.statusCode) {

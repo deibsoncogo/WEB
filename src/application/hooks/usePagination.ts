@@ -1,19 +1,6 @@
 import { ChangeEvent, useState } from 'react'
 
-export type usePaginationType = {
-  goBack: () => void
-  goNext: () => void
-  rangeChange: (value: ChangeEvent<HTMLSelectElement>) => void
-  setCurrentPage: (page: number) => void
-  setTotalPage: (total: number) => void
-  pagination: {
-    totalPages: number
-    currentPage: number
-    take: number
-  }
-}
-
-export function usePagination(): usePaginationType {
+export function usePagination() {
   const [pagination, setPagination] = useState({
     totalPages: 1,
     currentPage: 1,
@@ -60,3 +47,5 @@ export function usePagination(): usePaginationType {
 
   return { goBack, goNext, rangeChange, setCurrentPage, setTotalPage, pagination }
 }
+
+export type usePaginationType = ReturnType<typeof usePagination>

@@ -18,6 +18,7 @@ import { Search } from '../../components/search/Search'
 import CategoriesTable from '../../components/tables/categories-list'
 import * as Yup from 'yup'
 import { usePagination } from '../../../application/hooks/usePagination'
+import { debounce } from '../../../helpers/debounce'
 
 type Props = {
   remoteCreateCategory: ICreateCategory
@@ -29,15 +30,17 @@ const schema = Yup.object().shape({
 })
 
 function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props) {
+  const [filters, setFilters] = useState<Partial<Category>>({} as Category)
   const [categories, setCategories] = useState<Category[]>([])
   const [modalCreateCategoryActive, setModalCreateCategoryActive] = useState(false)
 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
   const { take, currentPage } = pagination
-  const paginationParams: GetCategoriesParams = { page: currentPage, take, filters: {} }
+  const paginationParams: GetCategoriesParams = { page: currentPage, take, filters }
 
   const createCategoryFormRef = useRef<FormHandles>(null)
+  const searchCategoryFormRef = useRef<FormHandles>(null)
 
   const {
     makeRequest: createCategory,
@@ -52,11 +55,11 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
     data: paginatedCategories,
   } = useRequest<OutputPagination, GetCategoriesParams>(remoteGetCategories.get)
 
-  const openModalCreateCategory = () => {
+  const handleOpenModalCreateCategory = () => {
     setModalCreateCategoryActive(true)
   }
 
-  const closeModalCreateCategory = () => {
+  const handleCloseModalCreateCategory = () => {
     createCategoryFormRef.current?.reset()
     createCategoryFormRef.current?.setErrors({})
     setModalCreateCategoryActive(false)
@@ -74,9 +77,13 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
     }
   }
 
+  const handleSearchCategory = debounce((text: string) => {
+    setFilters({ name: text })
+  })
+
   useEffect(() => {
     getCategories(paginationParams)
-  }, [pagination])
+  }, [pagination.take, pagination.currentPage, filters])
 
   useEffect(() => {
     if (paginatedCategories) {
@@ -95,7 +102,7 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
   useEffect(() => {
     if (categoryCreated) {
       getCategories(paginationParams)
-      closeModalCreateCategory()
+      handleCloseModalCreateCategory()
     }
   }, [categoryCreated])
 
@@ -103,7 +110,7 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
     <>
       <CreateCategoryDrawer
         visible={modalCreateCategoryActive}
-        close={closeModalCreateCategory}
+        close={handleCloseModalCreateCategory}
         createCategory={handleCreateCategory}
         loading={loadingCategoryCreation}
         ref={createCategoryFormRef}
@@ -112,9 +119,9 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
       <div className='card mb-5 mb-xl-8'>
         <div className='card-header border-0 pt-5'>
           <h3 className='card-title align-items-start flex-column'>
-            <Search />
+            <Search ref={searchCategoryFormRef} onChangeText={handleSearchCategory} />
           </h3>
-          <div className='card-toolbar' onClick={openModalCreateCategory}>
+          <div className='card-toolbar' onClick={handleOpenModalCreateCategory}>
             <button className='btn btn-sm btn-light-primary'>
               <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
               Nova Categoria

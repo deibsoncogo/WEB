@@ -1,20 +1,27 @@
-import { useRef } from 'react'
+import { ChangeEvent, ChangeEventHandler, FormEvent, forwardRef } from 'react'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
 import { KTSVG } from '../../../helpers'
 
-function Search() {
-  const formRef = useRef<FormHandles>(null)
+type SearchProps = {
+  onChangeText: (text: string) => void
+}
 
+const Search = forwardRef<FormHandles, SearchProps>((props, ref) => {
+  const { onChangeText } = props
   async function handleFormSubmit(data: any) {}
+
+  const handleOnChangeText = (event: ChangeEvent<HTMLInputElement>) => {
+    onChangeText(event.target.value)
+  }
 
   return (
     <Form
       data-kt-search-element='form'
       className='w-150 position-relative mb-3 bg-light rounded ps-3'
       autoComplete='off'
-      ref={formRef}
+      ref={ref}
       onSubmit={handleFormSubmit}
     >
       <KTSVG
@@ -28,9 +35,11 @@ function Search() {
         type='text'
         className='form-control form-control-flush ps-10'
         data-kt-search-element='input'
+        onChangeCapture={handleOnChangeText}
       />
     </Form>
   )
-}
+})
+Search.displayName = 'Search'
 
 export { Search }
