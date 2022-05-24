@@ -24,11 +24,17 @@ import {
   IDeleteCategory,
 } from '../../../domain/usecases/interfaces/category/deleteCategory'
 import { toast } from 'react-toastify'
+import { UpdateCategoryDrawer } from '../../components/forms/update-category'
+import {
+  IUpdateCategory,
+  UpdateCategoryParams,
+} from '../../../domain/usecases/interfaces/category/updateCategory'
 
 type Props = {
   remoteCreateCategory: ICreateCategory
   remoteGetCategories: IGetCategories
   remoteDeleteCategory: IDeleteCategory
+  remoteUpdateCategory: IUpdateCategory
 }
 
 const schema = Yup.object().shape({
@@ -39,10 +45,13 @@ function CategoriesTemplate({
   remoteGetCategories,
   remoteCreateCategory,
   remoteDeleteCategory,
+  remoteUpdateCategory,
 }: Props) {
   const [filters, setFilters] = useState<Partial<Category>>({} as Category)
   const [categories, setCategories] = useState<Category[]>([])
-  const [modalCreateCategoryActive, setModalCreateCategoryActive] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<Category | undefined>()
+  const [isDrawerCreateCategoryOpen, setIsDrawerCreateCategoryOpen] = useState(false)
+  const [isDrawerUpdateCategoryOpen, setIsDrawerUpdateCategoryOpen] = useState(false)
 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
@@ -50,6 +59,7 @@ function CategoriesTemplate({
   const paginationParams: GetCategoriesParams = { page: currentPage, take, filters }
 
   const createCategoryFormRef = useRef<FormHandles>(null)
+  const updateCategoryFormRef = useRef<FormHandles>(null)
   const searchCategoryFormRef = useRef<FormHandles>(null)
 
   const {
@@ -57,6 +67,7 @@ function CategoriesTemplate({
     loading: loadingCategoryCreation,
     error: createCategoryError,
     data: categoryCreated,
+    cleanUp: cleanUpCreateCategory,
   } = useRequest<void, CreateCategoryParams>(remoteCreateCategory.create)
 
   const {
@@ -70,20 +81,29 @@ function CategoriesTemplate({
     error: deleteCategoryError,
     data: categorySuccessfullDeleted,
     loading: loadingCategoryDeletion,
+    cleanUp: cleanUpDeleteCategory,
   } = useRequest<string, DeleteCategoryParams>(remoteDeleteCategory.delete)
 
+  const {
+    makeRequest: updateCategory,
+    error: updateCategoryError,
+    data: categorySuccessfullUpdated,
+    loading: loadingCategoryUpdate,
+    cleanUp: cleanUpUpdateCategory,
+  } = useRequest<string, UpdateCategoryParams>(remoteUpdateCategory.update)
+
   const handleOpenModalCreateCategory = () => {
-    setModalCreateCategoryActive(true)
+    setIsDrawerCreateCategoryOpen(true)
   }
 
   const handleCloseModalCreateCategory = () => {
     createCategoryFormRef.current?.reset()
     createCategoryFormRef.current?.setErrors({})
-    setModalCreateCategoryActive(false)
+    setIsDrawerCreateCategoryOpen(false)
   }
 
   const handleCreateCategory = async (params: CreateCategoryParams) => {
-    const { error, success } = await applyYupValidation<typeof schema>(schema, params)
+    const { error, success } = await applyYupValidation<CreateCategoryParams>(schema, params)
 
     if (success) {
       createCategory(params)
@@ -98,8 +118,49 @@ function CategoriesTemplate({
     setFilters({ name: text })
   })
 
-  const handleDeleteCategory = (categoryId: string) => {
-    deleteCategory({ id: categoryId })
+  const handleDeleteCategory = () => {
+    if (selectedCategory) {
+      deleteCategory({ id: selectedCategory.id })
+    }
+  }
+
+  const handleSelectedCategory = (category: Category | undefined) => {
+    if (category) {
+      setSelectedCategory(category)
+    }
+  }
+
+  const handleUpdateCategory = async (params: UpdateCategoryParams) => {
+    if (!selectedCategory) return
+
+    if (selectedCategory.name === params.name) {
+      handleCloseDrawerUpdateCategory()
+      return
+    }
+
+    const fullParams = { ...params, id: selectedCategory?.id }
+
+    const { error, success } = await applyYupValidation<UpdateCategoryParams>(schema, fullParams)
+
+    if (success) {
+      updateCategory(fullParams)
+    }
+
+    if (error) {
+      updateCategoryFormRef?.current?.setErrors(error)
+    }
+  }
+
+  const handleOpenDrawerUpdateCategory = (category: Category) => {
+    setIsDrawerUpdateCategoryOpen(true)
+    setSelectedCategory(category)
+    updateCategoryFormRef.current?.setFieldValue('name', category?.name)
+  }
+
+  const handleCloseDrawerUpdateCategory = () => {
+    updateCategoryFormRef.current?.reset()
+    updateCategoryFormRef.current?.setErrors({})
+    setIsDrawerUpdateCategoryOpen(false)
   }
 
   useEffect(() => {
@@ -109,6 +170,7 @@ function CategoriesTemplate({
     pagination.currentPage,
     filters,
     categorySuccessfullDeleted,
+    categorySuccessfullUpdated,
     categoryCreated,
   ])
 
@@ -130,30 +192,51 @@ function CategoriesTemplate({
     if (deleteCategoryError) {
       toast.error(deleteCategoryError)
     }
+
     if (getCategoriesError) {
       toast.error(getCategoriesError)
     }
-  }, [deleteCategoryError, getCategoriesError])
+
+    if (updateCategoryError) {
+      toast.error(updateCategoryError)
+    }
+  }, [deleteCategoryError, getCategoriesError, updateCategoryError])
 
   useEffect(() => {
     if (categorySuccessfullDeleted) {
       toast.success('Categoria deletada com sucesso')
+      cleanUpDeleteCategory()
     }
 
     if (categoryCreated) {
       toast.success('Categoria criada com  sucesso')
       handleCloseModalCreateCategory()
+      cleanUpCreateCategory()
     }
-  }, [categorySuccessfullDeleted, categoryCreated])
+
+    if (categorySuccessfullUpdated) {
+      toast.success('Categoria atualizada com sucesso')
+      handleCloseDrawerUpdateCategory()
+      cleanUpUpdateCategory()
+    }
+  }, [categorySuccessfullDeleted, categoryCreated, categorySuccessfullUpdated])
 
   return (
     <>
       <CreateCategoryDrawer
-        visible={modalCreateCategoryActive}
+        visible={isDrawerCreateCategoryOpen}
         close={handleCloseModalCreateCategory}
         createCategory={handleCreateCategory}
         loading={loadingCategoryCreation}
         ref={createCategoryFormRef}
+      />
+
+      <UpdateCategoryDrawer
+        visible={isDrawerUpdateCategoryOpen}
+        close={handleCloseDrawerUpdateCategory}
+        updateCategory={handleUpdateCategory}
+        loading={loadingCategoryUpdate}
+        ref={updateCategoryFormRef}
       />
 
       <div className='card mb-5 mb-xl-8'>
@@ -174,6 +257,8 @@ function CategoriesTemplate({
           paginationHook={paginationHook}
           deleteCategory={handleDeleteCategory}
           loadingDeletion={loadingCategoryDeletion}
+          setSelectedCategory={handleSelectedCategory}
+          openUpdateCategoryDrawer={handleOpenDrawerUpdateCategory}
         />
       </div>
     </>

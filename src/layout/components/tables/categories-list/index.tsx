@@ -9,8 +9,10 @@ import { Row } from './row'
 type Props = {
   categories: Category[]
   paginationHook: usePaginationType
-  deleteCategory: (categoryId: string) => void
+  deleteCategory: () => void
   loadingDeletion: boolean
+  setSelectedCategory: (category: Category | undefined) => void
+  openUpdateCategoryDrawer: (category: Category) => void
 }
 
 export default function CategoriesTable({
@@ -18,25 +20,28 @@ export default function CategoriesTable({
   paginationHook,
   deleteCategory,
   loadingDeletion,
+  setSelectedCategory,
+  openUpdateCategoryDrawer,
 }: Props) {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>()
   const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false)
 
-  const handleOpenIsDeleteCategoryModal = (id: string) => {
-    setSelectedCategoryId(id)
+  const handleOpenIsDeleteCategoryModal = (category: Category) => {
+    setSelectedCategory(category)
     setIsDeleteCategoryModalOpen(true)
   }
 
   const handleCloseIsDeleteCategoryModal = () => {
-    setSelectedCategoryId(undefined)
+    setSelectedCategory(undefined)
     setIsDeleteCategoryModalOpen(false)
   }
 
   const handleConfimationModal = () => {
-    if (selectedCategoryId) {
-      deleteCategory(selectedCategoryId)
-      setIsDeleteCategoryModalOpen(false)
-    }
+    deleteCategory()
+    setIsDeleteCategoryModalOpen(false)
+  }
+
+  const handleOpenUpdateCategoryDrawer = (category: Category) => {
+    openUpdateCategoryDrawer(category)
   }
   return (
     <>
@@ -65,6 +70,7 @@ export default function CategoriesTable({
                     key={category.id}
                     category={category}
                     onOpenDeleteCategoryModal={handleOpenIsDeleteCategoryModal}
+                    onOpenUpdateCategoryDrawer={handleOpenUpdateCategoryDrawer}
                   />
                 ))}
               </tbody>

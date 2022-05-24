@@ -34,7 +34,7 @@ export function usePagination() {
   }
 
   const rangeChange = (value: ChangeEvent<HTMLSelectElement>) => {
-    setPagination((oldState) => ({ ...oldState, take: Number(value.target.value) }))
+    setPagination((oldState) => ({ ...oldState, take: Number(value.target.value), currentPage: 1 }))
   }
 
   const setTotalPage = (totalItems: number) => {

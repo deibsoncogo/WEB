@@ -18,9 +18,13 @@ export function useRequest<ReturnData, Params = {}>(request: any) {
       const dataFromAPI = await request(params)
       setData(dataFromAPI)
     } catch (e: any) {
-      console.log(e)
       if (e?.messages) {
         setError(e?.messages[0])
+        return
+      }
+
+      if (e?.message) {
+        setError(e?.message)
       }
     } finally {
       setLoading(false)
@@ -31,5 +35,10 @@ export function useRequest<ReturnData, Params = {}>(request: any) {
     setError(null)
   }
 
-  return { data, error, loading, cleanError, makeRequest }
+  const cleanUp = () => {
+    setData(undefined)
+    setError(null)
+  }
+
+  return { data, error, loading, cleanError, makeRequest, cleanUp }
 }

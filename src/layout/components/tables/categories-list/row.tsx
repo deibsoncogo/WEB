@@ -2,14 +2,19 @@ import { KTSVG } from '../../../../helpers'
 import { Category } from '../../../../interfaces/model/Category'
 
 type RowProps = {
-  onOpenDeleteCategoryModal: (categoryId: string) => void
+  onOpenDeleteCategoryModal: (category: Category) => void
+  onOpenUpdateCategoryDrawer: (category: Category) => void
   category: Category
 }
-export function Row({ category, onOpenDeleteCategoryModal }: RowProps) {
-  const { id, name } = category
+export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryDrawer }: RowProps) {
+  const { name } = category
 
   function handleOpenDeleteCategoryModal() {
-    onOpenDeleteCategoryModal(id)
+    onOpenDeleteCategoryModal(category)
+  }
+
+  function handleOpenUpdateCategoryDrawer() {
+    onOpenUpdateCategoryDrawer(category)
   }
 
   return (
@@ -18,14 +23,14 @@ export function Row({ category, onOpenDeleteCategoryModal }: RowProps) {
         <span className='text-muted fw-bold text-muted d-block fs-7'>{name}</span>
       </td>
       <td className='text-end'>
-        <a href='#' className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-          <KTSVG path='/icons/gen019.svg' className='svg-icon-3' />
-        </a>
-        <a href='#' className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-          <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-        </a>
         <button
-          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+          className='btn btn-icon btn-bg-light btn-active-color-primary btn-md me-1'
+          onClick={handleOpenUpdateCategoryDrawer}
+        >
+          <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+        </button>
+        <button
+          className='btn btn-icon btn-bg-light btn-active-color-primary btn-md'
           onClick={handleOpenDeleteCategoryModal}
         >
           <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />

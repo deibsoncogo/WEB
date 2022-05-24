@@ -9,11 +9,11 @@ interface ApplyType<T> {
   error: ErrorObject | undefined
 }
 
-export async function applyYupValidation<SchemaType, Data = {}>(
+export async function applyYupValidation<SchemaType>(
   schema: Yup.AnySchema,
-  data: Data
-): Promise<ApplyType<Data>> {
-  const verification: ApplyType<Data> = { error: undefined, success: undefined }
+  data: SchemaType
+): Promise<ApplyType<SchemaType>> {
+  const verification: ApplyType<SchemaType> = { error: undefined, success: undefined }
 
   try {
     await schema.validate(data, { abortEarly: false })
