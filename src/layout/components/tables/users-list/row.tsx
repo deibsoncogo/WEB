@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useState } from 'react'
 import { api } from '../../../../application/services/api'
 import { KTSVG } from '../../../../helpers'
@@ -48,9 +49,11 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser }: IR
         <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
           <KTSVG path='/icons/gen019.svg' className='svg-icon-3' />
         </button>
-        <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-          <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-        </button>
+        <Link href={`/users/edit/${id}`}>
+          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+            <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+          </button>
+        </Link>
         <button
           onClick={() => {
             setIsModalOpen(true)
