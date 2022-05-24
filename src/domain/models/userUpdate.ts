@@ -1,8 +1,6 @@
 import { Address } from './address'
-import { BiRotateLeft } from 'react-icons/bi'
-import { RiOutletLine } from 'react-icons/ri'
 
-export class UserSignUp {
+export class UserUpdate {
   name: string
   email: string
   password: string
