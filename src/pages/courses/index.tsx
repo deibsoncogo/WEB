@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 import { MakeUserTable } from '../../application/factories/components/userTable-factory'
+import CoursesTable from '../../layout/components/tables/courses-list'
 
 const Courses: NextPage = () => {
   return (
@@ -18,7 +19,7 @@ const Courses: NextPage = () => {
           <HeaderWrapper title='Usuários' />
 
           <div id='kt_content_container' className='container'>
-           {MakeUserTable()}
+          <CoursesTable></CoursesTable>
           </div>
         </div>
       </div>
