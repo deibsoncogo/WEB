@@ -1,7 +1,7 @@
 
 
 
-export function Switch({ isOn, handleToggle }: any) {
+export function Switch({ isOn, handleToggle, id }: any) {
 
     
   return (
@@ -10,8 +10,7 @@ export function Switch({ isOn, handleToggle }: any) {
         <input
           className='form-check-input'
           type='checkbox'
-          value=''
-          id='flexSwitchChecked'
+          id= {id}
           checked={isOn}
           onChange={handleToggle}
         />

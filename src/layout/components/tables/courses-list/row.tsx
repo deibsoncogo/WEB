@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { api } from '../../../../application/services/api'
 import { KTSVG } from '../../../../helpers'
-import { DeleteUserModal } from '../../modals/delete-user'
+import { ToggleComponent } from '../../../../styles/ts/components'
+import { Switch } from '../../inputs/switch'
+
 
 interface IRow {
   id: string
@@ -15,6 +17,7 @@ interface IRow {
 
 export function Row({ id, name, description, price, discount, teacher, active }: IRow) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [value, setValue] = useState(false);
 
 
   return (
@@ -35,7 +38,10 @@ export function Row({ id, name, description, price, discount, teacher, active }:
         <span className='text-dark fw-bold d-block fs-7'>{teacher}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{active}</span>
+      <Switch
+        isOn={value}
+        handleToggle={() => setValue(!value)}
+      />
       </td>
       <td className='text-end'>
         
@@ -50,9 +56,7 @@ export function Row({ id, name, description, price, discount, teacher, active }:
         >
           <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
         </button>
-      </td>
-
-     
+      </td>   
     </tr>
   )
 }
