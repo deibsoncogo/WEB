@@ -11,6 +11,9 @@
   }
 }
 
+
+
+
 // Tablet & mobile modes
 @include media-breakpoint-down(lg) {
   .container-custom {
@@ -18,4 +21,11 @@
     padding-left: get($container, padding, default) !important;
     padding-right: get($container, padding, default) !important;
   }
+}
+
+@media (min-width: 1400px){
+ .container {
+    max-width: inherit;
+}
+
 }
