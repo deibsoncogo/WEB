@@ -5,12 +5,12 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { Input, InputMasked, Select } from '../inputs'
-import axios from 'axios'
-import { api } from '../../../application/services/api'
-import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUP'
+import { findCEP } from '../../../utils/findCep'
+import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { Address } from '../../../domain/models/address'
 import { UserSignUp } from '../../../domain/models/userSignUp'
+import { levelOptions, roleOptions } from '../../../utils/selectOptions'
+import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUP'
 
 type Props = {
   userRegister: IUserSignUp
@@ -95,42 +95,8 @@ export function FormCreateUser({ userRegister }: Props) {
     userRegister
       .signUp(user)
       .then(() => router.push('/users'))
-      .catch((error) => console.log(error))
+      .catch((error: any) => console.log(error))
   }
-
-  async function findCEP() {
-    const cep = formRef.current?.getData().zipCode
-    const matches = cep.match(/\d*/g)
-    const number = +matches?.join('')
-
-    if (number <= 9999999 || number > 99999999) return
-
-    try {
-      const resp = await axios.get(`https://viacep.com.br/ws/${number}/json/`)
-      const data = {
-        zipCode: resp.data.cep,
-        street: resp.data.logradouro,
-        neighborhood: resp.data.bairro,
-        city: resp.data.localidade,
-        state: resp.data.uf,
-      }
-      setDefaultValue(data)
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const levelOptions = [
-    { value: 'begginer', label: 'Básico' },
-    { value: 'intermediate', label: 'Intermediário' },
-    { value: 'advanced', label: 'Avançado' },
-  ]
-
-  const roleOptions = [
-    { value: 'user', label: 'Usuário' },
-    { value: 'teacher', label: 'Professor' },
-    { value: 'admin', label: 'Administrador' },
-  ]
 
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
@@ -140,7 +106,7 @@ export function FormCreateUser({ userRegister }: Props) {
 
           <Input name='name' label='Nome' type='text' />
           <Input name='email' label='Email' type='email' />
-          <Input name='birthDate' label='Data de Nascimento' type='date' />
+          <DatePicker name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
           <InputMasked name='cpf' label='CPF' type='text' mask='999.999.999-99' />
           <InputMasked name='phoneNumber' label='Telefone' type='text' mask='(99) 9 9999-9999' />
 
@@ -170,7 +136,14 @@ export function FormCreateUser({ userRegister }: Props) {
         <div className='w-100'>
           <h3 className='mb-5'>Endereço</h3>
 
-          <InputMasked name='zipCode' label='CEP' mask='99999-999' onChange={findCEP} />
+          <InputMasked
+            name='zipCode'
+            label='CEP'
+            mask='99999-999'
+            onChange={() => {
+              findCEP(formRef.current?.getData().zipCode, setDefaultValue)
+            }}
+          />
           <Input name='street' label='Logradouro' />
           <Input name='number' label='Número' type='number' />
           <Input name='complement' label='Complemento' />

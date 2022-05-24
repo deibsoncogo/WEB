@@ -11,6 +11,7 @@ import { levelOptions, roleOptions } from '../../../utils/selectOptions'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { api } from '../../../application/services/api'
 import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
+import { findCEP } from '../../../utils/findCep'
 
 type IFormEditUser = {
   id: string
@@ -117,28 +118,6 @@ export function FormEditUser({ id, userRegister }: IFormEditUser) {
     }
   }
 
-  async function findCEP() {
-    const cep = formRef.current?.getData().zipCode
-    const matches = cep.match(/\d*/g)
-    const number = +matches?.join('')
-
-    if (number <= 9999999 || number > 99999999) return
-
-    try {
-      const resp = await axios.get(`https://viacep.com.br/ws/${number}/json/`)
-      const data = {
-        zipCode: resp.data.cep,
-        street: resp.data.logradouro,
-        neighborhood: resp.data.bairro,
-        city: resp.data.localidade,
-        state: resp.data.uf,
-      }
-      setDefaultValue(data)
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
       <div className='d-flex flex-row gap-5 w-100'>
@@ -177,7 +156,14 @@ export function FormEditUser({ id, userRegister }: IFormEditUser) {
         <div className='w-100'>
           <h3 className='mb-5'>Endereço</h3>
 
-          <InputMasked name='zipCode' label='CEP' mask='99999-999' onChange={findCEP} />
+          <InputMasked
+            name='zipCode'
+            label='CEP'
+            mask='99999-999'
+            onChange={() => {
+              findCEP(formRef.current?.getData().zipCode, setDefaultValue)
+            }}
+          />
           <Input name='street' label='Logradouro' />
           <Input name='number' label='Número' type='number' />
           <Input name='complement' label='Complemento' />
