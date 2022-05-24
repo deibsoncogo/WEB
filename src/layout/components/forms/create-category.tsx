@@ -1,8 +1,8 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import React from 'react'
-import { Spinner } from 'react-bootstrap'
 import { CreateCategoryParams } from '../../../domain/usecases/interfaces/category/createCategory'
+import CustomButton from '../buttons/CustomButton'
 import { DrawerRight } from '../drawerRight/DrawerRight'
 import { Input } from '../inputs'
 
@@ -23,22 +23,19 @@ const CreateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) =
         </Form>
 
         <div className='mb-10 d-flex justify-content-between'>
-          <button
+          <CustomButton
             type='submit'
-            className={`btn btn-lg mb-5 align-items-center justify-content-center d-flex btn-primary w-25`}
             form='create-category-form'
-            disabled={loading}
-          >
-            {loading ? <Spinner animation='border' /> : 'Salvar'}
-          </button>
-          <button
-            type='button'
-            className='btn btn-lg btn-secondary mb-5 w-min-120'
-            onClick={close}
-            disabled={loading}
-          >
-            Cancelar
-          </button>
+            customClasses={['btn-primary', 'w-25']}
+            title='Salvar'
+            loading={loading}
+          />
+
+          <CustomButton
+            customClasses={['btn-secondary', 'mb-5', 'px-20']}
+            title='Cancelar'
+            loading={loading}
+          />
         </div>
       </div>
     </DrawerRight>

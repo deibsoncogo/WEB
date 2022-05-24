@@ -1,6 +1,6 @@
 import React from 'react'
-import { Modal, Spinner } from 'react-bootstrap'
-import { RiCloseLine } from 'react-icons/ri'
+import { Modal } from 'react-bootstrap'
+import CustomButton from '../buttons/CustomButton'
 
 type ConfirmationModalProps = {
   loading: boolean
@@ -25,23 +25,21 @@ function ConfirmationModal({
       </Modal.Header>
       <Modal.Body>{content}</Modal.Body>
       <Modal.Footer>
-        <button
-          type='submit'
-          className={`btn btn-lg mb-5 align-items-center justify-content-center d-flex btn-primary w-25`}
-          form='create-category-form'
-          disabled={loading}
-          onClick={onConfimation}
-        >
-          {loading ? <Spinner animation='border' /> : 'Confirmar'}
-        </button>
-        <button
+        <CustomButton
           type='button'
-          className='btn btn-lg btn-secondary mb-5 w-min-120'
-          onClick={onRequestClose}
+          customClasses={['btn-primary', 'w-25']}
+          title='Confirmar'
+          onClick={onConfimation}
           disabled={loading}
-        >
-          Cancelar
-        </button>
+        />
+
+        <CustomButton
+          type='button'
+          customClasses={['btn-secondary', 'mb-5', 'px-20']}
+          title='Cancelar'
+          loading={loading}
+          onClick={onRequestClose}
+        />
       </Modal.Footer>
     </Modal>
   )
