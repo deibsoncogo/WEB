@@ -30,19 +30,19 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser }: IR
   return (
     <tr>
       <td className='ps-4'>
-        <span className='text-dark fw-bold text-dark d-block fs-7'>{name}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{name}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold text-dark d-block fs-7'>{email}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{email}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold text-dark d-block fs-7'>{birthDate}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{birthDate}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold text-dark d-block fs-7'>{cpf}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{cpf}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold text-dark d-block fs-7'>{address}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{address}</span>
       </td>
       <td className='text-end'>
         <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
