@@ -19,17 +19,27 @@ import CategoriesTable from '../../components/tables/categories-list'
 import * as Yup from 'yup'
 import { usePagination } from '../../../application/hooks/usePagination'
 import { debounce } from '../../../helpers/debounce'
+import {
+  DeleteCategoryParams,
+  IDeleteCategory,
+} from '../../../domain/usecases/interfaces/category/deleteCategory'
+import { toast } from 'react-toastify'
 
 type Props = {
   remoteCreateCategory: ICreateCategory
   remoteGetCategories: IGetCategories
+  remoteDeleteCategory: IDeleteCategory
 }
 
 const schema = Yup.object().shape({
   name: Yup.string().required('Nome é Nescessário'),
 })
 
-function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props) {
+function CategoriesTemplate({
+  remoteGetCategories,
+  remoteCreateCategory,
+  remoteDeleteCategory,
+}: Props) {
   const [filters, setFilters] = useState<Partial<Category>>({} as Category)
   const [categories, setCategories] = useState<Category[]>([])
   const [modalCreateCategoryActive, setModalCreateCategoryActive] = useState(false)
@@ -54,6 +64,13 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
     error: getCategoriesError,
     data: paginatedCategories,
   } = useRequest<OutputPagination, GetCategoriesParams>(remoteGetCategories.get)
+
+  const {
+    makeRequest: deleteCategory,
+    error: deleteCategoryError,
+    data: categorySuccessfullDeleted,
+    loading: loadingCategoryDeletion,
+  } = useRequest<string, DeleteCategoryParams>(remoteDeleteCategory.delete)
 
   const handleOpenModalCreateCategory = () => {
     setModalCreateCategoryActive(true)
@@ -81,9 +98,19 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
     setFilters({ name: text })
   })
 
+  const handleDeleteCategory = (categoryId: string) => {
+    deleteCategory({ id: categoryId })
+  }
+
   useEffect(() => {
     getCategories(paginationParams)
-  }, [pagination.take, pagination.currentPage, filters])
+  }, [
+    pagination.take,
+    pagination.currentPage,
+    filters,
+    categorySuccessfullDeleted,
+    categoryCreated,
+  ])
 
   useEffect(() => {
     if (paginatedCategories) {
@@ -100,11 +127,24 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
   }, [createCategoryError])
 
   useEffect(() => {
+    if (deleteCategoryError) {
+      toast.error(deleteCategoryError)
+    }
+    if (getCategoriesError) {
+      toast.error(getCategoriesError)
+    }
+  }, [deleteCategoryError, getCategoriesError])
+
+  useEffect(() => {
+    if (categorySuccessfullDeleted) {
+      toast.success('Categoria deletada com sucesso')
+    }
+
     if (categoryCreated) {
-      getCategories(paginationParams)
+      toast.success('Categoria criada com  sucesso')
       handleCloseModalCreateCategory()
     }
-  }, [categoryCreated])
+  }, [categorySuccessfullDeleted, categoryCreated])
 
   return (
     <>
@@ -129,7 +169,12 @@ function CategoriesTemplate({ remoteGetCategories, remoteCreateCategory }: Props
           </div>
         </div>
 
-        <CategoriesTable categories={categories} paginationHook={paginationHook} />
+        <CategoriesTable
+          categories={categories}
+          paginationHook={paginationHook}
+          deleteCategory={handleDeleteCategory}
+          loadingDeletion={loadingCategoryDeletion}
+        />
       </div>
     </>
   )

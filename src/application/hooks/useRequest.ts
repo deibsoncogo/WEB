@@ -18,6 +18,7 @@ export function useRequest<ReturnData, Params = {}>(request: any) {
       const dataFromAPI = await request(params)
       setData(dataFromAPI)
     } catch (e: any) {
+      console.log(e)
       if (e?.messages) {
         setError(e?.messages[0])
       }

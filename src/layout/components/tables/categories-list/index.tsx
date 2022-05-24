@@ -1,17 +1,53 @@
+import { useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
 import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { Category } from '../../../../interfaces/model/Category'
+import ConfirmationModal from '../../modal/ConfirmationModal'
 import Pagination from '../../pagination/Pagination'
 import { Row } from './row'
 
 type Props = {
   categories: Category[]
   paginationHook: usePaginationType
+  deleteCategory: (categoryId: string) => void
+  loadingDeletion: boolean
 }
 
-export default function CategoriesTable({ categories = [], paginationHook }: Props) {
+export default function CategoriesTable({
+  categories = [],
+  paginationHook,
+  deleteCategory,
+  loadingDeletion,
+}: Props) {
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>()
+  const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false)
+
+  const handleOpenIsDeleteCategoryModal = (id: string) => {
+    setSelectedCategoryId(id)
+    setIsDeleteCategoryModalOpen(true)
+  }
+
+  const handleCloseIsDeleteCategoryModal = () => {
+    setSelectedCategoryId(undefined)
+    setIsDeleteCategoryModalOpen(false)
+  }
+
+  const handleConfimationModal = () => {
+    if (selectedCategoryId) {
+      deleteCategory(selectedCategoryId)
+      setIsDeleteCategoryModalOpen(false)
+    }
+  }
   return (
     <>
+      <ConfirmationModal
+        isOpen={isDeleteCategoryModalOpen}
+        loading={loadingDeletion}
+        onRequestClose={handleCloseIsDeleteCategoryModal}
+        onConfimation={handleConfimationModal}
+        content='Você tem ceterza que deseja excluir esta categoria?'
+        title='Deletar'
+      />
       {categories.length > 0 && (
         <div className='card-body py-3'>
           <div className='table-responsive'>
@@ -25,7 +61,11 @@ export default function CategoriesTable({ categories = [], paginationHook }: Pro
 
               <tbody className='w-100'>
                 {categories?.map((category) => (
-                  <Row key={category.id} {...category} />
+                  <Row
+                    key={category.id}
+                    category={category}
+                    onOpenDeleteCategoryModal={handleOpenIsDeleteCategoryModal}
+                  />
                 ))}
               </tbody>
             </table>
