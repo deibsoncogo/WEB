@@ -24,7 +24,7 @@ function CustomButton({ title, loading = false, customClasses = [], ...props }: 
       disabled={loading}
       {...props}
     >
-      {loading ? <Spinner animation='border' /> : 'Salvar'}
+      {loading ? <Spinner animation='border' /> : title}
     </button>
   )
 }
