@@ -57,7 +57,7 @@ export function FormLogin() {
     } catch (err: any) {
       console.log(err)
       setHasError(true)
-      if (err.response.status === 500) {
+      if (err?.response?.status === 500) {
         setMessage(err.message)
         return
       }

@@ -5,7 +5,8 @@ import { LayoutProvider, LayoutSplashScreen, PageDataProvider } from '../layout/
 import { useRouter } from 'next/router'
 import { unprotectedRoutes } from '../application/routing/routes'
 import { AuthWrapper } from '../application/wrappers/authWrapper'
-
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import Modal from 'react-modal'
 import { Suspense } from 'react'
 Modal.setAppElement('#__next')
@@ -26,6 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             </AuthWrapper>
           )}
         </PageDataProvider>
+      <ToastContainer theme='colored' />
       </LayoutProvider>
     </Suspense>
   )
