@@ -9,10 +9,10 @@ interface IRow {
   id: string
   name: string
   description: string
-  price: string
-  discount: string
+  price: number
+  discount: number
   teacher: string
-  active: string
+  active: boolean
 }
 
 export function Row({ id, name, description, price, discount, teacher, active }: IRow) {

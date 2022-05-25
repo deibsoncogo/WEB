@@ -1,38 +1,33 @@
 import Link from 'next/link'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
-import { dateMask } from '../../../formatters/dateFormatter'
-import { cpfMask } from '../../../formatters/cpfFormatter'
-import { addressMask } from '../../../formatters/addressFormatter'
-//import { IGetAllCourses } from '../../../../domain/usecases/interfaces/user/getAllCourses'
-import { IUserResponse } from '../../../../interfaces/api-response'
 import { useEffect, useState } from 'react'
-import { RiFileExcel2Line } from 'react-icons/ri'
-import { MakeUserRow } from '../../../../application/factories/components/deleteModal-factory'
 import { MakeCourseRow } from '../../../../application/factories/components/course/rowCourse-factory'
+import { IGetAllCourses } from '../../../../domain/usecases/interfaces/course/getAllCourses'
+import { ICourseResponse } from '../../../../interfaces/api-response/courseResponse'
 
-// type Props = {
-//   getAllCourses: IGetAllCourses
-// }
+ type Props = {
+  getAllCourses: IGetAllCourses
+}
 
-export default function CoursesTable({ getAllCourses }: any) {
-  const [Courses, setCourses] = useState<IUserResponse[]>([])
-  const [error, setError] = useState<any>()
+export default function CoursesTable({ getAllCourses }: Props) {
+
+  const [courses, setCourses] = useState<ICourseResponse[]>([])
+  const [error, setError] = useState<Error>()
   const [loading, setLoading] = useState(true)
 
-  //setLoading(false)
   const fakeCourse = [{id: "1", name: "Day Trade Básico", description: "Curso de extensão", 
                     price: "R$ 1.200,00", discount: "R$ 200", teacher: "Palex", active: "ativo" }]
 
-//   useEffect(() => {
-//     getAllCourses
-//       .getAll()
-//       .then((data) => {
-//         setCourses(data)
-//       })
-//       .catch((error) => setError(error))
-//       .finally(() => setLoading(false))
-//   }, [])
+    useEffect(() => {     
+      getAllCourses
+        .getAll()
+        .then((data) => {
+          setCourses(data)
+        })
+        .catch((error) => setError(error))
+       .finally(() => setLoading(false))
+    }, [])
 
   return (
     <div className='card mb-5 mb-xl-8'>
@@ -66,8 +61,8 @@ export default function CoursesTable({ getAllCourses }: any) {
             </thead>
 
             { <tbody>
-              {loading &&
-                fakeCourse?.map((item) => (
+              {!loading &&
+                courses?.map((item) => (
                   <MakeCourseRow
                     key={item.id}
                     id={item.id}
@@ -75,8 +70,8 @@ export default function CoursesTable({ getAllCourses }: any) {
                     description={item.description}
                     price={item.price}
                     discount={item.discount}
-                    teacher={item.teacher}
-                    active={item.active}
+                    teacher={item.image}
+                    active={item.isActive}
                   />
                 ))}
             </tbody>}
