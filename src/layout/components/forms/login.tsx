@@ -49,13 +49,13 @@ export function FormLogin() {
     try {
       const response = await api.post('/auth/admin/login', data)
       const result: IAuthResponse = response.data.data
-      localStorage.setItem('accessToken', result.accessToken)
-      console.log(result)
       localStorage.setItem('name', result.name)
       localStorage.setItem('email', result.email)
+      localStorage.setItem('access_token', result.accessToken)
       localStorage.setItem('expiration', jwtDecode<IToken>(result.accessToken).exp)
       router.push('/dashboard')
     } catch (err: any) {
+      console.log(err)
       setHasError(true)
       if (err?.response?.status === 500) {
         setMessage(err.message)

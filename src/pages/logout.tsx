@@ -15,7 +15,7 @@ export default function Logout() {
 
   if (!!userId) {   
     try {
-      requestLogout.logout(new UserLogout(jwtDecode<IToken>(userId ? userId : '2').id))
+      requestLogout.logout(new UserLogout(jwtDecode<IToken>(userId).id))
       localStorage.clear()        
       route.push('/')  
     } catch (err) {

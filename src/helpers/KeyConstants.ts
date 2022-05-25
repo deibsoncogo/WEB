@@ -1,1 +1,1 @@
-export const keys = { TOKEN: 'accessToken' }
+export const keys = { TOKEN: 'access_token' }

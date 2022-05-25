@@ -1,18 +1,20 @@
-import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
-import { IUserResponse } from '../../../interfaces/api-response'
 import { HttpClient, HttpStatusCode } from '../../protocols'
+import { UserSignUp } from '../../../domain/models/userSignUp'
+import { IUserResponse } from '../../../interfaces/api-response'
+import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
 
-export class RemoteGetAllUsers implements IGetAllUsers {
+export class RemoteUpdateUser implements IUpdateUser {
   constructor(
     private readonly url: string,
     private readonly httpClient: HttpClient<IUserResponse[]>
   ) {}
 
-  async getAll() {
+  async updateUser(userSignUp: UserSignUp) {
     const httpResponse = await this.httpClient.request({
       url: this.url,
-      method: 'get',
+      method: 'put',
+      body: userSignUp,
     })
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:

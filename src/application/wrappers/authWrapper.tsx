@@ -15,7 +15,7 @@ export function AuthWrapper({ children }: any) {
   const currentRoute = route.pathname
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken')
+    const token = localStorage.getItem('access_token')
     if (token) {
       const values = jwtDecode<IToken>(token)
       if (parseInt(values.exp) < Date.now() / 1000) {
