@@ -35,7 +35,7 @@ export function TrainingsTable() {
           <Search />
         </h3>
         <div className='card-toolbar'>
-          <Link href='/trainings'>
+          <Link href='/trainings/create'>
             <a className='btn btn-sm btn-light-primary'>
               <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
               Novo Treinamento
