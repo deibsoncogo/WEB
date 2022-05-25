@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { api } from '../../../../application/services/api'
 import { KTSVG } from '../../../../helpers'
-import { DeleteUserModal } from '../../modals/delete-user'
+import { ActionModal } from '../../modals/action'
 
 interface IRow {
   id: string
@@ -61,8 +61,10 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser }: IR
         </button>
       </td>
 
-      <DeleteUserModal
+      <ActionModal
         isOpen={isModalOpen}
+        modalTitle = "Deletar"
+        message = "Você tem certeza que deseja excluir esse usuário?"
         action={handleDeleteUser}
         onRequestClose={() => {
           setIsModalOpen(false)

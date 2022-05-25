@@ -3,11 +3,13 @@ import { KTSVG } from '../../../helpers'
 
 type NewTransactionModalProps = {
   isOpen: boolean
+  modalTitle: string
+  message: string
   action: () => Promise<void>
   onRequestClose: () => void
 }
 
-export function DeleteUserModal({ isOpen, action, onRequestClose }: NewTransactionModalProps) {
+export function ActionModal({ isOpen, modalTitle, message, action, onRequestClose }: NewTransactionModalProps) {
   return (
     <Modal
       isOpen={isOpen}
@@ -18,7 +20,7 @@ export function DeleteUserModal({ isOpen, action, onRequestClose }: NewTransacti
       <div className='modal-dialog'>
         <div className='modal-content'>
           <div className='modal-header'>
-            <h5 className='modal-title'>Deletar</h5>
+            <h5 className='modal-title'>{modalTitle}</h5>
             <button
               className='btn btn-icon btn-sm btn-active-light-primary ms-2'
               aria-label='Close'
@@ -29,7 +31,7 @@ export function DeleteUserModal({ isOpen, action, onRequestClose }: NewTransacti
           </div>
 
           <div className='modal-body text-center'>
-            <p className='fs-5'>Você tem certeza que deseja excluir esse usuário.</p>
+            <p className='fs-5'>{message}</p>
           </div>
 
           <div className='modal-footer'>
