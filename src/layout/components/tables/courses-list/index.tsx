@@ -4,7 +4,9 @@ import { Search } from '../../search/Search'
 import { useEffect, useState } from 'react'
 import { MakeCourseRow } from '../../../../application/factories/components/course/rowCourse-factory'
 import { IGetAllCourses } from '../../../../domain/usecases/interfaces/course/getAllCourses'
-import { ICourseResponse } from '../../../../interfaces/api-response/courseResponse'
+import { IPartialCourseResponse } from '../../../../interfaces/api-response/courseResponse'
+import { currenceMask } from '../../../formatters/currenceFormatter'
+import { toast } from 'react-toastify'
 
  type Props = {
   getAllCourses: IGetAllCourses
@@ -12,12 +14,8 @@ import { ICourseResponse } from '../../../../interfaces/api-response/courseRespo
 
 export default function CoursesTable({ getAllCourses }: Props) {
 
-  const [courses, setCourses] = useState<ICourseResponse[]>([])
-  const [error, setError] = useState<Error>()
+  const [courses, setCourses] = useState<IPartialCourseResponse[]>([])
   const [loading, setLoading] = useState(true)
-
-  const fakeCourse = [{id: "1", name: "Day Trade Básico", description: "Curso de extensão", 
-                    price: "R$ 1.200,00", discount: "R$ 200", teacher: "Palex", active: "ativo" }]
 
     useEffect(() => {     
       getAllCourses
@@ -25,7 +23,7 @@ export default function CoursesTable({ getAllCourses }: Props) {
         .then((data) => {
           setCourses(data)
         })
-        .catch((error) => setError(error))
+        .catch((error) => toast.error("Não foi possível listar os cursos."))
        .finally(() => setLoading(false))
     }, [])
 
@@ -33,7 +31,9 @@ export default function CoursesTable({ getAllCourses }: Props) {
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
-          <Search />
+          <Search onChangeText={function (text: string): void {
+            throw new Error('Function not implemented.')
+          } } />
         </h3>
         <div className='card-toolbar'>
           <Link href='/Courses/create'>
@@ -68,9 +68,9 @@ export default function CoursesTable({ getAllCourses }: Props) {
                     id={item.id}
                     name={item.name}
                     description={item.description}
-                    price={item.price}
-                    discount={item.discount}
-                    teacher={item.image}
+                    price={currenceMask(item.price)}
+                    discount={currenceMask(item.discount)}
+                    teacher={item.teacherName}
                     active={item.isActive}
                   />
                 ))}
