@@ -1,12 +1,12 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
-import { ICourseResponse } from '../../../interfaces/api-response/courseResponse'
+import { IPartialCourseResponse} from '../../../interfaces/api-response/courseResponse'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteGetAllCourses implements IGetAllCourses {
   constructor(
     private readonly url: string,
-    private readonly httpClient: HttpClient<any>
+    private readonly httpClient: HttpClient<IPartialCourseResponse>
   ) {}
 
   async getAll() {
@@ -14,7 +14,6 @@ export class RemoteGetAllCourses implements IGetAllCourses {
       url: this.url,
       method: 'get',
     })
-    console.log(httpResponse)
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body

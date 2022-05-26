@@ -4,8 +4,8 @@ type IMakeCourseRow = {
     id: string
     name: string
     description: string
-    price: number
-    discount: number
+    price: string
+    discount: string
     teacher: string
     active: boolean
   }
