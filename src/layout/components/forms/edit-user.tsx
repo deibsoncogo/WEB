@@ -6,7 +6,7 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { formatDateToSend } from '../../../helpers'
+import { formatDate } from '../../../helpers'
 import { levelOptions, roleOptions } from '../../../utils/selectOptions'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { api } from '../../../application/services/api'
@@ -82,7 +82,7 @@ export function FormEditUser({ id, userRegister }: IFormEditUser) {
       passwordConfirm: data.password,
       cpf: cpf,
       photo: data.photo,
-      birthDate: formatDateToSend(data.birthDate),
+      birthDate: formatDate(data.birthDate, 'YYYY-DD-MM'),
       phoneNumber: phoneNumber,
       role: data.role,
       address: [

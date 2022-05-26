@@ -5,17 +5,25 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { KTSVG } from '../../../../helpers'
+import { formatDate, formatTime, KTSVG } from '../../../../helpers'
 import { levelOptions } from '../../../../utils/selectOptions'
 
 import { DatePicker, Input, Select, TextArea } from '../../inputs'
 import { InputImage } from '../../inputs/input-image'
+import { LivesTable } from '../../tables/lives-list'
+
+interface IStreamList {
+  liveDate: string
+  time: string
+  start: boolean
+}
 
 export function FormCreateTrainings() {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
   const [defaultValue, setDefaultValue] = useState({})
+  const [streamList, setStreamList] = useState<IStreamList[]>([])
 
   async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
@@ -34,6 +42,7 @@ export function FormCreateTrainings() {
         time: Yup.date().nullable().required('Hora é nescessária'),
       })
       await schema.validate(data, { abortEarly: false })
+      console.log(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -46,10 +55,27 @@ export function FormCreateTrainings() {
     }
   }
 
+  function addLiveTime() {
+    const liveData = {
+      liveDate: formatDate(formRef.current?.getData().liveDate, 'DD/MM/YYYY'),
+      time: formatTime(formRef.current?.getData().time, 'HH:mm'),
+      start: false,
+    }
+    if (liveData.liveDate === 'Invalid date' || liveData.time === 'Invalid date') return
+    setStreamList([...streamList, liveData])
+  }
+
+  function removeStreamItem(index: number) {
+    const temp = streamList.slice()
+    temp.splice(index, 1)
+    setStreamList(temp)
+  }
+
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
       <h3 className='mb-5'>Informações do Treinamento</h3>
       <InputImage name='photo' />
+
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-50'>
           <Input name='name' label='Nome' />
@@ -57,6 +83,7 @@ export function FormCreateTrainings() {
           <Input name='price' label='Preço' type='number' />
           <Input name='discount' label='Desconto' type='number' />
         </div>
+
         <div className='w-50'>
           <TextArea name='description' label='Descrição' rows={10} />
           <Select name='categories' label='Categorias'>
@@ -96,11 +123,19 @@ export function FormCreateTrainings() {
           />
         </div>
 
-        <button type='button' className='btn btn-lg btn-primary h-45px mb-7 mt-auto'>
+        <button
+          type='button'
+          onClick={addLiveTime}
+          className='btn btn-lg btn-primary h-45px mb-7 mt-auto'
+        >
           <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
           Adicionar Data
         </button>
       </div>
+
+      {streamList.length !== 0 && (
+        <LivesTable streamList={streamList} removeStreamItem={removeStreamItem} />
+      )}
 
       <div className='d-flex mt-10'>
         <button

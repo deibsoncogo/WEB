@@ -30,7 +30,7 @@ export function DatePicker({ name, label, ...rest }: Props) {
     })
   }, [fieldName, registerField])
 
-  const years = rangeInt(1900, new Date().getFullYear())
+  const years = rangeInt(1900, new Date().getFullYear() + 1)
 
   return (
     <div className='fv-row mb-7'>
