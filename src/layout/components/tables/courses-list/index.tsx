@@ -2,30 +2,38 @@ import Link from 'next/link'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
 import { useEffect, useState } from 'react'
-import { MakeCourseRow } from '../../../../application/factories/components/course/rowCourse-factory'
 import { IGetAllCourses } from '../../../../domain/usecases/interfaces/course/getAllCourses'
 import { IPartialCourseResponse } from '../../../../interfaces/api-response/courseResponse'
 import { currenceMask } from '../../../formatters/currenceFormatter'
 import { toast } from 'react-toastify'
+import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
+import { Row } from './row'
 
- type Props = {
+type Props =  {
   getAllCourses: IGetAllCourses
+  deleteCourse: IDeleteCourse
 }
 
-export default function CoursesTable({ getAllCourses }: Props) {
+export default function CoursesTable(props: Props) {
 
   const [courses, setCourses] = useState<IPartialCourseResponse[]>([])
   const [loading, setLoading] = useState(true)
+  const [refresher, setRefresher] = useState(true)
 
-    useEffect(() => {     
-      getAllCourses
+
+  function handleRefresher() {    
+    setRefresher(!refresher);
+  }
+
+    useEffect(() => {         
+      props.getAllCourses
         .getAll()
         .then((data) => {
           setCourses(data)
         })
         .catch((error) => toast.error("Não foi possível listar os cursos."))
        .finally(() => setLoading(false))
-    }, [])
+    }, [refresher])
 
   return (
     <div className='card mb-5 mb-xl-8'>
@@ -63,7 +71,7 @@ export default function CoursesTable({ getAllCourses }: Props) {
             { <tbody>
               {!loading &&
                 courses?.map((item) => (
-                  <MakeCourseRow
+                  <Row
                     key={item.id}
                     id={item.id}
                     name={item.name}
@@ -72,6 +80,8 @@ export default function CoursesTable({ getAllCourses }: Props) {
                     discount={currenceMask(item.discount)}
                     teacher={item.teacherName}
                     active={item.isActive}
+                    deleteCourse = {props.deleteCourse}
+                    handleRefresher={handleRefresher}                   
                   />
                 ))}
             </tbody>}
