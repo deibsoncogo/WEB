@@ -1,7 +1,7 @@
-import { ICourseResponse } from "../../../../interfaces/api-response/courseResponse";
+import { IPartialCourseResponse } from "../../../../interfaces/api-response/courseResponse";
 
 
 export interface IGetAllCourses {
-    getAll:() => Promise<ICourseResponse[]>
+    getAll:() => Promise<IPartialCourseResponse[]>
 }
 

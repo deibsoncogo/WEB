@@ -1,13 +1,10 @@
-export interface ICourseResponse{
+export interface IPartialCourseResponse{
     id: string,
     name: string,
     description: string,
-    image: string,
-    price: number,
-    installments: number,
-    discount: number,
-    userId: string,
-    content: string,
+    price: string,   
+    discount: string,
     isActive: boolean,
-    categoryId: string
+    categoryId: string,
+    teacherName:string
 }
