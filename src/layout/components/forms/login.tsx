@@ -53,7 +53,7 @@ export function FormLogin() {
       localStorage.setItem('email', result.email)
       localStorage.setItem('access_token', result.accessToken)
       localStorage.setItem('expiration', jwtDecode<IToken>(result.accessToken).exp)
-      router.push('/dashboard')
+      router.push('/books')
     } catch (err: any) {
       console.log(err)
       setHasError(true)
