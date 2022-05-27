@@ -1,3 +1,5 @@
+import { IUserResponse } from "./userResponse";
+
 export interface IPartialCourseResponse{
     id: string,
     name: string,
@@ -6,5 +8,6 @@ export interface IPartialCourseResponse{
     discount: string,
     isActive: boolean,
     categoryId: string,
-    teacherName:string
+    teacherName: string    
+    
 }

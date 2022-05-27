@@ -6,14 +6,17 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   label?: string
-  onChange?: () => Promise<void>
+  placeholderText?:string
+  onChange?: () => void
+  
+ 
 }
 
-export function Input({ name, label, onChange, ...rest }: IInputProps) {
+export function Input({ name, label, placeholderText, onChange, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const { fieldName, defaultValue = '', registerField, error } = useField(name)
-  const [isEyeVisible, setIsEyeVisible] = useState(true)
-
+  const [isEyeVisible, setIsEyeVisible] = useState(true)  
+ 
   useEffect(() => {
     registerField({
       name: fieldName,
@@ -21,7 +24,7 @@ export function Input({ name, label, onChange, ...rest }: IInputProps) {
       getValue: (ref) => {
         return ref.current.value
       },
-      setValue: (ref, value) => {
+      setValue: (ref, value) => {      
         ref.current.value = value
       },
       clearValue: (ref) => {
@@ -55,6 +58,7 @@ export function Input({ name, label, onChange, ...rest }: IInputProps) {
           className='form-control form-control-lg form-control-solid border-transparent bg-secondary'
           type='text'
           name={name}
+          placeholder={placeholderText}
           ref={inputRef}
           defaultValue={defaultValue}
           onChange={onChange}
