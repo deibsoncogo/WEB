@@ -12,16 +12,42 @@ import { levelOptions } from '../../../../utils/selectOptions'
 import { Input, Select, TextArea } from '../../inputs'
 import { ICreateCourse } from '../../../../domain/usecases/interfaces/course/createCourse'
 
+import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
+import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { toast } from 'react-toastify'
+
 
 
 type Props = {
   createCourse: ICreateCourse
+  getCategories: IGetCategoriesNoPagination
 }
 
 export function FormCreateCourse(props: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
+  const [categories, setCategories] = useState<ICategory[]>([])
   const [defaultValue, setDefaultValue] = useState({})
+
+  useEffect(() => {         
+    props.getCategories
+      .get()
+      .then((data) => {   
+       setCategories(data)
+      })
+      .catch((error) => toast.error("Não foi possível carregar as categorias de cursos."))
+      .finally(() => setLoading(false))
+  }, [])
+
+
+
+
+
+
+
+
+
+
 
   const currenyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
@@ -140,3 +166,7 @@ export function FormCreateCourse(props: Props) {
     </Form>
   )
 }
+function setLoading(arg0: boolean): void {
+  throw new Error('Function not implemented.')
+}
+
