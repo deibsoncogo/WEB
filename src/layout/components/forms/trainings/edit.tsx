@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import * as Yup from 'yup'
@@ -18,15 +18,20 @@ interface IStreamList {
   start: boolean
 }
 
-export function FormCreateTrainings() {
+export function FormEditTrainings({ data }: IEditTrainingsForm) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
-  const [defaultValue, setDefaultValue] = useState({})
+  const [defaultValue, setDefaultValue] = useState<ITrainings>({} as ITrainings)
   const [streamList, setStreamList] = useState<IStreamList[]>([])
+
+  useEffect(() => {
+    setDefaultValue(data)
+  }, [])
 
   async function handleFormSubmit(data: any) {
     if (!formRef.current) throw new Error()
+    console.log(data)
 
     try {
       formRef.current.setErrors({})
@@ -42,7 +47,6 @@ export function FormCreateTrainings() {
         time: Yup.date().nullable().required('Hora é nescessária'),
       })
       await schema.validate(data, { abortEarly: false })
-      console.log(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {

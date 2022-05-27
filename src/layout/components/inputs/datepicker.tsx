@@ -24,10 +24,15 @@ export function DatePicker({ name, label, ...rest }: Props) {
       name: fieldName,
       ref: datepickerRef.current,
       path: 'props.selected',
+      setValue: (ref: any) => {
+        setDate(defaultValue)
+        ref.current.value = defaultValue
+      },
       clearValue: (ref: any) => {
         ref.clear()
       },
     })
+    setDate(defaultValue)
   }, [fieldName, registerField])
 
   const years = rangeInt(1900, new Date().getFullYear() + 1)
