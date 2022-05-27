@@ -8,17 +8,17 @@ const Users: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Usuários</title>
+        <title>Livros</title>
       </Head>
 
       <div className='page d-flex flex-row flex-column-fluid'>
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Usuários' />
+          <HeaderWrapper title='Livros' />
 
           <div id='kt_content_container' className='container'>
-           {MakeUserTable()}
+            {MakeUserTable()}
           </div>
         </div>
       </div>

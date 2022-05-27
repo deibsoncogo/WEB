@@ -4,18 +4,18 @@ import { MakeFormCreateUser } from '../../application/factories/components/creat
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 
-const Users: NextPage = () => {
+const Books: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Criar Usuário</title>
+        <title>Criar Livro</title>
       </Head>
 
       <div className='page d-flex flex-row flex-column-fluid'>
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Novo Usuário' />
+          <HeaderWrapper title='Novo Livro' />
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
@@ -28,4 +28,4 @@ const Users: NextPage = () => {
   )
 }
 
-export default Users
+export default Books

@@ -14,7 +14,7 @@ type Props = {
   getAllUsers: IGetAllUsers
 }
 
-export default function UsersTable({ getAllUsers }: Props) {
+export default function BooksTable({ getAllUsers }: Props) {
   const [users, setUsers] = useState<IUserResponse[]>([])
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(true)
@@ -39,7 +39,7 @@ export default function UsersTable({ getAllUsers }: Props) {
           <Link href='/users/create'>
             <a className='btn btn-sm btn-light-primary'>
               <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-              Novo Usuário
+              Novo Livro
             </a>
           </Link>
         </div>
@@ -50,11 +50,13 @@ export default function UsersTable({ getAllUsers }: Props) {
           <table className='table align-middle gs-0 gy-4'>
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
-                <th className='text-dark ps-4 min-w-100px rounded-start'>Nome</th>
-                <th className='text-dark min-w-100px'>Email</th>
-                <th className='text-dark min-w-100px'>Nascimento</th>
-                <th className='text-dark min-w-150px'>CPF</th>
-                <th className='text-dark min-w-100px'>Endereço</th>
+                <th className='text-dark ps-4 min-w-100px rounded-start'>Título</th>
+                <th className='text-dark min-w-100px'>Descrição</th>
+                <th className='text-dark min-w-100px'>Preço</th>
+                <th className='text-dark min-w-150px'>Autor</th>
+                <th className='text-dark min-w-100px'>Estoque</th>
+                <th className='text-dark min-w-100px'>Ativo</th>
+                <th className='text-dark min-w-100px'>Ação</th>
                 <th className='text-dark min-w-150px text-end rounded-end' />
               </tr>
             </thead>
