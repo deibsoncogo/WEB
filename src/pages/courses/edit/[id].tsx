@@ -3,13 +3,13 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { MakeFormUpdateCourse } from '../../../application/factories/components/course/upDateCourse-factory'
-import { MakeFormUpdateUser } from '../../../application/factories/components/updateUser-factory'
 import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
 
 const EditCourse: NextPage = () => {
   const router = useRouter()
-  const { id } = router.query
+  const {id} = router.query
+  
 
   //useEffect(() => {}, [id])
 
@@ -27,7 +27,7 @@ const EditCourse: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <MakeFormUpdateCourse/>
+              <MakeFormUpdateCourse id = {id}/>
             </div>
           </div>
         </div>

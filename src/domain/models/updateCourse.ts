@@ -1,5 +1,5 @@
 export class UpdateCourse{
-    id: string;
+    id?: string;
     name: string;
     description: string;
     content: string;
@@ -7,12 +7,12 @@ export class UpdateCourse{
     discount?: number;
     image: string;
     installments: number;
-    isActive: boolean;
+    isActive?: boolean;
     price?: number;  
     userId: string;
 
-    constructor(id: string, name: string, description: string, content: string, categoryId: string,
-        discount: number | undefined, image: string, installments: number, isActive: boolean,  price: number | undefined,  
+    constructor(id: string| undefined, name: string, description: string, content: string, categoryId: string,
+        discount: number | undefined, image: string, installments: number, isActive: boolean | undefined,  price: number | undefined,  
         userId: string)
     {
         this.id = id;

@@ -76,7 +76,7 @@ export function FormCreateCourse(props: Props) {
     if (value == 'NaN') formRef.current?.setFieldValue(name, '')
   }  
 
-  async function handleFormSubmit(data: IFormCreateCourse) {
+  async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
 
     try {
@@ -107,7 +107,7 @@ export function FormCreateCourse(props: Props) {
     }
   }
 
-  async function handleCreateCourse(data: IFormCreateCourse) {
+  async function handleCreateCourse(data: IFormCourse) {
     
     
     let matchesPrice = data.price.split(',')[0].match(/\d*/g)

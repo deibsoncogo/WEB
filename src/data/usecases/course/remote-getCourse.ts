@@ -1,20 +1,23 @@
+import { ICourseResponse } from './../../../interfaces/api-response/courseResponse';
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
+import { IGetCourse } from '../../../domain/usecases/interfaces/course/getCourse'
 import { apiPaginationResponse } from '../../../interfaces/api-response/apiPaginationResponse'
 import { IPartialCourseResponse} from '../../../interfaces/api-response/coursePartialResponse'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteGetAllCourses implements IGetAllCourses {
+export class RemoteGetCourse implements IGetCourse {
   constructor(
     private readonly url: string,
-    private readonly httpClient: HttpClient<apiPaginationResponse<IPartialCourseResponse>>
+    private readonly httpClient: HttpClient<ICourseResponse>
   ) {}
 
-  async getAll() {
+  async get() {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',
     })
+ 
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body

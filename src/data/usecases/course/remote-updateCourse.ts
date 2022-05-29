@@ -15,8 +15,9 @@ export class RemoteUpdateCourse implements IUpdateCourse {
             method: 'put',
             body: updateCourse,
           })
+         
           switch (httpResponse.statusCode) {
-            case HttpStatusCode.created:
+            case HttpStatusCode.ok:
               return true
             case HttpStatusCode.badRequest:
               throw new InvalidParamsError(httpResponse.body?.message)

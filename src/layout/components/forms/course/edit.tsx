@@ -17,12 +17,17 @@ import { roles } from '../../../../application/wrappers/authWrapper'
 import { UserQueryRole } from '../../../../domain/models/userQueryRole'
 import { CreateCourse } from '../../../../domain/models/createCourse'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
+import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
+import { ICourseResponse } from '../../../../interfaces/api-response/courseResponse'
+import { currenceMaskOnlyValue } from '../../../formatters/currenceFormatter'
+import { UpdateCourse } from '../../../../domain/models/updateCourse'
 
 
 type Props = {
   updateCourse: IUpdateCourse
   getCategories: IGetCategoriesNoPagination
   getUsers: IGetAllUsersByRole
+  getCourse: IGetCourse
 }
 
 export function FormUpdateCourse(props: Props) {
@@ -30,21 +35,29 @@ export function FormUpdateCourse(props: Props) {
   const formRef = useRef<FormHandles>(null)
   const [categories, setCategories] = useState<ICategory[]>([])
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
-  const [defaultValue, setDefaultValue] = useState({})
+  const [defaultValue, setDefaultValue] = useState<ICourseResponse>()
   const [loading, setLoading] = useState(true)
 
-  // const course = new CreateCourse("data.name", "data.description", "data.content",
-  //   "data.categoryId", 22, "teste.jpg", 3, false, 22, "data.userId")
-
-  // setDefaultValue(course)
-
+ 
+  useEffect(() => {     
+     
+    props.getCourse
+      .get()
+      .then((data) => {  
+        console.log(data)    
+        setDefaultValue(data)
+      })
+      .catch((error) => toast.error("Não foi possível carregar o curso."))
+      .finally(() => setLoading(false))
+  }, [])
   
 
   useEffect(() => {     
-    console.log( props.getCategories)    
+   
     props.getCategories
       .get()
-      .then((data) => {      
+      .then((data) => { 
+       
         setCategories(data)
       })
       .catch((error) => toast.error("Não foi possível carregar as categorias de cursos."))
@@ -55,13 +68,19 @@ export function FormUpdateCourse(props: Props) {
     const userQuery = new UserQueryRole(roles.TEACHER)      
     props.getUsers
       .getAllByRole(userQuery)
-      .then((data) => {   
-        console.log(data)
+      .then((data) => {         
         setUsers(data)
       })
       .catch((error) => toast.error("Não foi possível carregar os Professores."))
       .finally(() => setLoading(false))
   }, [])
+ 
+
+  const findCategoryById = (id: string) => {
+    return categories.find(category => category.id == id)
+  }
+
+  
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
@@ -78,7 +97,7 @@ export function FormUpdateCourse(props: Props) {
     if (value == 'NaN') formRef.current?.setFieldValue(name, '')
   }  
 
-  async function handleFormSubmit(data: IFormCreateCourse) {
+  async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
 
     try {
@@ -90,11 +109,10 @@ export function FormUpdateCourse(props: Props) {
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         content:Yup.string().required('Conteúdo progrmático é necessário'),  
-        userIdt:Yup.string().optional()  })
+        userId:Yup.string().optional()  })
 
       await schema.validate(data, { abortEarly: false })
-      alert("Amo")
-      handleCreateCourse(data)
+      handleUpdateCourse(data)
 
     } catch (err) {
     
@@ -109,7 +127,7 @@ export function FormUpdateCourse(props: Props) {
     }
   }
 
-  async function handleCreateCourse(data: IFormCreateCourse) {
+  async function handleUpdateCourse(data: IFormCourse) {
     
     
     let matchesPrice = data.price.split(',')[0].match(/\d*/g)
@@ -119,18 +137,18 @@ export function FormUpdateCourse(props: Props) {
     let discount = matchesDiscount? parseInt(matchesDiscount?.join('')): undefined
 
 
-    const course = new CreateCourse(data.name, data.description, data.content,
-                data.categoryId, discount, "teste.jpg", 3, false, price, data.userId)
+    const course = new UpdateCourse(defaultValue?.id, data.name, data.description, data.content,
+                data.categoryId, discount, "teste1.jpg", 3,defaultValue?.isActive, price, data.userId)
   
-
+    console.log(course)
    
-    //  props.createCourse
-    //    .create(course)
-    //    .then(() => {
-    //     toast.success("Curso criado com sucesso!")
-    //     router.push('/courses')
-    //     })
-    //    .catch((error: any) => console.log(error))
+     props.updateCourse      
+       .update(course)
+       .then(() => {
+        toast.success("Curso atualizado com sucesso!")
+        router.push('/courses')
+       })
+      .catch((error: any) => console.log(error))
   }
 
   return (
@@ -141,9 +159,11 @@ export function FormUpdateCourse(props: Props) {
         <div className='w-50'>
           <Input name='name' label='Nome' />
           <Select name='userId' label='Professor'>
-            <option value='' disabled selected>
+            {defaultValue?.userId?  <option value={defaultValue.userId}>
+              {defaultValue.teacherName}
+            </option>: <option value='' disabled selected>
               Selecione
-            </option>
+            </option>}           
             {users.map((option) => (
               <option key={option.id} value={option.id}>
                 {option.name}
@@ -153,6 +173,7 @@ export function FormUpdateCourse(props: Props) {
           <Input name='time' label='Tempo de acesso ao curso (em meses)' />
           <Input
             name='price'
+            defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
             label='Preço'
             type='text'
             placeholderText='R$'
@@ -160,6 +181,7 @@ export function FormUpdateCourse(props: Props) {
           />
           <Input
             name='discount'
+            defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}
             label='Desconto'
             type='text'
             placeholderText='R$'
@@ -169,9 +191,11 @@ export function FormUpdateCourse(props: Props) {
         <div className='w-50'>
           <TextArea name='description' label='Descrição' rows={10} />
           <Select name='categoryId' label='Categoria'>
-            <option value='' disabled selected>
+          {defaultValue?.categoryId?  <option value={defaultValue.categoryId}>
+              {findCategoryById(defaultValue.categoryId)?.name}
+            </option>: <option value='' disabled selected>
               Selecione
-            </option>
+            </option>}           
             {categories.map((option) => (
               <option key={option.id} value={option.id}>
                 {option.name}
