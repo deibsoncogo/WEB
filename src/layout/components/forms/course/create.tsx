@@ -15,41 +15,53 @@ import { ICreateCourse } from '../../../../domain/usecases/interfaces/course/cre
 import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
 import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { toast } from 'react-toastify'
+import { IGetAllUsersByRole } from '../../../../domain/usecases/interfaces/user/getAllUsersByRole'
+import { IUserPartialResponse } from '../../../../interfaces/api-response/userPartialResponse'
+import { roles } from '../../../../application/wrappers/authWrapper'
+import { UserQueryRole } from '../../../../domain/models/userQueryRole'
+import { CreateCourse } from '../../../../domain/models/createCourse'
+
 
 
 
 type Props = {
   createCourse: ICreateCourse
   getCategories: IGetCategoriesNoPagination
+  getUsers: IGetAllUsersByRole
 }
 
 export function FormCreateCourse(props: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [categories, setCategories] = useState<ICategory[]>([])
+  const [users, setUsers] = useState<IUserPartialResponse[]>([])
   const [defaultValue, setDefaultValue] = useState({})
+  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {         
+  useEffect(() => {     
+    console.log( props.getCategories)    
     props.getCategories
       .get()
-      .then((data) => {   
-       setCategories(data)
+      .then((data) => {      
+        setCategories(data)
       })
       .catch((error) => toast.error("Não foi possível carregar as categorias de cursos."))
       .finally(() => setLoading(false))
   }, [])
 
+  useEffect(() => {   
+    const userQuery = new UserQueryRole(roles.TEACHER)      
+    props.getUsers
+      .getAllByRole(userQuery)
+      .then((data) => {   
+        console.log(data)
+        setUsers(data)
+      })
+      .catch((error) => toast.error("Não foi possível carregar os Professores."))
+      .finally(() => setLoading(false))
+  }, [])
 
-
-
-
-
-
-
-
-
-
-  const currenyFormatter = (name: string) => {
+  const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
 
     value = value + ''
@@ -62,28 +74,30 @@ export function FormCreateCourse(props: Props) {
     }
     formRef.current?.setFieldValue(name, value)
     if (value == 'NaN') formRef.current?.setFieldValue(name, '')
-  }
+  }  
 
-  
-
-  async function handleFormSubmit(data: IFormCreateUser) {
+  async function handleFormSubmit(data: IFormCreateCourse) {
     if (!formRef.current) throw new Error()
 
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é Nescessário'),
-        teacher: Yup.string().required('Professor é nescessário'),
-        price: Yup.number().required('Preço é nescessário'),
-        description: Yup.string().required('Descriçao é nescessário'),
-        categories: Yup.string().required('Selecione uma categoria'),
-        finishDate: Yup.date().nullable().required('Data é nescessária'),
-        liveDate: Yup.date().nullable().required('Data é nescessária'),
-        chatTime: Yup.date().nullable().required('Data é nescessária'),
-        time: Yup.date().nullable().required('Hora é nescessária'),
-      })
+        name: Yup.string().required('Nome é necessário'),       
+        price: Yup.string().required('Preço é necessário'),
+        discount: Yup.string().required('Desconto é necessário'),
+        description: Yup.string().required('Descriçao é necessária'),
+        categoryId: Yup.string().required('Selecione uma categoria'),
+        content:Yup.string().required('Conteúdo progrmático é necessário'),  
+        userIdt:Yup.string().optional()  })
+        
+      alert("Adoro")
       await schema.validate(data, { abortEarly: false })
+      alert("Amo")
+      handleCreateCourse(data)
+
     } catch (err) {
+      console.log(err)
+   
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
@@ -95,6 +109,30 @@ export function FormCreateCourse(props: Props) {
     }
   }
 
+  async function handleCreateCourse(data: IFormCreateCourse) {
+    
+    
+    let matchesPrice = data.price.split(',')[0].match(/\d*/g)
+    let price = matchesPrice? parseInt(matchesPrice?.join('')): undefined
+
+    let matchesDiscount = data.discount.split(',')[0].match(/\d*/g)
+    let discount = matchesDiscount? parseInt(matchesDiscount?.join('')): undefined
+
+
+    const course = new CreateCourse(data.name, data.description, data.content,
+                data.categoryId, discount, "teste.jpg", 3, false, price, data.userId)
+  
+
+   
+     props.createCourse
+       .create(course)
+       .then(() => {
+        toast.success("Curso criado com sucesso!")
+        router.push('/courses')
+        })
+       .catch((error: any) => console.log(error))
+  }
+
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
       <h3 className='mb-5'>Informações do Curso</h3>
@@ -102,41 +140,41 @@ export function FormCreateCourse(props: Props) {
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-50'>
           <Input name='name' label='Nome' />
-          <Select name='professor' label='Professor'>
+          <Select name='userId' label='Professor'>
             <option value='' disabled selected>
               Selecione
             </option>
-            {levelOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            {users.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
               </option>
             ))}
           </Select>
-          <Input name='teacher' label='Tempo de acesso ao curso' />
+          <Input name='time' label='Tempo de acesso ao curso (em meses)' />
           <Input
             name='price'
             label='Preço'
             type='text'
             placeholderText='R$'
-            onChange={() => currenyFormatter('price')}
+            onChange={() => currencyFormatter('price')}
           />
           <Input
             name='discount'
             label='Desconto'
             type='text'
             placeholderText='R$'
-            onChange={() => currenyFormatter('discount')}
+            onChange={() => currencyFormatter('discount')}
           />
         </div>
         <div className='w-50'>
           <TextArea name='description' label='Descrição' rows={10} />
-          <Select name='categories' label='Categoria'>
+          <Select name='categoryId' label='Categoria'>
             <option value='' disabled selected>
               Selecione
             </option>
-            {levelOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            {categories.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
               </option>
             ))}
           </Select>
@@ -146,7 +184,7 @@ export function FormCreateCourse(props: Props) {
       <h3 className='mb-5 mt-5'>Conteúdo e Materiais do Curso</h3>
       <h5 className='mb-5 mt-5 text-muted'>Conteúdo Prográmatico do Curso</h5>
       
-      <TextArea name='description' rows={10} />
+      <TextArea name='content' rows={10} />
          
       <div className='d-flex mt-10'>
         <button
@@ -166,7 +204,5 @@ export function FormCreateCourse(props: Props) {
     </Form>
   )
 }
-function setLoading(arg0: boolean): void {
-  throw new Error('Function not implemented.')
-}
+
 

@@ -4,7 +4,7 @@ import { IGetCategoriesNoPagination } from '../../../domain/usecases/interfaces/
 import { Category } from '../../../interfaces/model/Category'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteGetCategories implements IGetCategoriesNoPagination {
+export class RemoteGetCategoriesNoPagination implements IGetCategoriesNoPagination {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<Category[]>) {}
 
   get = async () => {
@@ -12,7 +12,6 @@ export class RemoteGetCategories implements IGetCategoriesNoPagination {
       url: this.url,
       method: 'get',
     })
-
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body
