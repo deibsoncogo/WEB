@@ -1,4 +1,4 @@
-interface IFormCreateCourse {
+interface IFormCourse {
   name: string
   price: string
   discount: string
