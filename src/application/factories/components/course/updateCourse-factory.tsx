@@ -1,12 +1,11 @@
-import { FormCreateCourse } from "../../../../layout/components/forms/course/create";
+import { FormUpdateCourse } from "../../../../layout/components/forms/course/edit";
 import { makeRemoteGetCategoriesNoPagination } from "../../usecases/categories/remote-getCategoriesNoPagination-factory";
-
-import { makeRemoteCreateCourse } from "../../usecases/course/remote-createCourse-factory";
+import { makeRemoteUpdateCourse } from "../../usecases/course/remote-updateCourse-factory";
 import { makeRemoteGetAllUsersByRole } from "../../usecases/remote-getAllUsersByRole-factory";
 
 
-export const MakeFormCreateCourse = () => {
-    return (<FormCreateCourse createCourse={makeRemoteCreateCourse()} 
+export const MakeFormUpdateCourse= () => {
+    return (<FormUpdateCourse updateCourse={makeRemoteUpdateCourse()} 
      getCategories = {makeRemoteGetCategoriesNoPagination()}
      getUsers = {makeRemoteGetAllUsersByRole()}/> );
   };

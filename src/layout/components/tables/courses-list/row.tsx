@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
 import { KTSVG } from '../../../../helpers'
@@ -59,10 +60,12 @@ export function Row(props: IRow) {
       />
       </td>
       <td className='text-end'>
-        
+      <Link href={`/courses/edit/${props.id}`}>
         <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
           <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
         </button>
+      </Link>
+            
         <button
           onClick={() => {
             setIsModalOpen(true)

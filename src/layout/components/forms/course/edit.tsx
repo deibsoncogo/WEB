@@ -7,11 +7,7 @@ import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
 import { KTSVG } from '../../../../helpers'
-import { levelOptions } from '../../../../utils/selectOptions'
-
 import { Input, Select, TextArea } from '../../inputs'
-import { ICreateCourse } from '../../../../domain/usecases/interfaces/course/createCourse'
-
 import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
 import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { toast } from 'react-toastify'
@@ -20,23 +16,29 @@ import { IUserPartialResponse } from '../../../../interfaces/api-response/userPa
 import { roles } from '../../../../application/wrappers/authWrapper'
 import { UserQueryRole } from '../../../../domain/models/userQueryRole'
 import { CreateCourse } from '../../../../domain/models/createCourse'
-
-
+import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
 
 
 type Props = {
-  createCourse: ICreateCourse
+  updateCourse: IUpdateCourse
   getCategories: IGetCategoriesNoPagination
   getUsers: IGetAllUsersByRole
 }
 
-export function FormCreateCourse(props: Props) {
+export function FormUpdateCourse(props: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [categories, setCategories] = useState<ICategory[]>([])
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
   const [defaultValue, setDefaultValue] = useState({})
   const [loading, setLoading] = useState(true)
+
+  // const course = new CreateCourse("data.name", "data.description", "data.content",
+  //   "data.categoryId", 22, "teste.jpg", 3, false, 22, "data.userId")
+
+  // setDefaultValue(course)
+
+  
 
   useEffect(() => {     
     console.log( props.getCategories)    
@@ -91,11 +93,11 @@ export function FormCreateCourse(props: Props) {
         userIdt:Yup.string().optional()  })
 
       await schema.validate(data, { abortEarly: false })
+      alert("Amo")
       handleCreateCourse(data)
 
     } catch (err) {
-      console.log(err)
-   
+    
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
@@ -120,14 +122,15 @@ export function FormCreateCourse(props: Props) {
     const course = new CreateCourse(data.name, data.description, data.content,
                 data.categoryId, discount, "teste.jpg", 3, false, price, data.userId)
   
+
    
-     props.createCourse
-       .create(course)
-       .then(() => {
-        toast.success("Curso criado com sucesso!")
-        router.push('/courses')
-        })
-       .catch((error: any) => console.log(error))
+    //  props.createCourse
+    //    .create(course)
+    //    .then(() => {
+    //     toast.success("Curso criado com sucesso!")
+    //     router.push('/courses')
+    //     })
+    //    .catch((error: any) => console.log(error))
   }
 
   return (
