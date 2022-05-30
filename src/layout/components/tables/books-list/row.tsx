@@ -2,48 +2,46 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { api } from '../../../../application/services/api'
 import { KTSVG } from '../../../../helpers'
+import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 import { ActionModal } from '../../modals/action'
 
-interface IRow {
+interface IBookRow {
   id: string
-  name: string
-  email: string
-  birthDate: string
-  cpf: string
-  address: string
-  deleteUser: IDeleteUser
+  title: string
+  description: string
+  price: string
+  author: string
+  inventory: number
+  deleteBook: IDeleteBook
 }
 
-export function Row({ id, name, email, birthDate, cpf, address, deleteUser }: IRow) {
+export function Row({ id, author, description, inventory, price, title }: IBookRow) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  async function handleDeleteUser() {
+  async function handleDeleteBook() {
     try {
-      const resp = await deleteUser.deleteUser()
       setIsModalOpen(false)
     } catch (err) {
       console.log(err)
     }
   }
 
-  function updatePassword() {}
-
   return (
     <tr>
       <td className='ps-4'>
-        <span className='text-dark fw-bold d-block fs-7'>{name}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{title}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{email}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{description}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{birthDate}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{price}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{cpf}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{author}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{address}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{inventory}</span>
       </td>
       <td className='text-end'>
         <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
@@ -66,9 +64,9 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser }: IR
 
       <ActionModal
         isOpen={isModalOpen}
-        modalTitle = "Deletar"
-        message = "Você tem certeza que deseja excluir esse usuário?"
-        action={handleDeleteUser}
+        modalTitle='Deletar'
+        message='Você tem certeza que deseja excluir esse livro?'
+        action={handleDeleteBook}
         onRequestClose={() => {
           setIsModalOpen(false)
         }}

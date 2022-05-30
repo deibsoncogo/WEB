@@ -5,29 +5,27 @@ import { dateMask } from '../../../formatters/dateFormatter'
 import { cpfMask } from '../../../formatters/cpfFormatter'
 import { addressMask } from '../../../formatters/addressFormatter'
 import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAllUsers'
-import { IUserResponse } from '../../../../interfaces/api-response'
+
 import { useEffect, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
-import { MakeUserRow } from '../../../../application/factories/components/deleteModal-factory'
+
+import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
+import { MakeBookRow } from '../../../../application/factories/components/createBook-factory'
 
 type Props = {
-  getAllUsers: IGetAllUsers
+  getAllBooks: IBookResponse[]
 }
 
-export default function BooksTable({ getAllUsers }: Props) {
-  const [users, setUsers] = useState<IUserResponse[]>([])
+export default function BooksTable({ getAllBooks }: Props) {
+  const [books, setBooks] = useState<IBookResponse[]>()
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getAllUsers
-      .getAll()
-      .then((data) => {
-        setUsers(data)
-      })
-      .catch((error) => setError(error))
-      .finally(() => setLoading(false))
-  }, [])
+    console.log(getAllBooks)
+    setBooks(getAllBooks)
+    setLoading(false)
+  }, [getAllBooks])
 
   return (
     <div className='card mb-5 mb-xl-8'>
@@ -55,23 +53,21 @@ export default function BooksTable({ getAllUsers }: Props) {
                 <th className='text-dark min-w-100px'>Preço</th>
                 <th className='text-dark min-w-150px'>Autor</th>
                 <th className='text-dark min-w-100px'>Estoque</th>
-                <th className='text-dark min-w-100px'>Ativo</th>
-                <th className='text-dark min-w-100px'>Ação</th>
                 <th className='text-dark min-w-150px text-end rounded-end' />
               </tr>
             </thead>
 
             <tbody>
               {!loading &&
-                users?.map((item) => (
-                  <MakeUserRow
+                books?.map((item) => (
+                  <MakeBookRow
                     key={item.id}
                     id={item.id}
-                    name={item.name}
-                    email={item.email}
-                    birthDate={dateMask(item.birthDate)}
-                    cpf={cpfMask(item.cpf)}
-                    address={addressMask(item.address[0])}
+                    title={item.title}
+                    description={item.description}
+                    price={dateMask(item.price)}
+                    author={item.author}
+                    inventory={item.inventory}
                   />
                 ))}
             </tbody>

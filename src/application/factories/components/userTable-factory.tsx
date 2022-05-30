@@ -1,7 +1,7 @@
-import BooksTable from '../../../layout/components/tables/books-list'
+import UsersTable from '../../../layout/components/tables/users-list'
 
 import { makeRemoteGetAllUsers } from '../usecases/remote-getAllUsers-factory'
 
 export const MakeUserTable = () => {
-  return <BooksTable getAllUsers={makeRemoteGetAllUsers()} />
+  return <UsersTable getAllUsers={makeRemoteGetAllUsers()} />
 }

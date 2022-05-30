@@ -2,7 +2,8 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
-import { MakeUserTable } from '../../application/factories/components/userTable-factory'
+
+import { MakeBookTable } from '../../application/factories/components/createBook-factory'
 
 const Users: NextPage = () => {
   return (
@@ -18,7 +19,7 @@ const Users: NextPage = () => {
           <HeaderWrapper title='Livros' />
 
           <div id='kt_content_container' className='container'>
-            {MakeUserTable()}
+            {MakeBookTable()}
           </div>
         </div>
       </div>
