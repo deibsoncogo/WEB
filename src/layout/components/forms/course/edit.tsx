@@ -21,12 +21,7 @@ import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCou
 import { ICourseResponse } from '../../../../interfaces/api-response/courseResponse'
 import { currenceMaskOnlyValue } from '../../../formatters/currenceFormatter'
 import { UpdateCourse } from '../../../../domain/models/updateCourse'
-import dynamic from 'next/dynamic'
-import 'react-quill/dist/quill.snow.css'
-
-const QuillNoSSRWrapper = dynamic(import('react-quill'), {	
-	ssr: false
-	})
+import { InputImage } from '../../inputs/input-image'
 
 type Props = {
   updateCourse: IUpdateCourse
@@ -144,9 +139,7 @@ export function FormUpdateCourse(props: Props) {
 
     const course = new UpdateCourse(defaultValue?.id, data.name, data.description, data.content,
                 data.categoryId, discount, "teste1.jpg", 3,defaultValue?.isActive, price, data.userId)
-  
-    console.log(course)
-   
+     
      props.updateCourse      
        .update(course)
        .then(() => {
@@ -159,7 +152,7 @@ export function FormUpdateCourse(props: Props) {
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
       <h3 className='mb-5'>Informações do Curso</h3>
-      {/* <InputImage name='photo' /> */}
+      <InputImage name='photo' />
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-50'>
           <Input name='name' label='Nome' />
@@ -226,8 +219,7 @@ export function FormUpdateCourse(props: Props) {
       <h3 className='mb-5 mt-5'>Conteúdo e Materiais do Curso</h3>
       <h5 className='mb-5 mt-5 text-muted'>Conteúdo Prográmatico do Curso</h5>
       
-      <QuillNoSSRWrapper  theme="snow" />
-      
+        
       <TextArea name='content' rows={10} />
          
       <div className='d-flex mt-10'>
