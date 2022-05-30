@@ -1,3 +1,5 @@
 export * from './input'
 export * from './input-mask'
 export * from './select'
+export * from './datepicker'
+export * from './textarea'

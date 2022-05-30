@@ -11,6 +11,9 @@ function AsideDefault() {
   const { classes, config } = useLayout()
   const { aside } = config
 
+  const name = localStorage.getItem('name')    
+  const email = localStorage.getItem('email')
+
   return (
     <div
       id='kt_aside'
@@ -59,8 +62,8 @@ function AsideDefault() {
           data-bs-dismiss-='click'
         >
           <div className='btn-label'>
-            <h3 className='text-white'>Usuário xxx</h3>
-            <span className='text-gray-500'>usuário-xxx@email.com</span>
+            <h3 className='text-white'>{name}</h3>
+            <span className='text-gray-500'>{email}</span>
           </div>
 
           <span className='svg-icon btn-icon svg-icon-2'>

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -8,6 +8,10 @@ import { FormHandles } from '@unform/core'
 
 import { Input } from '../inputs'
 import { api } from '../../../application/services/api'
+
+import { IAuthResponse } from '../../../interfaces/api-response/authResponse'
+import jwtDecode from 'jwt-decode'
+import { IToken } from '../../../interfaces/application/token'
 
 export function FormLogin() {
   const router = useRouter()
@@ -23,7 +27,7 @@ export function FormLogin() {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         email: Yup.string().email('Insira um email válido.').required('Email é nescessário.'),
-        password: Yup.string().required('Senha é nescessária'),
+        password: Yup.string().required('Senha é necessária'),
       })
       await schema.validate(data, { abortEarly: false })
 
@@ -44,17 +48,21 @@ export function FormLogin() {
     setHasError(false)
     try {
       const response = await api.post('/auth/admin/login', data)
+      const result: IAuthResponse = response.data.data
+      localStorage.setItem('name', result.name)
+      localStorage.setItem('email', result.email)
+      localStorage.setItem('access_token', result.accessToken)
+      localStorage.setItem('expiration', jwtDecode<IToken>(result.accessToken).exp)
       router.push('/dashboard')
     } catch (err: any) {
+      console.log(err)
       setHasError(true)
-      if (err.response.status === 500) {
+      if (err?.response?.status === 500) {
         setMessage(err.message)
         return
       }
-      if (Array.isArray(err.response.data.message))
-        setMessage(err.response.data.message[0])
-      else
-        setMessage(err.response.data.message)
+      if (Array.isArray(err.response.data.message)) setMessage(err.response.data.message[0])
+      else setMessage(err.response.data.message)
     }
   }
 
