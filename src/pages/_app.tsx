@@ -17,6 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
+      <ToastContainer theme='light' autoClose={3000}/>
       <LayoutProvider>
         <PageDataProvider>
           {unprotectedRoutes.includes(currentPath) ? (
@@ -27,7 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             </AuthWrapper>
           )}
         </PageDataProvider>
-      <ToastContainer theme='colored' />
+      
       </LayoutProvider>
     </Suspense>
   )

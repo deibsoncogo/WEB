@@ -3,20 +3,26 @@ import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
 import { useEffect, useState } from 'react'
 import { IGetAllCourses } from '../../../../domain/usecases/interfaces/course/getAllCourses'
-import { IPartialCourseResponse } from '../../../../interfaces/api-response/courseResponse'
+import { IPartialCourseResponse } from '../../../../interfaces/api-response/coursePartialResponse'
 import { currenceMask } from '../../../formatters/currenceFormatter'
 import { toast } from 'react-toastify'
 import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
 import { Row } from './row'
+import { apiPaginationResponse } from '../../../../interfaces/api-response/apiPaginationResponse'
+import { object } from 'yup'
+import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
+import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
 
 type Props =  {
   getAllCourses: IGetAllCourses
   deleteCourse: IDeleteCourse
+  updateCourse: IUpdateCourse
+  getCourse: IGetCourse
 }
 
 export default function CoursesTable(props: Props) {
 
-  const [courses, setCourses] = useState<IPartialCourseResponse[]>([])
+  const [courses, setCourses] = useState<apiPaginationResponse<IPartialCourseResponse>>(Object)
   const [loading, setLoading] = useState(true)
   const [refresher, setRefresher] = useState(true)
 
@@ -25,14 +31,14 @@ export default function CoursesTable(props: Props) {
     setRefresher(!refresher);
   }
 
-    useEffect(() => {         
+    useEffect(() => {     
       props.getAllCourses
         .getAll()
-        .then((data) => {
-          setCourses(data)
+        .then((data) => {   
+         setCourses(data)
         })
         .catch((error) => toast.error("Não foi possível listar os cursos."))
-       .finally(() => setLoading(false))
+        .finally(() => setLoading(false))
     }, [refresher])
 
   return (
@@ -42,7 +48,7 @@ export default function CoursesTable(props: Props) {
           <Search onChangeText={() => null} />
         </h3>
         <div className='card-toolbar'>
-          <Link href='/Courses/create'>
+          <Link href='/courses/create'>
             <a className='btn btn-sm btn-light-primary'>
               <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
               Novo Curso
@@ -68,7 +74,7 @@ export default function CoursesTable(props: Props) {
 
             { <tbody>
               {!loading &&
-                courses?.map((item) => (
+                courses.data?.map((item) => (
                   <Row
                     key={item.id}
                     id={item.id}
@@ -79,6 +85,8 @@ export default function CoursesTable(props: Props) {
                     teacher={item.teacherName}
                     active={item.isActive}
                     deleteCourse = {props.deleteCourse}
+                    updateCourse =  {props.updateCourse}
+                    getCourse =  {props.getCourse}
                     handleRefresher={handleRefresher}                   
                   />
                 ))}
