@@ -45,9 +45,7 @@ export default function CoursesTable(props: Props) {
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
-          <Search onChangeText={function (text: string): void {
-            throw new Error('Function not implemented.')
-          } } />
+          <Search onChangeText={() => null} />
         </h3>
         <div className='card-toolbar'>
           <Link href='/courses/create'>
