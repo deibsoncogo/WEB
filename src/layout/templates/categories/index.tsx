@@ -47,7 +47,7 @@ function CategoriesTemplate({
   remoteDeleteCategory,
   remoteUpdateCategory,
 }: Props) {
-  const [filters, setFilters] = useState<Partial<Category>>({} as Category)
+  const [categoryName, setCategoryName] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState<Category | undefined>()
   const [isDrawerCreateCategoryOpen, setIsDrawerCreateCategoryOpen] = useState(false)
@@ -56,7 +56,7 @@ function CategoriesTemplate({
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
   const { take, currentPage } = pagination
-  const paginationParams: GetCategoriesParams = { page: currentPage, take, filters }
+  const paginationParams: GetCategoriesParams = { page: currentPage, take, name: categoryName }
 
   const createCategoryFormRef = useRef<FormHandles>(null)
   const updateCategoryFormRef = useRef<FormHandles>(null)
@@ -115,7 +115,7 @@ function CategoriesTemplate({
   }
 
   const handleSearchCategory = debounce((text: string) => {
-    setFilters({ name: text })
+    setCategoryName(text)
   })
 
   const handleDeleteCategory = () => {
@@ -168,7 +168,7 @@ function CategoriesTemplate({
   }, [
     pagination.take,
     pagination.currentPage,
-    filters,
+    categoryName,
     categorySuccessfullDeleted,
     categorySuccessfullUpdated,
     categoryCreated,
