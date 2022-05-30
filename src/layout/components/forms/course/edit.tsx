@@ -30,6 +30,7 @@ type Props = {
   getCategories: IGetCategoriesNoPagination
   getUsers: IGetAllUsersByRole
   getCourse: IGetCourse
+  id: string| string[] | undefined
 }
 
 export function FormUpdateCourse(props: Props) {
@@ -42,14 +43,17 @@ export function FormUpdateCourse(props: Props) {
   const [stateEditor, setStateEditor] = useState({ content: '' })
 
   useEffect(() => {
-    props.getCourse
-      .get()
-      .then((data) => {        
-        setDefaultValue(data)
-        setStateEditor({ content: data.content })
-      })
-      .catch((error) => toast.error('Não foi possível carregar o curso.'))
-      .finally(() => setLoading(false))
+    
+    if(typeof props.id == "string"){
+      props.getCourse
+        .get(props.id)
+        .then((data) => {        
+          setDefaultValue(data)
+          setStateEditor({ content: data.content })
+        })
+        .catch((error) => toast.error('Não foi possível carregar o curso.'))
+        .finally(() => setLoading(false))
+      }
   }, [])
 
   useEffect(() => {

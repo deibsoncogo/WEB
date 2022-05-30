@@ -1,21 +1,35 @@
 import { useState } from "react"
+import { toast } from "react-toastify"
+import { UpdateCourse } from "../../../domain/models/updateCourse"
+import { IGetCourse } from "../../../domain/usecases/interfaces/course/getCourse"
+import { IUpdateCourse } from "../../../domain/usecases/interfaces/course/upDateCourse"
 import { ActionModal } from "../modals/action"
 
+interface ISwitch {
+  active: boolean
+  updateCourse: IUpdateCourse
+  getCourse: IGetCourse
+  id: string
+  
+}
 
-
-export function Switch({ id, active }: any) {
+export function Switch(props: ISwitch) {
   const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false)
-  const [isActive, setIsActive] = useState(active);  
+  const [isActive, setIsActive] = useState(props.active);  
 
   async function handleUpdateCourse() {
-    // try {
-    //   await props.deleteCourse.delete(props.id)
-    //   setIsModalDeleteOpen(false)
-    //   toast.success("Curso atualizado com sucesso.")
-    //   props.handleRefresher()
-    // } catch (err) {
-    //        toast.error("Não foi possível atualizar o curso.")
-    // }
+     try {
+       const course = await props.getCourse.get(props.id)       
+      
+       const courseUpdate = new UpdateCourse(course.id, course.name, course. description, course.content,
+       course.categoryId, parseFloat(course.discount), course.image,  parseInt(course.installments), !isActive,  parseFloat(course.price), course.userId)
+       await props.updateCourse.update(courseUpdate);     
+       setIsModalUpdateOpen(false)
+       setIsActive(!isActive)
+       toast.success("Curso atualizado com sucesso.")
+       } catch (err) {
+       toast.error("Não foi possível atualizar o curso.")
+    }
   }
   return (
     <>
@@ -26,7 +40,6 @@ export function Switch({ id, active }: any) {
          }} 
           className='form-check-input'
           type='checkbox'
-          id = {id}
           checked={isActive}         
         />
        </div>

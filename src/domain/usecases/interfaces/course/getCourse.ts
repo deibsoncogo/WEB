@@ -4,6 +4,6 @@ import { ICourseResponse } from "../../../../interfaces/api-response/courseRespo
 
 
 export interface IGetCourse {
-    get:() => Promise<ICourseResponse>
+    get:(id: string) => Promise<ICourseResponse>
 }
 

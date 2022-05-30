@@ -5,6 +5,8 @@ import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/del
 import { KTSVG } from '../../../../helpers'
 import { Switch } from '../../inputs/switch'
 import { ActionModal } from '../../modals/action'
+import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
+import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
 
 
 interface IRow {
@@ -16,6 +18,8 @@ interface IRow {
   teacher: string
   active: boolean
   deleteCourse: IDeleteCourse
+  updateCourse: IUpdateCourse
+  getCourse: IGetCourse
   handleRefresher: () => void; 
 }
 
@@ -35,18 +39,7 @@ export function Row(props: IRow) {
     }
   }
 
-  async function handleUpdateCourse() {
-    try {
-      await props.deleteCourse.delete(props.id)
-      setIsModalDeleteOpen(false)
-      toast.success("Curso atualizado com sucesso.")
-      props.handleRefresher()
-    } catch (err) {
-           toast.error("Não foi possível atualizar o curso.")
-    }
-  }
-
-
+  
   return (
     <tr>
       <td className='ps-4'>
@@ -67,8 +60,10 @@ export function Row(props: IRow) {
       <td>
             
       <Switch       
-        id={props.id}
+        updateCourse =  {props.updateCourse}
+        getCourse =  {props.getCourse}
         active={props.active}
+        id = {props.id}
       />
      
       </td>

@@ -12,9 +12,9 @@ export class RemoteGetCourse implements IGetCourse {
     private readonly httpClient: HttpClient<ICourseResponse>
   ) {}
 
-  async get() {
+  async get(id: string) {
     const httpResponse = await this.httpClient.request({
-      url: this.url,
+      url: `${this.url}/${id}`,
       method: 'get',
     })
  

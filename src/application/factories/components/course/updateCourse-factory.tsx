@@ -12,7 +12,8 @@ export const MakeFormUpdateCourse= (query: param) => {
     return (<FormUpdateCourse updateCourse={makeRemoteUpdateCourse()} 
      getCategories = {makeRemoteGetCategoriesNoPagination()}
      getUsers = {makeRemoteGetAllUsersByRole()}
-     getCourse = {makeRemoteGetCourse(query.id)}     
+     id = {query.id}
+     getCourse = {makeRemoteGetCourse()}     
      /> );
   };
   

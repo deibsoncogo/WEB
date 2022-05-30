@@ -10,10 +10,14 @@ import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/del
 import { Row } from './row'
 import { apiPaginationResponse } from '../../../../interfaces/api-response/apiPaginationResponse'
 import { object } from 'yup'
+import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
+import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
 
 type Props =  {
   getAllCourses: IGetAllCourses
   deleteCourse: IDeleteCourse
+  updateCourse: IUpdateCourse
+  getCourse: IGetCourse
 }
 
 export default function CoursesTable(props: Props) {
@@ -23,11 +27,12 @@ export default function CoursesTable(props: Props) {
   const [refresher, setRefresher] = useState(true)
 
 
-  function handleRefresher() {    
+  function handleRefresher() { 
+    setLoading(true)
     setRefresher(!refresher);
   }
 
-    useEffect(() => {         
+    useEffect(() => {     
       props.getAllCourses
         .getAll()
         .then((data) => {   
@@ -83,6 +88,8 @@ export default function CoursesTable(props: Props) {
                     teacher={item.teacherName}
                     active={item.isActive}
                     deleteCourse = {props.deleteCourse}
+                    updateCourse =  {props.updateCourse}
+                    getCourse =  {props.getCourse}
                     handleRefresher={handleRefresher}                   
                   />
                 ))}
