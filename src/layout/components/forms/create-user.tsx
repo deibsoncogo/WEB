@@ -5,12 +5,12 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { findCEP } from '../../../utils/findCep'
+import { findCEP } from '../../../utils/findCEP'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { Address } from '../../../domain/models/address'
 import { UserSignUp } from '../../../domain/models/userSignUp'
 import { levelOptions, roleOptions } from '../../../utils/selectOptions'
-import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUP'
+import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
 import { toast } from 'react-toastify'
 
 type Props = {
@@ -141,7 +141,7 @@ export function FormCreateUser({ userRegister }: Props) {
             name='zipCode'
             label='CEP'
             mask='99999-999'
-            onChange={() => {
+            onChange={async () => {
               findCEP(formRef.current?.getData().zipCode, setDefaultValue)
             }}
           />

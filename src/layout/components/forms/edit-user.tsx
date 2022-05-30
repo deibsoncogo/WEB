@@ -11,9 +11,9 @@ import { levelOptions, roleOptions } from '../../../utils/selectOptions'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { api } from '../../../application/services/api'
 import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
-import { findCEP } from '../../../utils/findCep'
-import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
+import { findCEP } from '../../../utils/findCEP'
 import { toast } from 'react-toastify'
+import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
 
 type IFormEditUser = {
   id: string
@@ -183,7 +183,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
             name='zipCode'
             label='CEP'
             mask='99999-999'
-            onChange={() => {
+            onChange={async () => {
               findCEP(formRef.current?.getData().zipCode, setDefaultValue)
             }}
           />

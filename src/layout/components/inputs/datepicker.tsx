@@ -67,7 +67,7 @@ export function DatePicker({ name, label, ...rest }: Props) {
 
             <select
               value={date.getFullYear()}
-              onChange={({ target: { value } }) => changeYear(value)}
+              onChange={({ target: { value } }) => changeYear(parseInt(value))}
             >
               {years.map((option) => (
                 <option key={option} value={option}>
