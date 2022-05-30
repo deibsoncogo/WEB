@@ -36,10 +36,10 @@ export function Input({ name, label, placeholderText, onChange, ...rest }: IInpu
   function switchType() {
     if (!inputRef) return
 
-    if (inputRef.current.type === 'text') {
+    if (inputRef?.current?.type === 'text') {
       inputRef.current.type = 'password'
       setIsEyeVisible(true)
-    } else if (inputRef.current.type === 'password') {
+    } else if (inputRef?.current?.type === 'password') {
       inputRef.current.type = 'text'
       setIsEyeVisible(false)
     }
@@ -53,8 +53,8 @@ export function Input({ name, label, placeholderText, onChange, ...rest }: IInpu
         </label>
       )}
 
-      <p className='form-control bg-secondary d-flex align-items-center form-control-lg p-0'>
-        <input
+      {name != 'content'? (<p className='form-control bg-secondary d-flex align-items-center form-control-lg p-0'>
+      <input
           className='form-control form-control-lg form-control-solid border-transparent bg-secondary'
           type='text'
           name={name}
@@ -71,8 +71,17 @@ export function Input({ name, label, placeholderText, onChange, ...rest }: IInpu
         {rest.type === 'password' && !isEyeVisible && (
           <AiFillEyeInvisible size={24} className='me-2' onClick={switchType} />
         )}
-      </p>
-
+      </p>)
+      
+      : ( <input
+          type='text'
+          hidden = {true}
+          name={name}
+          ref={inputRef}
+          defaultValue={defaultValue}
+          {...rest}
+      />)
+      }
       {error && <span className='text-danger'>{error}</span>}
     </div>
   )

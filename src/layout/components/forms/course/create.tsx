@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
-import { FormHandles } from '@unform/core'
+import { FormHandles, useField } from '@unform/core'
 
 import { KTSVG } from '../../../../helpers'
 import { levelOptions } from '../../../../utils/selectOptions'
@@ -90,15 +90,15 @@ export function FormCreateCourse(props: Props) {
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
-        content:Yup.string().required('Conteúdo progrmático é necessário'),  
-        userIdt:Yup.string().optional()  })
+        content:Yup.string().required('Conteúdo programático é necessário'),  
+        userId:Yup.string().optional()  })
 
+      data.content= stateEditor.content      
       await schema.validate(data, { abortEarly: false })
       handleCreateCourse(data)
 
     } catch (err) {
-      console.log(err)
-   
+      
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
@@ -117,20 +117,19 @@ export function FormCreateCourse(props: Props) {
     let price = matchesPrice? parseInt(matchesPrice?.join('')): undefined
 
     let matchesDiscount = data.discount.split(',')[0].match(/\d*/g)
-    let discount = matchesDiscount? parseInt(matchesDiscount?.join('')): undefined
-
+    let discount = matchesDiscount? parseInt(matchesDiscount?.join('')): undefined  
 
     const course = new CreateCourse(data.name, data.description, data.content,
-                data.categoryId, discount, "teste.jpg", 3, false, price, data.userId)
+                 data.categoryId, discount, "teste.jpg", 3, false, price, data.userId)
   
    
-     props.createCourse
-       .create(course)
-       .then(() => {
-        toast.success("Curso criado com sucesso!")
-        router.push('/courses')
-        })
-       .catch((error: any) => console.log(error))
+      props.createCourse
+        .create(course)
+        .then(() => {
+         toast.success("Curso criado com sucesso!")
+         router.push('/courses')
+         })
+        .catch((error: any) => console.log(error))
   }
 
   return (
@@ -195,7 +194,9 @@ export function FormCreateCourse(props: Props) {
     contextmenu: 'link image table',
     
   }}  value= {stateEditor.content} onEditorChange={handleChange}/>
-  
+
+  <Input  name='content'  />
+    
     <div className='d-flex mt-10'>
         <button
           type='button'
