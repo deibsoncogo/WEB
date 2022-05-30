@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { MakeFormCreateBook } from '../../application/factories/components/createBook-factory'
 import { MakeFormCreateUser } from '../../application/factories/components/createUser-factory'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
@@ -19,7 +20,7 @@ const Books: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              {MakeFormCreateUser()}
+              {MakeFormCreateBook()}
             </div>
           </div>
         </div>

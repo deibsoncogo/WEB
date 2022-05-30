@@ -34,7 +34,7 @@ export default function BooksTable({ getAllBooks }: Props) {
           <Search />
         </h3>
         <div className='card-toolbar'>
-          <Link href='/users/create'>
+          <Link href='/books/create'>
             <a className='btn btn-sm btn-light-primary'>
               <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
               Novo Livro

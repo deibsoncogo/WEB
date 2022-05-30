@@ -1,5 +1,6 @@
 import { IBookResponse } from '../../../interfaces/api-response/bookResponse'
-
+import { makeRemoteSignUp } from '../usecases/remote-signUp-factory'
+import { FormCreateBook } from '../../../layout/components/forms/create-book'
 import { makeApiUrl, makeAxiosHttpClient } from '../http'
 import { RemoteDeleteBook } from '../../../data/usecases/book/remote-deleteBook'
 import { Row } from '../../../layout/components/tables/books-list/row'
@@ -36,6 +37,10 @@ export const MakeBookTable = () => {
     },
   ]
   return <BooksTable getAllBooks={data} />
+}
+
+export const MakeFormCreateBook = () => {
+  return <FormCreateBook />
 }
 
 export function MakeBookRow({ id, author, description, inventory, price, title }: IBookResponse) {
