@@ -20,18 +20,29 @@ interface IRow {
 }
 
 export function Row(props: IRow) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [value, setValue] = useState(props.active);
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
+  
 
   
   async function handleDeleteCourse() {
     try {
       await props.deleteCourse.delete(props.id)
-      setIsModalOpen(false)
+      setIsModalDeleteOpen(false)
       toast.success("Curso deletado com sucesso.")
       props.handleRefresher()
     } catch (err) {
            toast.error("Não foi possível deletear o curso.")
+    }
+  }
+
+  async function handleUpdateCourse() {
+    try {
+      await props.deleteCourse.delete(props.id)
+      setIsModalDeleteOpen(false)
+      toast.success("Curso atualizado com sucesso.")
+      props.handleRefresher()
+    } catch (err) {
+           toast.error("Não foi possível atualizar o curso.")
     }
   }
 
@@ -54,10 +65,12 @@ export function Row(props: IRow) {
         <span className='text-dark fw-bold d-block fs-7'>{props.teacher}</span>
       </td>
       <td>
-      <Switch
-        isOn={value}
-        handleToggle={() => setValue(!value)}
+            
+      <Switch       
+        id={props.id}
+        active={props.active}
       />
+     
       </td>
       <td className='text-end'>
       <Link href={`/courses/edit/${props.id}`}>
@@ -68,7 +81,7 @@ export function Row(props: IRow) {
             
         <button
           onClick={() => {
-            setIsModalOpen(true)
+            setIsModalDeleteOpen(true)
           }}
           className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
         >
@@ -77,14 +90,16 @@ export function Row(props: IRow) {
       </td>   
 
       <ActionModal
-        isOpen={isModalOpen}
+        isOpen={isModalDeleteOpen}
         modalTitle = "Deletar"
         message = "Você tem certeza que deseja excluir este curso?"
         action={handleDeleteCourse}
         onRequestClose={() => {
-          setIsModalOpen(false)
+          setIsModalDeleteOpen(false)
         }}
       />
+
+      
     </tr>
   )
 }
