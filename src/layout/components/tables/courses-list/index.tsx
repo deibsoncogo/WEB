@@ -27,8 +27,7 @@ export default function CoursesTable(props: Props) {
   const [refresher, setRefresher] = useState(true)
 
 
-  function handleRefresher() { 
-    setLoading(true)
+  function handleRefresher() {    
     setRefresher(!refresher);
   }
 
