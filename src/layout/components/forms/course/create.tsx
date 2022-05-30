@@ -20,9 +20,7 @@ import { IUserPartialResponse } from '../../../../interfaces/api-response/userPa
 import { roles } from '../../../../application/wrappers/authWrapper'
 import { UserQueryRole } from '../../../../domain/models/userQueryRole'
 import { CreateCourse } from '../../../../domain/models/createCourse'
-
-
-
+import { Editor } from "@tinymce/tinymce-react";
 
 type Props = {
   createCourse: ICreateCourse
@@ -35,9 +33,14 @@ export function FormCreateCourse(props: Props) {
   const formRef = useRef<FormHandles>(null)
   const [categories, setCategories] = useState<ICategory[]>([])
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
-  const [defaultValue, setDefaultValue] = useState({})
   const [loading, setLoading] = useState(true)
+  const[stateEditor, setStateEditor] = useState({ content: "" })
+ 
+  function handleChange(event:any) {
+    setStateEditor({content: event});
+  }
 
+  
   useEffect(() => {     
     console.log( props.getCategories)    
     props.getCategories
@@ -131,7 +134,7 @@ export function FormCreateCourse(props: Props) {
   }
 
   return (
-    <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+    <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
       <h3 className='mb-5'>Informações do Curso</h3>
       {/* <InputImage name='photo' /> */}
       <div className='d-flex flex-row gap-5 w-100'>
@@ -180,10 +183,20 @@ export function FormCreateCourse(props: Props) {
 
       <h3 className='mb-5 mt-5'>Conteúdo e Materiais do Curso</h3>
       <h5 className='mb-5 mt-5 text-muted'>Conteúdo Prográmatico do Curso</h5>
-      
-      <TextArea name='content' rows={10} />
-         
-      <div className='d-flex mt-10'>
+
+    <Editor init={{    
+    plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',
+    menubar: false,
+    toolbar: 'undo redo | bold italic underline strikethrough | fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+    toolbar_sticky: true,
+    height: 300,
+    quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+    noneditable_class: 'mceNonEditable',    
+    contextmenu: 'link image table',
+    
+  }}  value= {stateEditor.content} onEditorChange={handleChange}/>
+  
+    <div className='d-flex mt-10'>
         <button
           type='button'
           onClick={() => {

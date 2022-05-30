@@ -21,7 +21,12 @@ import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCou
 import { ICourseResponse } from '../../../../interfaces/api-response/courseResponse'
 import { currenceMaskOnlyValue } from '../../../formatters/currenceFormatter'
 import { UpdateCourse } from '../../../../domain/models/updateCourse'
+import dynamic from 'next/dynamic'
+import 'react-quill/dist/quill.snow.css'
 
+const QuillNoSSRWrapper = dynamic(import('react-quill'), {	
+	ssr: false
+	})
 
 type Props = {
   updateCourse: IUpdateCourse
@@ -163,12 +168,19 @@ export function FormUpdateCourse(props: Props) {
               {defaultValue.teacherName}
             </option>: <option value='' disabled selected>
               Selecione
-            </option>}           
-            {users.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
+            </option>}  
+            {
+              users.map(option => {
+                if(defaultValue?.userId){
+                    if(option.id != defaultValue.userId){
+                    return (<option key={option.id} value={option.id}>
+                    {option.name}
+                    </option>)
+                    }
+                }
+              })
+            }         
+        
           </Select>
           <Input name='time' label='Tempo de acesso ao curso (em meses)' />
           <Input
@@ -195,18 +207,26 @@ export function FormUpdateCourse(props: Props) {
               {findCategoryById(defaultValue.categoryId)?.name}
             </option>: <option value='' disabled selected>
               Selecione
-            </option>}           
-            {categories.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
+            </option>}  
+            {
+              categories.map(option => {
+                if(defaultValue?.categoryId){
+                    if(option.id != defaultValue.categoryId){
+                    return (<option key={option.id} value={option.id}>
+                    {option.name}
+                    </option>)
+                    }
+                }
+              })
+            }   
           </Select>
         </div>
       </div>
 
       <h3 className='mb-5 mt-5'>Conteúdo e Materiais do Curso</h3>
       <h5 className='mb-5 mt-5 text-muted'>Conteúdo Prográmatico do Curso</h5>
+      
+      <QuillNoSSRWrapper  theme="snow" />
       
       <TextArea name='content' rows={10} />
          
