@@ -34,7 +34,9 @@ const CreateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) =
           <CustomButton
             customClasses={['btn-secondary', 'mb-5', 'px-20']}
             title='Cancelar'
+            type='button'
             loading={loading}
+            onClick={close}
           />
         </div>
       </div>
