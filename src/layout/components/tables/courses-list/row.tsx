@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
 import { KTSVG } from '../../../../helpers'
 import { Switch } from '../../inputs/switch'
 import { ActionModal } from '../../modals/action'
+import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
+import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
 
 
 interface IRow {
@@ -15,18 +18,20 @@ interface IRow {
   teacher: string
   active: boolean
   deleteCourse: IDeleteCourse
+  updateCourse: IUpdateCourse
+  getCourse: IGetCourse
   handleRefresher: () => void; 
 }
 
 export function Row(props: IRow) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [value, setValue] = useState(props.active);
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
+  
 
   
   async function handleDeleteCourse() {
     try {
       await props.deleteCourse.delete(props.id)
-      setIsModalOpen(false)
+      setIsModalDeleteOpen(false)
       toast.success("Curso deletado com sucesso.")
       props.handleRefresher()
     } catch (err) {
@@ -34,7 +39,7 @@ export function Row(props: IRow) {
     }
   }
 
-
+  
   return (
     <tr>
       <td className='ps-4'>
@@ -53,19 +58,25 @@ export function Row(props: IRow) {
         <span className='text-dark fw-bold d-block fs-7'>{props.teacher}</span>
       </td>
       <td>
-      <Switch
-        isOn={value}
-        handleToggle={() => setValue(!value)}
+            
+      <Switch       
+        updateCourse =  {props.updateCourse}
+        getCourse =  {props.getCourse}
+        active={props.active}
+        id = {props.id}
       />
+     
       </td>
       <td className='text-end'>
-        
+      <Link href={`/courses/edit/${props.id}`}>
         <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
           <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
         </button>
+      </Link>
+            
         <button
           onClick={() => {
-            setIsModalOpen(true)
+            setIsModalDeleteOpen(true)
           }}
           className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
         >
@@ -74,14 +85,16 @@ export function Row(props: IRow) {
       </td>   
 
       <ActionModal
-        isOpen={isModalOpen}
+        isOpen={isModalDeleteOpen}
         modalTitle = "Deletar"
         message = "Você tem certeza que deseja excluir este curso?"
         action={handleDeleteCourse}
         onRequestClose={() => {
-          setIsModalOpen(false)
+          setIsModalDeleteOpen(false)
         }}
       />
+
+      
     </tr>
   )
 }

@@ -1,26 +1,29 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { AsideDefault } from '../../layout/components/aside/AsideDefault'
-import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
-import { MakeUserTable } from '../../application/factories/components/userTable-factory'
-import CoursesTable from '../../layout/components/tables/courses-list'
-import { MakeCourseTable } from '../../application/factories/components/course/courseTable-factory'
+import { MakeFormCreateCourse } from '../../application/factories/components/course/createCourse-factory'
 
-const Courses: NextPage = () => {
+import { AsideDefault } from '../../layout/components/aside/AsideDefault'
+import { FormCreateCourse } from '../../layout/components/forms/course/create'
+import { FormCreateTrainings } from '../../layout/components/forms/trainings/create'
+import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
+
+const CreateCourse: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Cursos</title>
+        <title>Criar Curso</title>
       </Head>
 
       <div className='page d-flex flex-row flex-column-fluid'>
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Cursos' />
+          <HeaderWrapper title='Novo Curso' />
 
           <div id='kt_content_container' className='container'>
-          {MakeCourseTable()}
+            <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
+              { MakeFormCreateCourse()}
+            </div>
           </div>
         </div>
       </div>
@@ -28,4 +31,4 @@ const Courses: NextPage = () => {
   )
 }
 
-export default Courses
+export default CreateCourse

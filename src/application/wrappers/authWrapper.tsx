@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { IToken } from '../../interfaces/application/token'
 import jwtDecode from 'jwt-decode'
 
-const roles = { ADMIN: 'admin', TEACHER: 'teacher' }
+export const roles = { ADMIN: 'admin', TEACHER: 'teacher' }
 
 export function AuthWrapper({ children }: any) {
   const [isAuthenticated, setIsAuthenticate] = useState(false)

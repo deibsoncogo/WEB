@@ -6,14 +6,17 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   label?: string
-  onChange?: () => Promise<void>
+  placeholderText?:string
+  onChange?: () => void
+  
+ 
 }
 
-export function Input({ name, label, onChange, ...rest }: IInputProps) {
+export function Input({ name, label, placeholderText, onChange, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const { fieldName, defaultValue = '', registerField, error } = useField(name)
-  const [isEyeVisible, setIsEyeVisible] = useState(true)
-
+  const [isEyeVisible, setIsEyeVisible] = useState(true)  
+ 
   useEffect(() => {
     registerField({
       name: fieldName,
@@ -21,7 +24,7 @@ export function Input({ name, label, onChange, ...rest }: IInputProps) {
       getValue: (ref) => {
         return ref.current.value
       },
-      setValue: (ref, value) => {
+      setValue: (ref, value) => {      
         ref.current.value = value
       },
       clearValue: (ref) => {
@@ -33,10 +36,10 @@ export function Input({ name, label, onChange, ...rest }: IInputProps) {
   function switchType() {
     if (!inputRef) return
 
-    if (inputRef.current.type === 'text') {
+    if (inputRef?.current?.type === 'text') {
       inputRef.current.type = 'password'
       setIsEyeVisible(true)
-    } else if (inputRef.current.type === 'password') {
+    } else if (inputRef?.current?.type === 'password') {
       inputRef.current.type = 'text'
       setIsEyeVisible(false)
     }
@@ -50,11 +53,12 @@ export function Input({ name, label, onChange, ...rest }: IInputProps) {
         </label>
       )}
 
-      <p className='form-control bg-secondary d-flex align-items-center form-control-lg p-0'>
-        <input
+      {name != 'content'? (<p className='form-control bg-secondary d-flex align-items-center form-control-lg p-0'>
+      <input
           className='form-control form-control-lg form-control-solid border-transparent bg-secondary'
           type='text'
           name={name}
+          placeholder={placeholderText}
           ref={inputRef}
           defaultValue={defaultValue}
           onChange={onChange}
@@ -67,8 +71,17 @@ export function Input({ name, label, onChange, ...rest }: IInputProps) {
         {rest.type === 'password' && !isEyeVisible && (
           <AiFillEyeInvisible size={24} className='me-2' onClick={switchType} />
         )}
-      </p>
-
+      </p>)
+      
+      : ( <input
+          type='text'
+          hidden = {true}
+          name={name}
+          ref={inputRef}
+          defaultValue={defaultValue}
+          {...rest}
+      />)
+      }
       {error && <span className='text-danger'>{error}</span>}
     </div>
   )
