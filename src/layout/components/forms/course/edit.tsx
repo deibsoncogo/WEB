@@ -22,6 +22,8 @@ import { ICourseResponse } from '../../../../interfaces/api-response/courseRespo
 import { currenceMaskOnlyValue } from '../../../formatters/currenceFormatter'
 import { UpdateCourse } from '../../../../domain/models/updateCourse'
 import { InputImage } from '../../inputs/input-image'
+import { Editor } from '@tinymce/tinymce-react'
+import { time } from 'console'
 
 type Props = {
   updateCourse: IUpdateCourse
@@ -37,50 +39,47 @@ export function FormUpdateCourse(props: Props) {
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
   const [defaultValue, setDefaultValue] = useState<ICourseResponse>()
   const [loading, setLoading] = useState(true)
+  const [stateEditor, setStateEditor] = useState({ content: '' })
 
- 
-  useEffect(() => {     
-     
+  useEffect(() => {
     props.getCourse
       .get()
-      .then((data) => {  
-        console.log(data)    
+      .then((data) => {        
         setDefaultValue(data)
+        setStateEditor({ content: data.content })
       })
-      .catch((error) => toast.error("Não foi possível carregar o curso."))
+      .catch((error) => toast.error('Não foi possível carregar o curso.'))
       .finally(() => setLoading(false))
   }, [])
-  
 
-  useEffect(() => {     
-   
+  useEffect(() => {
     props.getCategories
       .get()
-      .then((data) => { 
-       
+      .then((data) => {
         setCategories(data)
       })
-      .catch((error) => toast.error("Não foi possível carregar as categorias de cursos."))
+      .catch((error) => toast.error('Não foi possível carregar as categorias de cursos.'))
       .finally(() => setLoading(false))
   }, [])
 
-  useEffect(() => {   
-    const userQuery = new UserQueryRole(roles.TEACHER)      
+  useEffect(() => {
+    const userQuery = new UserQueryRole(roles.TEACHER)
     props.getUsers
       .getAllByRole(userQuery)
-      .then((data) => {         
+      .then((data) => {
         setUsers(data)
       })
-      .catch((error) => toast.error("Não foi possível carregar os Professores."))
+      .catch((error) => toast.error('Não foi possível carregar os Professores.'))
       .finally(() => setLoading(false))
   }, [])
- 
 
   const findCategoryById = (id: string) => {
-    return categories.find(category => category.id == id)
+    return categories.find((category) => category.id == id)
   }
 
-  
+  function handleChange(event: any) {
+    setStateEditor({ content: event })
+  }
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
@@ -95,7 +94,7 @@ export function FormUpdateCourse(props: Props) {
     }
     formRef.current?.setFieldValue(name, value)
     if (value == 'NaN') formRef.current?.setFieldValue(name, '')
-  }  
+  }
 
   async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
@@ -103,19 +102,18 @@ export function FormUpdateCourse(props: Props) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é necessário'),       
+        name: Yup.string().required('Nome é necessário'),
         price: Yup.string().required('Preço é necessário'),
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
-        content:Yup.string().required('Conteúdo progrmático é necessário'),  
-        userId:Yup.string().optional()  })
-
+        content: Yup.string().required('Conteúdo progrmático é necessário'),
+        userId: Yup.string().optional(),
+      })
+      data.content= stateEditor.content  
       await schema.validate(data, { abortEarly: false })
       handleUpdateCourse(data)
-
     } catch (err) {
-    
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
@@ -128,24 +126,32 @@ export function FormUpdateCourse(props: Props) {
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
-    
-    
     let matchesPrice = data.price.split(',')[0].match(/\d*/g)
-    let price = matchesPrice? parseInt(matchesPrice?.join('')): undefined
+    let price = matchesPrice ? parseInt(matchesPrice?.join('')) : undefined
 
     let matchesDiscount = data.discount.split(',')[0].match(/\d*/g)
-    let discount = matchesDiscount? parseInt(matchesDiscount?.join('')): undefined
+    let discount = matchesDiscount ? parseInt(matchesDiscount?.join('')) : undefined
 
+    const course = new UpdateCourse(
+      defaultValue?.id,
+      data.name,
+      data.description,
+      data.content,
+      data.categoryId,
+      discount,
+      'teste1.jpg',
+      3,
+      defaultValue?.isActive,
+      price,
+      data.userId
+    )
 
-    const course = new UpdateCourse(defaultValue?.id, data.name, data.description, data.content,
-                data.categoryId, discount, "teste1.jpg", 3,defaultValue?.isActive, price, data.userId)
-     
-     props.updateCourse      
-       .update(course)
-       .then(() => {
-        toast.success("Curso atualizado com sucesso!")
+    props.updateCourse
+      .update(course)
+      .then(() => {
+        toast.success('Curso atualizado com sucesso!')
         router.push('/courses')
-       })
+      })
       .catch((error: any) => console.log(error))
   }
 
@@ -157,23 +163,24 @@ export function FormUpdateCourse(props: Props) {
         <div className='w-50'>
           <Input name='name' label='Nome' />
           <Select name='userId' label='Professor'>
-            {defaultValue?.userId?  <option value={defaultValue.userId}>
-              {defaultValue.teacherName}
-            </option>: <option value='' disabled selected>
-              Selecione
-            </option>}  
-            {
-              users.map(option => {
-                if(defaultValue?.userId){
-                    if(option.id != defaultValue.userId){
-                    return (<option key={option.id} value={option.id}>
-                    {option.name}
-                    </option>)
-                    }
+            {defaultValue?.userId ? (
+              <option value={defaultValue.userId}>{defaultValue.teacherName}</option>
+            ) : (
+              <option value='' disabled selected>
+                Selecione
+              </option>
+            )}
+            {users.map((option) => {
+              if (defaultValue?.userId) {
+                if (option.id != defaultValue.userId) {
+                  return (
+                    <option key={option.id} value={option.id}>
+                      {option.name}
+                    </option>
+                  )
                 }
-              })
-            }         
-        
+              }
+            })}
           </Select>
           <Input name='time' label='Tempo de acesso ao curso (em meses)' />
           <Input
@@ -196,32 +203,53 @@ export function FormUpdateCourse(props: Props) {
         <div className='w-50'>
           <TextArea name='description' label='Descrição' rows={10} />
           <Select name='categoryId' label='Categoria'>
-          {defaultValue?.categoryId?  <option value={defaultValue.categoryId}>
-              {findCategoryById(defaultValue.categoryId)?.name}
-            </option>: <option value='' disabled selected>
-              Selecione
-            </option>}  
-            {
-              categories.map(option => {
-                if(defaultValue?.categoryId){
-                    if(option.id != defaultValue.categoryId){
-                    return (<option key={option.id} value={option.id}>
-                    {option.name}
-                    </option>)
-                    }
+            {defaultValue?.categoryId ? (
+              <option value={defaultValue.categoryId}>
+                {findCategoryById(defaultValue.categoryId)?.name}
+              </option>
+            ) : (
+              <option value='' disabled selected>
+                Selecione
+              </option>
+            )}
+            {categories.map((option) => {
+              if (defaultValue?.categoryId) {
+                if (option.id != defaultValue.categoryId) {
+                  return (
+                    <option key={option.id} value={option.id}>
+                      {option.name}
+                    </option>
+                  )
                 }
-              })
-            }   
+              }
+            })}
           </Select>
         </div>
       </div>
 
       <h3 className='mb-5 mt-5'>Conteúdo e Materiais do Curso</h3>
       <h5 className='mb-5 mt-5 text-muted'>Conteúdo Prográmatico do Curso</h5>
-      
-        
-      <TextArea name='content' rows={10} />
-         
+
+      <Editor
+        init={{
+          plugins:
+            'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',
+          menubar: false,
+          toolbar:
+            'undo redo | bold italic underline strikethrough | fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+          toolbar_sticky: true,
+          height: 300,
+          quickbars_selection_toolbar:
+            'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+          noneditable_class: 'mceNonEditable',
+          contextmenu: 'link image table',
+        }}
+        value={stateEditor.content}
+        onEditorChange={handleChange}
+      />
+
+      <Input name='content' />
+
       <div className='d-flex mt-10'>
         <button
           type='button'
@@ -240,5 +268,3 @@ export function FormUpdateCourse(props: Props) {
     </Form>
   )
 }
-
-
