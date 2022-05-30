@@ -145,7 +145,7 @@ export function FormEditTrainings({ data }: IEditTrainingsForm) {
         <button
           type='button'
           onClick={() => {
-            router.push('/users')
+            router.push('/trainings')
           }}
           className='btn btn-lg btn-secondary w-150px mb-5 ms-auto me-10'
         >

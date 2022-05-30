@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import axios from 'axios'
@@ -12,13 +12,16 @@ import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { api } from '../../../application/services/api'
 import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
 import { findCEP } from '../../../utils/findCep'
+import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
+import { toast } from 'react-toastify'
 
 type IFormEditUser = {
   id: string
   userRegister: IUpdateUser
+  getUser: IGetUser
 }
 
-export function FormEditUser({ id, userRegister }: IFormEditUser) {
+export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -82,7 +85,7 @@ export function FormEditUser({ id, userRegister }: IFormEditUser) {
       passwordConfirm: data.password,
       cpf: cpf,
       photo: data.photo,
-      birthDate: formatDate(data.birthDate, 'YYYY-DD-MM'),
+      birthDate: (data.birthDate as Date).toISOString().split('T')[0],
       phoneNumber: phoneNumber,
       role: data.role,
       address: [
@@ -107,16 +110,36 @@ export function FormEditUser({ id, userRegister }: IFormEditUser) {
       await userRegister.updateUser(data)
       router.push('/users')
     } catch (err: any) {
-      if (!err.response) return
-      setHasError(true)
-      if (err.response.status === 500) {
-        setMessage(err.message)
-        return
-      }
-      if (Array.isArray(err.response.data.message)) setMessage(err.response.data.message[0])
-      else setMessage(err.response.data.message)
+      toast.error(Array.isArray(err.messages) ? err.messages[0] : err.messages)
     }
   }
+
+  useEffect(() => {
+    if (!formRef.current) return
+    getUser.getOne()
+    .then((res) => {
+      const newData: any = {
+        name: res.name,
+        email: res.email,
+        //birthDate: res.birthDate, // doesn't work, idk why
+        cpf: res.cpf,
+        phoneNumber: res.phoneNumber,
+        level: res.level,
+        role: res.role,
+        zipCode: res.address[0]?.zipCode || '',
+        street: res.address[0]?.street || '',
+        neighborhood: res.address[0]?.neighborhood || '',
+        city: res.address[0]?.city || '',
+        state: res.address[0]?.state || '',
+        number: res.address[0]?.number || '',
+      }
+      Object.keys(newData).forEach(key => {
+        formRef.current?.setFieldValue(key, newData[key])
+      })
+      formRef.current?.setErrors({})
+    })
+    .catch((err) => toast.error(err.messages))
+  }, [formRef.current])
 
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
