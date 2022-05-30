@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { MakeFormCreateBook } from '../../application/factories/components/createBook-factory'
-import { MakeFormCreateUser } from '../../application/factories/components/createUser-factory'
+
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 

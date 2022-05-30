@@ -28,7 +28,7 @@ export function FormCreateBook({}: Props) {
         <div className='w-100'>
           <h3 className='mb-5'>Dados do Livro</h3>
 
-          <InputImage name='file'></InputImage>
+          <InputImage name='file' />
           <Input name='title' label='Título' type='text' />
           <Input name='author' label='Autor' type='text' />
           <Input name='inventory' label='Estoque' />

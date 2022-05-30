@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { useState } from 'react'
-import { api } from '../../../../application/services/api'
+
 import { KTSVG } from '../../../../helpers'
-import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
+
 import { ActionModal } from '../../modals/action'
 
 interface IBookRow {

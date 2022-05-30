@@ -2,9 +2,6 @@ import Link from 'next/link'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
 import { dateMask } from '../../../formatters/dateFormatter'
-import { cpfMask } from '../../../formatters/cpfFormatter'
-import { addressMask } from '../../../formatters/addressFormatter'
-import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAllUsers'
 
 import { useEffect, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
@@ -22,7 +19,6 @@ export default function BooksTable({ getAllBooks }: Props) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log(getAllBooks)
     setBooks(getAllBooks)
     setLoading(false)
   }, [getAllBooks])
