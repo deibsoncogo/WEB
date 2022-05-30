@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
-      <ToastContainer theme='colored' autoClose={3000}/>
+      <ToastContainer theme='light' autoClose={3000}/>
       <LayoutProvider>
         <PageDataProvider>
           {unprotectedRoutes.includes(currentPath) ? (
