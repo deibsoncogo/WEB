@@ -21,6 +21,7 @@ import { roles } from '../../../../application/wrappers/authWrapper'
 import { UserQueryRole } from '../../../../domain/models/userQueryRole'
 import { CreateCourse } from '../../../../domain/models/createCourse'
 import { Editor } from "@tinymce/tinymce-react";
+import { InputImage } from '../../inputs/input-image'
 
 type Props = {
   createCourse: ICreateCourse
@@ -135,7 +136,7 @@ export function FormCreateCourse(props: Props) {
   return (
     <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
       <h3 className='mb-5'>Informações do Curso</h3>
-      {/* <InputImage name='photo' /> */}
+      <InputImage name='photo' /> 
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-50'>
           <Input name='name' label='Nome' />
