@@ -1,7 +1,7 @@
 import { Category } from '../../../../interfaces/model/Category'
 
 export interface GetCategoriesParams {
-  filters?: Partial<Category>
+  name: string
   take: number
   page: number
 }
