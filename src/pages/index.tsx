@@ -1,8 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-
-import { FormLogin } from '../layout/components/forms/login'
-
+import { MakeFormSignInUser } from '../application/factories/components/signInUser-factory'
 const Home: NextPage = () => {
   return (
     <>
@@ -27,7 +25,7 @@ const Home: NextPage = () => {
           <div className='text-center mb-15'>
             <h1>LOGIN</h1>
           </div>
-          <FormLogin />
+          {MakeFormSignInUser()}
         </div>
       </div>
     </>

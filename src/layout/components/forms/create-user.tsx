@@ -5,13 +5,13 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { findCEP } from '../../../utils/findCep'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { Address } from '../../../domain/models/address'
 import { UserSignUp } from '../../../domain/models/userSignUp'
 import { levelOptions, roleOptions } from '../../../utils/selectOptions'
-import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUP'
 import { toast } from 'react-toastify'
+import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
+import { findCEP } from '../../../utils/findCEP'
 
 type Props = {
   userRegister: IUserSignUp
