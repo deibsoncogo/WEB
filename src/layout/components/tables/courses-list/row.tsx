@@ -7,7 +7,7 @@ import { Switch } from '../../inputs/switch'
 import { ActionModal } from '../../modals/action'
 import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
-
+import ReactTooltip from 'react-tooltip'
 
 interface IRow {
   id: string
@@ -25,7 +25,8 @@ interface IRow {
 
 export function Row(props: IRow) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
-  
+  const [tooltip, showTooltip] = useState(true);
+
 
   
   async function handleDeleteCourse() {
@@ -41,60 +42,73 @@ export function Row(props: IRow) {
 
   
   return (
-    <tr>
-      <td className='ps-4'>
-        <span className='text-dark fw-bold d-block fs-7'>{props.name}</span>
-      </td>
-      <td>
-        <span className='text-dark fw-bold d-block fs-7'>{props.description}</span>
-      </td>
-      <td>
-        <span className='text-dark fw-bold d-block fs-7'>{props.price}</span>
-      </td>
-      <td>
-        <span className='text-dark fw-bold d-block fs-7'>{props.discount}</span>
-      </td>
-      <td>
-        <span className='text-dark fw-bold d-block fs-7'>{props.teacher}</span>
-      </td>
-      <td>
-            
-      <Switch       
-        updateCourse =  {props.updateCourse}
-        getCourse =  {props.getCourse}
-        active={props.active}
-        id = {props.id}
-      />
-     
-      </td>
-      <td className='text-end'>
-      <Link href={`/courses/edit/${props.id}`}>
-        <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-          <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-        </button>
-      </Link>
-            
-        <button
-          onClick={() => {
-            setIsModalDeleteOpen(true)
+    <>
+      <tr>
+        <td className='ps-4'>
+          <span className='text-dark fw-bold d-block fs-7'>{props.name}</span>
+        </td>
+        <td>
+          <span className='text-dark fw-bold d-block fs-7'>{props.description}</span>
+        </td>
+        <td>
+          <span className='text-dark fw-bold d-block fs-7'>{props.price}</span>
+        </td>
+        <td>
+          <span className='text-dark fw-bold d-block fs-7'>{props.discount}</span>
+        </td>
+        <td>
+          <span className='text-dark fw-bold d-block fs-7'>{props.teacher}</span>
+        </td>
+        <td>
+          <Switch
+            updateCourse={props.updateCourse}
+            getCourse={props.getCourse}
+            active={props.active}
+            id={props.id}
+          />
+        </td>
+        <td className='text-end'>
+          <Link href={`/courses/edit/${props.id}`}>
+            <button
+              data-tip='Editar'
+              className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+              onMouseEnter={() => showTooltip(true)}
+              onMouseLeave={() => {
+                showTooltip(false)
+                setTimeout(() => showTooltip(true))
+              }}
+            >
+              <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+            </button>
+          </Link>              
+
+          <button
+            onClick={() => {
+              setIsModalDeleteOpen(true)
+            }}
+            data-tip='Deletar'
+            className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
+            onMouseEnter={() => showTooltip(true)}
+            onMouseLeave={() => {
+              showTooltip(false)
+              setTimeout(() => showTooltip(true))
+            }}
+          >
+            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+          </button>
+          {tooltip && <ReactTooltip effect='solid' />} 
+        </td>      
+
+        <ActionModal
+          isOpen={isModalDeleteOpen}
+          modalTitle='Deletar'
+          message='Você tem certeza que deseja excluir este curso?'
+          action={handleDeleteCourse}
+          onRequestClose={() => {
+            setIsModalDeleteOpen(false)
           }}
-          className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
-        >
-          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-        </button>
-      </td>   
-
-      <ActionModal
-        isOpen={isModalDeleteOpen}
-        modalTitle = "Deletar"
-        message = "Você tem certeza que deseja excluir este curso?"
-        action={handleDeleteCourse}
-        onRequestClose={() => {
-          setIsModalDeleteOpen(false)
-        }}
-      />
-
-      
-    </tr>
+        />
+      </tr>
+    </>
   )
 }
