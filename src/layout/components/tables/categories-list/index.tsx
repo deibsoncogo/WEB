@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
 import { usePaginationType } from '../../../../application/hooks/usePagination'
@@ -13,6 +14,7 @@ type Props = {
   loadingDeletion: boolean
   setSelectedCategory: (category: Category | undefined) => void
   openUpdateCategoryDrawer: (category: Category) => void
+  exportCategories: () => Promise<any>
 }
 
 type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
@@ -24,6 +26,7 @@ export default function CategoriesTable({
   loadingDeletion,
   setSelectedCategory,
   openUpdateCategoryDrawer,
+  exportCategories,
 }: Props) {
   const [order, setOrder] = useState<orderOptions>('')
   const [orderedCategories, setOrdererCategories] = useState<Category[]>(categories)
@@ -70,6 +73,21 @@ export default function CategoriesTable({
     const firtstCharValue = categoryA.name.charCodeAt(0)
     const secondCharValue = categoryB.name.charCodeAt(0)
     return secondCharValue - firtstCharValue
+  }
+
+  const downloadPlan = async () => {
+    const response = await exportCategories()
+    const type = response.type
+    const blob = new Blob([response.data], { type: type })
+    const link = document.createElement('a')
+    link.href = window.URL.createObjectURL(blob)
+    const filename = new Date().toLocaleDateString('pt-BR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    link.download = `categorias_${filename}.xlsx`
+    link.click()
   }
 
   useEffect(() => {
@@ -141,10 +159,10 @@ export default function CategoriesTable({
       )}
 
       <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
-        <div className='d-flex justify-center align-center'>
+        <div className='d-flex justify-center align-items-center'>
           <p className='m-0 text-gray-600 lh-1 text-center'>Download:</p>
           <button className='btn border border-gray-900 ms-5 p-1' title='Exportar Exel'>
-            <RiFileExcel2Line size={20} className='svg-icon-2 mh-50px' />
+            <RiFileExcel2Line size={20} className='svg-icon-2 mh-50px' onClick={downloadPlan} />
           </button>
         </div>
 

@@ -1,9 +1,12 @@
+import { AxiosResponse, ResponseType } from 'axios'
+
 export type HttpRequest = {
   url: string
   method: HttpMethod
   body?: any
   headers?: any
   params?: any
+  responseType?: ResponseType | undefined
 }
 
 export interface HttpClient<R = any> {
@@ -26,4 +29,5 @@ export enum HttpStatusCode {
 export type HttpResponse<T = any> = {
   statusCode: HttpStatusCode
   body: T | any
+  response: AxiosResponse
 }
