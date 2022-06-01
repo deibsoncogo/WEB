@@ -8,9 +8,10 @@ type IMakeUserRow = {
   cpf: string
   birthDate: string
   address: string
+  refreshUsers: () => void
 }
 
-export function MakeUserRow({ id, name, email, birthDate, cpf, address }: IMakeUserRow) {
+export function MakeUserRow({ id, name, email, birthDate, cpf, address, refreshUsers }: IMakeUserRow) {
   return (
     <Row
       id={id}
@@ -20,6 +21,7 @@ export function MakeUserRow({ id, name, email, birthDate, cpf, address }: IMakeU
       cpf={cpf}
       address={address}
       deleteUser={makeRemoteDeleteUser(id)}
+      refreshUsers={refreshUsers}
     />
   )
 }

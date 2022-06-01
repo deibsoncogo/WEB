@@ -9,6 +9,7 @@ import { IUserResponse } from '../../../../interfaces/api-response'
 import { useEffect, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
 import { MakeUserRow } from '../../../../application/factories/components/deleteModal-factory'
+import { toast } from 'react-toastify'
 
 type Props = {
   getAllUsers: IGetAllUsers
@@ -25,15 +26,30 @@ export default function UsersTable({ getAllUsers }: Props) {
       .then((data) => {
         setUsers(data)
       })
-      .catch((error) => setError(error))
+      .catch((error) => toast.error(error.messages))
       .finally(() => setLoading(false))
   }, [])
+
+  const refreshUsers = () => {
+    setLoading(true)
+    getAllUsers
+    .getAll()
+    .then((data) => {
+      setUsers(data)
+    })
+    .catch((error) => toast.error(error.messages))
+    .finally(() => setLoading(false))
+  }
+
+  const onSearchTextChanged = (search: string): void => {
+    console.log(search)
+  }
 
   return (
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
-          <Search />
+          <Search onChangeText={onSearchTextChanged} />
         </h3>
         <div className='card-toolbar'>
           <Link href='/users/create'>
@@ -70,6 +86,7 @@ export default function UsersTable({ getAllUsers }: Props) {
                     birthDate={dateMask(item.birthDate)}
                     cpf={cpfMask(item.cpf)}
                     address={addressMask(item.address[0])}
+                    refreshUsers={refreshUsers}
                   />
                 ))}
             </tbody>

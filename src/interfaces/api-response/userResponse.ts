@@ -8,4 +8,6 @@ export interface IUserResponse {
   cpf: string
   birthDate: string
   address: IAddressResponse[]
+  level: string
+  role: string
 }

@@ -1,32 +1,40 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import { MakeFormUpdateUser } from '../../../application/factories/components/updateUser-factory'
+
 import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
+import { FormEditTrainings } from '../../../layout/components/forms/trainings/edit'
 import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
 
-const EditUser: NextPage = () => {
-  const router = useRouter()
-  const { id } = router.query
-
-  useEffect(() => {}, [id])
+const EditTrainings: NextPage = () => {
+  const fakeData = {
+    id: 'string',
+    name: 'string',
+    teacher: 'string',
+    description: 'string',
+    categories: 'string',
+    price: 20,
+    discount: 10,
+    chatTime: new Date('02/02/2000'),
+    finishDate: new Date('02/02/2000'),
+    liveDate: new Date('02/02/2000'),
+    time: new Date('02/02/2000'),
+  }
 
   return (
     <>
       <Head>
-        <title>Editar Usuário</title>
+        <title>Editar Treinamento</title>
       </Head>
 
       <div className='page d-flex flex-row flex-column-fluid'>
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Editar Usuário' />
+          <HeaderWrapper title='Editar Treinamento' />
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <MakeFormUpdateUser id={id as string} />
+              <FormEditTrainings data={fakeData} />
             </div>
           </div>
         </div>
@@ -35,4 +43,4 @@ const EditUser: NextPage = () => {
   )
 }
 
-export default EditUser
+export default EditTrainings

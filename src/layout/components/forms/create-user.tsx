@@ -11,6 +11,7 @@ import { Address } from '../../../domain/models/address'
 import { UserSignUp } from '../../../domain/models/userSignUp'
 import { levelOptions, roleOptions } from '../../../utils/selectOptions'
 import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUP'
+import { toast } from 'react-toastify'
 
 type Props = {
   userRegister: IUserSignUp
@@ -95,7 +96,7 @@ export function FormCreateUser({ userRegister }: Props) {
     userRegister
       .signUp(user)
       .then(() => router.push('/users'))
-      .catch((error: any) => console.log(error))
+      .catch((error: any) => toast.error(error.messages))
   }
 
   return (

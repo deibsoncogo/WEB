@@ -20,7 +20,7 @@ export class UserSignUp {
     password: string,
     passwordConfirmation: string,
     cpf: string,
-    birthDate: string,
+    birthDate: Date,
     phoneNumber: string,
     role: string,
     level: string,
@@ -31,7 +31,7 @@ export class UserSignUp {
     this.password = password
     this.passwordConfirm = passwordConfirmation
     this.cpf = cpf
-    this.birthDate = birthDate
+    this.birthDate = birthDate.toISOString().split('T')[0]
     this.phoneNumber = phoneNumber
     this.role = role
     this.level = level

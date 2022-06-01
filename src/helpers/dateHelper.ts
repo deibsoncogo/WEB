@@ -8,7 +8,12 @@ export function rangeInt(start: number, end: number): number[] {
   return arrNumbers
 }
 
-export function formatDateToSend(date: Date): string {
-  const newDate = moment(date).format('YYYY-DD-MM')
+export function formatDate(date: Date, format: string): string {
+  const newDate = moment(date).format(format)
+  return newDate
+}
+
+export function formatTime(time: Date, format: string): string {
+  const newDate = moment(time).format(format)
   return newDate
 }
