@@ -17,6 +17,7 @@ import { usePagination } from '../../../../application/hooks/usePagination'
 import Pagination from '../../pagination/Pagination'
 import { Loading } from '../../loading/loading'
 
+
 type Props =  {
   getAllCourses: IGetAllCourses
   deleteCourse: IDeleteCourse
@@ -48,10 +49,9 @@ export default function CoursesTable(props: Props) {
 
     useEffect(() => {    
       const paginationParams: GetCoursesParams = { page: currentPage, take, ...filters}
-      console.log(paginationParams)
       props.getAllCourses
         .getAll(paginationParams)
-        .then((data) => {   
+        .then((data) => {           
          setCourses(data.data)
          setTotalPage(data.total)
         })
