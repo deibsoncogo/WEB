@@ -29,14 +29,12 @@ import {
   IUpdateCategory,
   UpdateCategoryParams,
 } from '../../../domain/usecases/interfaces/category/updateCategory'
-import { IExportCategories } from '../../../domain/usecases/interfaces/category/exportCategories'
 
 type Props = {
   remoteCreateCategory: ICreateCategory
   remoteGetCategories: IGetCategories
   remoteDeleteCategory: IDeleteCategory
   remoteUpdateCategory: IUpdateCategory
-  remoteExportCategoires: IExportCategories
 }
 
 const schema = Yup.object().shape({
@@ -48,7 +46,6 @@ function CategoriesTemplate({
   remoteCreateCategory,
   remoteDeleteCategory,
   remoteUpdateCategory,
-  remoteExportCategoires,
 }: Props) {
   const [categoryName, setCategoryName] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
@@ -262,7 +259,6 @@ function CategoriesTemplate({
           loadingDeletion={loadingCategoryDeletion}
           setSelectedCategory={handleSelectedCategory}
           openUpdateCategoryDrawer={handleOpenDrawerUpdateCategory}
-          exportCategories={remoteExportCategoires.export}
         />
       </div>
     </>
