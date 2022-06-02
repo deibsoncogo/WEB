@@ -1,12 +1,19 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { Input, TextArea } from '../../inputs'
+import { Input, Select, TextArea } from '../../inputs'
 import { InputImage } from '../../inputs/input-image'
 import { ActionModal } from '../../modals/action'
+import { useRequest } from '../../../../application/hooks/useRequest'
+import {
+  GetCategoriesParams,
+  OutputPagination,
+} from '../../../../domain/usecases/interfaces/category/getCategories'
+import { makeRemoteGetCategories } from '../../../../application/factories/usecases/categories/remote-getCategories-factory'
+import { usePagination } from '../../../../application/hooks/usePagination'
 
 type Props = {}
 
@@ -15,13 +22,30 @@ export function FormCreateBook({}: Props) {
   const formRef = useRef<FormHandles>(null)
   const [isOpenModal, setIsOpenModal] = useState(false)
 
+  const paginationHook = usePagination()
+
+  const { pagination, setTotalPage } = paginationHook
+  const { take, currentPage } = pagination
+  const paginationParams: GetCategoriesParams = { page: currentPage, take, name: '' }
   const [defaultValue, setDefaultValue] = useState({})
 
   async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
     setIsOpenModal(true)
   }
+
   async function handleCreateBook() {}
+
+  const { makeRequest: getCategories, data: paginatedCategories } = useRequest<
+    OutputPagination,
+    GetCategoriesParams
+  >(makeRemoteGetCategories().get)
+
+  useEffect(() => {
+    getCategories(paginationParams)
+  }, [pagination.take, pagination.currentPage])
+
+  console.log(paginatedCategories)
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
       <div className='d-flex flex-row gap-5 w-100'>
@@ -29,19 +53,10 @@ export function FormCreateBook({}: Props) {
           <h3 className='mb-5'>Dados do Livro</h3>
 
           <InputImage name='file' />
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'flex-start',
-              flexDirection: 'row',
-            }}
-          >
+          <div className='d-flex justify-content-start flex-row '>
             <div
+              className='d-flex justify-content-center flex-column w-100'
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
                 marginRight: '10%',
               }}
             >
@@ -51,15 +66,19 @@ export function FormCreateBook({}: Props) {
               <Input name='price' label='Preço' type='number' />
               <Input name='discount' label='Desconto' type='number' />
             </div>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
-              }}
-            >
+            <div className='d-flex justify-content-start flex-column w-100'>
               <TextArea name='description' label='Descrição' />
-              <Input name='category' label='Categoria' type='text' />
+
+              <Select name='category' label='Categorias'>
+                <option value='' disabled selected>
+                  Selecione
+                </option>
+                {paginatedCategories?.data.map((option) => (
+                  <option key={option.id} value={option.name}>
+                    {option.name}
+                  </option>
+                ))}
+              </Select>
             </div>
           </div>
         </div>
