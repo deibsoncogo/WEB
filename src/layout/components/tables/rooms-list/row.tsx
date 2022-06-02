@@ -3,17 +3,9 @@ import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { KTSVG } from '../../../../helpers'
 import { ActionModal } from '../../modals/action'
+import { Room } from '../../../../interfaces/model/Room'
 
-interface IRow {
-  id: string
-  name: string
-  description: string
-  price: string | number
-  teacher: string
-  isActive: boolean
-}
-
-export function Row({ id, name, description, price, teacher, isActive }: IRow) {
+export function Row({ id, name, description, price, teacher, isActive }: Room) {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
   const [isChecked, setIsChecked] = useState(isActive)
 
