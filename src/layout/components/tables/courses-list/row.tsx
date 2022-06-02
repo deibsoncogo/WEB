@@ -7,7 +7,7 @@ import { Switch } from '../../inputs/switch'
 import { ActionModal } from '../../modals/action'
 import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip} from "@nextui-org/react";
 
 interface IRow {
   id: string
@@ -68,36 +68,24 @@ export function Row(props: IRow) {
           />
         </td>
         <td className='text-end'>
-          <Link href={`/courses/edit/${props.id}`}>
+          <Tooltip content={'Editar'} rounded css={{ color: '$customColor' }}>
+            <Link href={`/courses/edit/${props.id}`}>
+              <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+                <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+              </button>
+            </Link>
+          </Tooltip>
+          <Tooltip content={'Deletar'} rounded css={{ color: '$customColor' }}>
             <button
-              data-tip='Editar'
-              className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-              onMouseEnter={() => showTooltip(true)}
-              onMouseLeave={() => {
-                showTooltip(false)
-                setTimeout(() => showTooltip(true))
+              onClick={() => {
+                setIsModalDeleteOpen(true)
               }}
+              className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
             >
-              <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
             </button>
-          </Link>              
-
-          <button
-            onClick={() => {
-              setIsModalDeleteOpen(true)
-            }}
-            data-tip='Deletar'
-            className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
-            onMouseEnter={() => showTooltip(true)}
-            onMouseLeave={() => {
-              showTooltip(false)
-              setTimeout(() => showTooltip(true))
-            }}
-          >
-            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-          </button>
-          {tooltip && <ReactTooltip effect='solid' />} 
-        </td>      
+          </Tooltip>
+        </td>
 
         <ActionModal
           isOpen={isModalDeleteOpen}
