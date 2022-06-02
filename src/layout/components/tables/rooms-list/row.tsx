@@ -1,5 +1,8 @@
 import Link from 'next/link'
+import { useState } from 'react'
+import { toast } from 'react-toastify'
 import { KTSVG } from '../../../../helpers'
+import { ActionModal } from '../../modals/action'
 
 interface IRow {
   id: string
@@ -7,9 +10,23 @@ interface IRow {
   description: string
   price: string | number
   teacher: string
+  isActive: boolean
 }
 
-export function Row({ id, name, description, price, teacher }: IRow) {
+export function Row({ id, name, description, price, teacher, isActive }: IRow) {
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
+  const [isChecked, setIsChecked] = useState(isActive)
+
+  async function handleChangeStatus() {
+    try {      
+      setIsStatusModalOpen(false)
+      setIsChecked(!isChecked)
+      toast.success('Status alterado com sucesso!')      
+    } catch (err: any) {
+      toast.error(err.messages[0])
+    }
+  }
+
   return (
     <tr>
       <td className='ps-4'>
@@ -38,7 +55,8 @@ export function Row({ id, name, description, price, teacher }: IRow) {
       </td>
       <td>
         <div className='form-check form-switch form-check-custom form-check-solid'>
-          <input className='form-check-input' type='checkbox' value='' id='flexSwitchDefault' />
+          <input className='form-check-input' type='checkbox' value='' id='flexSwitchDefault' checked={isChecked}
+            onClick={() => {setIsStatusModalOpen(true)}}/>
         </div>
       </td>
 
@@ -52,6 +70,16 @@ export function Row({ id, name, description, price, teacher }: IRow) {
           <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
         </button>
       </td>
+
+      <ActionModal
+        isOpen={isStatusModalOpen}
+        modalTitle = "Status"
+        message = "Você tem certeza que deseja alterar o status dessa sala?"
+        action={handleChangeStatus}
+        onRequestClose={() => {
+          setIsStatusModalOpen(false)
+        }}
+      />
     </tr>
   )
 }

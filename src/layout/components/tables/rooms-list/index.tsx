@@ -69,6 +69,7 @@ export function RoomsTable() {
                     description={item.description}
                     price={item.price}
                     teacher={item.teacher}
+                    isActive={item.isActive}
                   />
                 ))}
             </tbody>
