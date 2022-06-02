@@ -27,8 +27,6 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
 
   const { currentPage, totalPages, take } = pagination
 
-  console.log('oshe', currentPage, totalPages)
-
   useEffect(() => {
     setLoading(false)
   }, [remoteGetAllBooks])
@@ -43,8 +41,6 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
     getBooks(paginationParams)
     if (books?.data) setTotalPage(books?.total)
   }, [pagination.currentPage, pagination.take])
-
-  console.log('presto??????', books)
 
   return (
     <div className='card mb-5 mb-xl-8'>

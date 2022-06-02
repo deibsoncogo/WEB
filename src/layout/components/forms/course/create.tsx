@@ -20,7 +20,7 @@ import { IUserPartialResponse } from '../../../../interfaces/api-response/userPa
 import { roles } from '../../../../application/wrappers/authWrapper'
 import { UserQueryRole } from '../../../../domain/models/userQueryRole'
 import { CreateCourse } from '../../../../domain/models/createCourse'
-import { Editor } from "@tinymce/tinymce-react";
+import { Editor } from '@tinymce/tinymce-react'
 import { InputImage } from '../../inputs/input-image'
 
 type Props = {
@@ -35,33 +35,31 @@ export function FormCreateCourse(props: Props) {
   const [categories, setCategories] = useState<ICategory[]>([])
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
   const [loading, setLoading] = useState(true)
-  const[stateEditor, setStateEditor] = useState({ content: "" })
- 
-  function handleChange(event:any) {
-    setStateEditor({content: event});
+  const [stateEditor, setStateEditor] = useState({ content: '' })
+
+  function handleChange(event: any) {
+    setStateEditor({ content: event })
   }
 
-  
-  useEffect(() => {     
-    console.log( props.getCategories)    
+  useEffect(() => {
     props.getCategories
       .get()
-      .then((data) => {      
+      .then((data) => {
         setCategories(data)
       })
-      .catch((error) => toast.error("Não foi possível carregar as categorias de cursos."))
+      .catch((error) => toast.error('Não foi possível carregar as categorias de cursos.'))
       .finally(() => setLoading(false))
   }, [])
 
-  useEffect(() => {   
-    const userQuery = new UserQueryRole(roles.TEACHER)      
+  useEffect(() => {
+    const userQuery = new UserQueryRole(roles.TEACHER)
     props.getUsers
       .getAllByRole(userQuery)
-      .then((data) => {   
+      .then((data) => {
         console.log(data)
         setUsers(data)
       })
-      .catch((error) => toast.error("Não foi possível carregar os Professores."))
+      .catch((error) => toast.error('Não foi possível carregar os Professores.'))
       .finally(() => setLoading(false))
   }, [])
 
@@ -78,7 +76,7 @@ export function FormCreateCourse(props: Props) {
     }
     formRef.current?.setFieldValue(name, value)
     if (value == 'NaN') formRef.current?.setFieldValue(name, '')
-  }  
+  }
 
   async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
@@ -86,20 +84,19 @@ export function FormCreateCourse(props: Props) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é necessário'),       
+        name: Yup.string().required('Nome é necessário'),
         price: Yup.string().required('Preço é necessário'),
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
-        content:Yup.string().required('Conteúdo programático é necessário'),  
-        userId:Yup.string().optional()  })
+        content: Yup.string().required('Conteúdo programático é necessário'),
+        userId: Yup.string().optional(),
+      })
 
-      data.content= stateEditor.content      
+      data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
       handleCreateCourse(data)
-
     } catch (err) {
-      
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
@@ -112,31 +109,38 @@ export function FormCreateCourse(props: Props) {
   }
 
   async function handleCreateCourse(data: IFormCourse) {
-    
-    
     let matchesPrice = data.price.split(',')[0].match(/\d*/g)
-    let price = matchesPrice? parseInt(matchesPrice?.join('')): undefined
+    let price = matchesPrice ? parseInt(matchesPrice?.join('')) : undefined
 
     let matchesDiscount = data.discount.split(',')[0].match(/\d*/g)
-    let discount = matchesDiscount? parseInt(matchesDiscount?.join('')): undefined  
+    let discount = matchesDiscount ? parseInt(matchesDiscount?.join('')) : undefined
 
-    const course = new CreateCourse(data.name, data.description, data.content,
-                 data.categoryId, discount, "teste.jpg", 3, false, price, data.userId)
-  
-   
-      props.createCourse
-        .create(course)
-        .then(() => {
-         toast.success("Curso criado com sucesso!")
-         router.push('/courses')
-         })
-        .catch((error: any) => console.log(error))
+    const course = new CreateCourse(
+      data.name,
+      data.description,
+      data.content,
+      data.categoryId,
+      discount,
+      'teste.jpg',
+      3,
+      false,
+      price,
+      data.userId
+    )
+
+    props.createCourse
+      .create(course)
+      .then(() => {
+        toast.success('Curso criado com sucesso!')
+        router.push('/courses')
+      })
+      .catch((error: any) => console.log(error))
   }
 
   return (
     <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
       <h3 className='mb-5'>Informações do Curso</h3>
-      <InputImage name='photo' /> 
+      <InputImage name='photo' />
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-50'>
           <Input name='name' label='Nome' />
@@ -184,21 +188,27 @@ export function FormCreateCourse(props: Props) {
       <h3 className='mb-5 mt-5'>Conteúdo e Materiais do Curso</h3>
       <h5 className='mb-5 mt-5 text-muted'>Conteúdo Prográmatico do Curso</h5>
 
-    <Editor init={{    
-    plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',
-    menubar: false,
-    toolbar: 'undo redo | bold italic underline strikethrough | fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
-    toolbar_sticky: true,
-    height: 300,
-    quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
-    noneditable_class: 'mceNonEditable',    
-    contextmenu: 'link image table',
-    
-  }}  value= {stateEditor.content} onEditorChange={handleChange}/>
+      <Editor
+        init={{
+          plugins:
+            'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',
+          menubar: false,
+          toolbar:
+            'undo redo | bold italic underline strikethrough | fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+          toolbar_sticky: true,
+          height: 300,
+          quickbars_selection_toolbar:
+            'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+          noneditable_class: 'mceNonEditable',
+          contextmenu: 'link image table',
+        }}
+        value={stateEditor.content}
+        onEditorChange={handleChange}
+      />
 
-  <Input  name='content'  />
-    
-    <div className='d-flex mt-10'>
+      <Input name='content' />
+
+      <div className='d-flex mt-10'>
         <button
           type='button'
           onClick={() => {
@@ -216,5 +226,3 @@ export function FormCreateCourse(props: Props) {
     </Form>
   )
 }
-
-

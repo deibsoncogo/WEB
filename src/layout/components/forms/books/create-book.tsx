@@ -45,7 +45,6 @@ export function FormCreateBook({}: Props) {
     getCategories(paginationParams)
   }, [pagination.take, pagination.currentPage])
 
-  console.log(paginatedCategories)
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
       <div className='d-flex flex-row gap-5 w-100'>
