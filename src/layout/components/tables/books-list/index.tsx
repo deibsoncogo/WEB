@@ -10,13 +10,18 @@ import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 import { MakeBookRow } from '../../../../application/factories/components/createBook-factory'
 import Pagination from '../../pagination/Pagination'
 import { usePagination } from '../../../../application/hooks/usePagination'
+import {
+  GetBookParams,
+  IGetBooks,
+  OutputPagination,
+} from '../../../../domain/usecases/interfaces/book/getBooks'
+import { useRequest } from '../../../../application/hooks/useRequest'
 
 type Props = {
-  getAllBooks: IBookResponse[]
+  remoteGetAllBooks: IGetBooks
 }
 
-export default function BooksTable({ getAllBooks }: Props) {
-  const [books, setBooks] = useState<IBookResponse[]>()
+export default function BooksTable({ remoteGetAllBooks }: Props) {
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(true)
 
@@ -24,13 +29,26 @@ export default function BooksTable({ getAllBooks }: Props) {
   const { pagination, setTotalPage } = paginationHook
 
   const { currentPage, totalPages } = pagination
+
   console.log('oshe', currentPage, totalPages)
 
   useEffect(() => {
-    setBooks(getAllBooks)
+    // setBooks(remoteGetAllBooks)
     setTotalPage(60)
     setLoading(false)
-  }, [getAllBooks])
+  }, [remoteGetAllBooks])
+
+  const {
+    makeRequest: getBooks,
+    error: getBooksError,
+    data: books,
+  } = useRequest<OutputPagination, GetBookParams>(remoteGetAllBooks.get)
+
+  useEffect(() => {
+    getBooks()
+  }, [pagination.take, pagination.currentPage])
+
+  console.log('presto??????', books)
 
   return (
     <div className='card mb-5 mb-xl-8'>
@@ -64,15 +82,17 @@ export default function BooksTable({ getAllBooks }: Props) {
 
             <tbody>
               {!loading &&
-                books?.map((item) => (
+                books?.data.map((item) => (
                   <MakeBookRow
                     key={item.id}
                     id={item.id}
-                    title={item.title}
-                    description={item.description}
-                    price={dateMask(item.price)}
+                    name={item.name}
+                    price={item.price}
                     author={item.author}
-                    inventory={item.inventory}
+                    stock={item.stock}
+                    category={item.category}
+                    discount={item.discount}
+                    imageUrl={item.imageUrl}
                   />
                 ))}
             </tbody>

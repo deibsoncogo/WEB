@@ -13,14 +13,14 @@ export const MakeFormCreateBook = () => {
   return <FormCreateBook />
 }
 
-export function MakeBookRow({ id, author, description, inventory, price, title }: IBookResponse) {
+export function MakeBookRow({ id, author, description, stock, price, name }: IBookResponse) {
   return (
     <Row
       id={id}
-      title={title}
+      name={name}
       description={description}
       author={author}
-      inventory={inventory}
+      stock={stock}
       price={price}
       deleteBook={makeRemoteDeleteBook(id)}
     />

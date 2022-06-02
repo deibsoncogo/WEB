@@ -1,8 +1,16 @@
 export interface IBookResponse {
   id: string
-  title: string
+  name: string
+  imageUrl: string
   description: string
   price: string
   author: string
-  inventory: number
+  discount: string
+  stock: number
+
+  category: {
+    id: string
+    name: string
+    created_at: string
+  }
 }

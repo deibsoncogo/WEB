@@ -7,15 +7,15 @@ import { ActionModal } from '../../modals/action'
 
 interface IBookRow {
   id: string
-  title: string
+  name: string
   description: string
   price: string
   author: string
-  inventory: number
+  stock: number
   deleteBook: IDeleteBook
 }
 
-export function Row({ id, author, description, inventory, price, title }: IBookRow) {
+export function Row({ id, author, description, stock, price, name }: IBookRow) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   async function handleDeleteBook() {
@@ -29,7 +29,7 @@ export function Row({ id, author, description, inventory, price, title }: IBookR
   return (
     <tr>
       <td className='ps-4'>
-        <span className='text-dark fw-bold d-block fs-7'>{title}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{name}</span>
       </td>
       <td>
         <span className='text-dark fw-bold d-block fs-7'>{description}</span>
@@ -41,7 +41,7 @@ export function Row({ id, author, description, inventory, price, title }: IBookR
         <span className='text-dark fw-bold d-block fs-7'>{author}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{inventory}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{stock}</span>
       </td>
       <td className='text-end'>
         <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
