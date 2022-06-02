@@ -17,7 +17,7 @@ const Courses: NextPage = () => {
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Usuários' />
+          <HeaderWrapper title='Cursos' />
 
           <div id='kt_content_container' className='container'>
           {MakeCourseTable()}

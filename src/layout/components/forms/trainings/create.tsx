@@ -25,7 +25,7 @@ export function FormCreateTrainings() {
   const [defaultValue, setDefaultValue] = useState({})
   const [streamList, setStreamList] = useState<IStreamList[]>([])
 
-  async function handleFormSubmit(data: IFormCreateUser) {
+  async function handleFormSubmit(data: any) {
     if (!formRef.current) throw new Error()
 
     try {
@@ -141,7 +141,7 @@ export function FormCreateTrainings() {
         <button
           type='button'
           onClick={() => {
-            router.push('/users')
+            router.push('/trainings')
           }}
           className='btn btn-lg btn-secondary w-150px mb-5 ms-auto me-10'
         >

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import { api } from '../../../../application/services/api'
 import { KTSVG } from '../../../../helpers'
 import { ActionModal } from '../../modals/action'
@@ -12,17 +13,20 @@ interface IRow {
   cpf: string
   address: string
   deleteUser: IDeleteUser
+  refreshUsers: () => void
 }
 
-export function Row({ id, name, email, birthDate, cpf, address, deleteUser }: IRow) {
+export function Row({ id, name, email, birthDate, cpf, address, deleteUser, refreshUsers }: IRow) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   async function handleDeleteUser() {
     try {
       const resp = await deleteUser.deleteUser()
       setIsModalOpen(false)
-    } catch (err) {
-      console.log(err)
+      toast.success('Usuário deletado com sucesso!')
+      refreshUsers()
+    } catch (err: any) {
+      toast.error(err.messages[0])
     }
   }
 

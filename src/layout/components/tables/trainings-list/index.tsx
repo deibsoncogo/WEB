@@ -32,7 +32,7 @@ export function TrainingsTable() {
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
-          <Search />
+          <Search onChangeText={() => null} />
         </h3>
         <div className='card-toolbar'>
           <Link href='/trainings/create'>

@@ -38,6 +38,8 @@ export function InputImage({ name, ...rest }: IInputImage) {
 
   return (
     <div className='fv-row mb-7'>
+
+    { preview &&
       <div className='rounded bg-gray-300 min-w-250px min-h-200px mw-250px mh-200px border border-gray-400'>
         <div>
           {preview && (
@@ -52,6 +54,7 @@ export function InputImage({ name, ...rest }: IInputImage) {
           )}
         </div>
       </div>
+    }
 
       {error && <span className='text-danger'>{error}</span>}
 
@@ -67,7 +70,7 @@ export function InputImage({ name, ...rest }: IInputImage) {
         />
         Selecionar imagem
       </label>
-
+      {preview &&
       <button
         onClick={() => {
           setPreview(null)
@@ -76,6 +79,7 @@ export function InputImage({ name, ...rest }: IInputImage) {
       >
         Remover imagem
       </button>
+     }
     </div>
   )
 }

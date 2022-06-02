@@ -12,6 +12,7 @@ import { api } from '../../../application/services/api'
 import { IAuthResponse } from '../../../interfaces/api-response/authResponse'
 import jwtDecode from 'jwt-decode'
 import { IToken } from '../../../interfaces/application/token'
+import { toast } from 'react-toastify'
 
 export function FormLogin() {
   const router = useRouter()
@@ -53,7 +54,8 @@ export function FormLogin() {
       localStorage.setItem('email', result.email)
       localStorage.setItem('access_token', result.accessToken)
       localStorage.setItem('expiration', jwtDecode<IToken>(result.accessToken).exp)
-      router.push('/books')
+      router.push('/dashboard')
+      toast.success('Login efetuado com sucesso')
     } catch (err: any) {
       console.log(err)
       setHasError(true)
