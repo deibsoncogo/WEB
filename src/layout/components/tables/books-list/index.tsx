@@ -1,12 +1,10 @@
 import Link from 'next/link'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
-import { dateMask } from '../../../formatters/dateFormatter'
 
 import { useEffect, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
 
-import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 import { MakeBookRow } from '../../../../application/factories/components/createBook-factory'
 import Pagination from '../../pagination/Pagination'
 import { usePagination } from '../../../../application/hooks/usePagination'
@@ -22,31 +20,29 @@ type Props = {
 }
 
 export default function BooksTable({ remoteGetAllBooks }: Props) {
-  const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(true)
 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
 
-  const { currentPage, totalPages } = pagination
+  const { currentPage, totalPages, take } = pagination
 
   console.log('oshe', currentPage, totalPages)
 
   useEffect(() => {
-    // setBooks(remoteGetAllBooks)
-    setTotalPage(60)
     setLoading(false)
   }, [remoteGetAllBooks])
 
-  const {
-    makeRequest: getBooks,
-    error: getBooksError,
-    data: books,
-  } = useRequest<OutputPagination, GetBookParams>(remoteGetAllBooks.get)
+  const { makeRequest: getBooks, data: books } = useRequest<OutputPagination, GetBookParams>(
+    remoteGetAllBooks.get
+  )
+
+  const paginationParams: GetBookParams = { page: currentPage, take }
 
   useEffect(() => {
-    getBooks()
-  }, [pagination.take, pagination.currentPage])
+    getBooks(paginationParams)
+    if (books?.data) setTotalPage(books?.total)
+  }, [pagination.currentPage, pagination.take])
 
   console.log('presto??????', books)
 
@@ -90,6 +86,7 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
                     price={item.price}
                     author={item.author}
                     stock={item.stock}
+                    description={item.description}
                     category={item.category}
                     discount={item.discount}
                     imageUrl={item.imageUrl}
