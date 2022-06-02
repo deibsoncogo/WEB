@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nextui-org/react": "^1.0.0-beta.7",
     "@tinymce/tinymce-react": "^4.1.0",
     "@unform/core": "^2.1.6",
     "@unform/web": "^2.1.6",
