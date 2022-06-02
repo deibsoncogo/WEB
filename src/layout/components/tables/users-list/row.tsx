@@ -5,6 +5,8 @@ import { api } from '../../../../application/services/api'
 import { KTSVG } from '../../../../helpers'
 import { ActionModal } from '../../modals/action'
 
+import { Tooltip} from "@nextui-org/react";
+
 interface IRow {
   id: string
   name: string
@@ -50,28 +52,35 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser, refr
         <span className='text-dark fw-bold d-block fs-7'>{address}</span>
       </td>
       <td className='text-end'>
-        <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-          <KTSVG path='/icons/gen019.svg' className='svg-icon-3' />
-        </button>
-        <Link href={`/users/edit/${id}`}>
+        <Tooltip content={'Alterar Senha'} rounded css={{ color: '$customColor' }}>
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-            <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+            <KTSVG path='/icons/gen019.svg' className='svg-icon-3' />
           </button>
-        </Link>
-        <button
-          onClick={() => {
-            setIsModalOpen(true)
-          }}
-          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
-        >
-          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-        </button>
+        </Tooltip>
+        <Tooltip content={'Editar'} rounded css={{ color: '$customColor' }}>
+          <Link href={`/users/edit/${id}`}>
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+              <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+            </button>
+          </Link>
+        </Tooltip>
+
+        <Tooltip content={'Deletar'} rounded css={{ color: '$customColor' }}>
+          <button
+            onClick={() => {
+              setIsModalOpen(true)
+            }}
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+          >
+            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+          </button>
+        </Tooltip>
       </td>
 
       <ActionModal
         isOpen={isModalOpen}
-        modalTitle = "Deletar"
-        message = "Você tem certeza que deseja excluir esse usuário?"
+        modalTitle='Deletar'
+        message='Você tem certeza que deseja excluir esse usuário?'
         action={handleDeleteUser}
         onRequestClose={() => {
           setIsModalOpen(false)

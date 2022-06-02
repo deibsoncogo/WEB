@@ -6,7 +6,6 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { KTSVG } from '../../../../helpers'
 import { Input, Select, TextArea } from '../../inputs'
 import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
 import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
@@ -15,7 +14,6 @@ import { IGetAllUsersByRole } from '../../../../domain/usecases/interfaces/user/
 import { IUserPartialResponse } from '../../../../interfaces/api-response/userPartialResponse'
 import { roles } from '../../../../application/wrappers/authWrapper'
 import { UserQueryRole } from '../../../../domain/models/userQueryRole'
-import { CreateCourse } from '../../../../domain/models/createCourse'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
 import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
 import { ICourseResponse } from '../../../../interfaces/api-response/courseResponse'
@@ -23,7 +21,7 @@ import { currenceMaskOnlyValue } from '../../../formatters/currenceFormatter'
 import { UpdateCourse } from '../../../../domain/models/updateCourse'
 import { InputImage } from '../../inputs/input-image'
 import { Editor } from '@tinymce/tinymce-react'
-import { time } from 'console'
+import { Loading } from '../../loading/loading'
 
 type Props = {
   updateCourse: IUpdateCourse
@@ -39,7 +37,9 @@ export function FormUpdateCourse(props: Props) {
   const [categories, setCategories] = useState<ICategory[]>([])
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
   const [defaultValue, setDefaultValue] = useState<ICourseResponse>()
-  const [loading, setLoading] = useState(true)
+  const [loadingCourse, setLoadingCourse] = useState(true)
+  const [loadingCategories, setLoadingCategoris] = useState(true)
+  const [loadingUsers, setLoadingUsers] = useState(true)
   const [stateEditor, setStateEditor] = useState({ content: '' })
 
   useEffect(() => {
@@ -48,11 +48,11 @@ export function FormUpdateCourse(props: Props) {
       props.getCourse
         .get(props.id)
         .then((data) => {        
-          setDefaultValue(data)
+          setDefaultValue(data)         
           setStateEditor({ content: data.content })
         })
         .catch((error) => toast.error('Não foi possível carregar o curso.'))
-        .finally(() => setLoading(false))
+        .finally(() => setLoadingCourse(false))
       }
   }, [])
 
@@ -63,7 +63,7 @@ export function FormUpdateCourse(props: Props) {
         setCategories(data)
       })
       .catch((error) => toast.error('Não foi possível carregar as categorias de cursos.'))
-      .finally(() => setLoading(false))
+      .finally(() => setLoadingCategoris(false))
   }, [])
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export function FormUpdateCourse(props: Props) {
         setUsers(data)
       })
       .catch((error) => toast.error('Não foi possível carregar os Professores.'))
-      .finally(() => setLoading(false))
+      .finally(() => setLoadingUsers(false))
   }, [])
 
   const findCategoryById = (id: string) => {
@@ -107,7 +107,8 @@ export function FormUpdateCourse(props: Props) {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome é necessário'),
-        price: Yup.string().required('Preço é necessário'),
+        accessTime: Yup.number().required('Tempo de acesso é necessário'),
+        price: Yup.string().required('Preço é necessário'),       
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
@@ -147,9 +148,11 @@ export function FormUpdateCourse(props: Props) {
       3,
       defaultValue?.isActive,
       price,
+      parseInt(data.accessTime),
       data.userId
     )
 
+    console.log(course)
     props.updateCourse
       .update(course)
       .then(() => {
@@ -159,8 +162,11 @@ export function FormUpdateCourse(props: Props) {
       .catch((error: any) => console.log(error))
   }
 
-  return (
-    <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+  return (    
+    <>
+    {loadingCourse && loadingCategories && loadingUsers && <Loading/>}
+    
+    {!(loadingCourse && loadingCategories && loadingUsers) && (<Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
       <h3 className='mb-5'>Informações do Curso</h3>
       <InputImage name='photo' />
       <div className='d-flex flex-row gap-5 w-100'>
@@ -186,7 +192,7 @@ export function FormUpdateCourse(props: Props) {
               }
             })}
           </Select>
-          <Input name='time' label='Tempo de acesso ao curso (em meses)' />
+          <Input name='accessTime' type='number' label='Tempo de acesso ao curso (em meses)' />
           <Input
             name='price'
             defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
@@ -269,6 +275,7 @@ export function FormUpdateCourse(props: Props) {
           Salvar
         </button>
       </div>
-    </Form>
+    </Form>)}
+    </>
   )
 }

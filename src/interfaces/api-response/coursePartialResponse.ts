@@ -5,9 +5,8 @@ export interface IPartialCourseResponse{
     name: string,
     description: string,
     price: string,   
-    discount: string,
+    discount: string,   
     isActive: boolean,
     categoryId: string,
-    teacherName: string    
-    
+    teacherName: string   
 }

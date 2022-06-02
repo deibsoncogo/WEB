@@ -86,7 +86,8 @@ export function FormCreateCourse(props: Props) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é necessário'),       
+        name: Yup.string().required('Nome é necessário'),
+        accessTime: Yup.number().required('Tempo de acesso é necessário'),       
         price: Yup.string().required('Preço é necessário'),
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
@@ -150,7 +151,7 @@ export function FormCreateCourse(props: Props) {
               </option>
             ))}
           </Select>
-          <Input name='time' label='Tempo de acesso ao curso (em meses)' />
+          <Input name='accessTime' type = 'number' label='Tempo de acesso ao curso (em meses)' />
           <Input
             name='price'
             label='Preço'

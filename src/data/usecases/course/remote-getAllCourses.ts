@@ -16,9 +16,10 @@ export class RemoteGetAllCourses implements IGetAllCourses {
       method: 'get',
       params: query
     })
+   
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
-        return httpResponse.body.data
+        return httpResponse.body
       case HttpStatusCode.badRequest:
         throw new InvalidParamsError(httpResponse.body?.message)
       default:

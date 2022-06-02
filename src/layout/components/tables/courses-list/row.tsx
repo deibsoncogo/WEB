@@ -7,7 +7,7 @@ import { Switch } from '../../inputs/switch'
 import { ActionModal } from '../../modals/action'
 import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
-
+import { Tooltip} from "@nextui-org/react";
 
 interface IRow {
   id: string
@@ -25,9 +25,7 @@ interface IRow {
 
 export function Row(props: IRow) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
-  
-
-  
+    
   async function handleDeleteCourse() {
     try {
       await props.deleteCourse.delete(props.id)
@@ -41,60 +39,61 @@ export function Row(props: IRow) {
 
   
   return (
-    <tr>
-      <td className='ps-4'>
-        <span className='text-dark fw-bold d-block fs-7'>{props.name}</span>
-      </td>
-      <td>
-        <span className='text-dark fw-bold d-block fs-7'>{props.description}</span>
-      </td>
-      <td>
-        <span className='text-dark fw-bold d-block fs-7'>{props.price}</span>
-      </td>
-      <td>
-        <span className='text-dark fw-bold d-block fs-7'>{props.discount}</span>
-      </td>
-      <td>
-        <span className='text-dark fw-bold d-block fs-7'>{props.teacher}</span>
-      </td>
-      <td>
-            
-      <Switch       
-        updateCourse =  {props.updateCourse}
-        getCourse =  {props.getCourse}
-        active={props.active}
-        id = {props.id}
-      />
-     
-      </td>
-      <td className='text-end'>
-      <Link href={`/courses/edit/${props.id}`}>
-        <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-          <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-        </button>
-      </Link>
-            
-        <button
-          onClick={() => {
-            setIsModalDeleteOpen(true)
+    <>
+      <tr>
+        <td className='ps-4'>
+          <span className='text-dark fw-bold d-block fs-7'>{props.name}</span>
+        </td>
+        <td>
+          <span className='text-dark fw-bold d-block fs-7'>{props.description}</span>
+        </td>
+        <td>
+          <span className='text-dark fw-bold d-block fs-7'>{props.price}</span>
+        </td>
+        <td>
+          <span className='text-dark fw-bold d-block fs-7'>{props.discount}</span>
+        </td>
+        <td>
+          <span className='text-dark fw-bold d-block fs-7'>{props.teacher}</span>
+        </td>
+        <td>
+          <Switch
+            updateCourse={props.updateCourse}
+            getCourse={props.getCourse}
+            active={props.active}
+            id={props.id}
+          />
+        </td>
+        <td className='text-end'>
+          <Tooltip content={'Editar'} rounded css={{ color: '$customColor' }}>
+            <Link href={`/courses/edit/${props.id}`}>
+              <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+                <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+              </button>
+            </Link>
+          </Tooltip>
+          <Tooltip content={'Deletar'} rounded css={{ color: '$customColor' }}>
+            <button
+              onClick={() => {
+                setIsModalDeleteOpen(true)
+              }}
+              className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
+            >
+              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+            </button>
+          </Tooltip>
+        </td>
+
+        <ActionModal
+          isOpen={isModalDeleteOpen}
+          modalTitle='Deletar'
+          message='Você tem certeza que deseja excluir este curso?'
+          action={handleDeleteCourse}
+          onRequestClose={() => {
+            setIsModalDeleteOpen(false)
           }}
-          className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
-        >
-          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-        </button>
-      </td>   
-
-      <ActionModal
-        isOpen={isModalDeleteOpen}
-        modalTitle = "Deletar"
-        message = "Você tem certeza que deseja excluir este curso?"
-        action={handleDeleteCourse}
-        onRequestClose={() => {
-          setIsModalDeleteOpen(false)
-        }}
-      />
-
-      
-    </tr>
+        />
+      </tr>
+    </>
   )
 }
