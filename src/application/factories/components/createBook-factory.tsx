@@ -1,6 +1,6 @@
 import { IBookResponse } from '../../../interfaces/api-response/bookResponse'
 
-import { FormCreateBook } from '../../../layout/components/forms/create-book'
+import { FormCreateBook } from '../../../layout/components/forms/books/create-book'
 import { makeApiUrl, makeAxiosHttpClient } from '../http'
 import { RemoteDeleteBook } from '../../../data/usecases/book/remote-deleteBook'
 import { Row } from '../../../layout/components/tables/books-list/row'
