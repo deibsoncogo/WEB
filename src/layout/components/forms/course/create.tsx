@@ -89,9 +89,10 @@ export function FormCreateCourse(props: Props) {
         name: Yup.string().required('Nome é necessário'),
         accessTime: Yup.number().required('Tempo de acesso é necessário'),       
         price: Yup.string().required('Preço é necessário'),
+        installments: Yup.number().required('Quantidade de parcelas é necessária'),
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
-        categoryId: Yup.string().required('Selecione uma categoria'),
+        categoryId: Yup.string().required('Selecione uma categoria'),        
         content:Yup.string().required('Conteúdo programático é necessário'),  
         userId:Yup.string().optional()  })
 
@@ -115,14 +116,10 @@ export function FormCreateCourse(props: Props) {
   async function handleCreateCourse(data: IFormCourse) {
     
     
-    let matchesPrice = data.price.split(',')[0].match(/\d*/g)
-    let price = matchesPrice? parseInt(matchesPrice?.join('')): undefined
-
-    let matchesDiscount = data.discount.split(',')[0].match(/\d*/g)
-    let discount = matchesDiscount? parseInt(matchesDiscount?.join('')): undefined  
-
+    const price = parseFloat(data.price.replace(".", "").replace(',','.'))    
+    const discount  = parseFloat(data.discount.replace(".", "").replace(',','.'))  
     const course = new CreateCourse(data.name, data.description, data.content,
-                 data.categoryId, discount, "teste.jpg", 3, false, price, data.userId)
+                 data.categoryId, discount, "teste.jpg", parseInt(data.installments), false, price, parseInt(data.accessTime), data.userId)
   
    
       props.createCourse
@@ -165,7 +162,7 @@ export function FormCreateCourse(props: Props) {
             type='text'
             placeholderText='R$'
             onChange={() => currencyFormatter('discount')}
-          />
+          />          
         </div>
         <div className='w-50'>
           <TextArea name='description' label='Descrição' rows={10} />
@@ -178,7 +175,12 @@ export function FormCreateCourse(props: Props) {
                 {option.name}
               </option>
             ))}
-          </Select>
+          </Select>  
+          <Input
+            name='installments'
+            label='Quantidade de Parcelas'
+            type='number'            
+          />        
         </div>
       </div>
 

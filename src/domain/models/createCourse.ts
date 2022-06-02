@@ -7,12 +7,13 @@ export class CreateCourse{
     image: string;
     installments: number;
     isActive: boolean;
-    price?: number;  
+    price?: number; 
+    accessTime: number; 
     userId: string;
 
     constructor(name: string, description: string, content: string, categoryId: string,
         discount: number | undefined, image: string, installments: number, isActive: boolean,  price: number | undefined,  
-        userId: string)
+        accessTime: number, userId: string)
     {
         this.name = name;
         this.description = description;
@@ -23,6 +24,7 @@ export class CreateCourse{
         this.installments = installments;
         this.isActive = isActive;
         this.price = price;
+        this.accessTime = accessTime;
         this.userId = userId;           
         
         

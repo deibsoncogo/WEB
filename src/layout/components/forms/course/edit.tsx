@@ -108,7 +108,8 @@ export function FormUpdateCourse(props: Props) {
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome é necessário'),
         accessTime: Yup.number().required('Tempo de acesso é necessário'),
-        price: Yup.string().required('Preço é necessário'),       
+        price: Yup.string().required('Preço é necessário'),    
+        installments: Yup.number().required('Quantidade de parcelas é necessária'),   
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
@@ -131,11 +132,9 @@ export function FormUpdateCourse(props: Props) {
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
-    let matchesPrice = data.price.split(',')[0].match(/\d*/g)
-    let price = matchesPrice ? parseInt(matchesPrice?.join('')) : undefined
-
-    let matchesDiscount = data.discount.split(',')[0].match(/\d*/g)
-    let discount = matchesDiscount ? parseInt(matchesDiscount?.join('')) : undefined
+    
+    const price = parseFloat(data.price.replace(".", "").replace(',','.'))    
+    const discount  = parseFloat(data.discount.replace(".", "").replace(',','.'))  
 
     const course = new UpdateCourse(
       defaultValue?.id,
@@ -145,14 +144,12 @@ export function FormUpdateCourse(props: Props) {
       data.categoryId,
       discount,
       'teste1.jpg',
-      3,
+      parseInt(data.installments),
       defaultValue?.isActive,
       price,
       parseInt(data.accessTime),
       data.userId
-    )
-
-    console.log(course)
+    )   
     props.updateCourse
       .update(course)
       .then(() => {
@@ -234,6 +231,11 @@ export function FormUpdateCourse(props: Props) {
               }
             })}
           </Select>
+          <Input
+            name='installments'
+            label='Quantidade de Parcelas'
+            type='number'            
+          /> 
         </div>
       </div>
 
@@ -258,7 +260,7 @@ export function FormUpdateCourse(props: Props) {
         onEditorChange={handleChange}
       />
 
-      <Input name='content' />
+      <Input name='content'/>
 
       <div className='d-flex mt-10'>
         <button
