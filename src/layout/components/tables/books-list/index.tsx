@@ -8,6 +8,8 @@ import { RiFileExcel2Line } from 'react-icons/ri'
 
 import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 import { MakeBookRow } from '../../../../application/factories/components/createBook-factory'
+import Pagination from '../../pagination/Pagination'
+import { usePagination } from '../../../../application/hooks/usePagination'
 
 type Props = {
   getAllBooks: IBookResponse[]
@@ -18,8 +20,15 @@ export default function BooksTable({ getAllBooks }: Props) {
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(true)
 
+  const paginationHook = usePagination()
+  const { pagination, setTotalPage } = paginationHook
+
+  const { currentPage, totalPages } = pagination
+  console.log('oshe', currentPage, totalPages)
+
   useEffect(() => {
     setBooks(getAllBooks)
+    setTotalPage(60)
     setLoading(false)
   }, [getAllBooks])
 
@@ -78,36 +87,7 @@ export default function BooksTable({ getAllBooks }: Props) {
             <RiFileExcel2Line size={20} className='svg-icon-2 mh-50px' />
           </button>
         </div>
-
-        <div className='card-toolbar'>
-          <ul className='pagination'>
-            <li className='page-item previous disabled'>
-              <a href='#' className='page-link'>
-                <i className='previous'></i>
-              </a>
-            </li>
-            <li className='page-item'>
-              <a href='#' className='page-link'>
-                1
-              </a>
-            </li>
-            <li className='page-item active'>
-              <a href='#' className='page-link'>
-                2
-              </a>
-            </li>
-            <li className='page-item'>
-              <a href='#' className='page-link'>
-                3
-              </a>
-            </li>
-            <li className='page-item next'>
-              <a href='#' className='page-link'>
-                <i className='next'></i>
-              </a>
-            </li>
-          </ul>
-        </div>
+        <Pagination paginationHook={paginationHook} />
       </div>
     </div>
   )

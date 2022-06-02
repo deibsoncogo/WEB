@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 
-import { MakeBookTable } from '../../application/factories/components/createBook-factory'
+import { MakeBookPage } from '../../application/factories/pages/books/book-factory'
 
 const Users: NextPage = () => {
   return (
@@ -19,7 +19,7 @@ const Users: NextPage = () => {
           <HeaderWrapper title='Livros' />
 
           <div id='kt_content_container' className='container'>
-            {MakeBookTable()}
+            <MakeBookPage />
           </div>
         </div>
       </div>

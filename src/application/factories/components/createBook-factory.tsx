@@ -9,36 +9,6 @@ import BooksTable from '../../../layout/components/tables/books-list'
 const makeRemoteDeleteBook = (id: string): IDeleteBook =>
   new RemoteDeleteBook(makeApiUrl(`/books/${id}`), makeAxiosHttpClient())
 
-export const MakeBookTable = () => {
-  const data = [
-    {
-      id: '1',
-      title: 'Manual do Aristeu',
-      description: 'Livro interessante',
-      price: '10',
-      author: 'Aristeu',
-      inventory: 10,
-    },
-    {
-      id: '2',
-      title: 'O livro do ano',
-      description: 'Livro interessante',
-      price: '10',
-      author: 'Manual do Mundo',
-      inventory: 10,
-    },
-    {
-      id: '3',
-      title: 'Desafiando a física',
-      description: 'Livro de Física',
-      price: '100',
-      author: 'Charles do Bronx',
-      inventory: 10,
-    },
-  ]
-  return <BooksTable getAllBooks={data} />
-}
-
 export const MakeFormCreateBook = () => {
   return <FormCreateBook />
 }

@@ -88,7 +88,7 @@ export function FormCreateBook({}: Props) {
         <button
           type='button'
           onClick={() => {
-            router.push('/users')
+            router.push('/books')
           }}
           style={{ marginRight: '10px' }}
           className='btn btn-lg btn-secondary w-150px mr-10'
