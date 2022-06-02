@@ -30,9 +30,11 @@ export function Row({ id, name, description, price, teacher }: IRow) {
         <span className='text-dark fw-bold d-block fs-7'>{teacher}</span>
       </td>
       <td>
-        <button className='btn btn-icon btn-active-color-primary btn-sm me-1'>
-          <KTSVG path='/icons/com003.svg' className='svg-icon-3' />
-        </button>
+        <Link href={`/rooms/chat/${id}`}>
+          <button className='btn btn-icon btn-active-color-primary btn-sm me-1'>
+            <KTSVG path='/icons/com003.svg' className='svg-icon-3' />
+          </button>
+        </Link>
       </td>
       <td>
         <div className='form-check form-switch form-check-custom form-check-solid'>
