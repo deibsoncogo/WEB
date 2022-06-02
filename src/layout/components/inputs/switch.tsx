@@ -22,7 +22,7 @@ export function Switch(props: ISwitch) {
        const course = await props.getCourse.get(props.id)       
       
        const courseUpdate = new UpdateCourse(course.id, course.name, course. description, course.content,
-       course.categoryId, parseFloat(course.discount), course.image,  parseInt(course.installments), !isActive,  parseFloat(course.price), course.userId)
+       course.categoryId, parseFloat(course.discount), course.image,  parseInt(course.installments), !isActive,  parseFloat(course.price), course.accessTime, course.userId)
        await props.updateCourse.update(courseUpdate);     
        setIsModalUpdateOpen(false)
        setIsActive(!isActive)

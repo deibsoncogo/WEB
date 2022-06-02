@@ -25,10 +25,7 @@ interface IRow {
 
 export function Row(props: IRow) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
-  const [tooltip, showTooltip] = useState(true);
-
-
-  
+    
   async function handleDeleteCourse() {
     try {
       await props.deleteCourse.delete(props.id)
