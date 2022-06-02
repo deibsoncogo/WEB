@@ -4,10 +4,14 @@ import Link from 'next/link'
 import { Row } from './row'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
+import Pagination from '../../pagination/Pagination'
+import { usePagination } from '../../../../application/hooks/usePagination'
 
 export function RoomsTable() {
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
+
+  const paginationHook = usePagination()
 
   const [rooms, setRooms] = useState([
     {
@@ -78,37 +82,9 @@ export function RoomsTable() {
       </div>
 
       <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
-        <div />
+        <div />        
 
-        <div className='card-toolbar'>
-          <ul className='pagination'>
-            <li className='page-item previous disabled'>
-              <a href='#' className='page-link'>
-                <i className='previous'></i>
-              </a>
-            </li>
-            <li className='page-item'>
-              <a href='#' className='page-link'>
-                1
-              </a>
-            </li>
-            <li className='page-item active'>
-              <a href='#' className='page-link'>
-                2
-              </a>
-            </li>
-            <li className='page-item'>
-              <a href='#' className='page-link'>
-                3
-              </a>
-            </li>
-            <li className='page-item next'>
-              <a href='#' className='page-link'>
-                <i className='next'></i>
-              </a>
-            </li>
-          </ul>
-        </div>
+        <Pagination paginationHook={paginationHook} />
       </div>
     </div>
   )
