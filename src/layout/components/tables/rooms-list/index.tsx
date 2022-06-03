@@ -222,12 +222,12 @@ export function RoomsTable() {
           <table className='table table-striped align-middle gs-0 gy-4'>
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
-                <th className='text-dark ps-4 min-w-100px rounded-start' onClick={handleOrderRoomByName}>Nome</th>
+                <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer' onClick={handleOrderRoomByName}>Nome</th>
                 <th className='text-dark min-w-100px'>Descrição</th>
-                <th className='text-dark min-w-100px' onClick={handleOrderRoomByPrice}>Preço</th>
-                <th className='text-dark min-w-150px' onClick={handleOrderRoomByTeacher}>Professor</th>
+                <th className='text-dark min-w-100px cursor-pointer' onClick={handleOrderRoomByPrice}>Preço</th>
+                <th className='text-dark min-w-150px cursor-pointer' onClick={handleOrderRoomByTeacher}>Professor</th>
                 <th className='text-dark min-w-100px'>Chat</th>
-                <th className='text-dark min-w-100px' onClick={handleOrderRoomByStatus}>Ativo</th>
+                <th className='text-dark min-w-100px cursor-pointer' onClick={handleOrderRoomByStatus}>Ativo</th>
                 <th className='text-dark min-w-50px'>Ação</th>
               </tr>
             </thead>
