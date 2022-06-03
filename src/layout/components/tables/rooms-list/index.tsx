@@ -6,14 +6,15 @@ import { Search } from '../../search/Search'
 import Pagination from '../../pagination/Pagination'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { Room } from '../../../../interfaces/model/Room'
+import { debounce } from '../../../../helpers/debounce'
 
 type orderOptions = 'status-asc' | 'status-desc' | 'teacher-asc' | 'teacher-desc' | 'cheaper' | 'costlier' | 'table-sort-asc' | 'table-sort-desc' | ''
 
 export function RoomsTable() {
+  const paginationHook = usePagination()
+
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
-
-  const paginationHook = usePagination()
 
   const [rooms, setRooms] = useState([
     {
@@ -36,6 +37,23 @@ export function RoomsTable() {
 
   const [order, setOrder] = useState<orderOptions>('')
   const [orderedRooms, setOrderedRooms] = useState<Room[]>(rooms)
+
+  const [searchText, setSearchText] = useState('')
+
+  const searchRoom = () => {
+    const matchingRooms = rooms.filter(room => {      
+      return room.name.match(new RegExp(searchText, "i")) || room.description.match(new RegExp(searchText, "i"))
+    })
+    setOrderedRooms(matchingRooms)
+  }
+
+  useEffect(() => {
+    searchRoom();
+  }, [searchText]);
+
+  const handleSearchRoom = debounce((text: string) => {
+    setSearchText(text)
+  })
 
   const handleOrderRoomByName = () => {
     console.log(order)
@@ -85,9 +103,9 @@ export function RoomsTable() {
     console.log(order)
     switch (order) {
       case '':
-        return setOrder('prof-asc')
-      case 'prof-asc':
-        return setOrder('prof-desc')
+        return setOrder('teacher-asc')
+      case 'teacher-asc':
+        return setOrder('teacher-desc')
       default:
         setOrder('')
     }
@@ -191,7 +209,7 @@ export function RoomsTable() {
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
-          <Search onChangeText={() => null} />
+          <Search onChangeText={handleSearchRoom} />
         </h3>
         <div className='card-toolbar'>
           <Link href='/rooms/create'>
