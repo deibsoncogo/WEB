@@ -7,7 +7,7 @@ import Pagination from '../../pagination/Pagination'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { Room } from '../../../../interfaces/model/Room'
 
-type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
+type orderOptions = 'status-asc' | 'status-desc' | 'teacher-asc' | 'teacher-desc' | 'cheaper' | 'costlier' | 'table-sort-asc' | 'table-sort-desc' | ''
 
 export function RoomsTable() {
   const [error, setError] = useState<any>()
@@ -20,7 +20,7 @@ export function RoomsTable() {
       id: '1',
       name: 'Boletim Diário',
       description: 'Boletim completo s...',
-      price: '49,80',
+      price: 49.80,
       teacher: 'Palex',
       isActive: true,
     },
@@ -28,7 +28,7 @@ export function RoomsTable() {
       id: '2',
       name: 'Planilhas',
       description: 'Planilha completas...',
-      price: '84,00',
+      price: 84.00,
       teacher: 'Palex',
       isActive: false,
     },
@@ -37,7 +37,7 @@ export function RoomsTable() {
   const [order, setOrder] = useState<orderOptions>('')
   const [orderedRooms, setOrderedRooms] = useState<Room[]>(rooms)
 
-  const handleOrderRoom = () => {
+  const handleOrderRoomByName = () => {
     console.log(order)
     switch (order) {
       case '':
@@ -49,29 +49,135 @@ export function RoomsTable() {
     }
   }
 
-  const orderRoomASC = (roomA: Room, roomB: Room) => {
+  const orderRoomByNameASC = (roomA: Room, roomB: Room) => {
     const firtstCharValue = roomA.name.charCodeAt(0)
     const secondCharValue = roomB.name.charCodeAt(0)
     return firtstCharValue - secondCharValue
   }
 
-  const orderRoomDESC = (roomA: Room, roomB: Room) => {
+  const orderRoomByNameDESC = (roomA: Room, roomB: Room) => {
     const firtstCharValue = roomA.name.charCodeAt(0)
     const secondCharValue = roomB.name.charCodeAt(0)
     return secondCharValue - firtstCharValue
   }
 
+  const handleOrderRoomByPrice = () => {
+    console.log(order)
+    switch (order) {
+      case '':
+        return setOrder('cheaper')
+      case 'cheaper':
+        return setOrder('costlier')
+      default:
+        setOrder('')
+    }
+  }
+
+  const orderRoomByPriceASC = (roomA: Room, roomB: Room) => {
+    return roomA.price - roomB.price
+  }
+
+  const orderRoomByPriceDESC = (roomA: Room, roomB: Room) => {
+    return roomB.price - roomA.price
+  }
+
+  const handleOrderRoomByTeacher = () => {
+    console.log(order)
+    switch (order) {
+      case '':
+        return setOrder('prof-asc')
+      case 'prof-asc':
+        return setOrder('prof-desc')
+      default:
+        setOrder('')
+    }
+  }
+
+  const orderRoomByTeacherASC = (roomA: Room, roomB: Room) => {
+    const firtstCharValue = roomA.teacher.charCodeAt(0)
+    const secondCharValue = roomB.teacher.charCodeAt(0)
+    return firtstCharValue - secondCharValue
+  }
+
+  const orderRoomByTeacherDESC = (roomA: Room, roomB: Room) => {
+    const firtstCharValue = roomA.teacher.charCodeAt(0)
+    const secondCharValue = roomB.teacher.charCodeAt(0)
+    return secondCharValue - firtstCharValue
+  }
+
+  const handleOrderRoomByStatus = () => {
+    console.log(order)
+    switch (order) {
+      case '':
+        return setOrder('status-asc')
+      case 'status-asc':
+        return setOrder('status-desc')
+      default:
+        setOrder('')
+    }
+  }
+
+  const orderRoomByStatusASC = (roomA: Room, roomB: Room) => {
+    return roomA.isActive - roomB.isActive
+  }
+
+  const orderRoomByStatusDESC = (roomA: Room, roomB: Room) => {
+    return roomB.isActive - roomA.isActive
+  }
+
   useEffect(() => {
     if (order === 'table-sort-asc') {
       setOrderedRooms((oldstate) => {
-        const updatedOrderedRooms = oldstate.sort(orderRoomASC)
+        const updatedOrderedRooms = oldstate.sort(orderRoomByNameASC)
         return updatedOrderedRooms
       })
     }
 
-    if (order == 'table-sort-desc') {
+    if (order === 'table-sort-desc') {
       setOrderedRooms((oldstate) => {
-        const updatedOrderedRooms = oldstate.sort(orderRoomDESC)
+        const updatedOrderedRooms = oldstate.sort(orderRoomByNameDESC)
+        return updatedOrderedRooms
+      })
+    }
+
+    if (order === 'cheaper') {
+      setOrderedRooms((oldstate) => {
+        const updatedOrderedRooms = oldstate.sort(orderRoomByPriceASC)
+        return updatedOrderedRooms
+      })
+    }
+
+    if (order === 'costlier') {
+      setOrderedRooms((oldstate) => {
+        const updatedOrderedRooms = oldstate.sort(orderRoomByPriceDESC)
+        return updatedOrderedRooms
+      })
+    }
+
+    if (order === 'teacher-asc') {
+      setOrderedRooms((oldstate) => {
+        const updatedOrderedRooms = oldstate.sort(orderRoomByTeacherASC)
+        return updatedOrderedRooms
+      })
+    }
+
+    if (order === 'teacher-desc') {
+      setOrderedRooms((oldstate) => {
+        const updatedOrderedRooms = oldstate.sort(orderRoomByTeacherDESC)
+        return updatedOrderedRooms
+      })
+    }
+
+    if (order === 'status-asc') {
+      setOrderedRooms((oldstate) => {
+        const updatedOrderedRooms = oldstate.sort(orderRoomByStatusASC)
+        return updatedOrderedRooms
+      })
+    }
+
+    if (order === 'status-desc') {
+      setOrderedRooms((oldstate) => {
+        const updatedOrderedRooms = oldstate.sort(orderRoomByStatusDESC)
         return updatedOrderedRooms
       })
     }
@@ -102,12 +208,12 @@ export function RoomsTable() {
           <table className='table table-striped align-middle gs-0 gy-4'>
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
-                <th className='text-dark ps-4 min-w-100px rounded-start' onClick={handleOrderRoom}>Nome</th>
+                <th className='text-dark ps-4 min-w-100px rounded-start' onClick={handleOrderRoomByName}>Nome</th>
                 <th className='text-dark min-w-100px'>Descrição</th>
-                <th className='text-dark min-w-100px'>Preço</th>
-                <th className='text-dark min-w-150px'>Professor</th>
+                <th className='text-dark min-w-100px' onClick={handleOrderRoomByPrice}>Preço</th>
+                <th className='text-dark min-w-150px' onClick={handleOrderRoomByTeacher}>Professor</th>
                 <th className='text-dark min-w-100px'>Chat</th>
-                <th className='text-dark min-w-100px'>Ativo</th>
+                <th className='text-dark min-w-100px' onClick={handleOrderRoomByStatus}>Ativo</th>
                 <th className='text-dark min-w-50px'>Ação</th>
               </tr>
             </thead>
