@@ -15,17 +15,23 @@ import {
 } from '../../../../domain/usecases/interfaces/book/getBooks'
 import { useRequest } from '../../../../application/hooks/useRequest'
 import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
-import { BiCategory } from 'react-icons/bi'
+import { BiCategory, BiColumns } from 'react-icons/bi'
 import { RiFileExcel2Line } from 'react-icons/ri'
+import { stringify } from 'querystring'
 
 type Props = {
   remoteGetAllBooks: IGetBooks
 }
 
+type IFilterProps = {
+  column: string
+  order: 'ASC' | 'DESC'
+}
+
 export default function BooksTable({ remoteGetAllBooks }: Props) {
   const [loading, setLoading] = useState(true)
   const [books, setBooks] = useState<IBookResponse[]>([])
-  const [columnSelect, setColumnSelect] = useState('')
+  const [columnSelect, setColumnSelect] = useState<IFilterProps>()
 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
@@ -96,86 +102,99 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
               <tr className='fw-bolder text-muted bg-light'>
                 <th
                   onClick={() =>
-                    setColumnSelect(columnSelect === 'title-down' ? 'title-up' : 'title-down')
+                    setColumnSelect({
+                      column: 'title',
+                      order: columnSelect?.order === 'ASC' ? 'DESC' : 'ASC',
+                    })
                   }
                   className={`text-${
-                    columnSelect.includes('title') ? 'primary' : 'dark'
+                    columnSelect?.column === 'title' ? 'primary' : 'dark'
                   } min-w-150px ps-4 min-w-100px rounded-start`}
                 >
                   Título
-                  {columnSelect.includes('title-up') && (
+                  {columnSelect?.order === 'ASC' ? (
+                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
+                  ) : (
                     <GoArrowUp size={16} className='svg-icon-2 mh-50px' />
                   )}
-                  {columnSelect.includes('title-down') && (
-                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
-                  )}
                 </th>
+
                 <th
                   onClick={() =>
-                    setColumnSelect(
-                      columnSelect === 'description-down' ? 'description-up' : 'description-down'
-                    )
+                    setColumnSelect({
+                      column: 'decription',
+                      order: columnSelect?.order === 'ASC' ? 'DESC' : 'ASC',
+                    })
                   }
                   className={`text-${
-                    columnSelect.includes('description') ? 'primary' : 'dark'
-                  } min-w-150px align-items-center`}
+                    columnSelect?.column === 'decription' ? 'primary' : 'dark'
+                  } min-w-150px`}
                 >
                   Descrição
-                  {columnSelect.includes('description-up') && (
+                  {columnSelect?.order === 'ASC' ? (
+                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
+                  ) : (
                     <GoArrowUp size={16} className='svg-icon-2 mh-50px' />
                   )}
-                  {columnSelect.includes('description-down') && (
-                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
-                  )}
                 </th>
+
                 <th
                   onClick={() =>
-                    setColumnSelect(columnSelect === 'price-down' ? 'price-up' : 'price-down')
+                    setColumnSelect({
+                      column: 'price',
+                      order: columnSelect?.order === 'ASC' ? 'DESC' : 'ASC',
+                    })
                   }
                   className={`text-${
-                    columnSelect.includes('price') ? 'primary' : 'dark'
-                  } min-w-150px align-items-center`}
+                    columnSelect?.column === 'price' ? 'primary' : 'dark'
+                  } min-w-150px`}
                 >
                   Preço
-                  {columnSelect.includes('price-up') && (
+                  {columnSelect?.order === 'ASC' ? (
+                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
+                  ) : (
                     <GoArrowUp size={16} className='svg-icon-2 mh-50px' />
                   )}
-                  {columnSelect.includes('price-down') && (
-                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
-                  )}
                 </th>
+
                 <th
                   onClick={() =>
-                    setColumnSelect(columnSelect === 'author-down' ? 'author-up' : 'author-down')
+                    setColumnSelect({
+                      column: 'author',
+                      order: columnSelect?.order === 'ASC' ? 'DESC' : 'ASC',
+                    })
                   }
                   className={`text-${
-                    columnSelect.includes('author') ? 'primary' : 'dark'
-                  } min-w-150px align-items-center`}
+                    columnSelect?.column === 'author' ? 'primary' : 'dark'
+                  } min-w-150px`}
                 >
                   Autor
-                  {columnSelect.includes('author-up') && (
+                  {columnSelect?.order === 'ASC' ? (
+                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
+                  ) : (
                     <GoArrowUp size={16} className='svg-icon-2 mh-50px' />
                   )}
-                  {columnSelect.includes('author-down') && (
-                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
-                  )}
                 </th>
+
                 <th
                   onClick={() =>
-                    setColumnSelect(columnSelect === 'stock-down' ? 'stock-up' : 'stock-down')
+                    setColumnSelect({
+                      column: 'stock',
+                      order: columnSelect?.order === 'ASC' ? 'DESC' : 'ASC',
+                    })
                   }
                   className={`text-${
-                    columnSelect.includes('stock') ? 'primary' : 'dark'
-                  } min-w-150px align-items-center`}
+                    columnSelect?.column === 'stock' ? 'primary' : 'dark'
+                  } min-w-150px`}
                 >
                   Estoque
-                  {columnSelect.includes('stock-up') && (
+                  {columnSelect?.order === 'ASC' ? (
+                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
+                  ) : (
                     <GoArrowUp size={16} className='svg-icon-2 mh-50px' />
                   )}
-                  {columnSelect.includes('stock-down') && (
-                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
-                  )}
                 </th>
+
                 <th className='text-dark min-w-150px text-end rounded-end' />
               </tr>
             </thead>
