@@ -55,8 +55,7 @@ export function RoomsTable() {
     setSearchText(text)
   })
 
-  const handleOrderRoomByName = () => {
-    console.log(order)
+  const handleOrderRoomByName = () => {    
     switch (order) {
       case '':
         return setOrder('table-sort-asc')
@@ -79,8 +78,7 @@ export function RoomsTable() {
     return secondCharValue - firtstCharValue
   }
 
-  const handleOrderRoomByPrice = () => {
-    console.log(order)
+  const handleOrderRoomByPrice = () => {    
     switch (order) {
       case '':
         return setOrder('cheaper')
@@ -99,8 +97,7 @@ export function RoomsTable() {
     return roomB.price - roomA.price
   }
 
-  const handleOrderRoomByTeacher = () => {
-    console.log(order)
+  const handleOrderRoomByTeacher = () => {    
     switch (order) {
       case '':
         return setOrder('teacher-asc')
@@ -123,8 +120,7 @@ export function RoomsTable() {
     return secondCharValue - firtstCharValue
   }
 
-  const handleOrderRoomByStatus = () => {
-    console.log(order)
+  const handleOrderRoomByStatus = () => {    
     switch (order) {
       case '':
         return setOrder('status-asc')
