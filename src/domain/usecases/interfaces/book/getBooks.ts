@@ -1,7 +1,7 @@
 import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 
 export interface GetBookParams {
-  total?: number
+  name?: string
   take?: number | string
   page?: number | string
 }

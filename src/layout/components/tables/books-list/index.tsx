@@ -15,9 +15,8 @@ import {
 } from '../../../../domain/usecases/interfaces/book/getBooks'
 import { useRequest } from '../../../../application/hooks/useRequest'
 import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
-import { BiCategory, BiColumns } from 'react-icons/bi'
+
 import { RiFileExcel2Line } from 'react-icons/ri'
-import { stringify } from 'querystring'
 
 type Props = {
   remoteGetAllBooks: IGetBooks
@@ -39,6 +38,7 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
   const { currentPage, take } = pagination
 
   const [searchText, setSearchText] = useState('')
+
   useEffect(() => {
     setLoading(false)
   }, [remoteGetAllBooks])
@@ -52,29 +52,16 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
   console.log('pagi', pagination)
   console.log('search', searchText)
 
-  const paginationParams: GetBookParams = { page: currentPage, take }
+  const paginationParams: GetBookParams = { page: currentPage, take, name: searchText }
 
   useEffect(() => {
     getBooks(paginationParams)
-  }, [currentPage, take])
-
-  useEffect(() => {
-    getBooks()
-  }, [searchText.length])
+  }, [currentPage, take, searchText])
 
   useEffect(() => {
     if (paginatedBooks) {
       const { data, total } = paginatedBooks
-
-      searchText.length > 0
-        ? setBooks(
-            data.filter(
-              (book) =>
-                book.name.includes(searchText) || book.name.includes(searchText.toLocaleUpperCase())
-            )
-          )
-        : setBooks(data)
-
+      setBooks(data)
       setTotalPage(total)
     }
   }, [paginatedBooks])
@@ -235,7 +222,7 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
             <RiFileExcel2Line size={20} className='svg-icon-2 mh-50px' />
           </button>
         </div>
-        {!searchText && <Pagination paginationHook={paginationHook} />}
+        <Pagination paginationHook={paginationHook} />
       </div>
     </div>
   )
