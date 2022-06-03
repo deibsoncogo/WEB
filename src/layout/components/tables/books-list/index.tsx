@@ -14,6 +14,7 @@ import {
   OutputPagination,
 } from '../../../../domain/usecases/interfaces/book/getBooks'
 import { useRequest } from '../../../../application/hooks/useRequest'
+import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 
 type Props = {
   remoteGetAllBooks: IGetBooks
@@ -21,32 +22,48 @@ type Props = {
 
 export default function BooksTable({ remoteGetAllBooks }: Props) {
   const [loading, setLoading] = useState(true)
+  const [books, setBooks] = useState<IBookResponse[]>([])
 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
 
-  const { currentPage, totalPages, take } = pagination
+  const { currentPage, take } = pagination
 
+  const [searchText, setSearchText] = useState('')
   useEffect(() => {
     setLoading(false)
   }, [remoteGetAllBooks])
 
-  const { makeRequest: getBooks, data: books } = useRequest<OutputPagination, GetBookParams>(
-    remoteGetAllBooks.get
-  )
+  const { makeRequest: getBooks, data: paginatedBooks } = useRequest<
+    OutputPagination,
+    GetBookParams
+  >(remoteGetAllBooks.get)
+
+  console.log(paginatedBooks)
+  console.log(pagination)
+  console.log('search', searchText)
 
   const paginationParams: GetBookParams = { page: currentPage, take }
 
   useEffect(() => {
     getBooks(paginationParams)
-    if (books?.data) setTotalPage(books?.total)
-  }, [pagination.currentPage, pagination.take])
+  }, [currentPage, take])
+
+  useEffect(() => {
+    if (paginatedBooks) {
+      const { data, total } = paginatedBooks
+      searchText.length > 0
+        ? setBooks(paginatedBooks.data.filter((book) => book.name.includes(searchText)))
+        : setBooks(data)
+      setTotalPage(total)
+    }
+  }, [paginatedBooks, searchText])
 
   return (
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
-          <Search />
+          <Search onChangeText={(value) => setSearchText(value)} />
         </h3>
         <div className='card-toolbar'>
           <Link href='/books/create'>
@@ -74,7 +91,7 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
 
             <tbody>
               {!loading &&
-                books?.data.map((item) => (
+                books?.map((item) => (
                   <MakeBookRow
                     key={item.id}
                     id={item.id}
@@ -90,6 +107,12 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
                 ))}
             </tbody>
           </table>
+
+          {books && books.length < 1 && (
+            <div className='py-14 border mx-4 my-8 d-flex'>
+              <p className='text-center w-100 m-0 font-weight-bold'>Nenhum livro cadastrado.</p>
+            </div>
+          )}
         </div>
       </div>
 
