@@ -7,9 +7,7 @@ interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   label?: string
   placeholderText?:string
-  onChange?: () => void
-  
- 
+  onChange?: (value?:any) => void
 }
 
 export function Input({ name, label, placeholderText, onChange, ...rest }: IInputProps) {
