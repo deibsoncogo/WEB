@@ -4,6 +4,7 @@ export interface GetCategoriesParams {
   name: string
   take: number
   page: number
+  order: 'asc' | 'desc' | undefined
 }
 
 export interface OutputPagination {

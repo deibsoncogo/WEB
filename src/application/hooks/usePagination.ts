@@ -1,7 +1,13 @@
 import { ChangeEvent, useState } from 'react'
 
+type PaginationType = {
+  totalPages: number
+  currentPage: number
+  take: number
+  order?: 'asc' | 'desc'
+}
 export function usePagination() {
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<PaginationType>({
     totalPages: 1,
     currentPage: 1,
     take: 5,
@@ -45,7 +51,27 @@ export function usePagination() {
     })
   }
 
-  return { goBack, goNext, rangeChange, setCurrentPage, setTotalPage, pagination }
+  const handleOrdenation = () => {
+    console.log('Click')
+    const { order } = pagination
+
+    if (order === 'asc') {
+      setPagination((oldState) => ({ ...oldState, order: 'desc' }))
+      return
+    }
+
+    if (order === 'desc') {
+      setPagination((oldState) => {
+        const { currentPage, take, totalPages } = oldState
+        return { currentPage, take, totalPages }
+      })
+      return
+    }
+
+    setPagination((oldState) => ({ ...oldState, order: 'asc' }))
+  }
+
+  return { goBack, goNext, rangeChange, setCurrentPage, setTotalPage, handleOrdenation, pagination }
 }
 
 export type usePaginationType = ReturnType<typeof usePagination>

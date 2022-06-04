@@ -9,7 +9,24 @@ export const MakeFormCreateBook = () => {
   return <FormCreateBook />
 }
 
-export function MakeBookRow({ id, author, description, stock, price, name }: IBookResponse) {
+type MakeBookRowType = {
+  book: IBookResponse
+  deleteBook: (bookId: string) => void
+  loadingDeletion: boolean
+  isModalDeletionOpen: boolean
+  closeModalDeleteConfirmation: () => void
+  openModalDeleteConfirmation: () => void
+}
+
+export function MakeBookRow({
+  book,
+  deleteBook,
+  loadingDeletion,
+  isModalDeletionOpen,
+  closeModalDeleteConfirmation,
+  openModalDeleteConfirmation,
+}: MakeBookRowType) {
+  const { id, author, description, stock, price, name } = book
   return (
     <Row
       id={id}
@@ -18,7 +35,11 @@ export function MakeBookRow({ id, author, description, stock, price, name }: IBo
       author={author}
       stock={stock}
       price={price}
-      deleteBook={makeRemoteDeleteBook()}
+      deleteBook={deleteBook}
+      loadingDeletion={loadingDeletion}
+      isModalDeletionOpen={isModalDeletionOpen}
+      closeModalDeleteConfirmation={closeModalDeleteConfirmation}
+      openModalDeleteConfirmation={openModalDeleteConfirmation}
     />
   )
 }

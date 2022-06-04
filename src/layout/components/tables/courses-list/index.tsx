@@ -17,7 +17,7 @@ import { Course } from '../../../../interfaces/model/Course'
 import { debounce } from '../../../../helpers/debounce'
 import { FormHandles } from '@unform/core'
 import { usePagination } from '../../../../application/hooks/usePagination'
-import Pagination from '../../pagination/Pagination'
+import { Pagination } from '../../pagination/Pagination'
 import { Loading } from '../../loading/loading'
 
 type Props = {
@@ -49,7 +49,6 @@ export default function CoursesTable(props: Props) {
 
   useEffect(() => {
     const paginationParams: GetCoursesParams = { page: currentPage, take, ...filters }
-    console.log(paginationParams)
     props.getAllCourses
       .getAll(paginationParams)
       .then((data) => {

@@ -25,12 +25,20 @@ export const unprotectedRoutes = [appRoutes.LOGIN_PAGE,
                                   appRoutes.RESET_PASSWORD]
 
 
-export const professorRoutes = [appRoutes.COURSES,
-                                appRoutes.BOOKS]
+export const professorRoutes = [appRoutes.DASHBOARD,
+                                appRoutes.CATEGORIES,
+                                appRoutes.CONTENTS,
+                                appRoutes.BANNERS,
+                                appRoutes.ALERTS,
+                                appRoutes.PLANNS,
+                                appRoutes.COURSES,
+                                appRoutes.BOOKS,
+                                appRoutes.ROOMS,
+                                appRoutes.UNAUTHORIZED,
+                                appRoutes.LOGOUT,                           
+                               ]
 
 export const adminRoutes = [appRoutes.USERS,
-                            appRoutes.CATEGORIES,
-                            appRoutes.CONTENTS,
-                            appRoutes.BANNERS,
-                            appRoutes.BANNERS
+                            appRoutes.SALES,
+                            appRoutes.COUPONS
                            ].concat(professorRoutes)

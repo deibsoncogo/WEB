@@ -5,7 +5,7 @@ import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 
 import { MakeBookPage } from '../../application/factories/pages/books/book-factory'
 
-const Users: NextPage = () => {
+const Books: NextPage = () => {
   return (
     <>
       <Head>
@@ -27,4 +27,4 @@ const Users: NextPage = () => {
   )
 }
 
-export default Users
+export default Books

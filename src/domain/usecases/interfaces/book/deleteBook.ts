@@ -1,7 +1,7 @@
-export interface DeleteBookParams {
+export interface IDeleteBookParams {
   id: string
 }
 
 export interface IDeleteBook {
-  delete: (params: DeleteBookParams) => Promise<string>
+  delete: (params: IDeleteBookParams) => Promise<string>
 }

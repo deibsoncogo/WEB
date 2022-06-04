@@ -1,34 +1,34 @@
 import { FormHandles } from '@unform/core'
 import React, { useEffect, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
+import * as Yup from 'yup'
+import { usePagination } from '../../../application/hooks/usePagination'
 import { useRequest } from '../../../application/hooks/useRequest'
 import {
   CreateCategoryParams,
   ICreateCategory,
 } from '../../../domain/usecases/interfaces/category/createCategory'
 import {
+  DeleteCategoryParams,
+  IDeleteCategory,
+} from '../../../domain/usecases/interfaces/category/deleteCategory'
+import {
   GetCategoriesParams,
   IGetCategories,
   OutputPagination,
 } from '../../../domain/usecases/interfaces/category/getCategories'
-import { KTSVG } from '../../../helpers'
-import { applyYupValidation } from '../../../helpers/applyYupValidation'
-import { Category } from '../../../interfaces/model/Category'
-import { CreateCategoryDrawer } from '../../components/forms/create-category'
-import { Search } from '../../components/search/Search'
-import CategoriesTable from '../../components/tables/categories-list'
-import * as Yup from 'yup'
-import { usePagination } from '../../../application/hooks/usePagination'
-import { debounce } from '../../../helpers/debounce'
-import {
-  DeleteCategoryParams,
-  IDeleteCategory,
-} from '../../../domain/usecases/interfaces/category/deleteCategory'
-import { toast } from 'react-toastify'
-import { UpdateCategoryDrawer } from '../../components/forms/update-category'
 import {
   IUpdateCategory,
   UpdateCategoryParams,
 } from '../../../domain/usecases/interfaces/category/updateCategory'
+import { KTSVG } from '../../../helpers'
+import { applyYupValidation } from '../../../helpers/applyYupValidation'
+import { debounce } from '../../../helpers/debounce'
+import { Category } from '../../../interfaces/model/Category'
+import { CreateCategoryDrawer } from '../../components/forms/create-category'
+import { UpdateCategoryDrawer } from '../../components/forms/update-category'
+import { Search } from '../../components/search/Search'
+import CategoriesTable from '../../components/tables/categories-list'
 
 type Props = {
   remoteCreateCategory: ICreateCategory
@@ -54,9 +54,14 @@ function CategoriesTemplate({
   const [isDrawerUpdateCategoryOpen, setIsDrawerUpdateCategoryOpen] = useState(false)
 
   const paginationHook = usePagination()
-  const { pagination, setTotalPage } = paginationHook
-  const { take, currentPage } = pagination
-  const paginationParams: GetCategoriesParams = { page: currentPage, take, name: categoryName }
+  const { pagination, setTotalPage, handleOrdenation } = paginationHook
+  const { take, currentPage, order } = pagination
+  const paginationParams: GetCategoriesParams = {
+    page: currentPage,
+    take,
+    name: categoryName,
+    order,
+  }
 
   const createCategoryFormRef = useRef<FormHandles>(null)
   const updateCategoryFormRef = useRef<FormHandles>(null)
@@ -168,6 +173,7 @@ function CategoriesTemplate({
   }, [
     pagination.take,
     pagination.currentPage,
+    pagination.order,
     categoryName,
     categorySuccessfullDeleted,
     categorySuccessfullUpdated,
@@ -259,6 +265,8 @@ function CategoriesTemplate({
           loadingDeletion={loadingCategoryDeletion}
           setSelectedCategory={handleSelectedCategory}
           openUpdateCategoryDrawer={handleOpenDrawerUpdateCategory}
+          onOrder={handleOrdenation}
+          order={order}
         />
       </div>
     </>

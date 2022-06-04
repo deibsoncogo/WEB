@@ -11,6 +11,7 @@ export class AxiosHttpClient implements HttpClient {
         data: data.body,
         headers: this.getAuthHeaders(),
         params: data.params,
+        responseType: data.responseType,
       })
     } catch (error: any) {
       axiosResponse = error.response
@@ -19,6 +20,7 @@ export class AxiosHttpClient implements HttpClient {
     return {
       statusCode: axiosResponse.status,
       body: axiosResponse?.data?.data || axiosResponse?.data,
+      response: axiosResponse,
     }
   }
 

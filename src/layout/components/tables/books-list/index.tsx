@@ -5,7 +5,7 @@ import { Search } from '../../search/Search'
 import { useEffect, useState } from 'react'
 
 import { MakeBookRow } from '../../../../application/factories/components/createBook-factory'
-import Pagination from '../../pagination/Pagination'
+import { Pagination } from '../../pagination/Pagination'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import {
   GetBookParams,
@@ -18,10 +18,9 @@ import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 import { RiFileExcel2Line } from 'react-icons/ri'
 import { Book } from '../../../../interfaces/model/Book'
 import { debounce } from '../../../../helpers/debounce'
-import {
-  DeleteBookParams,
-  IDeleteBook,
-} from '../../../../domain/usecases/interfaces/book/deleteBook'
+import { IDeleteBook } from '../../../../domain/usecases/interfaces/book/deleteBook'
+import { DeleteCategoryParams } from '../../../../domain/usecases/interfaces/category/deleteCategory'
+import { toast } from 'react-toastify'
 
 type Props = {
   remoteGetAllBooks: IGetBooks
@@ -30,7 +29,7 @@ type Props = {
 
 type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 
-export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Props) {
+const BooksTable = ({ remoteGetAllBooks, remoteDeleteBook }: Props) => {
   const [loading, setLoading] = useState(true)
   const [books, setBooks] = useState<IBookResponse[]>([])
 
@@ -43,12 +42,15 @@ export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Prop
 
   const [order, setOrder] = useState<orderOptions>('')
 
+  const [isModalDeleteBookOpen, setIsModalDeleteBookOpen] = useState(false)
+
   const {
     makeRequest: deleteBookRequest,
     error: deleteBookError,
     data: bookSuccessfullDeleted,
-    loading: loadingCategoryBook,
-  } = useRequest<string, DeleteBookParams>(remoteDeleteBook.delete)
+    loading: loadingBookDeleteion,
+    cleanError: cleanUpBookDeletionsError,
+  } = useRequest<string, DeleteCategoryParams>(remoteDeleteBook.delete)
 
   useEffect(() => {
     setLoading(false)
@@ -61,9 +63,21 @@ export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Prop
 
   const paginationParams: GetBookParams = { page: currentPage, take, name: searchText }
 
+  const handleCloseModalConfirmDeletion = () => {
+    setIsModalDeleteBookOpen(false)
+  }
+
+  const handleOpenModalConfirmDeletion = () => {
+    setIsModalDeleteBookOpen(true)
+  }
+
+  const handleBookDelettion = (bookId: string) => {
+    deleteBookRequest({ id: bookId })
+  }
+
   useEffect(() => {
     getBooks(paginationParams)
-  }, [currentPage, take, searchText])
+  }, [currentPage, take, searchText, bookSuccessfullDeleted])
 
   useEffect(() => {
     if (paginatedBooks) {
@@ -76,6 +90,20 @@ export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Prop
   const handleSearchBook = debounce((text: string) => {
     setSearchText(text.trim())
   })
+
+  useEffect(() => {
+    if (bookSuccessfullDeleted) {
+      handleCloseModalConfirmDeletion()
+      toast.success('Livro deletado com sucesso')
+      cleanUpBookDeletionsError()
+    }
+  }, [bookSuccessfullDeleted])
+
+  useEffect(() => {
+    if (deleteBookError) {
+      toast.error(deleteBookError)
+    }
+  }, [deleteBookError])
 
   return (
     <div className='card mb-5 mb-xl-8'>
@@ -101,7 +129,6 @@ export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Prop
                 <th
                   className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${order}`}
                   role='columnheader'
-                  onClick={handleOrderCategory}
                 >
                   Título
                 </th>
@@ -109,7 +136,6 @@ export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Prop
                 <th
                   className={`text-dark  min-w-150px cursor-pointer ${order}`}
                   role='columnheader'
-                  onClick={handleOrderCategory}
                 >
                   Descrição
                 </th>
@@ -117,7 +143,6 @@ export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Prop
                 <th
                   className={`text-dark  min-w-150px cursor-pointer ${order}`}
                   role='columnheader'
-                  onClick={handleOrderCategory}
                 >
                   Preço
                 </th>
@@ -125,7 +150,6 @@ export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Prop
                 <th
                   className={`text-dark  min-w-150px cursor-pointer ${order}`}
                   role='columnheader'
-                  onClick={handleOrderCategory}
                 >
                   Autor
                 </th>
@@ -133,7 +157,6 @@ export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Prop
                 <th
                   className={`text-dark  min-w-150px cursor-pointer ${order}`}
                   role='columnheader'
-                  onClick={handleOrderCategory}
                 >
                   Estoque
                 </th>
@@ -144,18 +167,15 @@ export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Prop
 
             <tbody>
               {!loading &&
-                books?.map((item) => (
+                books?.map((book) => (
                   <MakeBookRow
-                    key={item.id}
-                    id={item.id}
-                    name={item.name}
-                    price={item.price}
-                    author={item.author}
-                    stock={item.stock}
-                    description={item.description}
-                    category={item.category}
-                    discount={item.discount}
-                    imageUrl={item.imageUrl}
+                    key={book.id}
+                    book={book}
+                    deleteBook={handleBookDelettion}
+                    loadingDeletion={loadingBookDeleteion}
+                    isModalDeletionOpen={isModalDeleteBookOpen}
+                    closeModalDeleteConfirmation={handleCloseModalConfirmDeletion}
+                    openModalDeleteConfirmation={handleOpenModalConfirmDeletion}
                   />
                 ))}
             </tbody>
@@ -183,3 +203,5 @@ export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Prop
     </div>
   )
 }
+
+export default BooksTable

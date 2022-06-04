@@ -1,4 +1,4 @@
-import { ChangeEvent, ChangeEventHandler, FormEvent, forwardRef } from 'react'
+import { ChangeEvent, forwardRef } from 'react'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
@@ -13,7 +13,7 @@ const Search = forwardRef<FormHandles, SearchProps>((props, ref) => {
   async function handleFormSubmit(data: any) {}
 
   const handleOnChangeText = (event: ChangeEvent<HTMLInputElement>) => {
-    onChangeText(event.target.value)
+    onChangeText(event.target.value.trim())
   }
 
   return (
