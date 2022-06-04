@@ -3,7 +3,6 @@ import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
 
 import { useEffect, useState } from 'react'
-import { GoArrowUp, GoArrowDown } from 'react-icons/go'
 
 import { MakeBookRow } from '../../../../application/factories/components/createBook-factory'
 import Pagination from '../../pagination/Pagination'
@@ -17,20 +16,23 @@ import { useRequest } from '../../../../application/hooks/useRequest'
 import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 
 import { RiFileExcel2Line } from 'react-icons/ri'
+import { Book } from '../../../../interfaces/model/Book'
+import { debounce } from '../../../../helpers/debounce'
+import {
+  DeleteBookParams,
+  IDeleteBook,
+} from '../../../../domain/usecases/interfaces/book/deleteBook'
 
 type Props = {
   remoteGetAllBooks: IGetBooks
+  remoteDeleteBook: IDeleteBook
 }
 
-type IFilterProps = {
-  column: string
-  order: 'ASC' | 'DESC'
-}
+type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 
-export default function BooksTable({ remoteGetAllBooks }: Props) {
+export default function BooksTable({ remoteGetAllBooks, remoteDeleteBook }: Props) {
   const [loading, setLoading] = useState(true)
   const [books, setBooks] = useState<IBookResponse[]>([])
-  const [columnSelect, setColumnSelect] = useState<IFilterProps>()
 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
@@ -38,6 +40,15 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
   const { currentPage, take } = pagination
 
   const [searchText, setSearchText] = useState('')
+
+  const [order, setOrder] = useState<orderOptions>('')
+
+  const {
+    makeRequest: deleteBookRequest,
+    error: deleteBookError,
+    data: bookSuccessfullDeleted,
+    loading: loadingCategoryBook,
+  } = useRequest<string, DeleteBookParams>(remoteDeleteBook.delete)
 
   useEffect(() => {
     setLoading(false)
@@ -47,10 +58,6 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
     OutputPagination,
     GetBookParams
   >(remoteGetAllBooks.get)
-
-  console.log(paginatedBooks)
-  console.log('pagi', pagination)
-  console.log('search', searchText)
 
   const paginationParams: GetBookParams = { page: currentPage, take, name: searchText }
 
@@ -66,11 +73,15 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
     }
   }, [paginatedBooks])
 
+  const handleSearchBook = debounce((text: string) => {
+    setSearchText(text.trim())
+  })
+
   return (
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
-          <Search onChangeText={(value) => setSearchText(value.trim())} />
+          <Search onChangeText={handleSearchBook} />
         </h3>
         <div className='card-toolbar'>
           <Link href='/books/create'>
@@ -88,98 +99,43 @@ export default function BooksTable({ remoteGetAllBooks }: Props) {
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
                 <th
-                  onClick={() =>
-                    setColumnSelect({
-                      column: 'title',
-                      order: columnSelect?.order === 'ASC' ? 'DESC' : 'ASC',
-                    })
-                  }
-                  className={`text-${
-                    columnSelect?.column === 'title' ? 'primary' : 'dark'
-                  } min-w-150px ps-4 min-w-100px rounded-start`}
+                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${order}`}
+                  role='columnheader'
+                  onClick={handleOrderCategory}
                 >
                   Título
-                  {columnSelect?.order === 'ASC' ? (
-                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
-                  ) : (
-                    <GoArrowUp size={16} className='svg-icon-2 mh-50px' />
-                  )}
                 </th>
 
                 <th
-                  onClick={() =>
-                    setColumnSelect({
-                      column: 'decription',
-                      order: columnSelect?.order === 'ASC' ? 'DESC' : 'ASC',
-                    })
-                  }
-                  className={`text-${
-                    columnSelect?.column === 'decription' ? 'primary' : 'dark'
-                  } min-w-150px`}
+                  className={`text-dark  min-w-150px cursor-pointer ${order}`}
+                  role='columnheader'
+                  onClick={handleOrderCategory}
                 >
                   Descrição
-                  {columnSelect?.order === 'ASC' ? (
-                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
-                  ) : (
-                    <GoArrowUp size={16} className='svg-icon-2 mh-50px' />
-                  )}
                 </th>
 
                 <th
-                  onClick={() =>
-                    setColumnSelect({
-                      column: 'price',
-                      order: columnSelect?.order === 'ASC' ? 'DESC' : 'ASC',
-                    })
-                  }
-                  className={`text-${
-                    columnSelect?.column === 'price' ? 'primary' : 'dark'
-                  } min-w-150px`}
+                  className={`text-dark  min-w-150px cursor-pointer ${order}`}
+                  role='columnheader'
+                  onClick={handleOrderCategory}
                 >
                   Preço
-                  {columnSelect?.order === 'ASC' ? (
-                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
-                  ) : (
-                    <GoArrowUp size={16} className='svg-icon-2 mh-50px' />
-                  )}
                 </th>
 
                 <th
-                  onClick={() =>
-                    setColumnSelect({
-                      column: 'author',
-                      order: columnSelect?.order === 'ASC' ? 'DESC' : 'ASC',
-                    })
-                  }
-                  className={`text-${
-                    columnSelect?.column === 'author' ? 'primary' : 'dark'
-                  } min-w-150px`}
+                  className={`text-dark  min-w-150px cursor-pointer ${order}`}
+                  role='columnheader'
+                  onClick={handleOrderCategory}
                 >
                   Autor
-                  {columnSelect?.order === 'ASC' ? (
-                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
-                  ) : (
-                    <GoArrowUp size={16} className='svg-icon-2 mh-50px' />
-                  )}
                 </th>
 
                 <th
-                  onClick={() =>
-                    setColumnSelect({
-                      column: 'stock',
-                      order: columnSelect?.order === 'ASC' ? 'DESC' : 'ASC',
-                    })
-                  }
-                  className={`text-${
-                    columnSelect?.column === 'stock' ? 'primary' : 'dark'
-                  } min-w-150px`}
+                  className={`text-dark  min-w-150px cursor-pointer ${order}`}
+                  role='columnheader'
+                  onClick={handleOrderCategory}
                 >
                   Estoque
-                  {columnSelect?.order === 'ASC' ? (
-                    <GoArrowDown size={16} className='svg-icon-2 mh-50px' />
-                  ) : (
-                    <GoArrowUp size={16} className='svg-icon-2 mh-50px' />
-                  )}
                 </th>
 
                 <th className='text-dark min-w-150px text-end rounded-end' />

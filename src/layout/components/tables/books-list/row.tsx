@@ -1,9 +1,13 @@
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRequest } from '../../../../application/hooks/useRequest'
+import {
+  DeleteBookParams,
+  IDeleteBook,
+} from '../../../../domain/usecases/interfaces/book/deleteBook'
 
 import { KTSVG } from '../../../../helpers'
-
-import { ActionModal } from '../../modals/action'
+import ConfirmationModal from '../../modal/ConfirmationModal'
 
 interface IBookRow {
   id: string
@@ -15,17 +19,21 @@ interface IBookRow {
   deleteBook: IDeleteBook
 }
 
-export function Row({ id, author, description, stock, price, name }: IBookRow) {
+export function Row({ id, author, description, stock, price, name, deleteBook }: IBookRow) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  async function handleDeleteBook() {
+  const handleDeleteBook = async () => {
     try {
-      setIsModalOpen(false)
-    } catch (err) {
-      console.log(err)
+      await deleteBookRequest({ id })
+      console.log(bookSuccessfullDeleted)
+      console.log('loadin', bookSuccessfullDeleted)
+    } catch (error) {
+      console.log('err', error)
+      console.log(deleteBookError)
     }
   }
 
+  useEffect(() => {}, [bookSuccessfullDeleted])
   return (
     <tr>
       <td className='ps-4'>
@@ -47,7 +55,7 @@ export function Row({ id, author, description, stock, price, name }: IBookRow) {
         <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
           <KTSVG path='/icons/gen019.svg' className='svg-icon-3' />
         </button>
-        <Link href={`/users/edit/${id}`}>
+        <Link href={`/books/edit/${id}`}>
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
             <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
           </button>
@@ -62,14 +70,13 @@ export function Row({ id, author, description, stock, price, name }: IBookRow) {
         </button>
       </td>
 
-      <ActionModal
+      <ConfirmationModal
         isOpen={isModalOpen}
-        modalTitle='Deletar'
-        message='Você tem certeza que deseja excluir esse livro?'
-        action={handleDeleteBook}
-        onRequestClose={() => {
-          setIsModalOpen(false)
-        }}
+        loading={loadingCategoryBook}
+        onRequestClose={() => setIsModalOpen(false)}
+        onConfimation={handleDeleteBook}
+        content='Você tem certeza que deseja excluir este livro?'
+        title='Deletar'
       />
     </tr>
   )

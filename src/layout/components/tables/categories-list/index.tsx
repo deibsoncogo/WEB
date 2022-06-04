@@ -99,7 +99,7 @@ export default function CategoriesTable({
         loading={loadingDeletion}
         onRequestClose={handleCloseIsDeleteCategoryModal}
         onConfimation={handleConfimationModal}
-        content='Você tem ceterza que deseja excluir esta categoria?'
+        content='Você tem certeza que deseja excluir esta categoria?'
         title='Deletar'
       />
       {orderedCategories.length > 0 && (

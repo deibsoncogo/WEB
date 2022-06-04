@@ -13,7 +13,6 @@ const Search = forwardRef<FormHandles, SearchProps>((props, ref) => {
   async function handleFormSubmit(data: any) {}
 
   const handleOnChangeText = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log('HEllo aurora')
     onChangeText(event.target.value)
   }
 
