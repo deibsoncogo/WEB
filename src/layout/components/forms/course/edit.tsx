@@ -28,7 +28,7 @@ type Props = {
   getCategories: IGetCategoriesNoPagination
   getUsers: IGetAllUsersByRole
   getCourse: IGetCourse
-  id: string| string[] | undefined
+  id: string | string[] | undefined
 }
 
 export function FormUpdateCourse(props: Props) {
@@ -43,17 +43,16 @@ export function FormUpdateCourse(props: Props) {
   const [stateEditor, setStateEditor] = useState({ content: '' })
 
   useEffect(() => {
-    
-    if(typeof props.id == "string"){
+    if (typeof props.id == 'string') {
       props.getCourse
         .get(props.id)
-        .then((data) => {        
-          setDefaultValue(data)         
+        .then((data) => {
+          setDefaultValue(data)
           setStateEditor({ content: data.content })
         })
         .catch((error) => toast.error('Não foi possível carregar o curso.'))
         .finally(() => setLoadingCourse(false))
-      }
+    }
   }, [])
 
   useEffect(() => {
@@ -107,16 +106,22 @@ export function FormUpdateCourse(props: Props) {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome é necessário'),
-        accessTime: Yup.number().required('Tempo de acesso é necessário'),
-        price: Yup.string().required('Preço é necessário'),    
-        installments: Yup.number().required('Quantidade de parcelas é necessária'),   
+        accessTime: Yup.number().typeError('Tempo de acesso deve ser um número')
+        .required('Tempo de acesso é necessário')
+        .positive("Tempo de acesso deve ser positivo")
+        .integer("Tempo de acesso deve ser um número inteiro."),
+        price: Yup.string().required('Preço é necessário'),
+        installments: Yup.number().typeError('Quantidade de parcelas deve ser um número')
+        .required('Quantidade de parcelas é necessário')
+        .positive("Quantidade de parcelas deve ser positiva")
+        .integer("Quantidade de parcelas deve ser um número inteiro"),
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         content: Yup.string().required('Conteúdo progrmático é necessário'),
         userId: Yup.string().optional(),
       })
-      data.content= stateEditor.content  
+      data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
       handleUpdateCourse(data)
     } catch (err) {
@@ -132,9 +137,8 @@ export function FormUpdateCourse(props: Props) {
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
-    
-    const price = parseFloat(data.price.replace(".", "").replace(',','.'))    
-    const discount  = parseFloat(data.discount.replace(".", "").replace(',','.'))  
+    const price = parseFloat(data.price.replace('.', '').replace(',', '.'))
+    const discount = parseFloat(data.discount.replace('.', '').replace(',', '.'))
 
     const course = new UpdateCourse(
       defaultValue?.id,
@@ -149,7 +153,7 @@ export function FormUpdateCourse(props: Props) {
       price,
       parseInt(data.accessTime),
       data.userId
-    )   
+    )
     props.updateCourse
       .update(course)
       .then(() => {
@@ -159,125 +163,123 @@ export function FormUpdateCourse(props: Props) {
       .catch((error: any) => console.log(error))
   }
 
-  return (    
+  return (
     <>
-    {loadingCourse && loadingCategories && loadingUsers && <Loading/>}
-    
-    {!(loadingCourse && loadingCategories && loadingUsers) && (<Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
-      <h3 className='mb-5'>Informações do Curso</h3>
-      <InputImage name='photo' />
-      <div className='d-flex flex-row gap-5 w-100'>
-        <div className='w-50'>
-          <Input name='name' label='Nome' />
-          <Select name='userId' label='Professor'>
-            {defaultValue?.userId ? (
-              <option value={defaultValue.userId}>{defaultValue.teacherName}</option>
-            ) : (
-              <option value='' disabled selected>
-                Selecione
-              </option>
-            )}
-            {users.map((option) => {
-              if (defaultValue?.userId) {
-                if (option.id != defaultValue.userId) {
-                  return (
-                    <option key={option.id} value={option.id}>
-                      {option.name}
-                    </option>
-                  )
-                }
-              }
-            })}
-          </Select>
-          <Input name='accessTime' type='number' label='Tempo de acesso ao curso (em meses)' />
-          <Input
-            name='price'
-            defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
-            label='Preço'
-            type='text'
-            placeholderText='R$'
-            onChange={() => currencyFormatter('price')}
+      {loadingCourse && loadingCategories && loadingUsers && <Loading />}
+
+      {!(loadingCourse && loadingCategories && loadingUsers) && (
+        <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+          <h3 className='mb-5'>Informações do Curso</h3>
+          <InputImage name='photo' />
+          <div className='d-flex flex-row gap-5 w-100'>
+            <div className='w-50'>
+              <Input name='name' label='Nome' />
+              <Select name='userId' label='Professor'>
+                {defaultValue?.userId ? (
+                  <option value={defaultValue.userId}>{defaultValue.teacherName}</option>
+                ) : (
+                  <option value='' disabled selected>
+                    Selecione
+                  </option>
+                )}
+                {users.map((option) => {
+                  if (defaultValue?.userId) {
+                    if (option.id != defaultValue.userId) {
+                      return (
+                        <option key={option.id} value={option.id}>
+                          {option.name}
+                        </option>
+                      )
+                    }
+                  }
+                })}
+              </Select>
+              <Input name='accessTime' type='number' label='Tempo de acesso ao curso (em meses)' />
+              <Input
+                name='price'
+                defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
+                label='Preço'
+                type='text'
+                placeholderText='R$'
+                onChange={() => currencyFormatter('price')}
+              />
+              <Input
+                name='discount'
+                defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}
+                label='Desconto'
+                type='text'
+                placeholderText='R$'
+                onChange={() => currencyFormatter('discount')}
+              />
+            </div>
+            <div className='w-50'>
+              <TextArea name='description' label='Descrição' rows={10} />
+              <Select name='categoryId' label='Categoria'>
+                {defaultValue?.categoryId ? (
+                  <option value={defaultValue.categoryId}>
+                    {findCategoryById(defaultValue.categoryId)?.name}
+                  </option>
+                ) : (
+                  <option value='' disabled selected>
+                    Selecione
+                  </option>
+                )}
+                {categories.map((option) => {
+                  if (defaultValue?.categoryId) {
+                    if (option.id != defaultValue.categoryId) {
+                      return (
+                        <option key={option.id} value={option.id}>
+                          {option.name}
+                        </option>
+                      )
+                    }
+                  }
+                })}
+              </Select>
+              <Input name='installments' label='Quantidade de Parcelas' type='number' />
+            </div>
+          </div>
+
+          <h3 className='mb-5 mt-5'>Conteúdo e Materiais do Curso</h3>
+          <h5 className='mb-5 mt-5 text-muted'>Conteúdo Prográmatico do Curso</h5>
+
+          <Editor
+            init={{
+              plugins:
+                'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',
+              menubar: false,
+              toolbar:
+                'undo redo | bold italic underline strikethrough | fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+              toolbar_sticky: true,
+              height: 300,
+              quickbars_selection_toolbar:
+                'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+              noneditable_class: 'mceNonEditable',
+              contextmenu: 'link image table',
+            }}
+            value={stateEditor.content}
+            onEditorChange={handleChange}
           />
-          <Input
-            name='discount'
-            defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}
-            label='Desconto'
-            type='text'
-            placeholderText='R$'
-            onChange={() => currencyFormatter('discount')}
-          />
-        </div>
-        <div className='w-50'>
-          <TextArea name='description' label='Descrição' rows={10} />
-          <Select name='categoryId' label='Categoria'>
-            {defaultValue?.categoryId ? (
-              <option value={defaultValue.categoryId}>
-                {findCategoryById(defaultValue.categoryId)?.name}
-              </option>
-            ) : (
-              <option value='' disabled selected>
-                Selecione
-              </option>
-            )}
-            {categories.map((option) => {
-              if (defaultValue?.categoryId) {
-                if (option.id != defaultValue.categoryId) {
-                  return (
-                    <option key={option.id} value={option.id}>
-                      {option.name}
-                    </option>
-                  )
-                }
-              }
-            })}
-          </Select>
-          <Input
-            name='installments'
-            label='Quantidade de Parcelas'
-            type='number'            
-          /> 
-        </div>
-      </div>
 
-      <h3 className='mb-5 mt-5'>Conteúdo e Materiais do Curso</h3>
-      <h5 className='mb-5 mt-5 text-muted'>Conteúdo Prográmatico do Curso</h5>
+          <Input name='content' />
 
-      <Editor
-        init={{
-          plugins:
-            'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',
-          menubar: false,
-          toolbar:
-            'undo redo | bold italic underline strikethrough | fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
-          toolbar_sticky: true,
-          height: 300,
-          quickbars_selection_toolbar:
-            'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
-          noneditable_class: 'mceNonEditable',
-          contextmenu: 'link image table',
-        }}
-        value={stateEditor.content}
-        onEditorChange={handleChange}
-      />
+          <div className='d-flex mt-10'>
+            <button
+              type='button'
+              onClick={() => {
+                router.push('/courses')
+              }}
+              className='btn btn-lg btn-secondary w-150px mb-5 ms-auto me-10'
+            >
+              Cancelar
+            </button>
 
-      <Input name='content'/>
-
-      <div className='d-flex mt-10'>
-        <button
-          type='button'
-          onClick={() => {
-            router.push('/courses')
-          }}
-          className='btn btn-lg btn-secondary w-150px mb-5 ms-auto me-10'
-        >
-          Cancelar
-        </button>
-
-        <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
-          Salvar
-        </button>
-      </div>
-    </Form>)}
+            <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
+              Salvar
+            </button>
+          </div>
+        </Form>
+      )}
     </>
   )
 }
