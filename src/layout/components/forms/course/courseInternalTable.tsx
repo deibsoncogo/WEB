@@ -8,6 +8,12 @@ type prop = {
   courseClassArray: CourseClass[]
 }
 
+let currentId = 0;
+
+function getNewId() { 
+  return ++currentId;
+}
+
 export default function CoursesInternalTable(props: prop) {
   const [nameClass, setName] = useState<string>()
   const [link, setLink] = useState<string>()
@@ -107,7 +113,7 @@ export default function CoursesInternalTable(props: prop) {
                 <tbody>
                   {props?.courseClassArray?.map((item) => (
                     <Row
-                      key={item.id}
+                      key={getNewId()}
                       name={item.name}
                       link={item.link}
                       displayOrder={item.displayOrder}
