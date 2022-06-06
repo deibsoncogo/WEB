@@ -1,11 +1,9 @@
+import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useState } from 'react'
-import { toast } from 'react-toastify'
-import { api } from '../../../../application/services/api'
+import { IDeleteUserParams } from '../../../../domain/usecases/interfaces/user/deleteUser'
 import { KTSVG } from '../../../../helpers'
 import { ActionModal } from '../../modals/action'
-
-import { Tooltip} from "@nextui-org/react";
 
 interface IRow {
   id: string
@@ -14,25 +12,29 @@ interface IRow {
   birthDate: string
   cpf: string
   address: string
-  deleteUser: IDeleteUser
-  refreshUsers: () => void
+  deleteUser: (params: IDeleteUserParams) => void
+  openResetUserPasswordModal: (userId: string) => void
 }
 
-export function Row({ id, name, email, birthDate, cpf, address, deleteUser, refreshUsers }: IRow) {
+export function Row({
+  id,
+  name,
+  email,
+  birthDate,
+  cpf,
+  address,
+  deleteUser,
+  openResetUserPasswordModal,
+}: IRow) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   async function handleDeleteUser() {
-    try {
-      const resp = await deleteUser.deleteUser()
-      setIsModalOpen(false)
-      toast.success('Usuário deletado com sucesso!')
-      refreshUsers()
-    } catch (err: any) {
-      toast.error(err.messages[0])
-    }
+    deleteUser({ id })
   }
 
-  function updatePassword() {}
+  const handleClickResetPassword = () => {
+    openResetUserPasswordModal(id)
+  }
 
   return (
     <tr>
@@ -75,6 +77,16 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser, refr
             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
           >
             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+          </button>
+        </Tooltip>
+        <Tooltip
+          content={'Alterar Senha'}
+          rounded
+          css={{ color: '$customColor' }}
+          onClick={handleClickResetPassword}
+        >
+          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+            <KTSVG path='/icons/key.svg' className='svg-icon-3' />
           </button>
         </Tooltip>
       </td>
