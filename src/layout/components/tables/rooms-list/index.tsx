@@ -8,7 +8,7 @@ import { usePagination } from '../../../../application/hooks/usePagination'
 import { Room } from '../../../../interfaces/model/Room'
 import { debounce } from '../../../../helpers/debounce'
 
-type orderOptions = 'status-asc' | 'status-desc' | 'teacher-asc' | 'teacher-desc' | 'cheaper' | 'costlier' | 'table-sort-asc' | 'table-sort-desc' | ''
+type orderOptions = 'asc' | 'desc' | ''
 
 export function RoomsTable() {
   const paginationHook = usePagination()
@@ -35,8 +35,41 @@ export function RoomsTable() {
     },
   ])
 
+  const [column, setColumn] = useState('');
   const [order, setOrder] = useState<orderOptions>('')
   const [orderedRooms, setOrderedRooms] = useState<Room[]>(rooms)
+
+  const handleOrdering = (column: string) => {
+    setColumn(column);
+    switch (order) {
+      case '':        
+        return setOrder('asc')
+      case 'asc':
+        return setOrder('desc')
+      default:
+        setOrder('')
+    }
+  }
+
+  const handleOrderColumn = (roomA: Room, roomB: Room) => {
+    switch (column) {
+      case 'name':
+        return order === 'asc' ? roomA.name.charCodeAt(0) - roomB.name.charCodeAt(0) : roomB.name.charCodeAt(0) - roomA.name.charCodeAt(0)
+      case 'price':
+        return order === 'asc' ? roomA.price - roomB.price : roomB.price - roomA.price
+      case 'teacher':
+        return order === 'asc' ? roomA.teacher.charCodeAt(0) - roomB.teacher.charCodeAt(0) : roomB.teacher.charCodeAt(0) - roomA.teacher.charCodeAt(0)
+      case 'isActive':
+        return order === 'asc' ? roomA.isActive - roomB.isActive : roomB.isActive - roomA.isActive
+    }
+  }
+
+  useEffect(() => {
+    setOrderedRooms((oldstate) => {
+      const updatedOrderedRooms = oldstate.sort(handleOrderColumn)
+      return updatedOrderedRooms
+    })
+  }, [order, rooms])
 
   const [searchText, setSearchText] = useState('')
 
@@ -54,152 +87,6 @@ export function RoomsTable() {
   const handleSearchRoom = debounce((text: string) => {
     setSearchText(text)
   })
-
-  const handleOrderRoomByName = () => {    
-    switch (order) {
-      case '':
-        return setOrder('table-sort-asc')
-      case 'table-sort-asc':
-        return setOrder('table-sort-desc')
-      default:
-        setOrder('')
-    }
-  }
-
-  const orderRoomByNameASC = (roomA: Room, roomB: Room) => {
-    const firtstCharValue = roomA.name.charCodeAt(0)
-    const secondCharValue = roomB.name.charCodeAt(0)
-    return firtstCharValue - secondCharValue
-  }
-
-  const orderRoomByNameDESC = (roomA: Room, roomB: Room) => {
-    const firtstCharValue = roomA.name.charCodeAt(0)
-    const secondCharValue = roomB.name.charCodeAt(0)
-    return secondCharValue - firtstCharValue
-  }
-
-  const handleOrderRoomByPrice = () => {    
-    switch (order) {
-      case '':
-        return setOrder('cheaper')
-      case 'cheaper':
-        return setOrder('costlier')
-      default:
-        setOrder('')
-    }
-  }
-
-  const orderRoomByPriceASC = (roomA: Room, roomB: Room) => {
-    return roomA.price - roomB.price
-  }
-
-  const orderRoomByPriceDESC = (roomA: Room, roomB: Room) => {
-    return roomB.price - roomA.price
-  }
-
-  const handleOrderRoomByTeacher = () => {    
-    switch (order) {
-      case '':
-        return setOrder('teacher-asc')
-      case 'teacher-asc':
-        return setOrder('teacher-desc')
-      default:
-        setOrder('')
-    }
-  }
-
-  const orderRoomByTeacherASC = (roomA: Room, roomB: Room) => {
-    const firtstCharValue = roomA.teacher.charCodeAt(0)
-    const secondCharValue = roomB.teacher.charCodeAt(0)
-    return firtstCharValue - secondCharValue
-  }
-
-  const orderRoomByTeacherDESC = (roomA: Room, roomB: Room) => {
-    const firtstCharValue = roomA.teacher.charCodeAt(0)
-    const secondCharValue = roomB.teacher.charCodeAt(0)
-    return secondCharValue - firtstCharValue
-  }
-
-  const handleOrderRoomByStatus = () => {    
-    switch (order) {
-      case '':
-        return setOrder('status-asc')
-      case 'status-asc':
-        return setOrder('status-desc')
-      default:
-        setOrder('')
-    }
-  }
-
-  const orderRoomByStatusASC = (roomA: Room, roomB: Room) => {
-    return roomA.isActive - roomB.isActive
-  }
-
-  const orderRoomByStatusDESC = (roomA: Room, roomB: Room) => {
-    return roomB.isActive - roomA.isActive
-  }
-
-  useEffect(() => {
-    if (order === 'table-sort-asc') {
-      setOrderedRooms((oldstate) => {
-        const updatedOrderedRooms = oldstate.sort(orderRoomByNameASC)
-        return updatedOrderedRooms
-      })
-    }
-
-    if (order === 'table-sort-desc') {
-      setOrderedRooms((oldstate) => {
-        const updatedOrderedRooms = oldstate.sort(orderRoomByNameDESC)
-        return updatedOrderedRooms
-      })
-    }
-
-    if (order === 'cheaper') {
-      setOrderedRooms((oldstate) => {
-        const updatedOrderedRooms = oldstate.sort(orderRoomByPriceASC)
-        return updatedOrderedRooms
-      })
-    }
-
-    if (order === 'costlier') {
-      setOrderedRooms((oldstate) => {
-        const updatedOrderedRooms = oldstate.sort(orderRoomByPriceDESC)
-        return updatedOrderedRooms
-      })
-    }
-
-    if (order === 'teacher-asc') {
-      setOrderedRooms((oldstate) => {
-        const updatedOrderedRooms = oldstate.sort(orderRoomByTeacherASC)
-        return updatedOrderedRooms
-      })
-    }
-
-    if (order === 'teacher-desc') {
-      setOrderedRooms((oldstate) => {
-        const updatedOrderedRooms = oldstate.sort(orderRoomByTeacherDESC)
-        return updatedOrderedRooms
-      })
-    }
-
-    if (order === 'status-asc') {
-      setOrderedRooms((oldstate) => {
-        const updatedOrderedRooms = oldstate.sort(orderRoomByStatusASC)
-        return updatedOrderedRooms
-      })
-    }
-
-    if (order === 'status-desc') {
-      setOrderedRooms((oldstate) => {
-        const updatedOrderedRooms = oldstate.sort(orderRoomByStatusDESC)
-        return updatedOrderedRooms
-      })
-    }
-
-    if (order === '') {
-      setOrderedRooms(rooms)
-    }
-  }, [order, rooms])
 
   return (
     <div className='card mb-5 mb-xl-8'>
@@ -222,12 +109,12 @@ export function RoomsTable() {
           <table className='table table-striped align-middle gs-0 gy-4'>
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
-                <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer' onClick={handleOrderRoomByName}>Nome</th>
+                <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer' onClick={() => handleOrdering('name')}>Nome</th>
                 <th className='text-dark min-w-100px'>Descrição</th>
-                <th className='text-dark min-w-100px cursor-pointer' onClick={handleOrderRoomByPrice}>Preço</th>
-                <th className='text-dark min-w-150px cursor-pointer' onClick={handleOrderRoomByTeacher}>Professor</th>
+                <th className='text-dark min-w-100px cursor-pointer' onClick={() => handleOrdering('price')}>Preço</th>
+                <th className='text-dark min-w-150px cursor-pointer' onClick={() => handleOrdering('teacher')}>Professor</th>
                 <th className='text-dark min-w-100px'>Chat</th>
-                <th className='text-dark min-w-100px cursor-pointer' onClick={handleOrderRoomByStatus}>Ativo</th>
+                <th className='text-dark min-w-100px cursor-pointer' onClick={() => handleOrdering('isActive')}>Ativo</th>
                 <th className='text-dark min-w-50px'>Ação</th>
               </tr>
             </thead>
