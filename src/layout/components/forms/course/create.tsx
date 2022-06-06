@@ -21,6 +21,7 @@ import { Editor } from '@tinymce/tinymce-react'
 import { InputImage } from '../../inputs/input-image'
 import { CourseClass } from '../../../../domain/models/courseClass'
 import CoursesInternalTable from './courseInternalTable'
+import FilesInternalTable from './filesInternalTable'
 
 type Props = {
   createCourse: ICreateCourse
@@ -44,7 +45,6 @@ export function FormCreateCourse(props: Props) {
   }
  
   useEffect(() => {
-    console.log(props.getCategories)
     props.getCategories
       .get()
       .then((data) => {
@@ -58,8 +58,7 @@ export function FormCreateCourse(props: Props) {
     const userQuery = new UserQueryRole(roles.TEACHER)
     props.getUsers
       .getAllByRole(userQuery)
-      .then((data) => {
-        console.log(data)
+      .then((data) => {      
         setUsers(data)
       })
       .catch((error) => toast.error('Não foi possível carregar os Professores.'))
@@ -154,7 +153,7 @@ export function FormCreateCourse(props: Props) {
         toast.success('Curso criado com sucesso!')
         router.push('/courses')
       })
-      .catch((error: any) => console.log(error))
+      .catch((error: any) => toast.error('Não foi possível criar o curso!'))
   }
 
   return (
@@ -229,9 +228,8 @@ export function FormCreateCourse(props: Props) {
         />
 
         <Input name='content' />
-
+        
         <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
-
         <CoursesInternalTable courseClassArray={courseClass} />
 
         <div className='d-flex mt-10'>

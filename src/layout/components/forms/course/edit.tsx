@@ -160,7 +160,7 @@ export function FormUpdateCourse(props: Props) {
         toast.success('Curso atualizado com sucesso!')
         router.push('/courses')
       })
-      .catch((error: any) => console.log(error))
+      .catch((error: any) => toast.error('Não foi possível atualizar o curso!'))
   }
 
   return (
