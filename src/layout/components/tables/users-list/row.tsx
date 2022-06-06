@@ -53,9 +53,11 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser, refr
       </td>
       <td className='text-end'>
         <Tooltip content={'Alterar Senha'} rounded css={{ color: '$customColor' }}>
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-            <KTSVG path='/icons/gen019.svg' className='svg-icon-3' />
-          </button>
+          <Link href={"/reset-password"}>
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+              <KTSVG path='/icons/gen019.svg' className='svg-icon-3' />
+            </button>
+          </Link>
         </Tooltip>
         <Tooltip content={'Editar'} rounded css={{ color: '$customColor' }}>
           <Link href={`/users/edit/${id}`}>
