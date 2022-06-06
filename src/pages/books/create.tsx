@@ -1,8 +1,10 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { MakeFormCreateBook } from '../../application/factories/components/createBook-factory'
+
+import { makeRemoteGetCategoriesNoPagination } from '../../application/factories/usecases/categories/remote-getCategoriesNoPagination-factory'
 
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
+import { FormCreateBook } from '../../layout/components/forms/books/create'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 
 const Books: NextPage = () => {
@@ -20,7 +22,7 @@ const Books: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              {MakeFormCreateBook()}
+              <FormCreateBook getCategories={makeRemoteGetCategoriesNoPagination()} />
             </div>
           </div>
         </div>

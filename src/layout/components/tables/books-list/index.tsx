@@ -21,6 +21,7 @@ import { debounce } from '../../../../helpers/debounce'
 import { IDeleteBook } from '../../../../domain/usecases/interfaces/book/deleteBook'
 import { DeleteCategoryParams } from '../../../../domain/usecases/interfaces/category/deleteCategory'
 import { toast } from 'react-toastify'
+import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 
 type Props = {
   remoteGetAllBooks: IGetBooks
