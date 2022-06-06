@@ -28,7 +28,7 @@ export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryD
         <Tooltip
           content={'Editar'}
           rounded
-          css={{ color: '$customColor' }}
+          color='primary'
           onClick={handleOpenUpdateCategoryDrawer}
         >
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-md me-1'>
@@ -39,7 +39,7 @@ export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryD
         <Tooltip
           content={'Deletar'}
           rounded
-          css={{ color: '$customColor' }}
+          color='primary'
           onClick={handleOpenDeleteCategoryModal}
         >
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-md'>
