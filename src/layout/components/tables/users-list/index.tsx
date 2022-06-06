@@ -4,7 +4,10 @@ import { Search } from '../../search/Search'
 import { dateMask } from '../../../formatters/dateFormatter'
 import { cpfMask } from '../../../formatters/cpfFormatter'
 import { addressMask } from '../../../formatters/addressFormatter'
-import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAllUsers'
+import {
+  IGetAllUsers,
+  IGetAllUsersParams,
+} from '../../../../domain/usecases/interfaces/user/getAllUsers'
 import { IUserResponse } from '../../../../interfaces/api-response'
 import { useEffect, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
@@ -17,6 +20,10 @@ import {
 } from '../../../../domain/usecases/interfaces/user/exportAllUsersToXLSX'
 import { useRequest } from '../../../../application/hooks/useRequest'
 import { getCurrentDate } from '../../../../helpers/getCurrentDate'
+import { Loading } from '../../loading/loading'
+import { OutputPagination } from '../../../../domain/shared/interface/OutputPagination'
+import { usePagination } from '../../../../application/hooks/usePagination'
+import { Pagination } from '../../pagination/Pagination'
 
 type Props = {
   getAllUsers: IGetAllUsers
@@ -24,10 +31,24 @@ type Props = {
 }
 
 export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Props) {
-  const [users, setUsers] = useState<IUserResponse[]>([])
-  const [error, setError] = useState<any>()
-  const [loading, setLoading] = useState(true)
   const [userName, setUserName] = useState('')
+  const [users, setUsers] = useState<IUserResponse[]>([])
+
+  const paginationHook = usePagination()
+  const { pagination, setTotalPage, handleOrdenation } = paginationHook
+  const { take, currentPage, order } = pagination
+  const paginationParams: IGetAllUsersParams = {
+    page: currentPage,
+    take,
+    name: userName,
+    order,
+  }
+
+  const {
+    data: paginatedUsers,
+    makeRequest: getAllUserPaginated,
+    loading: loadingGetAllUsers,
+  } = useRequest<OutputPagination<IUserResponse>>(getAllUsers.getAll)
 
   const {
     data: usersExportedSucessful,
@@ -43,30 +64,26 @@ export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Pro
     exportUsersToXlsx({ name: userName })
   }
 
-  useEffect(() => {
-    getAllUsers
-      .getAll()
-      .then((data) => {
-        setUsers(data)
-      })
-      .catch((error) => toast.error(error.messages))
-      .finally(() => setLoading(false))
-  }, [])
-
-  const refreshUsers = () => {
-    setLoading(true)
-    getAllUsers
-      .getAll()
-      .then((data) => {
-        setUsers(data)
-      })
-      .catch((error) => toast.error(error.messages))
-      .finally(() => setLoading(false))
+  const handleGetAllUsersPaginated = () => {
+    console.log('Chamei')
+    getAllUserPaginated(paginationParams)
   }
 
   const onSearchTextChanged = (search: string): void => {
     console.log(search)
   }
+
+  useEffect(() => {
+    handleGetAllUsersPaginated()
+  }, [pagination.take, pagination.totalPages, pagination.currentPage])
+
+  useEffect(() => {
+    if (paginatedUsers) {
+      const { data, total } = paginatedUsers
+      setUsers(data)
+      setTotalPage(total)
+    }
+  }, [paginatedUsers])
 
   useEffect(() => {
     if (usersExportedSucessful) {
@@ -86,6 +103,8 @@ export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Pro
       toast.error(errorExportUsersToXLSX)
     }
   }, [errorExportUsersToXLSX])
+
+  const loading = loadingExportUsersToXLSX || loadingGetAllUsers
 
   return (
     <div className='card mb-5 mb-xl-8'>
@@ -118,7 +137,7 @@ export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Pro
             </thead>
 
             <tbody>
-              {!loading &&
+              {!loading ? (
                 users?.map((item) => (
                   <MakeUserRow
                     key={item.id}
@@ -128,9 +147,12 @@ export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Pro
                     birthDate={dateMask(item.birthDate)}
                     cpf={cpfMask(item.cpf)}
                     address={addressMask(item.address[0])}
-                    refreshUsers={refreshUsers}
+                    refreshUsers={handleGetAllUsersPaginated}
                   />
-                ))}
+                ))
+              ) : (
+                <Loading />
+              )}
             </tbody>
           </table>
         </div>
@@ -148,35 +170,7 @@ export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Pro
           </button>
         </div>
 
-        <div className='card-toolbar'>
-          <ul className='pagination'>
-            <li className='page-item previous disabled'>
-              <a href='#' className='page-link'>
-                <i className='previous'></i>
-              </a>
-            </li>
-            <li className='page-item'>
-              <a href='#' className='page-link'>
-                1
-              </a>
-            </li>
-            <li className='page-item active'>
-              <a href='#' className='page-link'>
-                2
-              </a>
-            </li>
-            <li className='page-item'>
-              <a href='#' className='page-link'>
-                3
-              </a>
-            </li>
-            <li className='page-item next'>
-              <a href='#' className='page-link'>
-                <i className='next'></i>
-              </a>
-            </li>
-          </ul>
-        </div>
+        <Pagination paginationHook={paginationHook} />
       </div>
     </div>
   )

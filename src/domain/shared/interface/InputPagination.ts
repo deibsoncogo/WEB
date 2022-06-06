@@ -1,4 +1,4 @@
-export interface BasePagination {
+export interface InputPagination {
   take: number
   page: number
   order: 'asc' | 'desc' | undefined
