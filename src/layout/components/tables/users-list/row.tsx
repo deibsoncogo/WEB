@@ -1,12 +1,9 @@
+import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useState } from 'react'
-import { toast } from 'react-toastify'
-import { api } from '../../../../application/services/api'
+import { IDeleteUserParams } from '../../../../domain/usecases/interfaces/user/deleteUser'
 import { KTSVG } from '../../../../helpers'
 import { ActionModal } from '../../modals/action'
-
-import { Tooltip } from '@nextui-org/react'
-import { IDeleteUserParams } from '../../../../domain/usecases/interfaces/user/deleteUser'
 
 interface IRow {
   id: string
