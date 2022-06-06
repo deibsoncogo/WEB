@@ -10,15 +10,38 @@ import { useEffect, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
 import { MakeUserRow } from '../../../../application/factories/components/deleteModal-factory'
 import { toast } from 'react-toastify'
+import {
+  IExportAllUsersParams,
+  IExportAllUsersToXLSX,
+  IExportAllUserToXLSXResponse,
+} from '../../../../domain/usecases/interfaces/user/exportAllUsersToXLSX'
+import { useRequest } from '../../../../application/hooks/useRequest'
+import { getCurrentDate } from '../../../../helpers/getCurrentDate'
 
 type Props = {
   getAllUsers: IGetAllUsers
+  makeExportAllUserToXLSX: IExportAllUsersToXLSX
 }
 
-export default function UsersTable({ getAllUsers }: Props) {
+export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Props) {
   const [users, setUsers] = useState<IUserResponse[]>([])
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(true)
+  const [userName, setUserName] = useState('')
+
+  const {
+    data: usersExportedSucessful,
+    makeRequest: exportUsersToXlsx,
+    loading: loadingExportUsersToXLSX,
+    cleanUp: cleanUpExportUsers,
+    error: errorExportUsersToXLSX,
+  } = useRequest<IExportAllUserToXLSXResponse, IExportAllUsersParams>(
+    makeExportAllUserToXLSX.export
+  )
+
+  const handleClickDownlondExcelClick = () => {
+    exportUsersToXlsx({ name: userName })
+  }
 
   useEffect(() => {
     getAllUsers
@@ -33,17 +56,36 @@ export default function UsersTable({ getAllUsers }: Props) {
   const refreshUsers = () => {
     setLoading(true)
     getAllUsers
-    .getAll()
-    .then((data) => {
-      setUsers(data)
-    })
-    .catch((error) => toast.error(error.messages))
-    .finally(() => setLoading(false))
+      .getAll()
+      .then((data) => {
+        setUsers(data)
+      })
+      .catch((error) => toast.error(error.messages))
+      .finally(() => setLoading(false))
   }
 
   const onSearchTextChanged = (search: string): void => {
     console.log(search)
   }
+
+  useEffect(() => {
+    if (usersExportedSucessful) {
+      const { type, data } = usersExportedSucessful
+      const blob = new Blob([data], { type: type })
+      const link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      const filename = `usuarios_${getCurrentDate()}.xlsx`
+      link.download = filename
+      link.click()
+      cleanUpExportUsers()
+    }
+  }, [usersExportedSucessful])
+
+  useEffect(() => {
+    if (errorExportUsersToXLSX) {
+      toast.error(errorExportUsersToXLSX)
+    }
+  }, [errorExportUsersToXLSX])
 
   return (
     <div className='card mb-5 mb-xl-8'>
@@ -95,9 +137,13 @@ export default function UsersTable({ getAllUsers }: Props) {
       </div>
 
       <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
-        <div className='d-flex justify-center align-center'>
+        <div className='d-flex justify-center align-items-center'>
           <p className='m-0 text-gray-600 lh-1 text-center'>Download:</p>
-          <button className='btn border border-gray-900 ms-5 p-1' title='Exportar Exel'>
+          <button
+            className='btn border border-gray-900 ms-5 p-1'
+            title='Exportar Exel'
+            onClick={handleClickDownlondExcelClick}
+          >
             <RiFileExcel2Line size={20} className='svg-icon-2 mh-50px' />
           </button>
         </div>

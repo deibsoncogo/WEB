@@ -52,7 +52,6 @@ export function usePagination() {
   }
 
   const handleOrdenation = () => {
-    console.log('Click')
     const { order } = pagination
 
     if (order === 'asc') {
