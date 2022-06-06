@@ -8,7 +8,7 @@ import { usePagination } from '../../../../application/hooks/usePagination'
 import { Room } from '../../../../interfaces/model/Room'
 import { debounce } from '../../../../helpers/debounce'
 
-type orderOptions = 'asc' | 'desc' | ''
+type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 
 export function RoomsTable() {
   const paginationHook = usePagination()
@@ -43,9 +43,9 @@ export function RoomsTable() {
     setColumn(column);
     switch (order) {
       case '':        
-        return setOrder('asc')
-      case 'asc':
-        return setOrder('desc')
+        return setOrder('table-sort-asc')
+      case 'table-sort-asc':
+        return setOrder('table-sort-desc')
       default:
         setOrder('')
     }
@@ -54,13 +54,13 @@ export function RoomsTable() {
   const handleOrderColumn = (roomA: Room, roomB: Room) => {
     switch (column) {
       case 'name':
-        return order === 'asc' ? roomA.name.charCodeAt(0) - roomB.name.charCodeAt(0) : roomB.name.charCodeAt(0) - roomA.name.charCodeAt(0)
+        return order === 'table-sort-asc' ? roomA.name.charCodeAt(0) - roomB.name.charCodeAt(0) : roomB.name.charCodeAt(0) - roomA.name.charCodeAt(0)
       case 'price':
-        return order === 'asc' ? roomA.price - roomB.price : roomB.price - roomA.price
+        return order === 'table-sort-asc' ? roomA.price - roomB.price : roomB.price - roomA.price
       case 'teacher':
-        return order === 'asc' ? roomA.teacher.charCodeAt(0) - roomB.teacher.charCodeAt(0) : roomB.teacher.charCodeAt(0) - roomA.teacher.charCodeAt(0)
+        return order === 'table-sort-asc' ? roomA.teacher.charCodeAt(0) - roomB.teacher.charCodeAt(0) : roomB.teacher.charCodeAt(0) - roomA.teacher.charCodeAt(0)
       case 'isActive':
-        return order === 'asc' ? roomA.isActive - roomB.isActive : roomB.isActive - roomA.isActive
+        return order === 'table-sort-asc' ? roomA.isActive - roomB.isActive : roomB.isActive - roomA.isActive
     }
   }
 
@@ -109,12 +109,12 @@ export function RoomsTable() {
           <table className='table table-striped align-middle gs-0 gy-4'>
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
-                <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer' onClick={() => handleOrdering('name')}>Nome</th>
+                <th className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${column === 'name' ? order : null}`} onClick={() => handleOrdering('name')}>Nome</th>
                 <th className='text-dark min-w-100px'>Descrição</th>
-                <th className='text-dark min-w-100px cursor-pointer' onClick={() => handleOrdering('price')}>Preço</th>
-                <th className='text-dark min-w-150px cursor-pointer' onClick={() => handleOrdering('teacher')}>Professor</th>
+                <th className={`text-dark min-w-100px cursor-pointer ${column === 'price' ? order : null}`} onClick={() => handleOrdering('price')}>Preço</th>
+                <th className={`text-dark min-w-150px cursor-pointer ${column === 'teacher' ? order : null}`} onClick={() => handleOrdering('teacher')}>Professor</th>
                 <th className='text-dark min-w-100px'>Chat</th>
-                <th className='text-dark min-w-100px cursor-pointer' onClick={() => handleOrdering('isActive')}>Ativo</th>
+                <th className={`text-dark min-w-100px cursor-pointer ${column === 'isActive' ? order : null}`} onClick={() => handleOrdering('isActive')}>Ativo</th>
                 <th className='text-dark min-w-50px'>Ação</th>
               </tr>
             </thead>
