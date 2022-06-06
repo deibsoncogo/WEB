@@ -9,7 +9,7 @@ export class AxiosHttpClient implements HttpClient {
         url: data.url,
         method: data.method,
         data: data.body,
-        headers: this.getAuthHeaders(),
+        headers: data.headers? data.headers: this.getAuthHeaders(),
         params: data.params,
         responseType: data.responseType,
       })
@@ -23,6 +23,7 @@ export class AxiosHttpClient implements HttpClient {
       response: axiosResponse,
     }
   }
+  //'content-type': 'multipart/form-data'
 
   getAuthHeaders(): AxiosRequestHeaders {
     // return authorization header with basic auth credentials
@@ -33,4 +34,5 @@ export class AxiosHttpClient implements HttpClient {
       return {}
     }
   }
+
 }
