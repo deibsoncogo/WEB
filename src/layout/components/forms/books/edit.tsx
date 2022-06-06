@@ -14,20 +14,44 @@ import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfac
 import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
 import { toast } from 'react-toastify'
 import { IFormBook } from '../../../../interfaces/forms/create-book'
+import {
+  GetBookParams,
+  IGetBooks,
+  OutputPagination,
+} from '../../../../domain/usecases/interfaces/book/getBooks'
+import { useRequest } from '../../../../application/hooks/useRequest'
+import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 
 type FormCreateBookProps = {
   getCategories: IGetCategoriesNoPagination
+
+  getBookById: IGetBooks
+  id: string | string[] | undefined
 }
 
-export function FormCreateBook({ getCategories }: FormCreateBookProps) {
+export function FormUpdateBook({ getCategories, id, getBookById }: FormCreateBookProps) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [isOpenModal, setIsOpenModal] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [defaultValue, setDefaultValue] = useState({})
   const [categories, setCategories] = useState<ICategory[]>()
 
-  const [stateEditor, setStateEditor] = useState({ content: '' })
+  const [book, setBook] = useState<IBookResponse[]>()
+
+  const { makeRequest: getBook, data } = useRequest<OutputPagination, GetBookParams>(
+    getBookById.get
+  )
+
+  useEffect(() => {
+    setLoading(false)
+  }, [getBookById])
+
+  useEffect(() => {
+    getBook({ id })
+    setBook(data?.data)
+  }, [id])
 
   async function handleCreateBook() {}
   useEffect(() => {
@@ -42,6 +66,9 @@ export function FormCreateBook({ getCategories }: FormCreateBookProps) {
   const handleBookCreate = async (data: IFormBook) => {
     console.log('passou em tudo')
   }
+
+  console.log('edit id', id)
+  console.log('book', book)
 
   async function handleFormSubmit(data: IFormBook) {
     if (!formRef.current) throw new Error()
@@ -87,7 +114,7 @@ export function FormCreateBook({ getCategories }: FormCreateBookProps) {
                 marginRight: '10%',
               }}
             >
-              <Input name='title' label='Título' type='text' />
+              <Input name='title' label='Título' type='text' defaultValue={book && book[0]?.name} />
               <Input name='author' label='Autor' type='text' />
               <Input name='stock' label='Estoque' type='number' />
               <Input

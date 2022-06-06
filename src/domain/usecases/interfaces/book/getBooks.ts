@@ -1,6 +1,7 @@
 import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 
 export interface GetBookParams {
+  id?: string | string[] | undefined
   name?: string
   take?: number | string
   page?: number | string

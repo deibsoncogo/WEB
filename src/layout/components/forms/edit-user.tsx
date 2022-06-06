@@ -11,9 +11,10 @@ import { levelOptions, roleOptions } from '../../../utils/selectOptions'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { api } from '../../../application/services/api'
 import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
-import { findCEP } from '../../../utils/findCep'
+
 import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
 import { toast } from 'react-toastify'
+import { findCEP } from '../../../utils/findCEP'
 
 type IFormEditUser = {
   id: string
@@ -116,29 +117,30 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
 
   useEffect(() => {
     if (!formRef.current) return
-    getUser.getOne()
-    .then((res) => {
-      const newData: any = {
-        name: res.name,
-        email: res.email,
-        //birthDate: res.birthDate, // doesn't work, idk why
-        cpf: res.cpf,
-        phoneNumber: res.phoneNumber,
-        level: res.level,
-        role: res.role,
-        zipCode: res.address[0]?.zipCode || '',
-        street: res.address[0]?.street || '',
-        neighborhood: res.address[0]?.neighborhood || '',
-        city: res.address[0]?.city || '',
-        state: res.address[0]?.state || '',
-        number: res.address[0]?.number || '',
-      }
-      Object.keys(newData).forEach(key => {
-        formRef.current?.setFieldValue(key, newData[key])
+    getUser
+      .getOne()
+      .then((res) => {
+        const newData: any = {
+          name: res.name,
+          email: res.email,
+          //birthDate: res.birthDate, // doesn't work, idk why
+          cpf: res.cpf,
+          phoneNumber: res.phoneNumber,
+          level: res.level,
+          role: res.role,
+          zipCode: res.address[0]?.zipCode || '',
+          street: res.address[0]?.street || '',
+          neighborhood: res.address[0]?.neighborhood || '',
+          city: res.address[0]?.city || '',
+          state: res.address[0]?.state || '',
+          number: res.address[0]?.number || '',
+        }
+        Object.keys(newData).forEach((key) => {
+          formRef.current?.setFieldValue(key, newData[key])
+        })
+        formRef.current?.setErrors({})
       })
-      formRef.current?.setErrors({})
-    })
-    .catch((err) => toast.error(err.messages))
+      .catch((err) => toast.error(err.messages))
   }, [formRef.current])
 
   return (
