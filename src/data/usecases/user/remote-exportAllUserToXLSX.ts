@@ -20,7 +20,6 @@ export class RemoteExportAllUserToXLSX implements IExportAllUsersToXLSX {
       responseType: 'blob',
     })
 
-    console.log(httpResponse)
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return {

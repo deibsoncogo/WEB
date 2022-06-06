@@ -29,6 +29,7 @@ import {
   IDeleteUserParams,
 } from '../../../../domain/usecases/interfaces/user/deleteUser'
 import { FullLoading } from '../../FullLoading/FullLoading'
+import { debounce } from '../../../../helpers/debounce'
 
 type Props = {
   getAllUsers: IGetAllUsers
@@ -53,6 +54,7 @@ export default function UsersTable({
     take,
     name: userName,
     order,
+    orderBy: pagination.orderBy,
   }
 
   const {
@@ -80,11 +82,17 @@ export default function UsersTable({
   } = useRequest<string, IDeleteUserParams>(makeDeleteUser.deleteUser)
 
   const handleClickDownlondExcelClick = () => {
-    exportUsersToXlsx({ name: userName })
+    exportUsersToXlsx(paginationParams)
   }
 
-  const onSearchTextChanged = (search: string): void => {
+  const onSearchTextChanged = debounce((search: string): void => {
     setUserName(search)
+  })
+
+  const getColumnHeaderClasses = (name: string) => {
+    return `text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+      name
+    )}`
   }
 
   useEffect(() => {
@@ -154,46 +162,36 @@ export default function UsersTable({
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
                 <th
-                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-                    'name'
-                  )}`}
+                  className={getColumnHeaderClasses('name')}
                   onClick={() => handleOrdenation('name')}
                 >
                   Nome
                 </th>
                 <th
-                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-                    'email'
-                  )}`}
+                  className={getColumnHeaderClasses('email')}
                   onClick={() => handleOrdenation('email')}
                 >
                   Email
                 </th>
                 <th
-                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-                    'birthDate'
-                  )}`}
+                  className={getColumnHeaderClasses('birthDate')}
                   onClick={() => handleOrdenation('birthDate')}
                 >
                   Nascimento
                 </th>
                 <th
-                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-                    'cpf'
-                  )}`}
+                  className={getColumnHeaderClasses('cpf')}
                   onClick={() => handleOrdenation('cpf')}
                 >
                   CPF
                 </th>
                 <th
-                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-                    'address'
-                  )}`}
+                  className={getColumnHeaderClasses('address')}
                   onClick={() => handleOrdenation('address')}
                 >
                   Endereço
                 </th>
-                <th className='text-dark min-w-150px text-end rounded-end' />
+                <th className='text-dark min-w-150px text-end rounded-end px-4'>Ação</th>
               </tr>
             </thead>
 
