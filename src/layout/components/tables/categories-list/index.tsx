@@ -4,7 +4,7 @@ import { RiFileExcel2Line } from 'react-icons/ri'
 import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { Category } from '../../../../interfaces/model/Category'
 import ConfirmationModal from '../../modal/ConfirmationModal'
-import Pagination from '../../pagination/Pagination'
+import { Pagination } from '../../pagination/Pagination'
 import { Row } from './row'
 
 type Props = {

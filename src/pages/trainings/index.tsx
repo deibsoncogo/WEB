@@ -3,7 +3,7 @@ import Head from 'next/head'
 
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
-import { TrainingsTable } from '../../layout/components/tables/trainings-list'
+import { MakeTrainingsPage } from '../../application/factories/pages/trainings/trainings-factory'
 
 const Trainings: NextPage = () => {
   return (
@@ -19,7 +19,7 @@ const Trainings: NextPage = () => {
           <HeaderWrapper title='Treinamentos' />
 
           <div id='kt_content_container' className='container'>
-            <TrainingsTable />
+            <MakeTrainingsPage />
           </div>
         </div>
       </div>
