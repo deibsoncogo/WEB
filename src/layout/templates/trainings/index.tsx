@@ -58,7 +58,7 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
         </div>
       </div>
 
-      <TrainingsTable trainings={trainings} paginationHook={paginationHook} />
+      <TrainingsTable trainings={trainings} paginationHook={paginationHook} getTrainings={getTrainings} />
     </div>
   )
 }
