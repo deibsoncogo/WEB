@@ -5,7 +5,8 @@ import { api } from '../../../../application/services/api'
 import { KTSVG } from '../../../../helpers'
 import { ActionModal } from '../../modals/action'
 
-import { Tooltip} from "@nextui-org/react";
+import { Tooltip } from '@nextui-org/react'
+import { IDeleteUserParams } from '../../../../domain/usecases/interfaces/user/deleteUser'
 
 interface IRow {
   id: string
@@ -14,22 +15,14 @@ interface IRow {
   birthDate: string
   cpf: string
   address: string
-  deleteUser: IDeleteUser
-  refreshUsers: () => void
+  deleteUser: (params: IDeleteUserParams) => void
 }
 
-export function Row({ id, name, email, birthDate, cpf, address, deleteUser, refreshUsers }: IRow) {
+export function Row({ id, name, email, birthDate, cpf, address, deleteUser }: IRow) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   async function handleDeleteUser() {
-    try {
-      const resp = await deleteUser.deleteUser()
-      setIsModalOpen(false)
-      toast.success('Usuário deletado com sucesso!')
-      refreshUsers()
-    } catch (err: any) {
-      toast.error(err.messages[0])
-    }
+    deleteUser({ id })
   }
 
   function updatePassword() {}

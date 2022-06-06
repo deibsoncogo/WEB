@@ -24,13 +24,23 @@ import { Loading } from '../../loading/loading'
 import { OutputPagination } from '../../../../domain/shared/interface/OutputPagination'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { Pagination } from '../../pagination/Pagination'
+import {
+  IDeleteUser,
+  IDeleteUserParams,
+} from '../../../../domain/usecases/interfaces/user/deleteUser'
+import { FullLoading } from '../../FullLoading/FullLoading'
 
 type Props = {
   getAllUsers: IGetAllUsers
   makeExportAllUserToXLSX: IExportAllUsersToXLSX
+  makeDeleteUser: IDeleteUser
 }
 
-export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Props) {
+export default function UsersTable({
+  getAllUsers,
+  makeExportAllUserToXLSX,
+  makeDeleteUser,
+}: Props) {
   const [userName, setUserName] = useState('')
   const [users, setUsers] = useState<IUserResponse[]>([])
 
@@ -60,22 +70,31 @@ export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Pro
     makeExportAllUserToXLSX.export
   )
 
+  const {
+    makeRequest: deleteUser,
+    data: userDeletedSuccessful,
+    error: errorDeleteUser,
+    loading: loadingUserDeletion,
+    cleanError: cleanUpDeleteUser,
+  } = useRequest<string, IDeleteUserParams>(makeDeleteUser.deleteUser)
+
   const handleClickDownlondExcelClick = () => {
     exportUsersToXlsx({ name: userName })
   }
 
-  const handleGetAllUsersPaginated = () => {
-    console.log('Chamei')
-    getAllUserPaginated(paginationParams)
-  }
-
   const onSearchTextChanged = (search: string): void => {
-    console.log(search)
+    setUserName(search)
   }
 
   useEffect(() => {
-    handleGetAllUsersPaginated()
-  }, [pagination.take, pagination.totalPages, pagination.currentPage])
+    getAllUserPaginated(paginationParams)
+  }, [
+    pagination.take,
+    pagination.totalPages,
+    pagination.currentPage,
+    userName,
+    userDeletedSuccessful,
+  ])
 
   useEffect(() => {
     if (paginatedUsers) {
@@ -102,12 +121,24 @@ export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Pro
     if (errorExportUsersToXLSX) {
       toast.error(errorExportUsersToXLSX)
     }
-  }, [errorExportUsersToXLSX])
+
+    if (errorDeleteUser) {
+      toast.error(errorDeleteUser)
+    }
+  }, [errorExportUsersToXLSX, errorDeleteUser])
+
+  useEffect(() => {
+    if (userDeletedSuccessful) {
+      toast.success('Usuário deletado com sucesso')
+      cleanUpDeleteUser()
+    }
+  }, [userDeletedSuccessful])
 
   const loading = loadingExportUsersToXLSX || loadingGetAllUsers
 
   return (
     <div className='card mb-5 mb-xl-8'>
+      {loading && <FullLoading />}
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
           <Search onChangeText={onSearchTextChanged} />
@@ -137,7 +168,7 @@ export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Pro
             </thead>
 
             <tbody>
-              {!loading ? (
+              {!loading &&
                 users?.map((item) => (
                   <MakeUserRow
                     key={item.id}
@@ -147,12 +178,9 @@ export default function UsersTable({ getAllUsers, makeExportAllUserToXLSX }: Pro
                     birthDate={dateMask(item.birthDate)}
                     cpf={cpfMask(item.cpf)}
                     address={addressMask(item.address[0])}
-                    refreshUsers={handleGetAllUsersPaginated}
+                    deleteUser={deleteUser}
                   />
-                ))
-              ) : (
-                <Loading />
-              )}
+                ))}
             </tbody>
           </table>
         </div>

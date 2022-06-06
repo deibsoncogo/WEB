@@ -1,5 +1,5 @@
+import { IDeleteUserParams } from '../../../domain/usecases/interfaces/user/deleteUser'
 import { Row } from '../../../layout/components/tables/users-list/row'
-import { makeRemoteDeleteUser } from '../usecases/remote-deletUser-factory'
 
 type IMakeUserRow = {
   id: string
@@ -8,10 +8,18 @@ type IMakeUserRow = {
   cpf: string
   birthDate: string
   address: string
-  refreshUsers: () => void
+  deleteUser: (params: IDeleteUserParams) => void
 }
 
-export function MakeUserRow({ id, name, email, birthDate, cpf, address, refreshUsers }: IMakeUserRow) {
+export function MakeUserRow({
+  id,
+  name,
+  email,
+  birthDate,
+  cpf,
+  address,
+  deleteUser,
+}: IMakeUserRow) {
   return (
     <Row
       id={id}
@@ -20,8 +28,7 @@ export function MakeUserRow({ id, name, email, birthDate, cpf, address, refreshU
       birthDate={birthDate}
       cpf={cpf}
       address={address}
-      deleteUser={makeRemoteDeleteUser(id)}
-      refreshUsers={refreshUsers}
+      deleteUser={deleteUser}
     />
   )
 }
