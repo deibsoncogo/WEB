@@ -44,7 +44,6 @@ export function FormCreateCourse(props: Props) {
   }
  
   useEffect(() => {
-    console.log(props.getCategories)
     props.getCategories
       .get()
       .then((data) => {
@@ -59,7 +58,6 @@ export function FormCreateCourse(props: Props) {
     props.getUsers
       .getAllByRole(userQuery)
       .then((data) => {
-        console.log(data)
         setUsers(data)
       })
       .catch((error) => toast.error('Não foi possível carregar os Professores.'))
