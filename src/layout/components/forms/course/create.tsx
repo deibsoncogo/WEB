@@ -35,13 +35,14 @@ export function FormCreateCourse(props: Props) {
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [stateEditor, setStateEditor] = useState({ content: '' })
+  const [imageUpload, setImageUpload] = useState<File>()
+  const [courseClass, setCourseClass] = useState<CourseClass[]>([])
 
-  let courseClass: CourseClass[] = []
-
+ 
   function handleChange(event: any) {
     setStateEditor({ content: event })
   }
-
+ 
   useEffect(() => {
     console.log(props.getCategories)
     props.getCategories
@@ -65,6 +66,11 @@ export function FormCreateCourse(props: Props) {
       .finally(() => setLoading(false))
   }, [])
 
+  const handleSingleImageUpload = (file: File) => {
+    setImageUpload(file)
+  }
+
+
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
 
@@ -82,11 +88,12 @@ export function FormCreateCourse(props: Props) {
 
   async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
-
+   
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome é necessário'),
+        userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number().typeError('Tempo de acesso deve ser um número')
         .required('Tempo de acesso é necessário')
         .positive("Tempo de acesso deve ser positivo")
@@ -100,7 +107,7 @@ export function FormCreateCourse(props: Props) {
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         content: Yup.string().required('Conteúdo programático é necessário'),
-        userId: Yup.string().optional(),
+       
       })
 
       data.content = stateEditor.content
@@ -119,8 +126,8 @@ export function FormCreateCourse(props: Props) {
   }
 
   async function handleCreateCourse(data: IFormCourse) {
-    const price = parseFloat(data.price.replace('.', '').replace(',', '.'))
-    const discount = parseFloat(data.discount.replace('.', '').replace(',', '.'))
+    const price = data.price.replace('.', '').replace(',', '.')
+    const discount = data.discount.replace('.', '').replace(',', '.')
     const course = new CreateCourse(
       data.name,
       data.description,
@@ -128,15 +135,21 @@ export function FormCreateCourse(props: Props) {
       data.categoryId,
       discount,
       'teste.jpg',
-      parseInt(data.installments),
+      data.installments,
       false,
       price,
-      parseInt(data.accessTime),
-      data.userId
+      data.accessTime,
+      data.userId,
+      courseClass
     )
 
+    const formData = new FormData();
+    if(imageUpload)
+       formData.append('image', imageUpload); 
+    formData.append('course', JSON.stringify(course))
+
     props.createCourse
-      .create(course)
+      .create(formData)
       .then(() => {
         toast.success('Curso criado com sucesso!')
         router.push('/courses')
@@ -148,7 +161,7 @@ export function FormCreateCourse(props: Props) {
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do Curso</h3>
-        <InputImage name='photo' />
+        <InputImage name='photo' handleSingleImageUpload = {handleSingleImageUpload} />
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />

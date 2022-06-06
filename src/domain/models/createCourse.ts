@@ -1,19 +1,22 @@
+import { CourseClass } from "./courseClass";
+
 export class CreateCourse{
     name: string;
     description: string;
     content: string;
     categoryId: string;
-    discount?: number;
+    discount: string;
     imageUrl: string;
-    installments: number;
+    installments: string;
     isActive: boolean;
-    price?: number; 
-    accessTime: number; 
+    price: string; 
+    accessTime: string; 
     userId: string;
+    courseClass: CourseClass[]
 
     constructor(name: string, description: string, content: string, categoryId: string,
-        discount: number | undefined, imageUrl: string, installments: number, isActive: boolean,  price: number | undefined,  
-        accessTime: number, userId: string)
+        discount: string , imageUrl: string, installments: string, isActive: boolean,  price: string,  
+        accessTime: string, userId: string, courseClass: CourseClass[])
     {
         this.name = name;
         this.description = description;
@@ -25,7 +28,8 @@ export class CreateCourse{
         this.isActive = isActive;
         this.price = price;
         this.accessTime = accessTime;
-        this.userId = userId;           
+        this.userId = userId;   
+        this.courseClass = courseClass        
         
         
     }
