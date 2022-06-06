@@ -59,7 +59,7 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser, refr
             </button>
           </Link>
         </Tooltip>
-        <Tooltip content={'Editar'} rounded css={{ color: '$customColor' }}>
+        <Tooltip content={'Editar'} rounded color="primary">
           <Link href={`/users/edit/${id}`}>
             <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
               <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
@@ -67,7 +67,7 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser, refr
           </Link>
         </Tooltip>
 
-        <Tooltip content={'Deletar'} rounded css={{ color: '$customColor' }}>
+        <Tooltip content={'Deletar'} rounded color="primary">
           <button
             onClick={() => {
               setIsModalOpen(true)
