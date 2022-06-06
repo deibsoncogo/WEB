@@ -50,7 +50,7 @@ export function RoomsTable() {
         setOrder('')
     }
   }
-
+  
   const handleOrderColumn = (roomA: Room, roomB: Room) => {
     switch (column) {
       case 'name':
@@ -64,11 +64,16 @@ export function RoomsTable() {
     }
   }
 
-  useEffect(() => {
+  useEffect(() => {  
+    if (order === '') {
+      setOrderedRooms(rooms)      
+      return
+    }
+    
     setOrderedRooms((oldstate) => {
-      const updatedOrderedRooms = oldstate.sort(handleOrderColumn)
+      const updatedOrderedRooms = oldstate.sort(handleOrderColumn)      
       return updatedOrderedRooms
-    })
+    })    
   }, [order, rooms])
 
   const [searchText, setSearchText] = useState('')
