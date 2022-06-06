@@ -53,8 +53,15 @@ export function Row({
       <td>
         <span className='text-dark fw-bold d-block fs-7'>{address}</span>
       </td>
-      <td className='d-flex justify-content-end px-4'>
-        <Tooltip content={'Editar'} rounded css={{ color: '$customColor' }}>
+      <td className='text-end'>
+        <Tooltip content={'Alterar Senha'} rounded css={{ color: '$customColor' }}>
+          <Link href={"/reset-password"}>
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+              <KTSVG path='/icons/gen019.svg' className='svg-icon-3' />
+            </button>
+          </Link>
+        </Tooltip>
+        <Tooltip content={'Editar'} rounded color="primary">
           <Link href={`/users/edit/${id}`}>
             <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
               <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
@@ -62,7 +69,7 @@ export function Row({
           </Link>
         </Tooltip>
 
-        <Tooltip content={'Deletar'} rounded css={{ color: '$customColor' }}>
+        <Tooltip content={'Deletar'} rounded color="primary">
           <button
             onClick={() => {
               setIsModalOpen(true)

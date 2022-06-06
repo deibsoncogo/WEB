@@ -6,8 +6,8 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   label?: string
-  placeholderText?: string
-  onChange?: () => void
+  placeholderText?:string
+  onChange?: (value?:any) => void
 }
 
 export function Input({ name, label, placeholderText, onChange, ...rest }: IInputProps) {
