@@ -16,16 +16,28 @@ interface IRow {
   cpf: string
   address: string
   deleteUser: (params: IDeleteUserParams) => void
+  openResetUserPasswordModal: (userId: string) => void
 }
 
-export function Row({ id, name, email, birthDate, cpf, address, deleteUser }: IRow) {
+export function Row({
+  id,
+  name,
+  email,
+  birthDate,
+  cpf,
+  address,
+  deleteUser,
+  openResetUserPasswordModal,
+}: IRow) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   async function handleDeleteUser() {
     deleteUser({ id })
   }
 
-  function updatePassword() {}
+  const handleClickResetPassword = () => {
+    openResetUserPasswordModal(id)
+  }
 
   return (
     <tr>
@@ -67,7 +79,7 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser }: IR
           content={'Alterar Senha'}
           rounded
           css={{ color: '$customColor' }}
-          style={{ wordBreak: 'keep-all' }}
+          onClick={handleClickResetPassword}
         >
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
             <KTSVG path='/icons/key.svg' className='svg-icon-3' />
