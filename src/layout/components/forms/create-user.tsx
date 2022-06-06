@@ -8,7 +8,7 @@ import { FormHandles } from '@unform/core'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { Address } from '../../../domain/models/address'
 import { UserSignUp } from '../../../domain/models/userSignUp'
-import { levelOptions, roleOptions } from '../../../utils/selectOptions'
+import { levelOptions, roleOptions, stateOptions } from '../../../utils/selectOptions'
 import { toast } from 'react-toastify'
 import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
 import { findCEP } from '../../../utils/findCEP'
@@ -150,7 +150,16 @@ export function FormCreateUser({ userRegister }: Props) {
           <Input name='complement' label='Complemento' />
           <Input name='neighborhood' label='Bairro' />
           <Input name='city' label='Cidade' />
-          <Input name='state' label='Estado' />
+          <Select name='state' label='Estado'>
+            <option value='' disabled selected>
+              Selecione
+            </option>
+            {stateOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>          
         </div>
       </div>
 
