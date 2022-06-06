@@ -45,7 +45,8 @@ export default function UsersTable({
   const [users, setUsers] = useState<IUserResponse[]>([])
 
   const paginationHook = usePagination()
-  const { pagination, setTotalPage, handleOrdenation } = paginationHook
+  const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
+    paginationHook
   const { take, currentPage, order } = pagination
   const paginationParams: IGetAllUsersParams = {
     page: currentPage,
@@ -88,13 +89,7 @@ export default function UsersTable({
 
   useEffect(() => {
     getAllUserPaginated(paginationParams)
-  }, [
-    pagination.take,
-    pagination.totalPages,
-    pagination.currentPage,
-    userName,
-    userDeletedSuccessful,
-  ])
+  }, [pagination.take, pagination.currentPage, pagination.order, userName, userDeletedSuccessful])
 
   useEffect(() => {
     if (paginatedUsers) {
@@ -158,11 +153,46 @@ export default function UsersTable({
           <table className='table align-middle gs-0 gy-4'>
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
-                <th className='text-dark ps-4 min-w-100px rounded-start'>Nome</th>
-                <th className='text-dark min-w-100px'>Email</th>
-                <th className='text-dark min-w-100px'>Nascimento</th>
-                <th className='text-dark min-w-150px'>CPF</th>
-                <th className='text-dark min-w-100px'>Endereço</th>
+                <th
+                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+                    'name'
+                  )}`}
+                  onClick={() => handleOrdenation('name')}
+                >
+                  Nome
+                </th>
+                <th
+                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+                    'email'
+                  )}`}
+                  onClick={() => handleOrdenation('email')}
+                >
+                  Email
+                </th>
+                <th
+                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+                    'birthDate'
+                  )}`}
+                  onClick={() => handleOrdenation('birthDate')}
+                >
+                  Nascimento
+                </th>
+                <th
+                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+                    'cpf'
+                  )}`}
+                  onClick={() => handleOrdenation('cpf')}
+                >
+                  CPF
+                </th>
+                <th
+                  className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+                    'address'
+                  )}`}
+                  onClick={() => handleOrdenation('address')}
+                >
+                  Endereço
+                </th>
                 <th className='text-dark min-w-150px text-end rounded-end' />
               </tr>
             </thead>
