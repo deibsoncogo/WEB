@@ -23,6 +23,7 @@ import { CourseClass } from '../../../../domain/models/courseClass'
 import CoursesInternalTable from './courseInternalTable'
 import FilesInternalTable from './filesUpload/filesInternalTable'
 import { FileUpload } from '../../../../domain/models/fileUpload'
+import { Loading } from '@nextui-org/react'
 
 type Props = {
   createCourse: ICreateCourse
@@ -36,6 +37,7 @@ export function FormCreateCourse(props: Props) {
   const [categories, setCategories] = useState<ICategory[]>([])
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
   const [loading, setLoading] = useState(true)
+  const [registerCourse, setRegisterCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
   const [imageUpload, setImageUpload] = useState<File>()
   const [filesUpload, setFilesUpload] = useState<FileUpload[]>([])
@@ -156,17 +158,22 @@ export function FormCreateCourse(props: Props) {
     }       
     formData.append('course', JSON.stringify(course))    
 
+    setRegisterCourse(true)
     props.createCourse
       .create(formData)
       .then(() => {
-        toast.success('Curso criado com sucesso!')
+        toast.success('Curso criado com sucesso!')       
         router.push('/courses')
       })
       .catch((error: any) => toast.error('Não foi possível criar o curso!'))
+      .finally(() => setRegisterCourse(false)) 
+        
+      
   }
 
   return (
     <>
+    {registerCourse && <Loading />}
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do Curso</h3>
         <InputImage name='photo' handleSingleImageUpload = {handleSingleImageUpload} />

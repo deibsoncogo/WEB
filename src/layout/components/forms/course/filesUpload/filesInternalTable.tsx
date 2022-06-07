@@ -114,8 +114,8 @@ export default function FilesInternalTable(props: prop) {
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th className='text-dark ps-4 min-w-200px rounded-start'>Nome</th>
-                    <th className='text-dark min-w-400px'>Arquivo</th>                  
-                    <th className='text-dark min-w-100px text-end rounded-end' />
+                    <th className='text-dark min-w-420px'>Arquivo</th>                  
+                    <th className='text-dark min-w-100px text-center rounded-end' />
                   </tr>
                 </thead>
 
