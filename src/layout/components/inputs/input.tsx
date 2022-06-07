@@ -7,10 +7,11 @@ interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   label?: string
   placeholderText?:string
+  classes?: string
   onChange?: (value?:any) => void
 }
 
-export function Input({ name, label, placeholderText, onChange, ...rest }: IInputProps) {
+export function Input({ name, label, placeholderText, classes, onChange, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const { fieldName, defaultValue = '', registerField, error } = useField(name)
   const [isEyeVisible, setIsEyeVisible] = useState(true)
@@ -44,7 +45,7 @@ export function Input({ name, label, placeholderText, onChange, ...rest }: IInpu
   }
 
   return (
-    <div className='fv-row mb-7'>
+    <div className={`${classes} fv-row mb-7`}>
       {label && (
         <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
           {label}

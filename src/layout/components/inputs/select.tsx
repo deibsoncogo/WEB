@@ -7,9 +7,10 @@ type SelectFace = SelectHTMLAttributes<HTMLSelectElement> & {
   name: string
   children: ReactNode
   label?: string
+  classes?: string
 }
 
-export function Select({ name, label, children, ...rest }: SelectFace) {
+export function Select({ name, label, classes, children, ...rest }: SelectFace) {
   const selectRef = useRef(null)
 
   const { fieldName, defaultValue, registerField, error } = useField(name)
@@ -31,7 +32,7 @@ export function Select({ name, label, children, ...rest }: SelectFace) {
   }, [fieldName, registerField])
 
   return (
-    <div className='fv-row mb-7'>
+    <div className={`${classes} fv-row mb-7`}>
       {label && (
         <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
           {label}

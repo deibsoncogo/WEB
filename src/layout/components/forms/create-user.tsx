@@ -105,13 +105,13 @@ export function FormCreateUser({ userRegister }: Props) {
         <div className='w-100'>
           <h3 className='mb-5'>Dados Pessoais</h3>
 
-          <Input name='name' label='Nome' type='text' />
-          <Input name='email' label='Email' type='email' />
-          <DatePicker name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
-          <InputMasked name='cpf' label='CPF' type='text' mask='999.999.999-99' />
-          <InputMasked name='phoneNumber' label='Telefone' type='text' mask='(99) 9 9999-9999' />
+          <Input classes='h-75px' name='name' label='Nome' type='text' />
+          <Input classes='h-75px' name='email' label='Email' type='email' />
+          <DatePicker classes='h-75px' name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
+          <InputMasked classes='h-75px' name='cpf' label='CPF' type='text' mask='999.999.999-99' />
+          <InputMasked classes='h-75px' name='phoneNumber' label='Telefone' type='text' mask='(99) 9 9999-9999' />
 
-          <Select name='level' label='Nível de Conhecimento'>
+          <Select classes='h-75px' name='level' label='Nível de Conhecimento'>
             <option value='' disabled selected>
               Selecione
             </option>
@@ -121,9 +121,9 @@ export function FormCreateUser({ userRegister }: Props) {
               </option>
             ))}
           </Select>
-          <Input name='password' label='Senha' type='password' />
+          <Input classes='h-75px'name='password' label='Senha' type='password' />
 
-          <Select name='role' label='Permissão'>
+          <Select classes='h-75px' name='role' label='Permissão'>
             <option value='' disabled selected>
               Selecione
             </option>
@@ -138,6 +138,7 @@ export function FormCreateUser({ userRegister }: Props) {
           <h3 className='mb-5'>Endereço</h3>
 
           <InputMasked
+            height='h-75px'
             name='zipCode'
             label='CEP'
             mask='99999-999'
@@ -145,12 +146,12 @@ export function FormCreateUser({ userRegister }: Props) {
               findCEP(formRef.current?.getData().zipCode, setDefaultValue)
             }}
           />
-          <Input name='street' label='Logradouro' />
-          <Input name='number' label='Número' type='number' />
-          <Input name='complement' label='Complemento' />
-          <Input name='neighborhood' label='Bairro' />
-          <Input name='city' label='Cidade' />
-          <Input name='state' label='Estado' />
+          <Input classes='h-75px' name='street' label='Logradouro' />
+          <Input classes='h-75px' name='number' label='Número' type='number' />
+          <Input classes='h-75px' name='complement' label='Complemento' />
+          <Input classes='h-75px' name='neighborhood' label='Bairro' />
+          <Input classes='h-75px' name='city' label='Cidade' />
+          <Input classes='h-75px' name='state' label='Estado' />          
         </div>
       </div>
 
