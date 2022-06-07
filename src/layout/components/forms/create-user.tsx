@@ -138,7 +138,7 @@ export function FormCreateUser({ userRegister }: Props) {
           <h3 className='mb-5'>Endereço</h3>
 
           <InputMasked
-            height='h-75px'
+            classes='h-75px'
             name='zipCode'
             label='CEP'
             mask='99999-999'
