@@ -43,7 +43,7 @@ export function Row(props: IRow) {
               }}
               className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
             >
-              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+              <KTSVG path='/icons/gen027.svg' className='svg-icon-3 svg-icon-primary' />
             </a>
           </Tooltip>
         </td>
