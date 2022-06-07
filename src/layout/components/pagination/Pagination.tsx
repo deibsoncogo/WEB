@@ -1,4 +1,3 @@
-import React, { ChangeEvent, ChangeEventHandler, useState } from 'react'
 import { usePaginationType } from '../../../application/hooks/usePagination'
 
 const ranges = ['5', '10', '15', '20']
@@ -6,7 +5,7 @@ const ranges = ['5', '10', '15', '20']
 type PaginationProps = {
   paginationHook: usePaginationType
 }
-function Pagination({ paginationHook }: PaginationProps) {
+export function Pagination({ paginationHook }: PaginationProps) {
   const { goBack, goNext, rangeChange, setCurrentPage, pagination } = paginationHook
 
   const { currentPage, totalPages } = pagination
@@ -69,5 +68,3 @@ function Pagination({ paginationHook }: PaginationProps) {
     </div>
   )
 }
-
-export default Pagination

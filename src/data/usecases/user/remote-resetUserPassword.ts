@@ -1,22 +1,15 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import {
-  IGetAllUsers,
-  IGetAllUsersParams,
-} from '../../../domain/usecases/interfaces/user/getAllUsers'
-import { IUserResponse } from '../../../interfaces/api-response'
+import { IResetUserPassword } from '../../../domain/usecases/interfaces/user/resetUserPassword'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteGetAllUsers implements IGetAllUsers {
-  constructor(
-    private readonly url: string,
-    private readonly httpClient: HttpClient<IUserResponse[]>
-  ) {}
+export class RemoteResetUserPassword implements IResetUserPassword {
+  constructor(private readonly url: string, private readonly httpClient: HttpClient<void>) {}
 
-  getAll = async (params: IGetAllUsersParams) => {
+  resetPassword = async (params: IResetUserPassword) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
-      method: 'get',
-      params: params,
+      method: 'put',
+      body: params,
     })
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:

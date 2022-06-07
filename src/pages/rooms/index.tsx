@@ -3,23 +3,23 @@ import Head from 'next/head'
 
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
-import { MakeTrainingsPage } from '../../application/factories/pages/trainings/trainings-factory'
+import { RoomsTable } from '../../layout/components/tables/rooms-list'
 
-const Trainings: NextPage = () => {
+const Rooms: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Treinamentos</title>
+        <title>Salas</title>
       </Head>
 
       <div className='page d-flex flex-row flex-column-fluid'>
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Treinamentos' />
+          <HeaderWrapper title='Salas' />
 
           <div id='kt_content_container' className='container'>
-            <MakeTrainingsPage />
+            <RoomsTable />
           </div>
         </div>
       </div>
@@ -27,4 +27,4 @@ const Trainings: NextPage = () => {
   )
 }
 
-export default Trainings
+export default Rooms

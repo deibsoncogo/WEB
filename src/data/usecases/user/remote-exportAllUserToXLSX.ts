@@ -1,28 +1,31 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { ConflitctEntitiesError } from '../../../domain/errors/conflict-entities-error'
-import { IDeleteUser, IDeleteUserParams } from '../../../domain/usecases/interfaces/user/deleteUser'
+import {
+  IExportAllUsersParams,
+  IExportAllUsersToXLSX,
+} from '../../../domain/usecases/interfaces/user/exportAllUsersToXLSX'
 import { IUserResponse } from '../../../interfaces/api-response'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteDeleteUser implements IDeleteUser {
+export class RemoteExportAllUserToXLSX implements IExportAllUsersToXLSX {
   constructor(
     private readonly url: string,
     private readonly httpClient: HttpClient<IUserResponse[]>
   ) {}
 
-  deleteUser = async (params: IDeleteUserParams) => {
+  export = async (params: IExportAllUsersParams) => {
     const httpResponse = await this.httpClient.request({
-      url: `${this.url}/${params.id}`,
-      params,
-      method: 'delete',
+      url: this.url,
+      method: 'get',
+      params: params,
+      responseType: 'blob',
     })
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
-        return httpResponse.body
-      case HttpStatusCode.conflict:
-        throw new ConflitctEntitiesError([
-          'Existem entidades deste usuário que precisam ser deletadas primeiro',
-        ])
+        return {
+          data: httpResponse.response.data,
+          type: httpResponse?.response.data.type,
+        }
       case HttpStatusCode.badRequest:
         throw new InvalidParamsError(httpResponse.body?.message)
       default:

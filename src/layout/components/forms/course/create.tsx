@@ -62,7 +62,7 @@ export function FormCreateCourse(props: Props) {
     const userQuery = new UserQueryRole(roles.TEACHER)
     props.getUsers
       .getAllByRole(userQuery)
-      .then((data) => {      
+      .then((data) => {
         setUsers(data)
       })
       .catch((error) => toast.error('Não foi possível carregar os Professores.'))

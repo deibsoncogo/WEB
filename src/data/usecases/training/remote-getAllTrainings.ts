@@ -1,18 +1,13 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import {
-  IGetAllUsers,
-  IGetAllUsersParams,
-} from '../../../domain/usecases/interfaces/user/getAllUsers'
-import { IUserResponse } from '../../../interfaces/api-response'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteGetAllUsers implements IGetAllUsers {
+export class RemoteGetAllTrainings implements IGetAllTrainings {
   constructor(
     private readonly url: string,
-    private readonly httpClient: HttpClient<IUserResponse[]>
+    private readonly httpClient: HttpClient<ITrainingsResponse[]>
   ) {}
 
-  getAll = async (params: IGetAllUsersParams) => {
+  async getAll(params: any) {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',
