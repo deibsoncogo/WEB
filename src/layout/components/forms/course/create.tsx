@@ -21,7 +21,8 @@ import { Editor } from '@tinymce/tinymce-react'
 import { InputImage } from '../../inputs/input-image'
 import { CourseClass } from '../../../../domain/models/courseClass'
 import CoursesInternalTable from './courseInternalTable'
-import FilesInternalTable from './filesInternalTable'
+import FilesInternalTable from './filesUpload/filesInternalTable'
+import { FileUpload } from '../../../../domain/models/fileUpload'
 
 type Props = {
   createCourse: ICreateCourse
@@ -37,8 +38,9 @@ export function FormCreateCourse(props: Props) {
   const [loading, setLoading] = useState(true)
   const [stateEditor, setStateEditor] = useState({ content: '' })
   const [imageUpload, setImageUpload] = useState<File>()
+  const [filesUpload, setFilesUpload] = useState<FileUpload[]>([])
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
-
+  const [hasErrorClass, setHasErrorClass] = useState(false)
  
   function handleChange(event: any) {
     setStateEditor({ content: event })
@@ -91,6 +93,7 @@ export function FormCreateCourse(props: Props) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
+        photo: Yup.mixed().required('Imagem é necessária'),              
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number().typeError('Tempo de acesso deve ser um número')
@@ -111,7 +114,10 @@ export function FormCreateCourse(props: Props) {
 
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
-      handleCreateCourse(data)
+      courseClass.length == 0? setHasErrorClass(true): handleCreateCourse(data)      
+      
+     
+     
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -123,7 +129,6 @@ export function FormCreateCourse(props: Props) {
       }
     }
   }
-
   async function handleCreateCourse(data: IFormCourse) {
     const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
@@ -133,7 +138,6 @@ export function FormCreateCourse(props: Props) {
       data.content,
       data.categoryId,
       discount,
-      'teste.jpg',
       data.installments,
       false,
       price,
@@ -143,9 +147,14 @@ export function FormCreateCourse(props: Props) {
     )
 
     const formData = new FormData();
-    if(imageUpload)
-       formData.append('image', imageUpload); 
-    formData.append('course', JSON.stringify(course))
+    if(imageUpload && filesUpload){
+      formData.append('image', imageUpload); 
+      filesUpload.map(file => {
+        formData.append('attachments', file.file)
+        formData.append('filesName',  file.name)
+      })
+    }       
+    formData.append('course', JSON.stringify(course))    
 
     props.createCourse
       .create(formData)
@@ -228,7 +237,24 @@ export function FormCreateCourse(props: Props) {
         />
 
         <Input name='content' />
-        
+
+               
+        <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>        
+        <FilesInternalTable filesUpload={filesUpload} />
+
+        {hasErrorClass && (
+        <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
+          <strong>Não é possível criar curso!</strong>
+          Você precisa adicionar, no mínimo, uma aula.
+          <button
+            type='button'
+            onClick={() => setHasErrorClass(false)}
+            className='btn-close'
+            data-bs-dismiss='alert'
+            aria-label='Close'
+          ></button>
+        </div>
+      )}
         <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
         <CoursesInternalTable courseClassArray={courseClass} />
 

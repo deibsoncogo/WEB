@@ -30,7 +30,7 @@ export function Row(props: IRow) {
           <span className='text-dark fw-bold d-block fs-7'>{props.originalName}</span>
         </td>
 
-        <td>
+        <td className='text-center'>
           <Tooltip content={'Deletar'} rounded color='primary'>
             <a
               onClick={() => {
@@ -38,7 +38,7 @@ export function Row(props: IRow) {
               }}
               className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
             >
-              <KTSVG path='/icons/gen027.svg' className='svg-icon-3 svg-icon-primary' />
+              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
             </a>
           </Tooltip>
         </td>
