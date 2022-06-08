@@ -10,6 +10,7 @@ export class RemoteGetAllAttachmentCourseByCourseId implements IGetAllAttachment
   ) {}
 
   async getAllByCourseId(courseId: string) {
+    
     const httpResponse = await this.httpClient.request({
       url: `${this.url}/${courseId}`,
       method: 'get'     

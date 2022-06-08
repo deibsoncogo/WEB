@@ -22,11 +22,17 @@ import { UpdateCourse } from '../../../../domain/models/updateCourse'
 import { InputImage } from '../../inputs/input-image'
 import { Editor } from '@tinymce/tinymce-react'
 import { Loading } from '../../loading/loading'
+import { IGetAllAttachmentByCourseId } from '../../../../domain/usecases/interfaces/courseAttachment/getAllAttachmentByCourseId'
+import { IGetAllCourseClassByCourseId } from '../../../../domain/usecases/interfaces/courseClass/getAllCourseClassByCourseId'
+import { ICourseAttachmentResponse } from '../../../../interfaces/api-response/courseAttachmentResponse'
+import { ICourseClassResponse } from '../../../../interfaces/api-response/courseClassResponse'
 
 type Props = {
   updateCourse: IUpdateCourse
   getCategories: IGetCategoriesNoPagination
   getUsers: IGetAllUsersByRole
+  getAttachments: IGetAllAttachmentByCourseId
+  getCourseClass: IGetAllCourseClassByCourseId
   getCourse: IGetCourse
   id: string | string[] | undefined
 }
@@ -36,10 +42,18 @@ export function FormUpdateCourse(props: Props) {
   const formRef = useRef<FormHandles>(null)
   const [categories, setCategories] = useState<ICategory[]>([])
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
+  const [attachments, setAttachment] = useState<ICourseAttachmentResponse[]>([])
+  const [courseClass, setCourseClass] = useState<ICourseClassResponse[]>([])
+
   const [defaultValue, setDefaultValue] = useState<ICourseResponse>()
+
   const [loadingCourse, setLoadingCourse] = useState(true)
   const [loadingCategories, setLoadingCategoris] = useState(true)
   const [loadingUsers, setLoadingUsers] = useState(true)
+  const [loadingAttachments, setLoadingAttachments] = useState(true)
+  const [loadingCourseClass, setLoadingCourseClass] = useState(true)
+
+
   const [stateEditor, setStateEditor] = useState({ content: '' })
 
   useEffect(() => {
@@ -76,6 +90,34 @@ export function FormUpdateCourse(props: Props) {
       .finally(() => setLoadingUsers(false))
   }, [])
 
+  useEffect(() => {  
+    if (typeof props.id == 'string') {  
+      props.getAttachments
+        .getAllByCourseId(props.id)
+        .then((data) => {       
+          setAttachment(data)
+        })
+        .catch((error) => toast.error('Não foi possível carregar os arquivos'))
+        .finally(() => setLoadingAttachments(false))
+    }
+  }, [])
+
+  useEffect(() => {  
+    if (typeof props.id == 'string') {  
+      props.getCourseClass
+        .getAllByCourseId(props.id)
+        .then((data) => {         
+          setCourseClass(data)
+        })
+        .catch((error) => toast.error('Não foi possível carregar as aulas.'))
+        .finally(() => setLoadingCourseClass(false))
+    }
+  }, [])
+
+  
+
+  
+
   const findCategoryById = (id: string) => {
     return categories.find((category) => category.id == id)
   }
@@ -106,6 +148,7 @@ export function FormUpdateCourse(props: Props) {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome é necessário'),
+        userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number().typeError('Tempo de acesso deve ser um número')
         .required('Tempo de acesso é necessário')
         .positive("Tempo de acesso deve ser positivo")
@@ -119,7 +162,7 @@ export function FormUpdateCourse(props: Props) {
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         content: Yup.string().required('Conteúdo progrmático é necessário'),
-        userId: Yup.string().optional(),
+       
       })
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
@@ -165,7 +208,12 @@ export function FormUpdateCourse(props: Props) {
 
   return (
     <>
-      {loadingCourse && loadingCategories && loadingUsers && <Loading />}
+      {loadingCourse 
+       && loadingCategories 
+       &&loadingUsers
+       && loadingAttachments 
+       && loadingCourseClass
+       && <Loading />}
 
       {!(loadingCourse && loadingCategories && loadingUsers) && (
         <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
