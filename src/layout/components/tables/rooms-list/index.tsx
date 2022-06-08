@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Row } from './row'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
-import Pagination from '../../pagination/Pagination'
+import { Pagination } from '../../pagination/Pagination'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { Room } from '../../../../interfaces/model/Room'
 import { debounce } from '../../../../helpers/debounce'
@@ -60,7 +60,9 @@ export function RoomsTable() {
       case 'teacher':
         return order === 'table-sort-asc' ? roomA.teacher.charCodeAt(0) - roomB.teacher.charCodeAt(0) : roomB.teacher.charCodeAt(0) - roomA.teacher.charCodeAt(0)
       case 'isActive':
-        return order === 'table-sort-asc' ? roomA.isActive - roomB.isActive : roomB.isActive - roomA.isActive
+        return order === 'table-sort-asc' ? 0 : 1
+      default:
+        return 0
     }
   }
 
