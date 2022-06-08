@@ -112,9 +112,6 @@ export function FormCreateUser({ userRegister }: Props) {
           <InputMasked name='phoneNumber' label='Telefone' type='text' mask='(99) 9 9999-9999' />
 
           <Select name='level' label='Nível de Conhecimento'>
-            <option value='' disabled selected>
-              Selecione
-            </option>
             {levelOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -124,9 +121,6 @@ export function FormCreateUser({ userRegister }: Props) {
           <Input name='password' label='Senha' type='password' />
 
           <Select name='role' label='Permissão'>
-            <option value='' disabled selected>
-              Selecione
-            </option>
             {roleOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
