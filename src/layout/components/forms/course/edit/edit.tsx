@@ -30,6 +30,7 @@ import { FileUpload } from '../../../../../domain/models/fileUpload'
 import CoursesInternalTable from './courseClass/courseInternalTable'
 import { CourseClass } from '../../../../../domain/models/courseClass'
 import FilesInternalTable from './filesUpload/filesInternalTable'
+import { DeleteFileUpload } from '../../../../../domain/models/deleteFile'
 
 type Props = {
   updateCourse: IUpdateCourse
@@ -60,7 +61,7 @@ export function FormUpdateCourse(props: Props) {
   const [loadingUpdateCourse, setLoadingUpdateCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
 
-  const [IdDeletedFiles] = useState<string[]>([])
+  const [IdDeletedFiles] = useState<DeleteFileUpload[]>([])
   const [filesUploadUpdate] = useState<FileUpload[]>([])
 
   const [IdDeletedCourseClass] = useState<string[]>([])
@@ -105,7 +106,7 @@ export function FormUpdateCourse(props: Props) {
       props.getAttachments
         .getAllByCourseId(props.id)
         .then((data) => {       
-          setAttachment(data)
+           setAttachment(data)
         })
         .catch((error) => toast.error('Não foi possível carregar os arquivos'))
         .finally(() => setLoadingAttachments(false))

@@ -1,4 +1,5 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
+import { DeleteFileUpload } from '../../../../../../domain/models/deleteFile'
 import { FileUpload } from '../../../../../../domain/models/fileUpload'
 import { KTSVG } from '../../../../../../helpers'
 import { ICourseAttachmentResponse } from '../../../../../../interfaces/api-response/courseAttachmentResponse'
@@ -8,7 +9,7 @@ import { Row } from './row'
 
 type prop = {
   filesUpload: ICourseAttachmentResponse[]
-  IdDeletedFiles: string[]
+  IdDeletedFiles: DeleteFileUpload[]
   filesUploadUpdate: FileUpload[]
 }
 

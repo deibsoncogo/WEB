@@ -1,4 +1,5 @@
 import { Tooltip } from '@nextui-org/react'
+import { DeleteFileUpload } from '../../../../../../domain/models/deleteFile'
 import { FileUpload } from '../../../../../../domain/models/fileUpload'
 import { KTSVG } from '../../../../../../helpers'
 import { ICourseAttachmentResponse } from '../../../../../../interfaces/api-response/courseAttachmentResponse'
@@ -9,19 +10,21 @@ interface IRow {
   originalName: string
   fileUpload: ICourseAttachmentResponse
   filesUpload: ICourseAttachmentResponse[]
-  IdDeletedFiles: string[]
+  IdDeletedFiles: DeleteFileUpload[]
   filesUploadUpdate: FileUpload[]
   handleRefresher: () => void
 }
 
 export function Row(props: IRow) {
-  const deleteFile = () => {
+
+  const deleteFile = () => { 
     const index = props.filesUpload.indexOf(props.fileUpload, 0)
     if (index > -1) {
       props.filesUpload.splice(index, 1)
 
-      if(props.fileUpload?.id){
-        props.IdDeletedFiles.push(props.fileUpload.id)
+      if(props.fileUpload?.id){        
+        props.IdDeletedFiles.push(new DeleteFileUpload(props.fileUpload.id, props.fileUpload.fileKey))
+        
       }
       else{
         const index = props.filesUploadUpdate.indexOf(props.fileUpload, 0)
