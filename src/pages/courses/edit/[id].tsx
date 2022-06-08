@@ -1,7 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 import { MakeFormUpdateCourse } from '../../../application/factories/components/course/updateCourse-factory'
 import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
@@ -10,9 +9,6 @@ const EditCourse: NextPage = () => {
   const router = useRouter()
   const {id} = router.query
   
-
-  //useEffect(() => {}, [id])
-
   return (
     <>
       <Head>

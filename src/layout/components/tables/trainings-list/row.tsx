@@ -1,15 +1,42 @@
 import Link from 'next/link'
+import { useState } from 'react'
+import { toast } from 'react-toastify'
 import { KTSVG } from '../../../../helpers'
+import ConfirmationModal from '../../modal/ConfirmationModal'
 
 interface IRow {
   id: string
   name: string
   description: string
   price: string | number
-  teacher: string
+  teacherName: string
+  deleteTraining: IDeleteTraining
+  getTrainings(): Promise<void>
 }
 
-export function Row({ id, name, description, price, teacher }: IRow) {
+export function Row({
+  id,
+  name,
+  description,
+  price,
+  teacherName,
+  deleteTraining,
+  getTrainings,
+}: IRow) {
+  const [loading, setLoading] = useState(false)
+  const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false)
+
+  async function handleDeleteTraining() {
+    try {
+      await deleteTraining.deleteTraining()
+      getTrainings()
+      toast.success('Treinamento excluído com sucesso')
+    } catch (err) {
+      console.log(err)
+      toast.error('Erro ao deletar o treinamento Treinamento')
+    }
+  }
+
   return (
     <tr>
       <td className='ps-4'>
@@ -27,7 +54,7 @@ export function Row({ id, name, description, price, teacher }: IRow) {
         <span className='text-dark fw-bold d-block fs-7'>{price}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{teacher}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{teacherName}</span>
       </td>
       <td>
         <button className='btn btn-icon btn-active-color-primary btn-sm me-1'>
@@ -42,14 +69,34 @@ export function Row({ id, name, description, price, teacher }: IRow) {
 
       <td className='text-end'>
         <Link href={`/trainings/edit/${id}`}>
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+          <button
+            title='Editar'
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+          >
             <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
           </button>
         </Link>
-        <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
+        <button
+          title='Deletar'
+          onClick={() => {
+            setIsDeleteCategoryModalOpen(true)
+          }}
+          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+        >
           <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
         </button>
       </td>
+
+      <ConfirmationModal
+        isOpen={isDeleteCategoryModalOpen}
+        loading={loading}
+        onRequestClose={() => {
+          setIsDeleteCategoryModalOpen(false)
+        }}
+        onConfimation={handleDeleteTraining}
+        content='Você tem ceterza que deseja excluir este treinamento??'
+        title='Deletar'
+      />
     </tr>
   )
 }

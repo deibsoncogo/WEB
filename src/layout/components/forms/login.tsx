@@ -13,21 +13,33 @@ import { IAuthResponse } from '../../../interfaces/api-response/authResponse'
 import jwtDecode from 'jwt-decode'
 import { IToken } from '../../../interfaces/application/token'
 import { toast } from 'react-toastify'
+import { IUserSignIn } from '../../../domain/usecases/interfaces/user/userSignIn'
+import { UserSignIn } from '../../../domain/models/userSignIn'
 
-export function FormLogin() {
+type Props = {
+  userLogin: IUserSignIn
+}
+export function FormLogin(props: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
 
-  async function handleFormSubmit(data: any) {
+  const onChangeError = () =>{
+        if(formRef.current){
+          formRef.current.setErrors({})
+        }
+  }
+
+
+  async function handleFormSubmit(data: IFormLogin) {
     if (!formRef.current) throw new Error()
 
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        email: Yup.string().email('Insira um email válido.').required('Email é nescessário.'),
+        email: Yup.string().email('Insira um email válido.').required('Email é necessário.'),
         password: Yup.string().required('Senha é necessária'),
       })
       await schema.validate(data, { abortEarly: false })
@@ -45,29 +57,21 @@ export function FormLogin() {
     }
   }
 
-  async function handleSignIn(data: any) {
+  async function handleSignIn(data: IFormLogin) {
     setHasError(false)
     try {
-      const response = await api.post('/auth/admin/login', data)
-      const result: IAuthResponse = response.data.data
-      localStorage.setItem('name', result.name)
-      localStorage.setItem('email', result.email)
-      localStorage.setItem('access_token', result.accessToken)
-      localStorage.setItem('expiration', jwtDecode<IToken>(result.accessToken).exp)      
+      const response = await props.userLogin.signIn(new UserSignIn(data.email, data.password));
+      localStorage.setItem('name', response.name)
+      localStorage.setItem('email', response.email)
+      localStorage.setItem('access_token', response.accessToken)
+      localStorage.setItem('expiration', jwtDecode<IToken>(response.accessToken).exp)      
       router.push('/dashboard')
       toast.success("Login efetuado com sucesso")
-    } catch (err: any) {
-      console.log(err)
+    } catch (err: any) {     
       setHasError(true)
-      if (err?.response?.status === 500) {
-        setMessage(err.message)
-        return
-      }
-      if (Array.isArray(err.response.data.message)) setMessage(err.response.data.message[0])
-      else setMessage(err.response.data.message)
+      setMessage(err.message)      
     }
-  }
-
+}
   return (
     <Form className='form w-100' ref={formRef} onSubmit={handleFormSubmit}>
       {hasError && (
@@ -76,7 +80,7 @@ export function FormLogin() {
         </div>
       )}
 
-      <Input name='email' label='E-mail' placeholder='E-mail' type='email' />
+      <Input name='email' label='E-mail' placeholder='E-mail' onChange={onChangeError}/>
       <Input name='password' label='Senha' placeholder='Senha' type='password' />
 
       <div className='mb-10 d-flex justify-content-between '>

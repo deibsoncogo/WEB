@@ -1,7 +1,7 @@
+import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useState } from 'react'
-import { toast } from 'react-toastify'
-import { api } from '../../../../application/services/api'
+import { IDeleteUserParams } from '../../../../domain/usecases/interfaces/user/deleteUser'
 import { KTSVG } from '../../../../helpers'
 import { ActionModal } from '../../modals/action'
 
@@ -12,25 +12,29 @@ interface IRow {
   birthDate: string
   cpf: string
   address: string
-  deleteUser: IDeleteUser
-  refreshUsers: () => void
+  deleteUser: (params: IDeleteUserParams) => void
+  openResetUserPasswordModal: (userId: string) => void
 }
 
-export function Row({ id, name, email, birthDate, cpf, address, deleteUser, refreshUsers }: IRow) {
+export function Row({
+  id,
+  name,
+  email,
+  birthDate,
+  cpf,
+  address,
+  deleteUser,
+  openResetUserPasswordModal,
+}: IRow) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   async function handleDeleteUser() {
-    try {
-      const resp = await deleteUser.deleteUser()
-      setIsModalOpen(false)
-      toast.success('Usuário deletado com sucesso!')
-      refreshUsers()
-    } catch (err: any) {
-      toast.error(err.messages[0])
-    }
+    deleteUser({ id })
   }
 
-  function updatePassword() {}
+  const handleClickResetPassword = () => {
+    openResetUserPasswordModal(id)
+  }
 
   return (
     <tr>
@@ -49,29 +53,41 @@ export function Row({ id, name, email, birthDate, cpf, address, deleteUser, refr
       <td>
         <span className='text-dark fw-bold d-block fs-7'>{address}</span>
       </td>
-      <td className='text-end'>
-        <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-          <KTSVG path='/icons/gen019.svg' className='svg-icon-3' />
-        </button>
-        <Link href={`/users/edit/${id}`}>
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-            <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+      <td className='text-end d-flex justify-content-end px-4'>
+        <Tooltip content={'Editar'} rounded color='primary'>
+          <Link href={`/users/edit/${id}`}>
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+              <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+            </button>
+          </Link>
+        </Tooltip>
+
+        <Tooltip content={'Deletar'} rounded color='primary'>
+          <button
+            onClick={() => {
+              setIsModalOpen(true)
+            }}
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+          >
+            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
           </button>
-        </Link>
-        <button
-          onClick={() => {
-            setIsModalOpen(true)
-          }}
-          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+        </Tooltip>
+        <Tooltip
+          content={'Alterar Senha'}
+          rounded
+          color='primary'
+          onClick={handleClickResetPassword}
         >
-          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-        </button>
+          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+            <KTSVG path='/icons/key.svg' className='svg-icon-3' />
+          </button>
+        </Tooltip>
       </td>
 
       <ActionModal
         isOpen={isModalOpen}
-        modalTitle = "Deletar"
-        message = "Você tem certeza que deseja excluir esse usuário?"
+        modalTitle='Deletar'
+        message='Você tem certeza que deseja excluir esse usuário?'
         action={handleDeleteUser}
         onRequestClose={() => {
           setIsModalOpen(false)

@@ -1,7 +1,15 @@
 import { ChangeEvent, useState } from 'react'
 
+type PaginationType = {
+  totalPages: number
+  currentPage: number
+  take: number
+  order?: 'asc' | 'desc' | undefined
+  orderBy?: string
+}
+
 export function usePagination() {
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<PaginationType>({
     totalPages: 1,
     currentPage: 1,
     take: 5,
@@ -45,7 +53,49 @@ export function usePagination() {
     })
   }
 
-  return { goBack, goNext, rangeChange, setCurrentPage, setTotalPage, pagination }
+  const handleOrdenation = (orderBy?: string) => {
+    const { order, orderBy: currentOrderBy } = pagination
+    let updatedOrder = order
+
+    if (currentOrderBy !== orderBy) {
+      updatedOrder = undefined
+    }
+
+    if (updatedOrder === 'asc') {
+      setPagination((oldState) => ({ ...oldState, order: 'desc' }))
+      return
+    }
+
+    if (updatedOrder === 'desc') {
+      setPagination((oldState) => {
+        const { currentPage, take, totalPages } = oldState
+        return { currentPage, take, totalPages }
+      })
+      return
+    }
+
+    setPagination((oldState) => ({ ...oldState, order: 'asc', orderBy }))
+  }
+
+  const getClassToCurrentOrderColumn = (columnName: string) => {
+    const { order, orderBy } = pagination
+    let orderClass = ''
+    if (order && orderBy === columnName) {
+      orderClass = order === 'asc' ? 'table-sort-asc' : 'table-sort-desc'
+    }
+    return orderClass
+  }
+
+  return {
+    goBack,
+    goNext,
+    rangeChange,
+    setCurrentPage,
+    setTotalPage,
+    handleOrdenation,
+    pagination,
+    getClassToCurrentOrderColumn,
+  }
 }
 
 export type usePaginationType = ReturnType<typeof usePagination>
