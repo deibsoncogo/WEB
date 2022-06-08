@@ -48,6 +48,7 @@ export function FormUpdateCourse(props: Props) {
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
   const [attachments, setAttachment] = useState<ICourseAttachmentResponse[]>([])
   const [courseClass, setCourseClass] = useState<ICourseClassResponse[]>([])
+  const [hasErrorClass, setHasErrorClass] = useState(false)
   const [defaultValue, setDefaultValue] = useState<ICourseResponse>()
   const [imageUpload, setImageUpload] = useState<File>()
 
@@ -177,7 +178,8 @@ export function FormUpdateCourse(props: Props) {
       })
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
-      handleUpdateCourse(data)
+      courseClass.length == 0? setHasErrorClass(true): handleUpdateCourse(data)  
+      
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -192,8 +194,8 @@ export function FormUpdateCourse(props: Props) {
 
   async function handleUpdateCourse(data: IFormCourse) {
     
-    const price = parseFloat(data.price.replace('.', '').replace(',', '.'))
-    const discount = parseFloat(data.discount.replace('.', '').replace(',', '.'))
+    const price = data.price.replace('.', '').replace(',', '.')
+    const discount = data.discount.replace('.', '').replace(',', '.')
 
     const course = new UpdateCourse(
       defaultValue?.id,
@@ -202,24 +204,29 @@ export function FormUpdateCourse(props: Props) {
       data.content,
       data.categoryId,
       discount,
-      'teste1.jpg',
-      parseInt(data.installments),
+      defaultValue?.imageUrl,
+      data.installments,
       defaultValue?.isActive,
       price,
-      parseInt(data.accessTime),
-      data.userId
+      data.accessTime,
+      data.userId,
+      courseClassUpdate
     )
 
     const formData = new FormData();
-    if(imageUpload && filesUploadUpdate){
-      formData.append('image', imageUpload); 
-      filesUploadUpdate.map(file => {
+    if(imageUpload){    
+      formData.append('image', imageUpload);      
+    }       
+
+    if(filesUploadUpdate){
+      filesUploadUpdate?.map(file => {
         if(file?.file)
            formData.append('attachments', file.file)
         formData.append('filesName',  file.name)
       })
-    }       
-    formData.append('course', JSON.stringify(courseClassUpdate)) 
+    }
+
+    formData.append('course', JSON.stringify(course)) 
     formData.append('deleteCourses', JSON.stringify(IdDeletedCourseClass))   
     formData.append('deleteFiles', JSON.stringify(IdDeletedFiles))   
 
@@ -228,7 +235,7 @@ export function FormUpdateCourse(props: Props) {
       .update(formData)
       .then(() => {
         toast.success('Curso atualizado com sucesso!')
-        router.push('/courses')
+        //router.push('/courses')
       })
       .catch((error: any) => toast.error('Não foi possível atualizar o curso!'))
   }
@@ -242,12 +249,10 @@ export function FormUpdateCourse(props: Props) {
        && loadingCourseClass
        && <Loading />}
 
-       {loadingUpdateCourse && <Loading />}
-
       {!(loadingCourse && loadingCategories && loadingUsers) && (
         <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
           <h3 className='mb-5'>Informações do Curso</h3>
-          <InputImage name='imageUrl' handleSingleImageUpload = {handleSingleImageUpload}/>
+          <InputImage name='imageUrl' handleSingleImageUpload = {handleSingleImageUpload}/>          
           <div className='d-flex flex-row gap-5 w-100'>
             <div className='w-50'>
               <Input name='name' label='Nome' />
@@ -343,6 +348,19 @@ export function FormUpdateCourse(props: Props) {
         <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>        
         <FilesInternalTable filesUpload={attachments} IdDeletedFiles={IdDeletedFiles} filesUploadUpdate = {filesUploadUpdate} />
 
+        {hasErrorClass && (
+        <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
+          <strong>Não é possível atualizar o curso!</strong>
+          O curso deve possuir, no mínimo, uma aula.
+          <button
+            type='button'
+            onClick={() => setHasErrorClass(false)}
+            className='btn-close'
+            data-bs-dismiss='alert'
+            aria-label='Close'
+          ></button>
+        </div>
+      )}
          <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
          <CoursesInternalTable courseClassArray={courseClass} IdDeletedCourseClass={IdDeletedCourseClass} courseClassUpdate = {courseClassUpdate} />
 
@@ -356,10 +374,11 @@ export function FormUpdateCourse(props: Props) {
             >
               Cancelar
             </button>
-
+           
             <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
               Salvar
             </button>
+            
           </div>
         </Form>
       )}
