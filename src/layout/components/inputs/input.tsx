@@ -57,7 +57,7 @@ export function Input({ name, label, placeholderText, onChange, ...rest }: IInpu
             className='form-control form-control-lg form-control-solid border-transparent bg-secondary'
             type='text'
             name={name}
-            placeholder={placeholderText}
+            placeholder={error ? error : placeholderText}
             ref={inputRef}
             defaultValue={defaultValue}
             onChange={onChange}
@@ -81,7 +81,6 @@ export function Input({ name, label, placeholderText, onChange, ...rest }: IInpu
           {...rest}
         />
       )}
-      {error && <span className='text-danger'>{error}</span>}
     </div>
   )
 }

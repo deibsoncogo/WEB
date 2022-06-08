@@ -38,13 +38,12 @@ export function InputMasked({ name, label, mask, onChange, ...rest }: IInputProp
         ref={inputRef}
         id={fieldName}
         mask={mask}
+        placeholder={error && error}
         className='form-control form-control-lg form-control-solid bg-secondary'
         defaultValue={defaultValue}
         onChange={onChange}
         {...rest}
       />
-
-      {error && <span className='text-danger'>{error}</span>}
     </div>
   )
 }
