@@ -48,8 +48,9 @@ export function DatePicker({ name, label, ...rest }: Props) {
         ref={datepickerRef}
         className='form-control bg-secondar'
         selected={date}
-        onChange={setDate}
+        onChange={setDate}        
         dateFormat='dd/MM/yyyy'
+        placeholderText={error && error}
         {...rest}
         renderCustomHeader={({
           date,
@@ -69,6 +70,14 @@ export function DatePicker({ name, label, ...rest }: Props) {
               value={date.getFullYear()}
               onChange={({ target: { value } }) => changeYear(value)}
             >
+              {error ? 
+                <option value='' disabled selected>
+                  {error}
+                </option>
+                : <option value='' disabled selected>
+                    Selecione
+                  </option>
+              }
               {years.map((option) => (
                 <option key={option} value={option}>
                   {option}
@@ -94,7 +103,6 @@ export function DatePicker({ name, label, ...rest }: Props) {
         )}
         {...rest}
       />
-      {error && <span className='text-danger'>{error}</span>}
     </div>
   )
 }
