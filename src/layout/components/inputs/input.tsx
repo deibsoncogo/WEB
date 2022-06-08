@@ -54,7 +54,7 @@ export function Input({ name, label, placeholderText, onChange, ...rest }: IInpu
       {name != 'content' ? (
         <p className='form-control bg-secondary d-flex align-items-center form-control-lg p-0'>
           <input
-            className='form-control form-control-lg form-control-solid border-transparent bg-secondary'
+            className={`form-control form-control-lg form-control-solid border-transparent bg-secondary ${error && 'placeholder-red'}`}
             type='text'
             name={name}
             placeholder={error ? error : placeholderText}
