@@ -1,4 +1,4 @@
-import { FormUpdateCourse } from "../../../../layout/components/forms/course/edit";
+import { FormUpdateCourse } from "../../../../layout/components/forms/course/edit/edit";
 import { makeRemoteGetCategoriesNoPagination } from "../../usecases/categories/remote-getCategoriesNoPagination-factory";
 import { makeRemoteGetCourse } from "../../usecases/course/remote-getCourse-factory";
 import { makeRemoteUpdateCourse } from "../../usecases/course/remote-updateCourse-factory";

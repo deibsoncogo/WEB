@@ -1,4 +1,5 @@
-export class CourseClass {  
+export class CourseClass { 
+  id?: string 
   name: string;
   link: string;
   displayOrder: number;
