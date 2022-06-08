@@ -7,6 +7,10 @@ export interface GetBookParams {
   page?: number | string
 }
 
+export interface GetBookParamsById {
+  id: string | undefined
+}
+
 export interface OutputPagination {
   data: IBookResponse[]
   total: number
@@ -16,4 +20,8 @@ export interface OutputPagination {
 
 export interface IGetBooks {
   get: (params: GetBookParams) => Promise<OutputPagination>
+}
+
+export interface IGetBookById {
+  get: (params: GetBookParamsById) => Promise<OutputPagination>
 }

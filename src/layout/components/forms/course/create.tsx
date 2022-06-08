@@ -19,6 +19,7 @@ import { UserQueryRole } from '../../../../domain/models/userQueryRole'
 import { CreateCourse } from '../../../../domain/models/createCourse'
 import { Editor } from '@tinymce/tinymce-react'
 import { InputImage } from '../../inputs/input-image'
+import { currencyFormatter } from '../../../../utils/currencyFormatter'
 
 type Props = {
   createCourse: ICreateCourse
@@ -59,21 +60,6 @@ export function FormCreateCourse(props: Props) {
       .catch((error) => toast.error('Não foi possível carregar os Professores.'))
       .finally(() => setLoading(false))
   }, [])
-
-  const currencyFormatter = (name: string) => {
-    var value = formRef.current?.getFieldValue(name)
-
-    value = value + ''
-    value = parseInt(value.replace(/[\D]+/g, ''))
-    value = value + ''
-    value = value.replace(/([0-9]{2})$/g, ',$1')
-
-    if (value.length > 6) {
-      value = value.replace(/([0-9]{3}),([0-9]{2}$)/g, '.$1,$2')
-    }
-    formRef.current?.setFieldValue(name, value)
-    if (value == 'NaN') formRef.current?.setFieldValue(name, '')
-  }
 
   async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
@@ -159,14 +145,14 @@ export function FormCreateCourse(props: Props) {
             label='Preço'
             type='text'
             placeholderText='R$'
-            onChange={() => currencyFormatter('price')}
+            onChange={() => currencyFormatter('price', formRef.current)}
           />
           <Input
             name='discount'
             label='Desconto'
             type='text'
             placeholderText='R$'
-            onChange={() => currencyFormatter('discount')}
+            onChange={() => currencyFormatter('discount', formRef.current)}
           />
         </div>
         <div className='w-50'>

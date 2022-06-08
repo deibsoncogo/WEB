@@ -2,7 +2,10 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { makeRemoteGetBooks } from '../../../application/factories/pages/books/remote-getBooks-factory'
+import {
+  makeRemoteGetBookById,
+  makeRemoteGetBooks,
+} from '../../../application/factories/pages/books/remote-getBooks-factory'
 
 import { makeRemoteGetCategoriesNoPagination } from '../../../application/factories/usecases/categories/remote-getCategoriesNoPagination-factory'
 import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
@@ -31,8 +34,8 @@ const EditUser: NextPage = () => {
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
               <FormUpdateBook
                 //   updateCourse={makeRemoteUpdateCourse()}
-                getBookById={makeRemoteGetBooks()}
-                getCategories={makeRemoteGetCategoriesNoPagination()}
+                getBookById={makeRemoteGetBookById(id as string)}
+                getAllCategories={makeRemoteGetCategoriesNoPagination()}
                 id={id}
               />
             </div>

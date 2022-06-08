@@ -12,24 +12,21 @@ import { ActionModal } from '../../modals/action'
 
 import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
-import { toast } from 'react-toastify'
+
 import { IFormBook } from '../../../../interfaces/forms/create-book'
-import {
-  GetBookParams,
-  IGetBooks,
-  OutputPagination,
-} from '../../../../domain/usecases/interfaces/book/getBooks'
-import { useRequest } from '../../../../application/hooks/useRequest'
+import { IGetBooks } from '../../../../domain/usecases/interfaces/book/getBooks'
+
 import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
+import { currencyFormatter } from '../../../../utils/currencyFormatter'
 
 type FormCreateBookProps = {
-  getCategories: IGetCategoriesNoPagination
+  getAllCategories: IGetCategoriesNoPagination
 
   getBookById: IGetBooks
   id: string | string[] | undefined
 }
 
-export function FormUpdateBook({ getCategories, id, getBookById }: FormCreateBookProps) {
+export function FormUpdateBook({ getAllCategories, id, getBookById }: FormCreateBookProps) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [isOpenModal, setIsOpenModal] = useState(false)
@@ -38,37 +35,37 @@ export function FormUpdateBook({ getCategories, id, getBookById }: FormCreateBoo
   const [defaultValue, setDefaultValue] = useState({})
   const [categories, setCategories] = useState<ICategory[]>()
 
-  const [book, setBook] = useState<IBookResponse[]>()
-
-  const { makeRequest: getBook, data } = useRequest<OutputPagination, GetBookParams>(
-    getBookById.get
-  )
-
-  useEffect(() => {
-    setLoading(false)
-  }, [getBookById])
-
-  useEffect(() => {
-    getBook({ id })
-    setBook(data?.data)
-  }, [id])
+  const [book, setBook] = useState<IBookResponse>()
 
   async function handleCreateBook() {}
-  useEffect(() => {
-    getCategories
-      .get()
-      .then((data) => {
-        setCategories(data)
-      })
-      .catch((error) => toast.error('Não foi possível carregar as categorias de cursos.'))
-  }, [])
 
   const handleBookCreate = async (data: IFormBook) => {
     console.log('passou em tudo')
   }
 
-  console.log('edit id', id)
-  console.log('book', book)
+  const getCategories = async () => {
+    if (id)
+      await getAllCategories.get().then((res) => {
+        console.log('res', res)
+        setCategories(res)
+      })
+  }
+
+  const getBook = async () => {
+    if (id)
+      await getBookById.get({ id }).then((res) => {
+        console.log('res', res)
+        setBook(res)
+      })
+  }
+
+  useEffect(() => {
+    getBook()
+  }, [getBookById])
+
+  useEffect(() => {
+    getCategories()
+  }, [getAllCategories])
 
   async function handleFormSubmit(data: IFormBook) {
     if (!formRef.current) throw new Error()
@@ -105,49 +102,64 @@ export function FormUpdateBook({ getCategories, id, getBookById }: FormCreateBoo
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-100'>
           <h3 className='mb-5'>Dados do Livro</h3>
+          {book && (
+            <>
+              <InputImage name='file' />
+              <div className='d-flex justify-content-start flex-row '>
+                <div
+                  className='d-flex justify-content-center flex-column w-100'
+                  style={{
+                    marginRight: '10%',
+                  }}
+                >
+                  <Input name='title' label='Título' type='text' defaultValue={book.name} />
+                  <Input name='author' label='Autor' type='text' defaultValue={book.author} />
+                  <Input name='stock' label='Estoque' type='number' defaultValue={book.stock} />
+                  <Input
+                    name='price'
+                    label='Preço'
+                    type='text'
+                    placeholderText='R$'
+                    onChange={() => currencyFormatter('price', formRef.current)}
+                    defaultValue={book.price}
+                  />
+                  <Input
+                    name='discount'
+                    label='Desconto'
+                    type='text'
+                    placeholderText='R$'
+                    onChange={() => currencyFormatter('price', formRef.current)}
+                    defaultValue={book.discount}
+                  />
+                </div>
+                <div className='d-flex justify-content-start flex-column w-100'>
+                  <TextArea
+                    name='description'
+                    label='Descrição'
+                    rows={10}
+                    defaultValue={book.description}
+                  />
 
-          <InputImage name='file' />
-          <div className='d-flex justify-content-start flex-row '>
-            <div
-              className='d-flex justify-content-center flex-column w-100'
-              style={{
-                marginRight: '10%',
-              }}
-            >
-              <Input name='title' label='Título' type='text' defaultValue={book && book[0]?.name} />
-              <Input name='author' label='Autor' type='text' />
-              <Input name='stock' label='Estoque' type='number' />
-              <Input
-                name='price'
-                label='Preço'
-                type='text'
-                placeholderText='R$'
-                onChange={() => currencyFormatter('price')}
-              />
-              <Input
-                name='discount'
-                label='Desconto'
-                type='text'
-                placeholderText='R$'
-                onChange={() => currencyFormatter('price')}
-              />
-            </div>
-            <div className='d-flex justify-content-start flex-column w-100'>
-              <TextArea name='description' label='Descrição' rows={10} />
+                  <Select name='category' label='Categorias'>
+                    {book.category && (
+                      <option key={book.id} value={book.category.name}>
+                        {book.category.name}
+                      </option>
+                    )}
 
-              <Select name='category' label='Categorias'>
-                <option value='' disabled selected>
-                  Selecione
-                </option>
-                {categories &&
-                  categories.map((option) => (
-                    <option key={option.id} value={option.name}>
-                      {option.name}
-                    </option>
-                  ))}
-              </Select>
-            </div>
-          </div>
+                    {categories &&
+                      categories.map((option) =>
+                        option.name !== book.category.name ? (
+                          <option key={option.id} value={option.name}>
+                            {option.name}
+                          </option>
+                        ) : null
+                      )}
+                  </Select>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -170,7 +182,7 @@ export function FormUpdateBook({ getCategories, id, getBookById }: FormCreateBoo
       <ActionModal
         isOpen={isOpenModal}
         modalTitle='Criar'
-        message='Você tem certeza que deseja criar esse livro?'
+        message='Você tem certeza que deseja atualizar esse livro?'
         action={handleCreateBook}
         onRequestClose={() => {
           setIsOpenModal(false)
@@ -178,7 +190,4 @@ export function FormUpdateBook({ getCategories, id, getBookById }: FormCreateBoo
       />
     </Form>
   )
-}
-function currencyFormatter(arg0: string): void {
-  throw new Error('Function not implemented.')
 }

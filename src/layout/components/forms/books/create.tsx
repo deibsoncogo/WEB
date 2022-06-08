@@ -14,6 +14,7 @@ import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfac
 import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
 import { toast } from 'react-toastify'
 import { IFormBook } from '../../../../interfaces/forms/create-book'
+import { currencyFormatter } from '../../../../utils/currencyFormatter'
 
 type FormCreateBookProps = {
   getCategories: IGetCategoriesNoPagination
@@ -95,14 +96,14 @@ export function FormCreateBook({ getCategories }: FormCreateBookProps) {
                 label='Preço'
                 type='text'
                 placeholderText='R$'
-                onChange={() => currencyFormatter('price')}
+                onChange={() => currencyFormatter('price', formRef.current)}
               />
               <Input
                 name='discount'
                 label='Desconto'
                 type='text'
                 placeholderText='R$'
-                onChange={() => currencyFormatter('price')}
+                onChange={() => currencyFormatter('price', formRef.current)}
               />
             </div>
             <div className='d-flex justify-content-start flex-column w-100'>
@@ -151,7 +152,4 @@ export function FormCreateBook({ getCategories }: FormCreateBookProps) {
       />
     </Form>
   )
-}
-function currencyFormatter(arg0: string): void {
-  throw new Error('Function not implemented.')
 }
