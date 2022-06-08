@@ -5,8 +5,7 @@ export class CreateCourse{
     description: string;
     content: string;
     categoryId: string;
-    discount: string;
-    imageUrl: string;
+    discount: string; 
     installments: string;
     isActive: boolean;
     price: string; 
@@ -15,7 +14,7 @@ export class CreateCourse{
     courseClass: CourseClass[]
 
     constructor(name: string, description: string, content: string, categoryId: string,
-        discount: string , imageUrl: string, installments: string, isActive: boolean,  price: string,  
+        discount: string, installments: string, isActive: boolean,  price: string,  
         accessTime: string, userId: string, courseClass: CourseClass[])
     {
         this.name = name;
@@ -23,7 +22,6 @@ export class CreateCourse{
         this.content = content;
         this.categoryId = categoryId;
         this.discount = discount;
-        this.imageUrl = imageUrl;
         this.installments = installments;
         this.isActive = isActive;
         this.price = price;

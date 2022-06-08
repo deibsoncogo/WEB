@@ -1,21 +1,20 @@
 import { Tooltip } from '@nextui-org/react'
-import { CourseClass } from '../../../../domain/models/courseClass'
-import { KTSVG } from '../../../../helpers'
+import { FileUpload } from '../../../../../domain/models/fileUpload'
+import { KTSVG } from '../../../../../helpers'
 
 interface IRow {
   name: string
-  link: string
-  displayOrder: number
-  classCourse: CourseClass
-  courseClassArray: CourseClass[]
+  originalName: string
+  fileUpload: FileUpload
+  filesUpload: FileUpload[]
   handleRefresher: () => void
 }
 
 export function Row(props: IRow) {
   const deleteClass = () => {
-    const index = props.courseClassArray.indexOf(props.classCourse, 0)
+    const index = props.filesUpload.indexOf(props.fileUpload, 0)
     if (index > -1) {
-      props.courseClassArray.splice(index, 1)
+      props.filesUpload.splice(index, 1)
     }
     props.handleRefresher()
   }
@@ -28,14 +27,10 @@ export function Row(props: IRow) {
         </td>
 
         <td>
-          <span className='text-dark fw-bold d-block fs-7'>{props.link}</span>
+          <span className='text-dark fw-bold d-block fs-7'>{props.originalName}</span>
         </td>
 
-        <td>
-          <span className='text-dark fw-bold d-block fs-7 text-center'>{props.displayOrder}</span>
-        </td>
-
-        <td className = 'text-center'>
+        <td className='text-center'>
           <Tooltip content={'Deletar'} rounded color='primary'>
             <a
               onClick={() => {
