@@ -2,4 +2,4 @@ import { RemoteGetAllTrainings } from '../../../../data/usecases/training/remote
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteGetAllTrainings = (): IGetAllTrainings =>
-  new RemoteGetAllTrainings(makeApiUrl('/training'), makeAxiosHttpClient())
+  new RemoteGetAllTrainings(makeApiUrl('training'), makeAxiosHttpClient())
