@@ -14,22 +14,32 @@ import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfac
 import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
 
 import { IFormBook } from '../../../../interfaces/forms/create-book'
-import { IGetBooks } from '../../../../domain/usecases/interfaces/book/getBooks'
+import { IGetBooks, IUpdateBook } from '../../../../domain/usecases/interfaces/book/getBooks'
 
 import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 import { currencyFormatter } from '../../../../utils/currencyFormatter'
+import { toast } from 'react-toastify'
+
+import { Loading } from '../../loading/loading'
 
 type FormCreateBookProps = {
   getAllCategories: IGetCategoriesNoPagination
-
+  updateBook: IUpdateBook
   getBookById: IGetBooks
-  id: string | string[] | undefined
+  id: string | undefined | string[]
 }
 
-export function FormUpdateBook({ getAllCategories, id, getBookById }: FormCreateBookProps) {
+export function FormUpdateBook({
+  getAllCategories,
+  id,
+  getBookById,
+  updateBook,
+}: FormCreateBookProps) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [isOpenModal, setIsOpenModal] = useState(false)
+  const [formValue, setFormValue] = useState<IFormBook>()
+
   const [loading, setLoading] = useState(false)
 
   const [defaultValue, setDefaultValue] = useState({})
@@ -37,55 +47,63 @@ export function FormUpdateBook({ getAllCategories, id, getBookById }: FormCreate
 
   const [book, setBook] = useState<IBookResponse>()
 
-  async function handleCreateBook() {}
-
-  const handleBookCreate = async (data: IFormBook) => {
-    console.log('passou em tudo')
+  async function handleCreateBook(data: IFormBook) {
+    setFormValue(data)
   }
 
   const getCategories = async () => {
     if (id)
       await getAllCategories.get().then((res) => {
-        console.log('res', res)
         setCategories(res)
       })
   }
 
   const getBook = async () => {
     if (id)
-      await getBookById.get({ id }).then((res) => {
-        console.log('res', res)
+      await getBookById.get({ id }).then((res: any) => {
         setBook(res)
       })
   }
 
   useEffect(() => {
-    getBook()
-  }, [getBookById])
-
-  useEffect(() => {
-    getCategories()
-  }, [getAllCategories])
+    try {
+      setLoading(true)
+      getBook()
+      getCategories()
+      setLoading(false)
+    } catch (error) {
+      toast.error('Erro ao carregar os dados.')
+    }
+  }, [getBookById, getAllCategories])
 
   async function handleFormSubmit(data: IFormBook) {
     if (!formRef.current) throw new Error()
 
+    if (id) data.id = id as string
+
     try {
       formRef.current.setErrors({})
+
       const schema = Yup.object().shape({
-        title: Yup.string().required('Título é necessário'),
+        image: Yup.string().required('Imagem é necessária.'),
+        name: Yup.string().required('Título é necessário'),
         author: Yup.string().required('Autor é necessário'),
         stock: Yup.number().required('Estoque é necessário'),
-        price: Yup.string().required('Preço é necessário'),
-        discount: Yup.string().required('Desconto é necessária'),
+        price: Yup.number().required('Preço é necessário'),
+        discount: Yup.number().required('Desconto é necessária'),
         description: Yup.string().required('Descrição é necessária'),
-        category: Yup.string().required('Selecione uma categoria'),
+        categoryId: Yup.string().required('Selecione uma categoria'),
+        id: Yup.string().required('Id é necessário.'),
       })
 
-      await schema.validate(data, { abortEarly: false })
-      setIsOpenModal(true)
-      handleBookCreate(data)
+      await schema.validate(data, { abortEarly: false }).then((res: any) => {
+        setIsOpenModal(true)
+
+        handleCreateBook(res)
+      })
     } catch (err) {
+      toast.error('Erro ao validar dados.')
+      console.log(err)
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
@@ -97,14 +115,27 @@ export function FormUpdateBook({ getAllCategories, id, getBookById }: FormCreate
     }
   }
 
+  async function handleActionButton() {
+    if (formValue)
+      try {
+        await updateBook.update({ data: formValue }).then((res: any) => {
+          console.log(res)
+          setIsOpenModal(false)
+          toast.success('Livro criado com sucesso!')
+        })
+      } catch (error) {
+        console.log(error)
+        toast.error('Erro ao criar livro.!')
+      }
+  }
+
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-100'>
           <h3 className='mb-5'>Dados do Livro</h3>
-          {book && (
+          {book && !loading ? (
             <>
-              <InputImage name='file' />
               <div className='d-flex justify-content-start flex-row '>
                 <div
                   className='d-flex justify-content-center flex-column w-100'
@@ -112,7 +143,8 @@ export function FormUpdateBook({ getAllCategories, id, getBookById }: FormCreate
                     marginRight: '10%',
                   }}
                 >
-                  <Input name='title' label='Título' type='text' defaultValue={book.name} />
+                  <InputImage name='image' type={'file'} />
+                  <Input name='name' label='Título' type='text' defaultValue={book.name} />
                   <Input name='author' label='Autor' type='text' defaultValue={book.author} />
                   <Input name='stock' label='Estoque' type='number' defaultValue={book.stock} />
                   <Input
@@ -140,9 +172,10 @@ export function FormUpdateBook({ getAllCategories, id, getBookById }: FormCreate
                     defaultValue={book.description}
                   />
 
-                  <Select name='category' label='Categorias'>
+                  <Select name='categoryId' label='Categorias'>
+                    <option value=''>Selecione</option>
                     {book.category && (
-                      <option key={book.id} value={book.category.name}>
+                      <option key={book.id} value={book.category.id} selected>
                         {book.category.name}
                       </option>
                     )}
@@ -150,7 +183,7 @@ export function FormUpdateBook({ getAllCategories, id, getBookById }: FormCreate
                     {categories &&
                       categories.map((option) =>
                         option.name !== book.category.name ? (
-                          <option key={option.id} value={option.name}>
+                          <option key={option.id} value={option.id}>
                             {option.name}
                           </option>
                         ) : null
@@ -158,36 +191,40 @@ export function FormUpdateBook({ getAllCategories, id, getBookById }: FormCreate
                   </Select>
                 </div>
               </div>
+              <div className='mb-10 d-flex justify-content-end'>
+                <button
+                  type='button'
+                  onClick={() => {
+                    router.push('/books')
+                  }}
+                  style={{ marginRight: '10px' }}
+                  className='btn btn-lg btn-secondary w-150px mr-10'
+                >
+                  Cancelar
+                </button>
+
+                <button type='submit' className='btn btn-lg btn-primary w-180px'>
+                  Salvar
+                </button>
+              </div>
             </>
+          ) : (
+            <Loading />
           )}
         </div>
       </div>
 
-      <div className='mb-10 d-flex justify-content-end'>
-        <button
-          type='button'
-          onClick={() => {
-            router.push('/books')
+      {!loading && (
+        <ActionModal
+          action={handleActionButton}
+          isOpen={isOpenModal}
+          modalTitle='Criar'
+          message='Você tem certeza que deseja atualizar esse livro?'
+          onRequestClose={() => {
+            setIsOpenModal(false)
           }}
-          style={{ marginRight: '10px' }}
-          className='btn btn-lg btn-secondary w-150px mr-10'
-        >
-          Cancelar
-        </button>
-
-        <button type='submit' className='btn btn-lg btn-primary w-180px'>
-          Salvar
-        </button>
-      </div>
-      <ActionModal
-        isOpen={isOpenModal}
-        modalTitle='Criar'
-        message='Você tem certeza que deseja atualizar esse livro?'
-        action={handleCreateBook}
-        onRequestClose={() => {
-          setIsOpenModal(false)
-        }}
-      />
+        />
+      )}
     </Form>
   )
 }

@@ -10,13 +10,14 @@ import { usePagination } from '../../../../application/hooks/usePagination'
 import {
   GetBookParams,
   IGetBooks,
+  IUpdateBook,
   OutputPagination,
 } from '../../../../domain/usecases/interfaces/book/getBooks'
 import { useRequest } from '../../../../application/hooks/useRequest'
 import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
 
 import { RiFileExcel2Line } from 'react-icons/ri'
-import { Book } from '../../../../interfaces/model/Book'
+
 import { debounce } from '../../../../helpers/debounce'
 import { IDeleteBook } from '../../../../domain/usecases/interfaces/book/deleteBook'
 import { DeleteCategoryParams } from '../../../../domain/usecases/interfaces/category/deleteCategory'
@@ -26,11 +27,12 @@ import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfac
 type Props = {
   remoteGetAllBooks: IGetBooks
   remoteDeleteBook: IDeleteBook
+  remoteUpdateBook: IUpdateBook
 }
 
 type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 
-const BooksTable = ({ remoteGetAllBooks, remoteDeleteBook }: Props) => {
+const BooksTable = ({ remoteGetAllBooks, remoteDeleteBook, remoteUpdateBook }: Props) => {
   const [loading, setLoading] = useState(true)
   const [books, setBooks] = useState<IBookResponse[]>([])
 

@@ -1,7 +1,5 @@
 import { IBookResponse } from '../../../interfaces/api-response/bookResponse'
 
-import { FormCreateBook } from '../../../layout/components/forms/books/create'
-
 import { Row } from '../../../layout/components/tables/books-list/row'
 
 type MakeBookRowType = {

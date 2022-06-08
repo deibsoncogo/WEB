@@ -2,17 +2,15 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import {
-  makeRemoteGetBookById,
-  makeRemoteGetBooks,
-} from '../../../application/factories/pages/books/remote-getBooks-factory'
+import { makeRemoteGetBookById } from '../../../application/factories/pages/books/remote-getBooks-factory'
+import { makeRemoteUpdateBook } from '../../../application/factories/pages/books/remote-updateBooks-factory'
 
 import { makeRemoteGetCategoriesNoPagination } from '../../../application/factories/usecases/categories/remote-getCategoriesNoPagination-factory'
 import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
 import { FormUpdateBook } from '../../../layout/components/forms/books/edit'
 import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
 
-const EditUser: NextPage = () => {
+const EditBook: NextPage = () => {
   const router = useRouter()
   const { id } = router.query
 
@@ -33,7 +31,7 @@ const EditUser: NextPage = () => {
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
               <FormUpdateBook
-                //   updateCourse={makeRemoteUpdateCourse()}
+                updateBook={makeRemoteUpdateBook()}
                 getBookById={makeRemoteGetBookById(id as string)}
                 getAllCategories={makeRemoteGetCategoriesNoPagination()}
                 id={id}
@@ -46,4 +44,4 @@ const EditUser: NextPage = () => {
   )
 }
 
-export default EditUser
+export default EditBook
