@@ -39,7 +39,7 @@ export function InputMasked({ name, label, mask, onChange, ...rest }: IInputProp
         id={fieldName}
         mask={mask}
         placeholder={error && error}
-        className='form-control form-control-lg form-control-solid bg-secondary'
+        className={`form-control form-control-lg form-control-solid border-transparent bg-secondary ${error && 'placeholder-red'}`}
         defaultValue={defaultValue}
         onChange={onChange}
         {...rest}
