@@ -8,7 +8,7 @@ import { FormHandles } from '@unform/core'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { Address } from '../../../domain/models/address'
 import { UserSignUp } from '../../../domain/models/userSignUp'
-import { levelOptions, roleOptions } from '../../../utils/selectOptions'
+import { levelOptions, roleOptions, stateOptions } from '../../../utils/selectOptions'
 import { toast } from 'react-toastify'
 import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
 import { findCEP } from '../../../utils/findCEP'
@@ -142,7 +142,7 @@ export function FormCreateUser({ userRegister }: Props) {
             name='zipCode'
             label='CEP'
             mask='99999-999'
-            onChange={() => {
+            onChange={async () => {
               findCEP(formRef.current?.getData().zipCode, setDefaultValue)
             }}
           />
@@ -151,7 +151,16 @@ export function FormCreateUser({ userRegister }: Props) {
           <Input classes='h-75px' name='complement' label='Complemento' />
           <Input classes='h-75px' name='neighborhood' label='Bairro' />
           <Input classes='h-75px' name='city' label='Cidade' />
-          <Input classes='h-75px' name='state' label='Estado' />          
+          <Select classes='h-75px' name='state' label='Estado'>
+            <option value='' disabled selected>
+              Selecione
+            </option>
+            {stateOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>    
         </div>
       </div>
 
