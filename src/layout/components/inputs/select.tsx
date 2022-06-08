@@ -41,18 +41,13 @@ export function Select({ name, label, children, ...rest }: SelectFace) {
       <select
         id={fieldName}
         ref={selectRef}
-        className='form-select form-select-solid'        
+        className={`form-select form-select-solid ${error && 'option-invalid'}`}        
         defaultValue={defaultValue}
         {...rest}
       >
-        {error ? 
-          <option value='' disabled selected>
-            {error}
-          </option>
-          : <option value='' disabled selected>
-              Selecione
-            </option>
-        }
+        <option value='' hidden disabled selected>
+          {error ? error : 'Selecione'}
+        </option>
         {children}
       </select>
     </div>
