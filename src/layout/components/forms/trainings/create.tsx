@@ -1,15 +1,14 @@
-import { useRef, useState } from 'react'
-import { useRouter } from 'next/router'
-
-import * as Yup from 'yup'
-import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-
-import { formatDate, formatTime, KTSVG } from '../../../../helpers'
+import { Form } from '@unform/web'
+import { useRouter } from 'next/router'
+import { forwardRef } from 'react'
+import * as Yup from 'yup'
+import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
+import { KTSVG } from '../../../../helpers'
 import { levelOptions } from '../../../../utils/selectOptions'
-
 import { DatePicker, Input, Select, TextArea } from '../../inputs'
 import { InputImage } from '../../inputs/input-image'
+import { SelectAsync } from '../../inputs/selectAsync'
 import { LivesTable } from '../../tables/lives-list'
 
 interface IStreamList {
@@ -18,84 +17,68 @@ interface IStreamList {
   start: boolean
 }
 
-export function FormCreateTrainings() {
+const schema = Yup.object().shape({
+  name: Yup.string().required('Nome é Nescessário'),
+  teacherId: Yup.string().required('Professor é nescessário'),
+  price: Yup.number().required('Preço é nescessário'),
+  description: Yup.string().required('Descriçao é nescessário'),
+  categories: Yup.string().required('Selecione uma categoria'),
+  finishDate: Yup.date().nullable().required('Data é nescessária'),
+  liveDate: Yup.date().nullable().required('Data é nescessária'),
+  chatTime: Yup.date().nullable().required('Data é nescessária'),
+  time: Yup.date().nullable().required('Hora é nescessária'),
+})
+
+type FormCreateTrainingProps = {
+  addWebinarTime: () => void
+  onSubmit: (data: any) => void
+  streamList: IStreamList[]
+  removeStreamItem: (index: number) => void
+  searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
+  searchCategories: (categoryName: string) => Promise<ISelectOption[]>
+}
+
+const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((props, ref) => {
+  const {
+    addWebinarTime,
+    onSubmit,
+    removeStreamItem,
+    searchTeachers,
+    streamList,
+    searchCategories,
+  } = props
   const router = useRouter()
-  const formRef = useRef<FormHandles>(null)
-
-  const [defaultValue, setDefaultValue] = useState({})
-  const [streamList, setStreamList] = useState<IStreamList[]>([])
-
-  async function handleFormSubmit(data: any) {
-    if (!formRef.current) throw new Error()
-
-    try {
-      formRef.current.setErrors({})
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é Nescessário'),
-        teacher: Yup.string().required('Professor é nescessário'),
-        price: Yup.number().required('Preço é nescessário'),
-        description: Yup.string().required('Descriçao é nescessário'),
-        categories: Yup.string().required('Selecione uma categoria'),
-        finishDate: Yup.date().nullable().required('Data é nescessária'),
-        liveDate: Yup.date().nullable().required('Data é nescessária'),
-        chatTime: Yup.date().nullable().required('Data é nescessária'),
-        time: Yup.date().nullable().required('Hora é nescessária'),
-      })
-      await schema.validate(data, { abortEarly: false })
-      console.log(data)
-    } catch (err) {
-      const validationErrors = {}
-      if (err instanceof Yup.ValidationError) {
-        err.inner.forEach((error) => {
-          // @ts-ignore
-          validationErrors[error.path] = error.message
-        })
-        formRef.current.setErrors(validationErrors)
-      }
-    }
-  }
-
-  function addLiveTime() {
-    const liveData = {
-      liveDate: formatDate(formRef.current?.getData().liveDate, 'DD/MM/YYYY'),
-      time: formatTime(formRef.current?.getData().time, 'HH:mm'),
-      start: false,
-    }
-    if (liveData.liveDate === 'Invalid date' || liveData.time === 'Invalid date') return
-    setStreamList([...streamList, liveData])
-  }
-
-  function removeStreamItem(index: number) {
-    const temp = streamList.slice()
-    temp.splice(index, 1)
-    setStreamList(temp)
-  }
 
   return (
-    <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+    <Form className='form' ref={ref} onSubmit={onSubmit}>
       <h3 className='mb-5'>Informações do Treinamento</h3>
       <InputImage name='photo' />
 
-      <div className='d-flex flex-row gap-5 w-100'>
+      <div className='d-flex flex-row align-items-between gap-5 w-100'>
         <div className='w-50'>
-          <Input name='name' label='Nome' />
-          <Input name='teacher' label='Professor' />
-          <Input name='price' label='Preço' type='number' />
-          <Input name='discount' label='Desconto' type='number' />
+          <Input name='name' label='Nome' classes='h-75px' />
+
+          <SelectAsync
+            searchOptions={searchTeachers}
+            name='teacherId'
+            label='Professor'
+            classes='h-75px'
+            placeholder='Digite o nome do professor'
+          />
+
+          <Input name='price' label='Preço' type='number' classes='h-75px' />
+          <Input name='discount' label='Desconto' type='number' classes='h-75px' />
         </div>
 
         <div className='w-50'>
           <TextArea name='description' label='Descrição' rows={10} />
-          <Select name='categories' label='Categorias'>
-            <option value='' disabled selected>
-              Selecione
-            </option>
-            {levelOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+          <SelectAsync
+            searchOptions={searchCategories}
+            name='categoryId'
+            label='Categoria'
+            classes='h-75px'
+            placeholder='Digite o nome da categoria'
+          />
         </div>
       </div>
 
@@ -125,7 +108,7 @@ export function FormCreateTrainings() {
 
         <button
           type='button'
-          onClick={addLiveTime}
+          onClick={addWebinarTime}
           className='btn btn-lg btn-primary h-45px mb-7 mt-auto'
         >
           <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
@@ -154,4 +137,8 @@ export function FormCreateTrainings() {
       </div>
     </Form>
   )
-}
+})
+
+FormCreateTraining.displayName = 'FormCreateTraining'
+
+export { FormCreateTraining }
