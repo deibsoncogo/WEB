@@ -147,7 +147,7 @@ export function FormCreateUser({ userRegister }: Props) {
             }}
           />
           <Input classes='h-75px' name='street' label='Logradouro' />
-          <Input classes='h-75px' name='number' label='Número' type='number' />
+          <Input classes='h-75px' name='number' label='Número' type='number' min="0" />
           <Input classes='h-75px' name='complement' label='Complemento' />
           <Input classes='h-75px' name='neighborhood' label='Bairro' />
           <Input classes='h-75px' name='city' label='Cidade' />
