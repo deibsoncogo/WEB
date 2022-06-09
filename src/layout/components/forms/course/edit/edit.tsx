@@ -59,7 +59,6 @@ export function FormUpdateCourse(props: Props) {
   const [IdDeletedCourseClass] = useState<string[]>([])
   const [courseClassUpdate] = useState<CourseClass[]>([])
 
-
   const handleSingleImageUpload = (file: File) => {
     setImageUpload(file)
   }
@@ -171,11 +170,10 @@ export function FormUpdateCourse(props: Props) {
         toast.success('Curso atualizado com sucesso!')
         router.push('/courses')
       })
-      .catch((error: any) => toast.error('Não foi possível atualizar o curso!'))
+      .catch(() => toast.error('Não foi possível atualizar o curso!'))
   }
 
   async function fetchData() {
-
     try{      
 
       if (typeof props.id == 'string') {
