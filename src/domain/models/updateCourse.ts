@@ -1,4 +1,5 @@
 import { CourseClass } from "./courseClass";
+import { DeleteFileUpload } from "./deleteFile";
 
 export class UpdateCourse{
     id?: string;
@@ -13,11 +14,12 @@ export class UpdateCourse{
     price?: string;
     accessTime: string; 
     userId: string;
-    courseClass: CourseClass[]
+    courseClass: CourseClass[];
+    deleteFiles: DeleteFileUpload[];
 
     constructor(id: string | undefined, name: string, description: string, content: string, categoryId: string,
         discount: string, imageUrl: string | undefined, installments: string, isActive: boolean | undefined,  price: string,  
-        accessTime: string, userId: string, courseClass: CourseClass[])
+        accessTime: string, userId: string, courseClass: CourseClass[], deleteFiles: DeleteFileUpload[])
     {
         this.id = id;
         this.name = name;
@@ -32,6 +34,7 @@ export class UpdateCourse{
         this.accessTime = accessTime;   
         this.userId = userId;  
         this.courseClass = courseClass
+        this.deleteFiles = deleteFiles
               
         
         

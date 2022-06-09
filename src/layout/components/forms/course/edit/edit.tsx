@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-
 import { useRouter } from 'next/router'
-
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-
 import { Input, Select, TextArea } from '../../../inputs'
 import { ICategory } from '../../../../../interfaces/api-response/categoryResponse'
 import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
@@ -53,12 +50,7 @@ export function FormUpdateCourse(props: Props) {
   const [defaultValue, setDefaultValue] = useState<ICourseResponse>()
   const [imageUpload, setImageUpload] = useState<File>()
 
-  const [loadingCourse, setLoadingCourse] = useState(true)
-  const [loadingCategories, setLoadingCategoris] = useState(true)
-  const [loadingUsers, setLoadingUsers] = useState(true)
-  const [loadingAttachments, setLoadingAttachments] = useState(true)
-  const [loadingCourseClass, setLoadingCourseClass] = useState(true)
-  const [loadingUpdateCourse, setLoadingUpdateCourse] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [stateEditor, setStateEditor] = useState({ content: '' })
 
   const [IdDeletedFiles] = useState<DeleteFileUpload[]>([])
@@ -67,65 +59,6 @@ export function FormUpdateCourse(props: Props) {
   const [IdDeletedCourseClass] = useState<string[]>([])
   const [courseClassUpdate] = useState<CourseClass[]>([])
 
-  useEffect(() => {
-    if (typeof props.id == 'string') {
-      props.getCourse
-        .get(props.id)
-        .then((data) => {
-          setDefaultValue(data)
-          setStateEditor({ content: data.content })
-        })
-        .catch((error) => toast.error('Não foi possível carregar o curso.'))
-        .finally(() => setLoadingCourse(false))
-    }
-  }, [])
-
-  useEffect(() => {
-    props.getCategories
-      .get()
-      .then((data) => {
-        setCategories(data)
-      })
-      .catch((error) => toast.error('Não foi possível carregar as categorias de cursos.'))
-      .finally(() => setLoadingCategoris(false))
-  }, [])
-
-  useEffect(() => {
-    const userQuery = new UserQueryRole(roles.TEACHER)
-    props.getUsers
-      .getAllByRole(userQuery)
-      .then((data) => {
-        setUsers(data)
-      })
-      .catch((error) => toast.error('Não foi possível carregar os Professores.'))
-      .finally(() => setLoadingUsers(false))
-  }, [])
-
-  useEffect(() => {  
-    if (typeof props.id == 'string') {  
-      props.getAttachments
-        .getAllByCourseId(props.id)
-        .then((data) => {       
-           setAttachment(data)
-        })
-        .catch((error) => toast.error('Não foi possível carregar os arquivos'))
-        .finally(() => setLoadingAttachments(false))
-    }
-  }, [])
-
-  useEffect(() => {  
-    if (typeof props.id == 'string') {  
-      props.getCourseClass
-        .getAllByCourseId(props.id)
-        .then((data) => {         
-          setCourseClass(data)
-        })
-        .catch((error) => toast.error('Não foi possível carregar as aulas.'))
-        .finally(() => setLoadingCourseClass(false))
-    }
-  }, [])
-
-  
 
   const handleSingleImageUpload = (file: File) => {
     setImageUpload(file)
@@ -141,7 +74,6 @@ export function FormUpdateCourse(props: Props) {
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
-
     value = value + ''
     value = parseInt(value.replace(/[\D]+/g, ''))
     value = value + ''
@@ -162,25 +94,25 @@ export function FormUpdateCourse(props: Props) {
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
-        accessTime: Yup.number().typeError('Tempo de acesso deve ser um número')
-        .required('Tempo de acesso é necessário')
-        .positive("Tempo de acesso deve ser positivo")
-        .integer("Tempo de acesso deve ser um número inteiro."),
+        accessTime: Yup.number()
+          .typeError('Tempo de acesso deve ser um número')
+          .required('Tempo de acesso é necessário')
+          .positive('Tempo de acesso deve ser positivo')
+          .integer('Tempo de acesso deve ser um número inteiro.'),
         price: Yup.string().required('Preço é necessário'),
-        installments: Yup.number().typeError('Quantidade de parcelas deve ser um número')
-        .required('Quantidade de parcelas é necessário')
-        .positive("Quantidade de parcelas deve ser positiva")
-        .integer("Quantidade de parcelas deve ser um número inteiro"),
+        installments: Yup.number()
+          .typeError('Quantidade de parcelas deve ser um número')
+          .required('Quantidade de parcelas é necessário')
+          .positive('Quantidade de parcelas deve ser positiva')
+          .integer('Quantidade de parcelas deve ser um número inteiro'),
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         content: Yup.string().required('Conteúdo progrmático é necessário'),
-       
       })
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
-      courseClass.length == 0? setHasErrorClass(true): handleUpdateCourse(data)  
-      
+      courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -194,7 +126,6 @@ export function FormUpdateCourse(props: Props) {
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
-    
     const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
 
@@ -211,49 +142,72 @@ export function FormUpdateCourse(props: Props) {
       price,
       data.accessTime,
       data.userId,
-      courseClassUpdate
+      courseClassUpdate,
+      IdDeletedFiles
     )
 
-    const formData = new FormData();
-    if(imageUpload){    
-      formData.append('image', imageUpload);      
-    }       
+    const formData = new FormData()
+    if (imageUpload) {
+      formData.append('image', imageUpload)
+    }
 
-    if(filesUploadUpdate){
-      filesUploadUpdate?.map(file => {
-        if(file?.file)
-           formData.append('attachments', file.file)
-        formData.append('filesName',  file.name)
+    if (filesUploadUpdate) {
+      filesUploadUpdate?.map((file) => {
+        if (file?.file) formData.append('attachments', file.file)
+        formData.append('filesName', file.name)
       })
     }
 
-    formData.append('course', JSON.stringify(course)) 
-    formData.append('deleteCourses', JSON.stringify(IdDeletedCourseClass))   
-    formData.append('deleteFiles', JSON.stringify(IdDeletedFiles))   
+    if (IdDeletedCourseClass.length > 0) {
+      IdDeletedCourseClass.map((id) => {
+        formData.append('deleteCourses', id)
+      })
+    }
+    formData.append('course', JSON.stringify(course))
 
-    setLoadingUpdateCourse(true)
     props.updateCourse
       .update(formData)
       .then(() => {
         toast.success('Curso atualizado com sucesso!')
-        //router.push('/courses')
+        router.push('/courses')
       })
       .catch((error: any) => toast.error('Não foi possível atualizar o curso!'))
   }
 
+  async function fetchData() {
+
+    try{      
+
+      if (typeof props.id == 'string') {
+       const data =  await props.getCourse.get(props.id)
+       setDefaultValue(data)
+       setStateEditor({ content: data.content })
+       setAttachment(await props.getAttachments.getAllByCourseId(props.id))
+       setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
+      }       
+      setCategories(await props.getCategories.get())
+      setUsers(await props.getUsers.getAllByRole(new UserQueryRole(roles.TEACHER)))     
+    }
+    catch(error){
+      toast.error("Não foi possível carregar os dados")
+    }
+    finally{
+      setLoading(false)
+    }
+
+  }
+ 
+  useEffect(() => {
+    fetchData()      
+  }, [])
+
+  
   return (
     <>
-      {loadingCourse 
-       && loadingCategories 
-       && loadingUsers
-       && loadingAttachments 
-       && loadingCourseClass
-       && <Loading />}
-
-      {!(loadingCourse && loadingCategories && loadingUsers) && (
-        <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+      {loading? <Loading />:        
+        (<Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
           <h3 className='mb-5'>Informações do Curso</h3>
-          <InputImage name='imageUrl' handleSingleImageUpload = {handleSingleImageUpload}/>          
+          <InputImage name='imageUrl' handleSingleImageUpload={handleSingleImageUpload} />
           <div className='d-flex flex-row gap-5 w-100'>
             <div className='w-50'>
               <Input name='name' label='Nome' />
@@ -346,24 +300,32 @@ export function FormUpdateCourse(props: Props) {
 
           <Input name='content' className='d-none' />
 
-        <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>        
-        <FilesInternalTable filesUpload={attachments} IdDeletedFiles={IdDeletedFiles} filesUploadUpdate = {filesUploadUpdate} />
+          <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>
+          <FilesInternalTable
+            filesUpload={attachments}
+            IdDeletedFiles={IdDeletedFiles}
+            filesUploadUpdate={filesUploadUpdate}
+          />
 
-        {hasErrorClass && (
-        <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
-          <strong>Não é possível atualizar o curso!</strong>
-          O curso deve possuir, no mínimo, uma aula.
-          <button
-            type='button'
-            onClick={() => setHasErrorClass(false)}
-            className='btn-close'
-            data-bs-dismiss='alert'
-            aria-label='Close'
-          ></button>
-        </div>
-      )}
-         <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
-         <CoursesInternalTable courseClassArray={courseClass} IdDeletedCourseClass={IdDeletedCourseClass} courseClassUpdate = {courseClassUpdate} />
+          {hasErrorClass && (
+            <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
+              <strong>Não é possível atualizar o curso!</strong>O curso deve possuir, no mínimo, uma
+              aula.
+              <button
+                type='button'
+                onClick={() => setHasErrorClass(false)}
+                className='btn-close'
+                data-bs-dismiss='alert'
+                aria-label='Close'
+              ></button>
+            </div>
+          )}
+          <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
+          <CoursesInternalTable
+            courseClassArray={courseClass}
+            IdDeletedCourseClass={IdDeletedCourseClass}
+            courseClassUpdate={courseClassUpdate}
+          />
 
           <div className='d-flex mt-10'>
             <button
@@ -375,11 +337,10 @@ export function FormUpdateCourse(props: Props) {
             >
               Cancelar
             </button>
-           
+
             <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
               Salvar
             </button>
-            
           </div>
         </Form>
       )}

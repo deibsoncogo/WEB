@@ -110,7 +110,7 @@ export default function CoursesInternalTable(props: prop) {
                     <th className='text-dark ps-4 min-w-200px rounded-start'>Nome</th>
                     <th className='text-dark min-w-200px'>Link</th>
                     <th className='text-dark min-w-150px'>Ordem de exibição</th>
-                    <th className='text-dark min-w-100px text-end rounded-end' />
+                    <th className='text-dark min-w-70px text-end rounded-end' />
                   </tr>
                 </thead>
 
