@@ -21,11 +21,19 @@ type IFormEditUser = {
   getUser: IGetUser
 }
 
+type IDefaultValue = {
+  city?: string
+  neighborhood?: string
+  state?: string
+  street?: string
+  zipCode?: string
+}
+
 export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
-  const [defaultValue, setDefaultValue] = useState({})
+  const [defaultValue, setDefaultValue] = useState<IDefaultValue>({})
 
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
@@ -129,6 +137,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
         city: res.address[0]?.city || '',
         state: res.address[0]?.state || '',
         number: res.address[0]?.number || '',
+        complement: res.address[0]?.complement || '',
       }        
       Object.keys(newData).forEach(key => {        
         formRef.current?.setFieldValue(key, newData[key])
@@ -136,7 +145,14 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       formRef.current?.setErrors({})
     })
     .catch((err) => toast.error(err.messages))
-  }, [formRef.current])
+  }, [])  
+
+  useEffect(() => {
+    Object.keys(defaultValue).forEach(key => {        
+      formRef.current?.setFieldValue(key, defaultValue[key])
+    })
+    formRef.current?.setFieldValue
+  }, [defaultValue])
 
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
