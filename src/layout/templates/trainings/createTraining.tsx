@@ -21,7 +21,7 @@ const schema = Yup.object().shape({
   teacherId: Yup.string().required('Professor é nescessário'),
   price: Yup.number().required('Preço é nescessário'),
   description: Yup.string().required('Descriçao é nescessário'),
-  categories: Yup.string().required('Selecione uma categoria'),
+  categoryId: Yup.string().required('Selecione uma categoria'),
   finishDate: Yup.date().nullable().required('Data é nescessária'),
   liveDate: Yup.date().nullable().required('Data é nescessária'),
   chatTime: Yup.date().nullable().required('Data é nescessária'),
@@ -44,6 +44,7 @@ function CreateTrainingPageTemplate({
   const [streamList, setStreamList] = useState<IStreamList[]>([])
 
   async function handleFormSubmit(data: any) {
+    console.log(data)
     const { error, success } = await applyYupValidation<ITrainings>(schema, data)
 
     if (success) {
@@ -86,6 +87,8 @@ function CreateTrainingPageTemplate({
         label: category.name,
         value: category.id,
       }))
+
+      console.log(data)
 
       return categoryOptions
     } catch {

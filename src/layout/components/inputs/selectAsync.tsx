@@ -22,8 +22,11 @@ type OptionsState = {
 }
 
 const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncProps) => {
+  const selectRef = useRef(null)
   const [options, setOptions] = useState<ISelectOption[]>([])
   const [loading, setLoading] = useState(false)
+
+  const { fieldName, registerField, error } = useField(name)
 
   const [optionsState, setOptionsState] = useState<OptionsState>({ inputValue: '', isOpen: false })
   const { inputValue, isOpen, selectedOption } = optionsState
@@ -64,23 +67,21 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
     }
   }, [inputValue])
 
-  const { fieldName, defaultValue, registerField, error } = useField(name)
-
-  //   useEffect(() => {
-  //     registerField({
-  //       ref: selectRef,
-  //       name: fieldName,
-  //       getValue: (ref) => {
-  //         return ref.current?.value
-  //       },
-  //       setValue: (ref, newValue) => {
-  //         ref.current.value = newValue
-  //       },
-  //       clearValue: (ref) => {
-  //         ref.current.value = ''
-  //       },
-  //     })
-  //   }, [fieldName, registerField])
+  useEffect(() => {
+    registerField({
+      ref: selectRef,
+      name: fieldName,
+      getValue: (ref) => {
+        return ref.current?.value
+      },
+      setValue: (ref, newValue) => {
+        ref.current.value = newValue
+      },
+      clearValue: (ref) => {
+        ref.current.value = undefined
+      },
+    })
+  }, [fieldName, registerField])
 
   return (
     <>
@@ -92,12 +93,15 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
           </label>
         )}
 
-        <div
-          className='form-control bg-secondary d-flex align-items-center form-control-lg p-0 border-0'
-          style={{ backgroundColor: 'red' }}
-        >
+        <input
+          type='hidden'
+          name={name}
+          value={optionsState?.selectedOption?.value}
+          ref={selectRef}
+        />
+
+        <div className='form-control bg-secondary d-flex align-items-center form-control-lg p-0 border-0'>
           <input
-            name={name}
             type='text'
             style={{ zIndex: 2 }}
             className='form-select form-select-lg form-select-solid'

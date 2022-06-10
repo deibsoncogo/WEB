@@ -1,11 +1,12 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import { useRouter } from 'next/router'
-import { forwardRef } from 'react'
+import React, { forwardRef, useState } from 'react'
 import * as Yup from 'yup'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { KTSVG } from '../../../../helpers'
 import { levelOptions } from '../../../../utils/selectOptions'
+import { maskedToMoney, onlyNums } from '../../../formatters/currenceFormatter'
 import { DatePicker, Input, Select, TextArea } from '../../inputs'
 import { InputImage } from '../../inputs/input-image'
 import { SelectAsync } from '../../inputs/selectAsync'
@@ -22,7 +23,7 @@ const schema = Yup.object().shape({
   teacherId: Yup.string().required('Professor é nescessário'),
   price: Yup.number().required('Preço é nescessário'),
   description: Yup.string().required('Descriçao é nescessário'),
-  categories: Yup.string().required('Selecione uma categoria'),
+  categoryId: Yup.string().required('Selecione uma categoria'),
   finishDate: Yup.date().nullable().required('Data é nescessária'),
   liveDate: Yup.date().nullable().required('Data é nescessária'),
   chatTime: Yup.date().nullable().required('Data é nescessária'),
@@ -39,6 +40,8 @@ type FormCreateTrainingProps = {
 }
 
 const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((props, ref) => {
+  const [price, setPrice] = useState('R$ 0,00')
+  const [discount, setDiscount] = useState('R$ 0,00')
   const {
     addWebinarTime,
     onSubmit,
@@ -47,10 +50,16 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
     streamList,
     searchCategories,
   } = props
+
   const router = useRouter()
 
+  const handleSubmit = (data: any) => {
+    const formattedData = { ...data, price: Number(onlyNums(data.price)) }
+    onSubmit(formattedData)
+  }
+
   return (
-    <Form className='form' ref={ref} onSubmit={onSubmit}>
+    <Form className='form' ref={ref} onSubmit={handleSubmit}>
       <h3 className='mb-5'>Informações do Treinamento</h3>
       <InputImage name='photo' />
 
@@ -65,8 +74,27 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               classes='h-75px'
               placeholder='Digite o nome do professor'
             />
-            <Input name='price' label='Preço' type='number' classes='h-75px' />
-            <Input name='discount' label='Desconto' type='number' classes='h-75px' />
+            <Input
+              name='price'
+              label='Preço'
+              type='text'
+              classes='h-75px'
+              value={price}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setPrice(maskedToMoney(e.target.value))
+              }}
+            />
+
+            <Input
+              name='discount'
+              label='Desconto'
+              type='text'
+              classes='h-75px'
+              value={discount}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setDiscount(maskedToMoney(e.target.value))
+              }}
+            />
           </div>
 
           <div className='col d-flex flex-column align-items-stretch justify-content-between'>
@@ -89,37 +117,44 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
       </div>
 
       <h3 className='mb-5 mt-5'>Datas do Treinamento</h3>
-      <div className='d-flex flex-row gap-5 w-100'>
-        <div className='w-25'>
-          <DatePicker
-            name='finishDate'
-            label='Data de Termino do Treinamento'
-            placeholderText='00/00/000'
-          />
-          <DatePicker name='liveDate' label='Dia da Transmição' placeholderText='00/00/000' />
-        </div>
-        <div className='w-25'>
-          <DatePicker name='chatTime' label='Desativação do chat' placeholderText='00/00/000' />
-          <DatePicker
-            name='time'
-            label='Horário'
-            placeholderText='00:00'
-            showTimeSelect
-            showTimeSelectOnly
-            timeIntervals={15}
-            timeCaption='Horas'
-            dateFormat='hh:mm'
-          />
+
+      <div className='container p-0'>
+        <div className='row'>
+          <div className='col-3'>
+            <DatePicker name='finishDate' label='Data de Termino' placeholderText='00/00/000' />
+          </div>
+          <div className='col-3'>
+            <DatePicker name='liveDate' label='Dia da Transmição' placeholderText='00/00/000' />
+          </div>
         </div>
 
-        <button
-          type='button'
-          onClick={addWebinarTime}
-          className='btn btn-lg btn-primary h-45px mb-7 mt-auto'
-        >
-          <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-          Adicionar Data
-        </button>
+        <div className='row d-flex align-items-end'>
+          <div className='col-3'>
+            <DatePicker name='chatTime' label='Desativação do chat' placeholderText='00/00/000' />
+          </div>
+          <div className='col-3'>
+            <DatePicker
+              name='time'
+              label='Horário'
+              placeholderText='00:00'
+              showTimeSelect
+              showTimeSelectOnly
+              timeIntervals={15}
+              timeCaption='Horas'
+              dateFormat='hh:mm'
+            />
+          </div>
+          <div className='col-3'>
+            <button
+              type='button'
+              onClick={addWebinarTime}
+              className='btn btn-lg btn-primary h-45px mb-7 mt-auto'
+            >
+              <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+              Adicionar Data
+            </button>
+          </div>
+        </div>
       </div>
 
       {streamList.length !== 0 && (
