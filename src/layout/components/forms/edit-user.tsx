@@ -118,7 +118,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       const newData: any = {
         name: res.name,
         email: res.email,
-        //birthDate: res.birthDate, // doesn't work, idk why
+        birthDate: res.birthDate,
         cpf: res.cpf,
         phoneNumber: res.phoneNumber,
         level: res.level,
@@ -129,8 +129,8 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
         city: res.address[0]?.city || '',
         state: res.address[0]?.state || '',
         number: res.address[0]?.number || '',
-      }
-      Object.keys(newData).forEach(key => {
+      }        
+      Object.keys(newData).forEach(key => {        
         formRef.current?.setFieldValue(key, newData[key])
       })
       formRef.current?.setErrors({})

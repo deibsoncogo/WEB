@@ -7,6 +7,7 @@ import { months } from '../../../utils/months'
 
 import 'react-datepicker/dist/react-datepicker.css'
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai'
+import { formatDateToUTC } from '../../../utils/formatDateToUTC'
 
 interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
   name: string
@@ -22,20 +23,22 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
 
   useEffect(() => {
     registerField({
+      ref: datepickerRef,
       name: fieldName,
-      ref: datepickerRef.current,
-      path: 'props.selected',
-      setValue: (ref: any) => {
-        setDate(defaultValue)
-        ref.current.value = defaultValue
+      getValue: (ref) => {
+        return ref.current?.value
       },
-      clearValue: (ref: any) => {
-        ref.clear()
+      setValue: (ref, newValue) => {
+        ref.current.value = newValue
+        const newDate = formatDateToUTC(newValue)
+        setDate(newDate)
+      },
+      clearValue: (ref) => {
+        ref.current.value = ''
       },
     })
-    setDate(defaultValue)
   }, [fieldName, registerField])
-
+  
   const years = rangeInt(1900, new Date().getFullYear() + 1)
 
   return (
