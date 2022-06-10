@@ -1,6 +1,7 @@
 import { InvalidParamsError, UnexpectedError } from "../../../domain/errors"
 import { CreateCourse } from "../../../domain/models/createCourse"
-import { ICreateCourse } from "../../../domain/usecases/interfaces/course/createCourse"
+import { CourseC, ICreateCourse } from "../../../domain/usecases/interfaces/course/createCourse"
+import { getAuthHeadersMultipart } from "../../../helpers/axios/axiosHeaderMultipart"
 import { HttpClient, HttpStatusCode } from "../../protocols"
 
 
@@ -8,11 +9,13 @@ export class RemoteCreateCourse implements ICreateCourse {
     
   constructor(private readonly url: string, private readonly httpClient: HttpClient<boolean>) {}
 
-    async create (createCourse: CreateCourse){
+    async create (createCourse: FormData){
         const httpResponse = await this.httpClient.request({
             url: this.url,
             method: 'post',
             body: createCourse,
+            headers: getAuthHeadersMultipart()
+
           })
           switch (httpResponse.statusCode) {
             case HttpStatusCode.created:
@@ -23,6 +26,8 @@ export class RemoteCreateCourse implements ICreateCourse {
               throw new UnexpectedError()
           }
         }
+
+        
 
 }
 

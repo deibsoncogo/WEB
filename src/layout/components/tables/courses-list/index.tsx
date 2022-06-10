@@ -92,8 +92,8 @@ export default function CoursesTable(props: Props) {
                     <th className='text-dark min-w-100px'>Preço</th>
                     <th className='text-dark min-w-100px'>Desconto</th>
                     <th className='text-dark min-w-100px'>Professor</th>
-                    <th className='text-dark min-w-50px'>Ativo</th>
-                    <th className='text-dark min-w-150px text-end rounded-end' />
+                    <th className='text-dark min-w-110px'>Ativo</th>
+                    <th className='text-dark min-w-50px text-end rounded-end' />
                   </tr>
                 </thead>
 

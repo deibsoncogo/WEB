@@ -68,6 +68,10 @@
   @include placeholder($white);
 }
 
+.placeholder-red {
+  @include placeholder($red !important);
+}
+
 // Textarea reset resize
 .resize-none {
   resize: none;

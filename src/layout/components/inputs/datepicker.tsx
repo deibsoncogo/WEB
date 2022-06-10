@@ -11,9 +11,10 @@ import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai'
 interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
   name: string
   label: string
+  classes?: string
 }
 
-export function DatePicker({ name, label, ...rest }: Props) {
+export function DatePicker({ name, label, classes, ...rest }: Props) {
   const datepickerRef = useRef(null)
   const { fieldName, registerField, defaultValue, error } = useField(name)
 
@@ -38,7 +39,7 @@ export function DatePicker({ name, label, ...rest }: Props) {
   const years = rangeInt(1900, new Date().getFullYear() + 1)
 
   return (
-    <div className='fv-row mb-7'>
+    <div className={`${classes} fv-row mb-7`}>
       {label && (
         <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
           {label}
@@ -48,8 +49,9 @@ export function DatePicker({ name, label, ...rest }: Props) {
         ref={datepickerRef}
         className='form-control bg-secondar'
         selected={date}
-        onChange={setDate}
+        onChange={setDate}        
         dateFormat='dd/MM/yyyy'
+        placeholderText={error && error}
         {...rest}
         renderCustomHeader={({
           date,
@@ -69,6 +71,9 @@ export function DatePicker({ name, label, ...rest }: Props) {
               value={date.getFullYear()}
               onChange={({ target: { value } }) => changeYear(value)}
             >
+              <option value='' hidden disabled selected>
+                {error ? error : 'Selecione'}
+              </option>
               {years.map((option) => (
                 <option key={option} value={option}>
                   {option}
@@ -94,7 +99,6 @@ export function DatePicker({ name, label, ...rest }: Props) {
         )}
         {...rest}
       />
-      {error && <span className='text-danger'>{error}</span>}
     </div>
   )
 }
