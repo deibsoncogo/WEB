@@ -54,31 +54,37 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
       <h3 className='mb-5'>Informações do Treinamento</h3>
       <InputImage name='photo' />
 
-      <div className='d-flex flex-row align-items-between gap-5 w-100'>
-        <div className='w-50'>
-          <Input name='name' label='Nome' classes='h-75px' />
+      <div className='container p-0'>
+        <div className='row'>
+          <div className='col d-flex justify-content-between flex-column'>
+            <Input name='name' label='Nome' classes='h-75px' />
+            <SelectAsync
+              searchOptions={searchTeachers}
+              name='teacherId'
+              label='Professor'
+              classes='h-75px'
+              placeholder='Digite o nome do professor'
+            />
+            <Input name='price' label='Preço' type='number' classes='h-75px' />
+            <Input name='discount' label='Desconto' type='number' classes='h-75px' />
+          </div>
 
-          <SelectAsync
-            searchOptions={searchTeachers}
-            name='teacherId'
-            label='Professor'
-            classes='h-75px'
-            placeholder='Digite o nome do professor'
-          />
+          <div className='col d-flex flex-column align-items-stretch justify-content-between'>
+            <TextArea
+              name='description'
+              label='Descrição'
+              style={{ minHeight: '246px', margin: 0 }}
+            />
+            <SelectAsync
+              searchOptions={searchCategories}
+              name='categoryId'
+              label='Categoria'
+              classes='h-75px'
+              placeholder='Digite o nome da categoria'
+            />
+          </div>
 
-          <Input name='price' label='Preço' type='number' classes='h-75px' />
-          <Input name='discount' label='Desconto' type='number' classes='h-75px' />
-        </div>
-
-        <div className='w-50'>
-          <TextArea name='description' label='Descrição' rows={10} />
-          <SelectAsync
-            searchOptions={searchCategories}
-            name='categoryId'
-            label='Categoria'
-            classes='h-75px'
-            placeholder='Digite o nome da categoria'
-          />
+          <div className='row'></div>
         </div>
       </div>
 

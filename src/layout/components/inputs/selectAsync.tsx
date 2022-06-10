@@ -85,14 +85,17 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
   return (
     <>
       {isOpen && <div className='custom-select-async-drop' onClick={closeOptions} />}
-      <div className='fv-row mb-7 position-relative custom-select-async h-75px'>
+      <div className='h-75px fv-row mb-7 position-relative custom-select-async'>
         {label && (
-          <label className='form-label fs-6 fw-bolder text-dark mb-2' htmlFor={name}>
+          <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
             {label}
           </label>
         )}
 
-        <div className='d-flex align-items-center'>
+        <div
+          className='form-control bg-secondary d-flex align-items-center form-control-lg p-0 border-0'
+          style={{ backgroundColor: 'red' }}
+        >
           <input
             name={name}
             type='text'
