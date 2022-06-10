@@ -97,7 +97,7 @@ export function FormCreateUser({ userRegister }: Props) {
     userRegister
       .signUp(user)
       .then(() => router.push('/users'))
-      .catch((error: any) => toast.error(error.messages))
+      .catch((error: any) => toast.error(error.messages[0]))
   }
 
   return (
