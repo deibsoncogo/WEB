@@ -152,7 +152,8 @@ export function FormCreateCourse(props: Props) {
     if(imageUpload && filesUpload){
       formData.append('image', imageUpload); 
       filesUpload.map(file => {
-        formData.append('attachments', file.file)
+        if(file?.file)
+           formData.append('attachments', file.file)
         formData.append('filesName',  file.name)
       })
     }       

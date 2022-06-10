@@ -1,20 +1,25 @@
+import { CourseClass } from "./courseClass";
+import { DeleteFileUpload } from "./deleteFile";
+
 export class UpdateCourse{
     id?: string;
     name: string;
     description: string;
     content: string;
     categoryId: string;
-    discount?: number;
-    imageUrl: string;
-    installments: number;
+    discount?: string;
+    imageUrl?: string;
+    installments: string;
     isActive?: boolean;
-    price?: number;
-    accessTime: number; 
+    price?: string;
+    accessTime: string; 
     userId: string;
+    courseClass: CourseClass[];
+    deleteFiles: DeleteFileUpload[];
 
-    constructor(id: string| undefined, name: string, description: string, content: string, categoryId: string,
-        discount: number | undefined, imageUrl: string, installments: number, isActive: boolean | undefined,  price: number | undefined,  
-        accessTime: number, userId: string)
+    constructor(id: string | undefined, name: string, description: string, content: string, categoryId: string,
+        discount: string, imageUrl: string | undefined, installments: string, isActive: boolean | undefined,  price: string,  
+        accessTime: string, userId: string, courseClass: CourseClass[], deleteFiles: DeleteFileUpload[])
     {
         this.id = id;
         this.name = name;
@@ -28,6 +33,8 @@ export class UpdateCourse{
         this.price = price;
         this.accessTime = accessTime;   
         this.userId = userId;  
+        this.courseClass = courseClass
+        this.deleteFiles = deleteFiles
               
         
         

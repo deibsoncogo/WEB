@@ -12,6 +12,7 @@ import { levelOptions, roleOptions, stateOptions } from '../../../utils/selectOp
 import { toast } from 'react-toastify'
 import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
 import { findCEP } from '../../../utils/findCEP'
+import { restrictNumberInput } from '../../../utils/restrictNumberInput'
 
 type Props = {
   userRegister: IUserSignUp
@@ -96,7 +97,7 @@ export function FormCreateUser({ userRegister }: Props) {
     userRegister
       .signUp(user)
       .then(() => router.push('/users'))
-      .catch((error: any) => toast.error(error.messages))
+      .catch((error: any) => toast.error(error.messages[0]))
   }
 
   return (
@@ -147,7 +148,7 @@ export function FormCreateUser({ userRegister }: Props) {
             }}
           />
           <Input classes='h-75px' name='street' label='Logradouro' />
-          <Input classes='h-75px' name='number' label='Número' type='number' />
+          <Input classes='h-75px' name='number' label='Número' type='number' onKeyDown={restrictNumberInput} min="0" />
           <Input classes='h-75px' name='complement' label='Complemento' />
           <Input classes='h-75px' name='neighborhood' label='Bairro' />
           <Input classes='h-75px' name='city' label='Cidade' />

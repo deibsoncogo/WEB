@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Row } from './row'
 import { KTSVG } from '../../../../helpers'
 import { Search } from '../../search/Search'
-import Pagination from '../../pagination/Pagination'
+import { Pagination } from '../../pagination/Pagination'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { Room } from '../../../../interfaces/model/Room'
 import { debounce } from '../../../../helpers/debounce'
@@ -54,13 +54,15 @@ export function RoomsTable() {
   const handleOrderColumn = (roomA: Room, roomB: Room) => {
     switch (column) {
       case 'name':
-        return order === 'table-sort-asc' ? roomA.name.charCodeAt(0) - roomB.name.charCodeAt(0) : roomB.name.charCodeAt(0) - roomA.name.charCodeAt(0)
+        return order === 'table-sort-asc' ? roomA.name.localeCompare(roomB.name, 'pt') : roomB.name.localeCompare(roomA.name, 'pt')
       case 'price':
         return order === 'table-sort-asc' ? roomA.price - roomB.price : roomB.price - roomA.price
       case 'teacher':
-        return order === 'table-sort-asc' ? roomA.teacher.charCodeAt(0) - roomB.teacher.charCodeAt(0) : roomB.teacher.charCodeAt(0) - roomA.teacher.charCodeAt(0)
+        return order === 'table-sort-asc' ? roomA.teacher.localeCompare(roomB.teacher, 'pt') : roomB.teacher.localeCompare(roomA.teacher, 'pt')
       case 'isActive':
-        return order === 'table-sort-asc' ? roomA.isActive - roomB.isActive : roomB.isActive - roomA.isActive
+        return order === 'table-sort-asc' ? Number(roomA.isActive) - Number(roomB.isActive) : Number(roomB.isActive) - Number(roomA.isActive)
+      default:
+        return 0
     }
   }
 
