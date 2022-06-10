@@ -19,11 +19,11 @@ export function MakeBookRow({
   closeModalDeleteConfirmation,
   openModalDeleteConfirmation,
 }: MakeBookRowType) {
-  const { id, author, description, stock, price, name } = book
+  const { id, author, description, stock, price, name, isActive } = book
 
-  let isActive = true
   return (
     <Row
+      activeBook={isActive}
       id={id}
       name={name}
       description={description}

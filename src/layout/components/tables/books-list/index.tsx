@@ -70,6 +70,10 @@ const BooksTable = ({ remoteGetAllBooks, remoteDeleteBook, remoteUpdateBook }: P
     setIsModalDeleteBookOpen(false)
   }
 
+  const handleActiveBook = () => {
+    setIsModalDeleteBookOpen(false)
+  }
+
   const handleOpenModalConfirmDeletion = () => {
     setIsModalDeleteBookOpen(true)
   }

@@ -15,7 +15,7 @@ interface IBookRow {
   stock: number
   isActive: boolean
   deleteBook: (bookId: string) => void
-  activeBook: (bookId: string) => Promise<void>
+  activeBook: boolean
   loadingDeletion: boolean
   isModalDeletionOpen: boolean
   closeModalDeleteConfirmation: () => void
