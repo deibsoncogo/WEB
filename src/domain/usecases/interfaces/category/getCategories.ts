@@ -1,4 +1,5 @@
 import { Category } from '../../../../interfaces/model/Category'
+import { OutputPagination } from '../../../shared/interface/OutputPagination'
 
 export interface GetCategoriesParams {
   name: string
@@ -7,12 +8,6 @@ export interface GetCategoriesParams {
   order: 'asc' | 'desc' | undefined
 }
 
-export interface OutputPagination {
-  data: Category[]
-  total: number
-  page: number
-}
-
 export interface IGetCategories {
-  get: (params: GetCategoriesParams) => Promise<OutputPagination>
+  get: (params: GetCategoriesParams) => Promise<OutputPagination<Category>>
 }

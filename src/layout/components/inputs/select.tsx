@@ -1,7 +1,6 @@
 import { useRef, useEffect, ReactNode, SelectHTMLAttributes } from 'react'
 
 import { useField } from '@unform/core'
-import { Form } from '@unform/web'
 
 type SelectFace = SelectHTMLAttributes<HTMLSelectElement> & {
   name: string
@@ -44,6 +43,7 @@ export function Select({ name, label, classes, children, ...rest }: SelectFace) 
         ref={selectRef}
         className={`form-select form-select-solid ${error && 'option-invalid'}`}        
         defaultValue={defaultValue}
+        onChangeCapture={clearError}
         onChange={() => clearError()}
         {...rest}
       >
