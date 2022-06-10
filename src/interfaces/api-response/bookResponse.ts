@@ -7,6 +7,7 @@ export interface IBookResponse {
   author: string
   discount: string
   stock: number
+  isActive: boolean
 
   category: {
     id: string

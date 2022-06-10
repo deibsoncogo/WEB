@@ -20,6 +20,8 @@ export function MakeBookRow({
   openModalDeleteConfirmation,
 }: MakeBookRowType) {
   const { id, author, description, stock, price, name } = book
+
+  let isActive = true
   return (
     <Row
       id={id}
@@ -28,6 +30,7 @@ export function MakeBookRow({
       author={author}
       stock={stock}
       price={price}
+      isActive={isActive}
       deleteBook={deleteBook}
       loadingDeletion={loadingDeletion}
       isModalDeletionOpen={isModalDeletionOpen}
