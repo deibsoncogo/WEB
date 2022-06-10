@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
-import { CourseClass } from '../../../../domain/models/courseClass'
-import { KTSVG } from '../../../../helpers'
-import { Input } from '../../inputs'
-import { Row } from './row'
+import { CourseClass } from '../../../../../../domain/models/courseClass';
+import { KTSVG } from '../../../../../../helpers';
+import { ICourseClassResponse } from '../../../../../../interfaces/api-response/courseClassResponse';
+import { Input } from '../../../../inputs';
+import { Row } from './row';
 
 type prop = {
-  courseClassArray: CourseClass[]
+  courseClassArray: ICourseClassResponse[]
+  IdDeletedCourseClass: string[]
+  courseClassUpdate: CourseClass[]
 }
 
 let currentId = 0;
@@ -15,7 +18,7 @@ function getNewId() {
 }
 
 export default function CoursesInternalTable(props: prop) {
-  const [nameClass, setName] = useState<string>()
+  const [name, setName] = useState<string>()
   const [link, setLink] = useState<string>()
   const [displayOrder, setDisplayOrder] = useState<number>()
   const [hasError, setHasError] = useState<boolean>(false)
@@ -29,7 +32,7 @@ export default function CoursesInternalTable(props: prop) {
   }
 
   async function handleClassSubmit() {
-    if (nameClass && link && displayOrder) {
+    if (name && link && displayOrder) {
       if (
         !link.match(
           /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
@@ -40,8 +43,9 @@ export default function CoursesInternalTable(props: prop) {
         setMessageError('Link inválido e/ou ordem de exibição igual a 0 (zero)')
         return
       }
-
-      props.courseClassArray.push(new CourseClass(nameClass, link, displayOrder))
+      const courseClass = {name, link, displayOrder}
+      props.courseClassArray.push(courseClass)
+      props.courseClassUpdate.push(courseClass)
       handleRefresher()
     } else {
       setHasError(true)
@@ -106,7 +110,7 @@ export default function CoursesInternalTable(props: prop) {
                     <th className='text-dark ps-4 min-w-200px rounded-start'>Nome</th>
                     <th className='text-dark min-w-200px'>Link</th>
                     <th className='text-dark min-w-150px'>Ordem de exibição</th>
-                    <th className='text-dark min-w-100px text-end rounded-end' />
+                    <th className='text-dark min-w-70px text-end rounded-end' />
                   </tr>
                 </thead>
 
@@ -119,7 +123,9 @@ export default function CoursesInternalTable(props: prop) {
                       displayOrder={item.displayOrder}
                       classCourse={item}
                       courseClassArray={props.courseClassArray}
+                      courseClassUpdate={props.courseClassUpdate}
                       handleRefresher={handleRefresher}
+                      IdDeletedCourseClass = {props.IdDeletedCourseClass}  
                     />
                   ))}
                 </tbody>

@@ -1,14 +1,18 @@
 import { Tooltip } from '@nextui-org/react'
-import { CourseClass } from '../../../../domain/models/courseClass'
-import { KTSVG } from '../../../../helpers'
+import { CourseClass } from '../../../../../../domain/models/courseClass'
+import { KTSVG } from '../../../../../../helpers'
+import { ICourseClassResponse } from '../../../../../../interfaces/api-response/courseClassResponse'
+
 
 interface IRow {
   name: string
   link: string
   displayOrder: number
-  classCourse: CourseClass
-  courseClassArray: CourseClass[]
+  classCourse: ICourseClassResponse
+  courseClassArray: ICourseClassResponse[]
+  courseClassUpdate: CourseClass[]
   handleRefresher: () => void
+  IdDeletedCourseClass: string[]
 }
 
 export function Row(props: IRow) {
@@ -16,6 +20,16 @@ export function Row(props: IRow) {
     const index = props.courseClassArray.indexOf(props.classCourse, 0)
     if (index > -1) {
       props.courseClassArray.splice(index, 1)
+      if(props.classCourse?.id){
+        props.IdDeletedCourseClass.push(props.classCourse.id)
+      }
+      else{
+        const index = props.courseClassUpdate.indexOf(props.classCourse, 0)
+        if (index > -1) {
+          props.courseClassUpdate.splice(index, 1)
+        }
+        
+      }     
     }
     props.handleRefresher()
   }

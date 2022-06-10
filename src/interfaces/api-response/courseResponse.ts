@@ -2,7 +2,7 @@
 export interface ICourseResponse{
     id: string;
     name: string;
-    image: string;
+    imageUrl: string;
     description: string;
     price: string; 
     installments: string;
