@@ -3,9 +3,10 @@ import { useField } from '@unform/core'
 
 interface IInputImage extends InputHTMLAttributes<HTMLInputElement> {
   name: string
+  handleSingleImageUpload?: (file: File) => void;
 }
 
-export function InputImage({ name, ...rest }: IInputImage) {
+export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputImage) {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const { fieldName, registerField, defaultValue, error } = useField(name)
@@ -16,9 +17,13 @@ export function InputImage({ name, ...rest }: IInputImage) {
     if (!file) {
       setPreview(null)
       return
-    }
+    }   
     const previewURL = URL.createObjectURL(file)
     setPreview(previewURL)
+    
+    if(handleSingleImageUpload)
+       handleSingleImageUpload(file)  
+    
   }, [])
 
   console.log(preview)

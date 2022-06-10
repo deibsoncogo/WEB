@@ -6,15 +6,13 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { formatDate } from '../../../helpers'
 import { levelOptions, roleOptions } from '../../../utils/selectOptions'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { api } from '../../../application/services/api'
 import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
-
+import { findCEP } from '../../../utils/findCEP'
 import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
 import { toast } from 'react-toastify'
-import { findCEP } from '../../../utils/findCEP'
 
 type IFormEditUser = {
   id: string
@@ -43,7 +41,6 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
         cpf: Yup.string().required('CPF é nescessário'),
         phoneNumber: Yup.string().required('Telefone é nescessário'),
         level: Yup.string().required('Nível de conhecimento é nescessário'),
-        password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é nescessária'),
         role: Yup.string().required('Premissão é nescessária'),
         zipCode: Yup.string().required('CEP é nescessário'),
         street: Yup.string().required('Rua é nescessário'),
@@ -82,8 +79,6 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       id,
       name: data.name,
       email: data.email,
-      password: data.password,
-      passwordConfirm: data.password,
       cpf: cpf,
       photo: data.photo,
       birthDate: (data.birthDate as Date).toISOString().split('T')[0],
@@ -154,7 +149,6 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           <DatePicker name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
           <InputMasked name='cpf' label='CPF' mask='999.999.999-99' />
           <InputMasked name='phoneNumber' label='Telefone' mask='(99) 9 9999-9999' />
-          <Input name='password' label='Senha' type='password' />
 
           <Select name='level' label='Nível de Conhecimento'>
             <option value='' disabled selected>

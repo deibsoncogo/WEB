@@ -3,10 +3,10 @@ interface IFormCourse {
   accessTime: string
   price: string
   discount: string
+  installments: string
   description: string
   content: string
   userId: string
-  categoryId: string
-   
+  categoryId: string   
  
 }

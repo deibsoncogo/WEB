@@ -92,8 +92,17 @@ export function FormUpdateCourse(props: Props) {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome é necessário'),
-        accessTime: Yup.number().required('Tempo de acesso é necessário'),
+        accessTime: Yup.number()
+          .typeError('Tempo de acesso deve ser um número')
+          .required('Tempo de acesso é necessário')
+          .positive('Tempo de acesso deve ser positivo')
+          .integer('Tempo de acesso deve ser um número inteiro.'),
         price: Yup.string().required('Preço é necessário'),
+        installments: Yup.number()
+          .typeError('Quantidade de parcelas deve ser um número')
+          .required('Quantidade de parcelas é necessário')
+          .positive('Quantidade de parcelas deve ser positiva')
+          .integer('Quantidade de parcelas deve ser um número inteiro'),
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
@@ -116,11 +125,8 @@ export function FormUpdateCourse(props: Props) {
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
-    let matchesPrice = data.price.split(',')[0].match(/\d*/g)
-    let price = matchesPrice ? parseInt(matchesPrice?.join('')) : undefined
-
-    let matchesDiscount = data.discount.split(',')[0].match(/\d*/g)
-    let discount = matchesDiscount ? parseInt(matchesDiscount?.join('')) : undefined
+    const price = parseFloat(data.price.replace('.', '').replace(',', '.'))
+    const discount = parseFloat(data.discount.replace('.', '').replace(',', '.'))
 
     const course = new UpdateCourse(
       defaultValue?.id,
@@ -130,21 +136,19 @@ export function FormUpdateCourse(props: Props) {
       data.categoryId,
       discount,
       'teste1.jpg',
-      3,
+      parseInt(data.installments),
       defaultValue?.isActive,
       price,
       parseInt(data.accessTime),
       data.userId
     )
-
-    console.log(course)
     props.updateCourse
       .update(course)
       .then(() => {
         toast.success('Curso atualizado com sucesso!')
         router.push('/courses')
       })
-      .catch((error: any) => console.log(error))
+      .catch((error: any) => toast.error('Não foi possível atualizar o curso!'))
   }
 
   return (
@@ -193,7 +197,7 @@ export function FormUpdateCourse(props: Props) {
                 label='Desconto'
                 type='text'
                 placeholderText='R$'
-                onChange={() => currencyFormatter('discount', formRef.current)}
+                onChange={() => currencyFormatter('discount')}
               />
             </div>
             <div className='w-50'>
@@ -220,6 +224,7 @@ export function FormUpdateCourse(props: Props) {
                   }
                 })}
               </Select>
+              <Input name='installments' label='Quantidade de Parcelas' type='number' />
             </div>
           </div>
 

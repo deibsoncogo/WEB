@@ -8,10 +8,11 @@ type IInputProps = InputHTMLAttributes<HTMLInputElement> &
     name: string
     mask: (string | (string | RegExp)[]) & string
     label?: string
+    classes?: string
     onChange?: () => Promise<void>
   }
 
-export function InputMasked({ name, label, mask, onChange, ...rest }: IInputProps) {
+export function InputMasked({ name, label, classes, mask, onChange, ...rest }: IInputProps) {
   const inputRef = useRef(null)
 
   const { fieldName, defaultValue = '', registerField, error } = useField(name)
@@ -25,7 +26,7 @@ export function InputMasked({ name, label, mask, onChange, ...rest }: IInputProp
   }, [fieldName, registerField])
 
   return (
-    <div className='fv-row mb-7'>
+    <div className={`${classes} fv-row mb-7`}>
       {label && (
         <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
           {label}

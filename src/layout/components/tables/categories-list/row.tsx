@@ -1,3 +1,4 @@
+import { Tooltip } from '@nextui-org/react'
 import { KTSVG } from '../../../../helpers'
 import { Category } from '../../../../interfaces/model/Category'
 
@@ -22,19 +23,29 @@ export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryD
       <td className='ps-4'>
         <span className='text-muted fw-bold text-muted d-block fs-7'>{name}</span>
       </td>
-      <td className='text-end'>
-        <button
-          className='btn btn-icon btn-bg-light btn-active-color-primary btn-md me-1'
+
+      <td className='text-end d-flex justify-content-end px-4'>
+        <Tooltip
+          content={'Editar'}
+          rounded
+          color='primary'
           onClick={handleOpenUpdateCategoryDrawer}
         >
-          <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-        </button>
-        <button
-          className='btn btn-icon btn-bg-light btn-active-color-primary btn-md'
+          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-md me-1'>
+            <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+          </button>
+        </Tooltip>
+
+        <Tooltip
+          content={'Deletar'}
+          rounded
+          color='primary'
           onClick={handleOpenDeleteCategoryModal}
         >
-          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-        </button>
+          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-md'>
+            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+          </button>
+        </Tooltip>
       </td>
     </tr>
   )

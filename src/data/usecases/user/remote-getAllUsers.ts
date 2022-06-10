@@ -1,5 +1,8 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
+import {
+  IGetAllUsers,
+  IGetAllUsersParams,
+} from '../../../domain/usecases/interfaces/user/getAllUsers'
 import { IUserResponse } from '../../../interfaces/api-response'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
@@ -9,14 +12,15 @@ export class RemoteGetAllUsers implements IGetAllUsers {
     private readonly httpClient: HttpClient<IUserResponse[]>
   ) {}
 
-  async getAll() {
+  getAll = async (params: IGetAllUsersParams) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',
+      params: params,
     })
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
-        return httpResponse.body.data
+        return httpResponse.body
       case HttpStatusCode.badRequest:
         throw new InvalidParamsError(httpResponse.body?.message)
       default:
