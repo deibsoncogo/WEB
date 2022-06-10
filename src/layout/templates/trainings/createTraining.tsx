@@ -2,32 +2,51 @@ import { FormHandles } from '@unform/core'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
-import * as Yup from 'yup'
+import { useRequest } from '../../../application/hooks/useRequest'
+import { appRoutes } from '../../../application/routing/routes'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetCategories } from '../../../domain/usecases/interfaces/category/getCategories'
+import {
+  ICreateTraining,
+  ICreateTrainingParams,
+} from '../../../domain/usecases/interfaces/trainings/createTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
 import { Role } from '../../../domain/usecases/interfaces/user/role'
 import { formatDate, formatTime } from '../../../helpers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormCreateTraining } from '../../components/forms/trainings/create'
 import { IStreamList, trainingFormSchema } from '../../components/forms/trainings/type'
+import { onlyNums } from '../../formatters/currenceFormatter'
 
 type CreateTrainingPageProps = {
   makeGetTeachers: IGetAllUsers
   remoteGetCategories: IGetCategories
+  remoteCreateTraining: ICreateTraining
 }
 
 function CreateTrainingPageTemplate({
   makeGetTeachers,
   remoteGetCategories,
+  remoteCreateTraining,
 }: CreateTrainingPageProps) {
+  const router = useRouter()
   const [streamList, setStreamList] = useState<IStreamList[]>([])
   const [isStreamingListValid, setIsStreamingListValid] = useState(true)
 
   const formRef = useRef<FormHandles>(null)
 
-  async function handleFormSubmit(data: any) {
-    const { error, success } = await applyYupValidation<ITrainings>(trainingFormSchema, data)
+  const {
+    makeRequest: createTraining,
+    data: trainingCreatedSuccessful,
+    error: createTrainingError,
+    loading: loadingTrainingCreation,
+  } = useRequest<FormData>(remoteCreateTraining.create)
+
+  async function handleFormSubmit(data: ICreateTrainingParams) {
+    const { error, success } = await applyYupValidation<ICreateTrainingParams>(
+      trainingFormSchema,
+      data
+    )
 
     if (streamList.length === 0) {
       setIsStreamingListValid(false)
@@ -35,18 +54,61 @@ function CreateTrainingPageTemplate({
 
     if (error) {
       formRef?.current?.setErrors(error)
+      return
     }
 
     if (success && streamList.length > 0) {
+      const formattedStreamings = streamList.map((stream) => ({
+        hour: stream.hour,
+        date: stream.dateISO,
+      }))
+      const formattedData = {
+        ...data,
+        price: Number(onlyNums(data.price)),
+        discount: Number(onlyNums(data.discount)),
+        streamings: formattedStreamings,
+        trainingEndDate: formatDate(new Date(data.trainingEndDate), 'YYYY-MM-DD'),
+        deactiveChatDate: formatDate(new Date(data.deactiveChatDate), 'YYYY-MM-DD'),
+      }
+      const {
+        categoryId,
+        description,
+        discount,
+        name,
+        price,
+        streamings,
+        teacherId,
+        photo,
+        trainingEndDate,
+        deactiveChatDate,
+      } = formattedData
+
       const formData = new FormData()
-      formData.append('image', data.photo)
+
+      if (photo) {
+        formData.append('image', photo)
+      }
+      formData.append('price', String(price))
+      formData.append('discount', String(discount))
+      formData.append('teacherId', String(teacherId))
+      formData.append('categoryId', String(categoryId))
+      formData.append('name', String(name))
+      formData.append('description', String(description))
+      formData.append('active', String(false))
+      formData.append('trainingEndDate', String(trainingEndDate))
+      formData.append('deactiveChatDate', String(deactiveChatDate))
+      const streamingsString = JSON.stringify(streamings)
+      formData.append('streamings', streamingsString)
+
+      createTraining(formData)
     }
   }
 
-  function addStreamingHour() {
+  function addStreamingDate() {
     const liveData = {
-      hour: formatDate(formRef.current?.getData().streamingDate, 'DD/MM/YYYY'),
-      date: formatTime(formRef.current?.getData().streamingHour, 'HH:mm'),
+      date: formatDate(formRef.current?.getData().streamingDate, 'DD/MM/YYYY'),
+      hour: formatTime(formRef.current?.getData().streamingHour, 'HH:mm'),
+      dateISO: formatDate(formRef.current?.getData().streamingDate, 'YYYY-MM-DD'),
       start: false,
     }
 
@@ -68,7 +130,7 @@ function CreateTrainingPageTemplate({
     setStreamList(temp)
   }
 
-  const handleGetAsyncCategories = async (categoryName: string) => {
+  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
     try {
       const { data } = await remoteGetCategories.get({
         name: categoryName,
@@ -89,9 +151,7 @@ function CreateTrainingPageTemplate({
     }
   }
 
-  console.log(formRef.current?.getErrors())
-
-  const handleGetAsyncTeachers = async (teacherName: string) => {
+  const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
     try {
       const { data } = await makeGetTeachers.getAll({
         name: teacherName,
@@ -113,18 +173,31 @@ function CreateTrainingPageTemplate({
     }
   }
 
-  console.log(formRef.current?.getErrors())
+  useEffect(() => {
+    if (trainingCreatedSuccessful) {
+      toast.success('Treinamemto Criado Com Sucesso')
+      router.push(appRoutes.TRAININGS)
+    }
+  }, [trainingCreatedSuccessful])
+
+  useEffect(() => {
+    if (createTrainingError) {
+      toast.error(createTrainingError)
+    }
+  }, [createTrainingError])
+
   return (
     <>
       <FormCreateTraining
         ref={formRef}
         removeStreamItem={removeStreamItem}
-        addStreamingHour={addStreamingHour}
+        addStreamingDate={addStreamingDate}
         streamList={streamList}
         onSubmit={handleFormSubmit}
-        searchTeachers={handleGetAsyncTeachers}
-        searchCategories={handleGetAsyncCategories}
+        searchTeachers={handleGetAsyncTeachersToSelectInput}
+        searchCategories={handleGetAsyncCategoriesToSelectInput}
         isStreamingListValid={isStreamingListValid}
+        loadingSubmit={loadingTrainingCreation}
       />
     </>
   )

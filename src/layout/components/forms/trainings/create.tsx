@@ -1,10 +1,9 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import { useRouter } from 'next/router'
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef } from 'react'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { KTSVG } from '../../../../helpers'
-import { maskedToMoney, onlyNums } from '../../../formatters/currenceFormatter'
+import CustomButton from '../../buttons/CustomButton'
 import { DatePicker, Input, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
 import { InputImage } from '../../inputs/input-image'
@@ -13,35 +12,30 @@ import { LivesTable } from '../../tables/lives-list'
 import { IStreamList } from './type'
 
 type FormCreateTrainingProps = {
-  addStreamingHour: () => void
+  addStreamingDate: () => void
   onSubmit: (data: any) => void
   streamList: IStreamList[]
   removeStreamItem: (index: number) => void
   searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
   searchCategories: (categoryName: string) => Promise<ISelectOption[]>
   isStreamingListValid: boolean
+  loadingSubmit: boolean
 }
 
 const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((props, ref) => {
   const {
-    addStreamingHour,
+    addStreamingDate,
     onSubmit,
     removeStreamItem,
     searchTeachers,
     streamList,
     searchCategories,
     isStreamingListValid,
+    loadingSubmit,
   } = props
 
-  const router = useRouter()
-
-  const handleSubmit = (data: any) => {
-    const formattedData = { ...data, price: Number(onlyNums(data.price)), streamings: streamList }
-    onSubmit(formattedData)
-  }
-
   return (
-    <Form className='form' ref={ref} onSubmit={handleSubmit}>
+    <Form className='form' ref={ref} onSubmit={onSubmit}>
       <h3 className='mb-5'>Informações do Treinamento</h3>
       <InputImage name='photo' />
 
@@ -124,7 +118,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
           <div className='col-3 pt-8'>
             <button
               type='button'
-              onClick={addStreamingHour}
+              onClick={addStreamingDate}
               className='btn btn-lg btn-primary h-45px mb-7 mt-auto'
               style={{ marginTop: '22px' }}
             >
@@ -146,19 +140,18 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
       )}
 
       <div className='d-flex mt-10'>
-        <button
+        <CustomButton
+          title='Cancelar'
           type='button'
-          onClick={() => {
-            router.push('/trainings')
-          }}
-          className='btn btn-lg btn-secondary w-150px mb-5 ms-auto me-10'
-        >
-          Cancelar
-        </button>
+          customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+        />
 
-        <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
-          Salvar
-        </button>
+        <CustomButton
+          type='submit'
+          title='Salvar'
+          customClasses={['w-180px', 'btn-primary']}
+          loading={loadingSubmit}
+        />
       </div>
     </Form>
   )

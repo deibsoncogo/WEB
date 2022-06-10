@@ -18,12 +18,7 @@ function CustomButton({ title, loading = false, customClasses = [], ...props }: 
   buttonClasses.push(...customClasses)
 
   return (
-    <button
-      className={buttonClasses.join(' ')}
-      form='create-category-form'
-      disabled={loading}
-      {...props}
-    >
+    <button className={buttonClasses.join(' ')} disabled={loading} {...props}>
       {loading ? <Spinner animation='border' /> : title}
     </button>
   )
