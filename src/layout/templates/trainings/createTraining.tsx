@@ -6,27 +6,11 @@ import * as Yup from 'yup'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetCategories } from '../../../domain/usecases/interfaces/category/getCategories'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
+import { Role } from '../../../domain/usecases/interfaces/user/role'
 import { formatDate, formatTime } from '../../../helpers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormCreateTraining } from '../../components/forms/trainings/create'
-
-export interface IStreamList {
-  liveDate: string
-  time: string
-  start: boolean
-}
-
-const schema = Yup.object().shape({
-  name: Yup.string().required('Nome é Nescessário'),
-  teacherId: Yup.string().required('Professor é nescessário'),
-  price: Yup.number().required('Preço é nescessário'),
-  description: Yup.string().required('Descriçao é nescessário'),
-  categoryId: Yup.string().required('Selecione uma categoria'),
-  finishDate: Yup.date().nullable().required('Data é nescessária'),
-  liveDate: Yup.date().nullable().required('Data é nescessária'),
-  chatTime: Yup.date().nullable().required('Data é nescessária'),
-  time: Yup.date().nullable().required('Hora é nescessária'),
-})
+import { IStreamList, trainingFormSchema } from '../../components/forms/trainings/type'
 
 type CreateTrainingPageProps = {
   makeGetTeachers: IGetAllUsers
@@ -37,34 +21,44 @@ function CreateTrainingPageTemplate({
   makeGetTeachers,
   remoteGetCategories,
 }: CreateTrainingPageProps) {
-  const router = useRouter()
+  const [streamList, setStreamList] = useState<IStreamList[]>([])
+  const [isStreamingListValid, setIsStreamingListValid] = useState(true)
+
   const formRef = useRef<FormHandles>(null)
 
-  const [defaultValue, setDefaultValue] = useState({})
-  const [streamList, setStreamList] = useState<IStreamList[]>([])
-
   async function handleFormSubmit(data: any) {
-    console.log(data)
-    const { error, success } = await applyYupValidation<ITrainings>(schema, data)
+    const { error, success } = await applyYupValidation<ITrainings>(trainingFormSchema, data)
 
-    if (success) {
-      console.log(data)
-      const formData = new FormData()
-      formData.append('image', data.photo)
+    if (streamList.length === 0) {
+      setIsStreamingListValid(false)
     }
 
     if (error) {
       formRef?.current?.setErrors(error)
     }
+
+    if (success && streamList.length > 0) {
+      const formData = new FormData()
+      formData.append('image', data.photo)
+    }
   }
 
-  function addWebinarTime() {
+  function addStreamingHour() {
     const liveData = {
-      liveDate: formatDate(formRef.current?.getData().liveDate, 'DD/MM/YYYY'),
-      time: formatTime(formRef.current?.getData().time, 'HH:mm'),
+      hour: formatDate(formRef.current?.getData().streamingDate, 'DD/MM/YYYY'),
+      date: formatTime(formRef.current?.getData().streamingHour, 'HH:mm'),
       start: false,
     }
-    if (liveData.liveDate === 'Invalid date' || liveData.time === 'Invalid date') return
+
+    const isInvalidDate = liveData.date === 'Invalid date' || liveData.hour === 'Invalid date'
+    if (isInvalidDate) {
+      return
+    }
+
+    if (!isStreamingListValid) {
+      setIsStreamingListValid(true)
+    }
+
     setStreamList([...streamList, liveData])
   }
 
@@ -88,14 +82,14 @@ function CreateTrainingPageTemplate({
         value: category.id,
       }))
 
-      console.log(data)
-
       return categoryOptions
     } catch {
       toast.error('Falha em buscar as categorias')
       return []
     }
   }
+
+  console.log(formRef.current?.getErrors())
 
   const handleGetAsyncTeachers = async (teacherName: string) => {
     try {
@@ -104,7 +98,7 @@ function CreateTrainingPageTemplate({
         order: 'asc',
         page: 1,
         take: 5,
-        // role: Role.Teacher,
+        role: Role.Teacher,
       })
 
       const teacherOptions: ISelectOption[] = data.map((teacher) => ({
@@ -119,20 +113,20 @@ function CreateTrainingPageTemplate({
     }
   }
 
-  useEffect(() => {
-    handleGetAsyncTeachers('')
-  }, [])
-
+  console.log(formRef.current?.getErrors())
   return (
-    <FormCreateTraining
-      ref={formRef}
-      removeStreamItem={removeStreamItem}
-      addWebinarTime={addWebinarTime}
-      streamList={streamList}
-      onSubmit={handleFormSubmit}
-      searchTeachers={handleGetAsyncTeachers}
-      searchCategories={handleGetAsyncCategories}
-    />
+    <>
+      <FormCreateTraining
+        ref={formRef}
+        removeStreamItem={removeStreamItem}
+        addStreamingHour={addStreamingHour}
+        streamList={streamList}
+        onSubmit={handleFormSubmit}
+        searchTeachers={handleGetAsyncTeachers}
+        searchCategories={handleGetAsyncCategories}
+        isStreamingListValid={isStreamingListValid}
+      />
+    </>
   )
 }
 

@@ -13,7 +13,7 @@ interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export function Input({ name, label, placeholderText, classes, onChange, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { fieldName, defaultValue = '', registerField, error } = useField(name)
+  const { fieldName, defaultValue = '', registerField, error, clearError } = useField(name)
   const [isEyeVisible, setIsEyeVisible] = useState(true)
 
   useEffect(() => {
@@ -62,6 +62,7 @@ export function Input({ name, label, placeholderText, classes, onChange, ...rest
             ref={inputRef}
             defaultValue={defaultValue}
             onChange={onChange}
+            onChangeCapture={clearError}
             {...rest}
           />
 
@@ -75,6 +76,7 @@ export function Input({ name, label, placeholderText, classes, onChange, ...rest
       ) : (
         <input
           type='text'
+          onChangeCapture={clearError}
           hidden={true}
           name={name}
           ref={inputRef}

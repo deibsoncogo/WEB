@@ -1,10 +1,5 @@
+import { IStreamList } from '../../forms/trainings/type'
 import { Row } from './row'
-
-interface IStreamList {
-  liveDate: string
-  time: string
-  start: boolean
-}
 
 interface ILivesTable {
   streamList: IStreamList[]
@@ -31,8 +26,8 @@ export function LivesTable({ streamList, removeStreamItem }: ILivesTable) {
                 <Row
                   key={index}
                   index={index}
-                  liveDate={item.liveDate}
-                  time={item.time}
+                  liveDate={item.date}
+                  time={item.hour}
                   start={item.start}
                   removeStreamItem={removeStreamItem}
                 />

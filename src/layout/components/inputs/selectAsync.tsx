@@ -26,7 +26,7 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
   const [options, setOptions] = useState<ISelectOption[]>([])
   const [loading, setLoading] = useState(false)
 
-  const { fieldName, registerField, error } = useField(name)
+  const { fieldName, registerField, error, clearError } = useField(name)
 
   const [optionsState, setOptionsState] = useState<OptionsState>({ inputValue: '', isOpen: false })
   const { inputValue, isOpen, selectedOption } = optionsState
@@ -78,7 +78,7 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
         ref.current.value = newValue
       },
       clearValue: (ref) => {
-        ref.current.value = undefined
+        ref.current.value = ''
       },
     })
   }, [fieldName, registerField])
@@ -96,7 +96,7 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
         <input
           type='hidden'
           name={name}
-          value={optionsState?.selectedOption?.value}
+          value={optionsState?.selectedOption?.value || ''}
           ref={selectRef}
         />
 
@@ -109,6 +109,7 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
             onChange={handleOnChange}
             value={optionsState.inputValue}
             onFocus={getOptions}
+            onChangeCapture={clearError}
           />
 
           {loading && (

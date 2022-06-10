@@ -8,7 +8,7 @@ interface IInputProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 export function TextArea({ name, label, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const { fieldName, defaultValue = '', registerField, error } = useField(name)
+  const { fieldName, defaultValue = '', registerField, error, clearError } = useField(name)
 
   useEffect(() => {
     registerField({
@@ -40,6 +40,7 @@ export function TextArea({ name, label, ...rest }: IInputProps) {
           name={name}
           ref={inputRef}
           defaultValue={defaultValue}
+          onChangeCapture={clearError}
           {...rest}
         />
       </div>

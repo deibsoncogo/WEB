@@ -2,59 +2,41 @@ import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import { useRouter } from 'next/router'
 import React, { forwardRef, useState } from 'react'
-import * as Yup from 'yup'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { KTSVG } from '../../../../helpers'
-import { levelOptions } from '../../../../utils/selectOptions'
 import { maskedToMoney, onlyNums } from '../../../formatters/currenceFormatter'
-import { DatePicker, Input, Select, TextArea } from '../../inputs'
+import { DatePicker, Input, TextArea } from '../../inputs'
+import { InputCurrence } from '../../inputs/input-currence'
 import { InputImage } from '../../inputs/input-image'
 import { SelectAsync } from '../../inputs/selectAsync'
 import { LivesTable } from '../../tables/lives-list'
-
-interface IStreamList {
-  liveDate: string
-  time: string
-  start: boolean
-}
-
-const schema = Yup.object().shape({
-  name: Yup.string().required('Nome é Nescessário'),
-  teacherId: Yup.string().required('Professor é nescessário'),
-  price: Yup.number().required('Preço é nescessário'),
-  description: Yup.string().required('Descriçao é nescessário'),
-  categoryId: Yup.string().required('Selecione uma categoria'),
-  finishDate: Yup.date().nullable().required('Data é nescessária'),
-  liveDate: Yup.date().nullable().required('Data é nescessária'),
-  chatTime: Yup.date().nullable().required('Data é nescessária'),
-  time: Yup.date().nullable().required('Hora é nescessária'),
-})
+import { IStreamList } from './type'
 
 type FormCreateTrainingProps = {
-  addWebinarTime: () => void
+  addStreamingHour: () => void
   onSubmit: (data: any) => void
   streamList: IStreamList[]
   removeStreamItem: (index: number) => void
   searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
   searchCategories: (categoryName: string) => Promise<ISelectOption[]>
+  isStreamingListValid: boolean
 }
 
 const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((props, ref) => {
-  const [price, setPrice] = useState('R$ 0,00')
-  const [discount, setDiscount] = useState('R$ 0,00')
   const {
-    addWebinarTime,
+    addStreamingHour,
     onSubmit,
     removeStreamItem,
     searchTeachers,
     streamList,
     searchCategories,
+    isStreamingListValid,
   } = props
 
   const router = useRouter()
 
   const handleSubmit = (data: any) => {
-    const formattedData = { ...data, price: Number(onlyNums(data.price)) }
+    const formattedData = { ...data, price: Number(onlyNums(data.price)), streamings: streamList }
     onSubmit(formattedData)
   }
 
@@ -74,27 +56,9 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               classes='h-75px'
               placeholder='Digite o nome do professor'
             />
-            <Input
-              name='price'
-              label='Preço'
-              type='text'
-              classes='h-75px'
-              value={price}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setPrice(maskedToMoney(e.target.value))
-              }}
-            />
 
-            <Input
-              name='discount'
-              label='Desconto'
-              type='text'
-              classes='h-75px'
-              value={discount}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setDiscount(maskedToMoney(e.target.value))
-              }}
-            />
+            <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
+            <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
           </div>
 
           <div className='col d-flex flex-column align-items-stretch justify-content-between'>
@@ -121,20 +85,32 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
       <div className='container p-0'>
         <div className='row'>
           <div className='col-3'>
-            <DatePicker name='finishDate' label='Data de Termino' placeholderText='00/00/000' />
-          </div>
-          <div className='col-3'>
-            <DatePicker name='liveDate' label='Dia da Transmição' placeholderText='00/00/000' />
-          </div>
-        </div>
-
-        <div className='row d-flex align-items-end'>
-          <div className='col-3'>
-            <DatePicker name='chatTime' label='Desativação do chat' placeholderText='00/00/000' />
+            <DatePicker
+              name='trainingEndDate'
+              label='Data de Termino'
+              placeholderText='00/00/000'
+            />
           </div>
           <div className='col-3'>
             <DatePicker
-              name='time'
+              name='deactiveChatDate'
+              label='Desativação do chat'
+              placeholderText='00/00/000'
+            />
+          </div>
+        </div>
+
+        <div className='row d-flex'>
+          <div className='col-3'>
+            <DatePicker
+              name='streamingDate'
+              label='Dia da transmissão'
+              placeholderText='00/00/000'
+            />
+          </div>
+          <div className='col-3'>
+            <DatePicker
+              name='streamingHour'
               label='Horário'
               placeholderText='00:00'
               showTimeSelect
@@ -144,16 +120,24 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               dateFormat='hh:mm'
             />
           </div>
-          <div className='col-3'>
+
+          <div className='col-3 pt-8'>
             <button
               type='button'
-              onClick={addWebinarTime}
+              onClick={addStreamingHour}
               className='btn btn-lg btn-primary h-45px mb-7 mt-auto'
+              style={{ marginTop: '22px' }}
             >
               <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
               Adicionar Data
             </button>
           </div>
+
+          {!isStreamingListValid && (
+            <span className='text-danger' style={{ marginTop: '-14px' }}>
+              Insira pelo menos uma transmissão
+            </span>
+          )}
         </div>
       </div>
 
