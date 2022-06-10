@@ -21,19 +21,11 @@ type IFormEditUser = {
   getUser: IGetUser
 }
 
-type IDefaultValue = {
-  city?: string
-  neighborhood?: string
-  state?: string
-  street?: string
-  zipCode?: string
-}
-
 export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
-  const [defaultValue, setDefaultValue] = useState<IDefaultValue>({})
+  const [defaultValue, setDefaultValue] = useState({})
 
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
@@ -119,6 +111,13 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     }
   }
 
+  function setKeys(obj: any) {
+    Object.keys(obj).forEach(key => {        
+      formRef.current?.setFieldValue(key, obj[key])
+    })
+    formRef.current?.setErrors({})
+  }
+
   useEffect(() => {
     if (!formRef.current) return
     getUser.getOne()
@@ -139,19 +138,13 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
         number: res.address[0]?.number || '',
         complement: res.address[0]?.complement || '',
       }        
-      Object.keys(newData).forEach(key => {        
-        formRef.current?.setFieldValue(key, newData[key])
-      })
-      formRef.current?.setErrors({})
+      setKeys(newData)
     })
     .catch((err) => toast.error(err.messages))
   }, [])  
 
   useEffect(() => {
-    Object.keys(defaultValue).forEach(key => {        
-      formRef.current?.setFieldValue(key, defaultValue[key])
-    })
-    formRef.current?.setFieldValue
+    setKeys(defaultValue)
   }, [defaultValue])
 
   return (
