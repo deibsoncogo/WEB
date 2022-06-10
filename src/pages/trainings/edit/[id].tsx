@@ -6,18 +6,21 @@ import { FormEditTrainings } from '../../../layout/components/forms/trainings/ed
 import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
 
 const EditTrainings: NextPage = () => {
-  const fakeData = {
+  const fakeData: ITrainings = {
     id: 'string',
     name: 'string',
-    teacher: 'string',
     description: 'string',
-    categories: 'string',
     price: 20,
     discount: 10,
-    chatTime: new Date('02/02/2000'),
-    finishDate: new Date('02/02/2000'),
-    liveDate: new Date('02/02/2000'),
-    time: new Date('02/02/2000'),
+    categoryId: '123',
+    imageUrl: '',
+    isChatActive: true,
+    streamingDate: '',
+    streamingHour: '',
+    teacher: {
+      id: '123',
+      name: '123',
+    }
   }
 
   return (

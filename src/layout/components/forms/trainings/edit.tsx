@@ -11,12 +11,7 @@ import { levelOptions } from '../../../../utils/selectOptions'
 import { DatePicker, Input, Select, TextArea } from '../../inputs'
 import { InputImage } from '../../inputs/input-image'
 import { LivesTable } from '../../tables/lives-list'
-
-interface IStreamList {
-  liveDate: string
-  time: string
-  start: boolean
-}
+import { IStreamList } from './type'
 
 export function FormEditTrainings({ data }: IEditTrainingsForm) {
   const router = useRouter()
@@ -61,11 +56,12 @@ export function FormEditTrainings({ data }: IEditTrainingsForm) {
 
   function addLiveTime() {
     const liveData = {
-      liveDate: formatDate(formRef.current?.getData().liveDate, 'DD/MM/YYYY'),
-      time: formatTime(formRef.current?.getData().time, 'HH:mm'),
+      date: formatDate(formRef.current?.getData().liveDate, 'DD/MM/YYYY'),
+      hour: formatTime(formRef.current?.getData().time, 'HH:mm'),
       start: false,
+      dateISO: formRef.current?.getData().liveDate.toISOString(),
     }
-    if (liveData.liveDate === 'Invalid date' || liveData.time === 'Invalid date') return
+    if (liveData.date === 'Invalid date' || liveData.hour === 'Invalid date') return
     setStreamList([...streamList, liveData])
   }
 

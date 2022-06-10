@@ -20,7 +20,7 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
   const { take, currentPage } = pagination
-  const paginationParams: GetCategoriesParams = { page: currentPage, take, name: trainingName }
+  const paginationParams: GetCategoriesParams = { page: currentPage, take, name: trainingName, order: undefined }
 
   async function getTrainings() {
     try {

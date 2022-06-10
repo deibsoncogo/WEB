@@ -179,7 +179,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
             name='zipCode'
             label='CEP'
             mask='99999-999'
-            onChange={() => {
+            onChange={async () => {
               findCEP(formRef.current?.getData().zipCode, setDefaultValue)
             }}
           />
