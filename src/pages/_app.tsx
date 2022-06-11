@@ -9,8 +9,6 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Modal from 'react-modal'
 import { Suspense } from 'react'
-import { NextUIProvider } from '@nextui-org/react'
-import { tooltipTheme } from '../layout/Theme/tootip'
 
 Modal.setAppElement('#__next')
 
@@ -26,12 +24,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
           {unprotectedRoutes.includes(currentPath) ? (
             <Component {...pageProps} />
-          ) : (
-            <NextUIProvider theme={tooltipTheme}>
+          ) : (        
               <AuthWrapper>
                 <Component {...pageProps} />
-              </AuthWrapper>
-            </NextUIProvider>
+              </AuthWrapper>        
           )}
         </PageDataProvider>
       </LayoutProvider>
