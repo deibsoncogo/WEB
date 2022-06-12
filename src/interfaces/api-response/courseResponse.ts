@@ -7,7 +7,7 @@ export interface ICourseResponse{
     price: string; 
     installments: string;
     discount: string;
-    accessTime: number;
+    accessTime: string;
     userId: string;
     content: string;
     isActive: boolean;

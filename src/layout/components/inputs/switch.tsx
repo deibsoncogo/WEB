@@ -17,30 +17,32 @@ export function Switch(props: ISwitch) {
   const [isActive, setIsActive] = useState(props.active)
 
   async function handleUpdateCourse() {
-    // try {
-    //   const course = await props.getCourse.get(props.id)
+     try {
+       const course = await props.getCourse.get(props.id)
 
-    //   const courseUpdate = new UpdateCourse(
-    //     course.id,
-    //     course.name,
-    //     course.description,
-    //     course.content,
-    //     course.categoryId,
-    //     parseFloat(course.discount),
-    //     course.image,
-    //     parseInt(course.installments),
-    //     !isActive,
-    //     parseFloat(course.price),
-    //     course.accessTime,
-    //     course.userId
-    //   )
-    //   await props.updateCourse.update(courseUpdate)
-    //   setIsModalUpdateOpen(false)
-    //   setIsActive(!isActive)
-    //   toast.success('Curso atualizado com sucesso.')
-    // } catch (err) {
-    //   toast.error('Não foi possível atualizar o curso.')
-    // }
+       const courseUpdate = new UpdateCourse(
+         course.id,
+         course.name,
+         course.description,
+         course.content,
+         course.categoryId,
+         course.discount,
+         course.imageUrl,
+         course.installments,
+         !isActive,
+         course.price,
+         course.accessTime,
+         course.userId
+       )
+       const form = new FormData()
+       form.append('course', JSON.stringify(courseUpdate))
+       await props.updateCourse.update(form)
+       setIsModalUpdateOpen(false)
+       setIsActive(!isActive)
+       toast.success('Curso atualizado com sucesso.')
+     } catch (err) {
+       toast.error('Não foi possível atualizar o curso.')
+     }
   }
   
   return (
