@@ -8,6 +8,8 @@ import { ActionModal } from '../../modals/action'
 import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
 import { Tooltip} from "@nextui-org/react";
+import { UpdateCourse } from '../../../../domain/models/updateCourse'
+import ConfirmationModal from '../../modal/ConfirmationModal'
 
 interface IRow {
   id: string
@@ -25,17 +27,57 @@ interface IRow {
 
 export function Row(props: IRow) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
+  const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false)
+  const [isActive, setIsActive] = useState(props.active)
+  const [loading, setLoading] = useState(false) 
     
   async function handleDeleteCourse() {
     try {
+      setLoading(true)
       await props.deleteCourse.delete(props.id)
       setIsModalDeleteOpen(false)
       toast.success("Curso deletado com sucesso.")
       props.handleRefresher()
-    } catch (err) {
+    } catch{
            toast.error("Não foi possível deletear o curso.")
     }
+    finally{
+      setLoading(false)
+    }
   }
+
+  async function handleUpdateCourse() {
+    try {
+      const course = await props.getCourse.get(props.id)
+
+      const courseUpdate = new UpdateCourse(
+        course.id,
+        course.name,
+        course.description,
+        course.content,
+        course.categoryId,
+        course.discount,
+        course.imageUrl,
+        course.installments,
+        !isActive,
+        course.price,
+        course.accessTime,
+        course.userId
+      )
+      const form = new FormData()
+      form.append('course', JSON.stringify(courseUpdate))
+      setLoading(true)
+      await props.updateCourse.update(form)
+      setIsModalUpdateOpen(false)
+      setIsActive(!isActive)      
+      toast.success('Curso atualizado com sucesso.')
+    } catch (err) {
+      toast.error('Não foi possível atualizar o curso.')
+    }
+    finally{
+      setLoading(false)
+    }
+ } 
 
   
   return (
@@ -57,11 +99,9 @@ export function Row(props: IRow) {
           <span className='text-dark fw-bold d-block fs-7'>{props.teacher}</span>
         </td>
         <td>
-          <Switch
-            updateCourse={props.updateCourse}
-            getCourse={props.getCourse}
-            active={props.active}
-            id={props.id}
+          <Switch          
+            active={isActive}         
+            setModalUpdate={setIsModalUpdateOpen}
           />
         </td>
         <td className='text-end'>
@@ -83,16 +123,28 @@ export function Row(props: IRow) {
             </button>
           </Tooltip>
         </td>
+     
+      <ConfirmationModal
+        isOpen={isModalDeleteOpen}
+        loading={loading}
+        onRequestClose={() => {
+          setIsModalDeleteOpen(false)
+        }}
+        onConfimation={handleDeleteCourse}
+        content='Você tem ceterza que deseja excluir este curso?'
+        title='Deletar'
+      />
 
-        <ActionModal
-          isOpen={isModalDeleteOpen}
-          modalTitle='Deletar'
-          message='Você tem certeza que deseja excluir este curso?'
-          action={handleDeleteCourse}
-          onRequestClose={() => {
-            setIsModalDeleteOpen(false)
-          }}
-        />
+     <ConfirmationModal
+        isOpen={isModalUpdateOpen}
+        loading={loading}
+        onRequestClose={() => {
+          setIsModalUpdateOpen(false)
+        }}
+        onConfimation={handleUpdateCourse}
+        content='Você tem certeza que deseja alterar o status deste curso?'
+        title='Confirmação'
+      />
       </tr>
     </>
   )
