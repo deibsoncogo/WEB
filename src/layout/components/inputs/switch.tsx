@@ -1,74 +1,30 @@
-import { useState } from 'react'
-import { toast } from 'react-toastify'
-import { UpdateCourse } from '../../../domain/models/updateCourse'
-import { IGetCourse } from '../../../domain/usecases/interfaces/course/getCourse'
-import { IUpdateCourse } from '../../../domain/usecases/interfaces/course/upDateCourse'
-import { ActionModal } from '../modals/action'
+import { Dispatch, SetStateAction, useState } from 'react'
+
 
 interface ISwitch {
   active: boolean
-  updateCourse: IUpdateCourse
-  getCourse: IGetCourse
-  id: string
+  setModalUpdate: Dispatch<SetStateAction<boolean>>
 }
 
-export function Switch(props: ISwitch) {
-  const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false)
-  const [isActive, setIsActive] = useState(props.active)
+export function Switch({active, setModalUpdate}: ISwitch) {
 
-  async function handleUpdateCourse() {
-     try {
-       const course = await props.getCourse.get(props.id)
-
-       const courseUpdate = new UpdateCourse(
-         course.id,
-         course.name,
-         course.description,
-         course.content,
-         course.categoryId,
-         course.discount,
-         course.imageUrl,
-         course.installments,
-         !isActive,
-         course.price,
-         course.accessTime,
-         course.userId
-       )
-       const form = new FormData()
-       form.append('course', JSON.stringify(courseUpdate))
-       await props.updateCourse.update(form)
-       setIsModalUpdateOpen(false)
-       setIsActive(!isActive)
-       toast.success('Curso atualizado com sucesso.')
-     } catch (err) {
-       toast.error('Não foi possível atualizar o curso.')
-     }
-  }
-  
+    
   return (
     <>
       <div className='d-block'>
         <div className='form-check form-switch form-switch-sm form-check-custom'>
           <input
             onClick={() => {
-              setIsModalUpdateOpen(true)
+              setModalUpdate(true)
             }}
             className='form-check-input'
             type='checkbox'
-            checked={isActive}
+            checked={active}
           />
         </div>
       </div>
 
-      <ActionModal
-        isOpen={isModalUpdateOpen}
-        modalTitle='Confirmação'
-        message='Você tem certeza que deseja alterar o status deste curso?'
-        action={handleUpdateCourse}
-        onRequestClose={() => {
-          setIsModalUpdateOpen(false)
-        }}
-      />
+    
     </>
   )
 }
