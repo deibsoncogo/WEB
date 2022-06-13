@@ -26,7 +26,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
       ref: datepickerRef,
       name: fieldName,
       getValue: (ref) => {
-        return ref.current?.value
+        return ref.current?.props.selected
       },
       setValue: (ref, newValue) => {
         ref.current.value = newValue
