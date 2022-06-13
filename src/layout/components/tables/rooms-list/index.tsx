@@ -10,16 +10,18 @@ import { debounce } from '../../../../helpers/debounce'
 import { IDeleteRoom } from '../../../../domain/usecases/interfaces/room/deleteRoom'
 import { currenceMask } from '../../../formatters/currenceFormatter'
 import { IGetRoom } from '../../../../domain/usecases/interfaces/room/getCourse'
+import { IUpdateRoom } from '../../../../domain/usecases/interfaces/room/updateRoom'
 
 type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 
 type Props =  { 
   getRoom: IGetRoom
+  updateRoom: IUpdateRoom
   deleteRoom: IDeleteRoom 
 }
 
 
-export function RoomsTable({getRoom, deleteRoom}: Props) {
+export function RoomsTable({getRoom, updateRoom, deleteRoom}: Props) {
   const paginationHook = usePagination()
 
   const [error, setError] = useState<any>()
@@ -154,6 +156,7 @@ export function RoomsTable({getRoom, deleteRoom}: Props) {
                     teacher={item.teacher}
                     isActive={item.isActive}
                     getRoom={getRoom}
+                    updateRoom={updateRoom}
                     deleteRoom={deleteRoom}
                     handleRefresher={handleRefresher}
                   />

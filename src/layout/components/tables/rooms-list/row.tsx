@@ -7,6 +7,7 @@ import ConfirmationModal from '../../modal/ConfirmationModal'
 import { Switch } from '../../inputs/switch'
 import { Tooltip} from "@nextui-org/react";
 import { IGetRoom } from '../../../../domain/usecases/interfaces/room/getCourse'
+import { IUpdateRoom } from '../../../../domain/usecases/interfaces/room/updateRoom'
 
 interface IRow {
   id: string
@@ -16,6 +17,7 @@ interface IRow {
   teacher: string
   isActive: boolean
   getRoom: IGetRoom
+  updateRoom: IUpdateRoom
   deleteRoom: IDeleteRoom
   handleRefresher: () => void; 
 }
@@ -28,6 +30,7 @@ export function Row({
   teacher,
   isActive,
   getRoom,
+  updateRoom,
   deleteRoom,
   handleRefresher,
 }: IRow) {
