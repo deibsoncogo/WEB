@@ -165,6 +165,12 @@ export function FormCreateUser({ userRegister }: Props) {
         </div>
       </div>
 
+      <div className='w-100'>
+        <button type='button' className='btn btn-outline-primary border border-primary w-180px mb-5'>
+          Adicionar produto grátis
+        </button>
+      </div>
+
       <div className='mb-10 d-flex justify-content-between '>
         <button
           type='button'
