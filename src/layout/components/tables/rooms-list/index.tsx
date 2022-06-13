@@ -137,7 +137,6 @@ export function RoomsTable({deleteRoom}: Props) {
                 <th className={`text-dark min-w-150px cursor-pointer ${column === 'teacher' ? order : null}`} onClick={() => handleOrdering('teacher')}>Professor</th>
                 <th className='text-dark min-w-100px'>Chat</th>
                 <th className={`text-dark min-w-100px cursor-pointer ${column === 'isActive' ? order : null}`} onClick={() => handleOrdering('isActive')}>Ativo</th>
-                <th className='text-dark min-w-50px'>Ação</th>
               </tr>
             </thead>
 

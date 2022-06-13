@@ -5,6 +5,7 @@ import { KTSVG } from '../../../../helpers'
 import { IDeleteRoom } from '../../../../domain/usecases/interfaces/room/deleteRoom'
 import ConfirmationModal from '../../modal/ConfirmationModal'
 import { Switch } from '../../inputs/switch'
+import { Tooltip} from "@nextui-org/react";
 
 interface IRow {
   id: string
@@ -61,25 +62,37 @@ export function Row({ id, name, description, price, teacher, isActive, deleteRoo
         <span className='text-dark fw-bold d-block fs-7'>{teacher}</span>
       </td>
       <td>
-        <Link href={`/rooms/chat/${id}`}>
-          <button className='btn btn-icon btn-active-color-primary btn-sm me-1'>
-            <KTSVG path='/icons/com003.svg' className='svg-icon-3' />
-          </button>
-        </Link>
+        <Tooltip content={'Chat'} rounded color='primary'>
+          <Link href={`/rooms/chat/${id}`}>
+            <button className='btn btn-icon btn-active-color-primary btn-sm me-1'>
+              <KTSVG path='/icons/com003.svg' className='svg-icon-3' />
+            </button>
+          </Link>
+        </Tooltip>
       </td>
       <td>
         <Switch active={isActive} setModalUpdate={setIsModalUpdateOpen} />
       </td>
 
       <td>
-        <Link href={`/rooms/edit/${id}`}>
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-            <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+        <Tooltip content={'Editar'} rounded color='primary'>
+          <Link href={`/room/edit/${id}`}>
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+              <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+            </button>
+          </Link>
+        </Tooltip>
+
+        <Tooltip content={'Deletar'} rounded color='primary'>
+          <button
+            onClick={() => {
+              setIsModalDeleteOpen(true)
+            }}
+            className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
+          >
+            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
           </button>
-        </Link>
-        <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
-          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-        </button>
+        </Tooltip>
       </td>
 
       <ConfirmationModal
