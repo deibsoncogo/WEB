@@ -14,6 +14,7 @@ import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser
 import { findCEP } from '../../../utils/findCEP'
 import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
 import { toast } from 'react-toastify'
+import { formatDateToUTC } from '../../../utils/formatDateToUTC'
 
 type IFormEditUser = {
   id: string
@@ -30,7 +31,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
 
-  async function handleFormSubmit(data: IFormCreateUser) {
+  async function handleFormSubmit(data: IFormCreateUser) {    
     if (!formRef.current) throw new Error()
 
     try {
@@ -66,7 +67,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     }
   }
 
-  function formatDataToSend(data: any) {
+  function formatDataToSend(data: any) {       
     const matchesCPF = data.cpf.match(/\d*/g)
     const cpf = matchesCPF?.join('')
 
@@ -74,7 +75,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     const phoneNumber = matchesPhone?.join('')
 
     const matchesCEP = data.zipCode.match(/\d*/g)
-    const zipCode = matchesCEP?.join('')
+    const zipCode = matchesCEP?.join('')  
 
     const userData = {
       id,
@@ -82,7 +83,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       email: data.email,
       cpf: cpf,
       photo: data.photo,
-      birthDate: (data.birthDate as Date).toISOString().split('T')[0],
+      birthDate: formatDateToUTC(data.birthDate).toISOString().split('T')[0],
       phoneNumber: phoneNumber,
       role: data.role,
       address: [
@@ -96,12 +97,12 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           complement: data.complement,
         },
       ],
-    }
+    }      
 
     return userData
   }
 
-  async function handleCreateUser(data: any) {
+  async function handleCreateUser(data: any) {    
     setHasError(false)
     try {
       await userRegister.updateUser(data)
