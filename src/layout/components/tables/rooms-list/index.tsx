@@ -132,7 +132,7 @@ export function RoomsTable({getRoom, updateRoom, deleteRoom}: Props) {
 
       <div className='card-body py-3'>
         <div className='table-responsive'>
-          <table className='table table-striped align-middle gs-0 gy-4'>
+          <table className='table align-middle gs-0 gy-4'>
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
                 <th className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${column === 'name' ? order : null}`} onClick={() => handleOrdering('name')}>Nome</th>
@@ -141,6 +141,7 @@ export function RoomsTable({getRoom, updateRoom, deleteRoom}: Props) {
                 <th className={`text-dark min-w-150px cursor-pointer ${column === 'teacher' ? order : null}`} onClick={() => handleOrdering('teacher')}>Professor</th>
                 <th className='text-dark min-w-100px'>Chat</th>
                 <th className={`text-dark min-w-100px cursor-pointer ${column === 'isActive' ? order : null}`} onClick={() => handleOrdering('isActive')}>Ativo</th>
+                <th className='text-dark min-w-50px text-end rounded-end' />
               </tr>
             </thead>
 
