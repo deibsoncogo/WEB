@@ -7,14 +7,22 @@ import { Pagination } from '../../pagination/Pagination'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { Room } from '../../../../interfaces/model/Room'
 import { debounce } from '../../../../helpers/debounce'
+import { IDeleteRoom } from '../../../../domain/usecases/interfaces/room/deleteRoom'
+import { currenceMask } from '../../../formatters/currenceFormatter'
 
 type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 
-export function RoomsTable() {
+type Props =  { 
+  deleteRoom: IDeleteRoom 
+}
+
+
+export function RoomsTable({deleteRoom}: Props) {
   const paginationHook = usePagination()
 
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
+  const [refresher, setRefresher] = useState(true)
 
   const [rooms, setRooms] = useState([
     {
@@ -38,6 +46,13 @@ export function RoomsTable() {
   const [column, setColumn] = useState('');
   const [order, setOrder] = useState<orderOptions>('')
   const [orderedRooms, setOrderedRooms] = useState<Room[]>(rooms)
+
+
+
+
+  function handleRefresher() {    
+    setRefresher(!refresher);
+  }
 
   const handleOrdering = (column: string) => {
     setColumn(column);
@@ -134,9 +149,11 @@ export function RoomsTable() {
                     id={item.id}
                     name={item.name}
                     description={item.description}
-                    price={item.price}
+                    price={currenceMask(item.price+'')}
                     teacher={item.teacher}
                     isActive={item.isActive}
+                    deleteRoom={deleteRoom}
+                    handleRefresher={handleRefresher}
                   />
                 ))}
             </tbody>

@@ -2,22 +2,44 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { KTSVG } from '../../../../helpers'
-import { ActionModal } from '../../modals/action'
-import { Room } from '../../../../interfaces/model/Room'
+import { IDeleteRoom } from '../../../../domain/usecases/interfaces/room/deleteRoom'
+import ConfirmationModal from '../../modal/ConfirmationModal'
+import { Switch } from '../../inputs/switch'
 
-export function Row({ id, name, description, price, teacher, isActive }: Room) {
-  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
-  const [isChecked, setIsChecked] = useState(isActive)
+interface IRow {
+  id: string
+  name: string
+  description: string
+  price: string | number
+  teacher: string
+  isActive: boolean
+  deleteRoom: IDeleteRoom
+  handleRefresher: () => void; 
+}
 
-  async function handleChangeStatus() {
-    try {      
-      setIsStatusModalOpen(false)
-      setIsChecked(!isChecked)
-      toast.success('Status alterado com sucesso!')      
-    } catch (err: any) {
-      toast.error(err.messages[0])
+export function Row({ id, name, description, price, teacher, isActive, deleteRoom, handleRefresher}: IRow) {
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
+  const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false)
+  const [loading, setLoading] = useState(false) 
+
+  async function handleDeleteRoom() {
+    try {
+      setLoading(true)
+      await deleteRoom.delete(id)
+      setIsModalDeleteOpen(false)
+      toast.success("Sala deletada com sucesso.")
+      handleRefresher()
+    } catch{
+           toast.error("Não foi possível deletar a sala.")
+    }
+    finally{
+      setLoading(false)
     }
   }
+
+  async function handleUpdateRoom() {
+    
+ } 
 
   return (
     <tr>
@@ -46,10 +68,7 @@ export function Row({ id, name, description, price, teacher, isActive }: Room) {
         </Link>
       </td>
       <td>
-        <div className='form-check form-switch form-check-custom form-check-solid'>
-          <input className='form-check-input' type='checkbox' value='' id='flexSwitchDefault' checked={isChecked}
-            onClick={() => {setIsStatusModalOpen(true)}}/>
-        </div>
+        <Switch active={isActive} setModalUpdate={setIsModalUpdateOpen} />
       </td>
 
       <td>
@@ -63,14 +82,26 @@ export function Row({ id, name, description, price, teacher, isActive }: Room) {
         </button>
       </td>
 
-      <ActionModal
-        isOpen={isStatusModalOpen}
-        modalTitle = "Status"
-        message = "Você tem certeza que deseja alterar o status dessa sala?"
-        action={handleChangeStatus}
+      <ConfirmationModal
+        isOpen={isModalDeleteOpen}
+        loading={loading}
         onRequestClose={() => {
-          setIsStatusModalOpen(false)
+          setIsModalDeleteOpen(false)
         }}
+        onConfimation={handleDeleteRoom}
+        content='Você tem ceterza que deseja excluir esta sala?'
+        title='Deletar'
+      />
+
+      <ConfirmationModal
+        isOpen={isModalUpdateOpen}
+        loading={loading}
+        onRequestClose={() => {
+          setIsModalUpdateOpen(false)
+        }}
+        onConfimation={handleUpdateRoom}
+        content='Você tem certeza que deseja alterar o status desta sala?'
+        title='Confirmação'
       />
     </tr>
   )
