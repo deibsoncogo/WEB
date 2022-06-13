@@ -39,7 +39,7 @@ export function Row(props: IRow) {
       toast.success("Curso deletado com sucesso.")
       props.handleRefresher()
     } catch{
-           toast.error("Não foi possível deletear o curso.")
+           toast.error("Não foi possível deletar o curso.")
     }
     finally{
       setLoading(false)
