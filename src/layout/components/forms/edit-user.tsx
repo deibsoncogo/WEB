@@ -6,7 +6,7 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { formatDate } from '../../../helpers'
+import { formatDateToUTC } from '../../../helpers'
 import { levelOptions, roleOptions } from '../../../utils/selectOptions'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { api } from '../../../application/services/api'
@@ -14,7 +14,6 @@ import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser
 import { findCEP } from '../../../utils/findCEP'
 import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
 import { toast } from 'react-toastify'
-import { formatDateToUTC } from '../../../utils/formatDateToUTC'
 
 type IFormEditUser = {
   id: string
@@ -139,7 +138,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
         state: res.address[0]?.state || '',
         number: res.address[0]?.number || '',
         complement: res.address[0]?.complement || '',
-      }        
+      }  
       setKeys(newData)
     })
     .catch((err) => toast.error(err.messages))

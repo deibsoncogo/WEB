@@ -2,12 +2,11 @@ import { useRef, useState, useEffect } from 'react'
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import { useField } from '@unform/core'
 
-import { rangeInt } from '../../../helpers'
+import { formatDateToUTC, rangeInt } from '../../../helpers'
 import { months } from '../../../utils/months'
 
 import 'react-datepicker/dist/react-datepicker.css'
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai'
-import { formatDateToUTC } from '../../../utils/formatDateToUTC'
 
 interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
   name: string
