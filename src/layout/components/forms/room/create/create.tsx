@@ -249,7 +249,7 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
         <div className='d-flex mt-10'>
 
         <CustomButton
-            customClasses={['btn-secondary', 'mb-5', 'px-20']}
+            customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
             loading={registerRoom}
@@ -261,7 +261,7 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
           <CustomButton
             type='submit'
             form='create-category-form'
-            customClasses={['btn-primary', 'w-25']}
+            customClasses={['w-180px', 'btn-primary']}
             title='Salvar'
             loading={registerRoom}
           />          
