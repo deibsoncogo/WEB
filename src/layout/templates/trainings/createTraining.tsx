@@ -135,6 +135,10 @@ function CreateTrainingPageTemplate({
     return options
   }
 
+  const handleCancel = () => {
+    router.push(appRoutes.TRAININGS)
+  }
+
   useEffect(() => {
     if (trainingCreatedSuccessful) {
       toast.success('Treinamemto Criado Com Sucesso')
@@ -156,6 +160,7 @@ function CreateTrainingPageTemplate({
         addStreamingDate={addStreamingDate}
         streamList={streamList}
         onSubmit={handleFormSubmit}
+        onCancel={handleCancel}
         searchTeachers={handleGetAsyncTeachersToSelectInput}
         searchCategories={handleGetAsyncCategoriesToSelectInput}
         isStreamingListValid={isStreamingListValid}

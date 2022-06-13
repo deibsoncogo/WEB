@@ -8,7 +8,7 @@ export class RemoteEditTraining implements IEditTraining {
   edit = async (data: FormData) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
-      method: 'post',
+      method: 'put',
       body: data,
       headers: {
         'Content-Type': 'multipart/form-data',

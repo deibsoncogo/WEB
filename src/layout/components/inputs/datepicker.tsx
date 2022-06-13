@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
-import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker'
+import ReactDatePicker, { ReactDatePickerProps, registerLocale } from 'react-datepicker'
+import br from 'date-fns/locale/pt-BR'
 import { useField } from '@unform/core'
 
 import { rangeInt } from '../../../helpers'
@@ -14,6 +15,7 @@ interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
   classes?: string
 }
 
+registerLocale('br', br)
 export function DatePicker({ name, label, classes, ...rest }: Props) {
   const datepickerRef = useRef(null)
   const { fieldName, registerField, defaultValue, error } = useField(name)
@@ -25,10 +27,10 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
       name: fieldName,
       ref: datepickerRef,
       getValue: (ref) => {
-        return ref
+        return ref.current.props.selected
       },
       setValue: (ref: any, value: string) => {
-        setDate(new Date(value))
+        setDate(value)
         ref.current.value = value
       },
       clearValue: (ref: any) => {
@@ -55,6 +57,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
           onChange={setDate}
           dateFormat='dd/MM/yyyy'
           name={name}
+          locale='br'
           {...rest}
           renderCustomHeader={({
             date,

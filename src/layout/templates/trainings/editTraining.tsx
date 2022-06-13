@@ -18,6 +18,7 @@ import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditTraining } from '../../components/forms/trainings/edit'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
 import { maskedToMoney, onlyNums } from '../../formatters/currenceFormatter'
+import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
 import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from './utils/getAsyncTeachersToSelectInput'
 import { getIsoDateToBRL } from './utils/getIsoDateToBRL'
@@ -44,15 +45,17 @@ function EditTrainingPageTemplate({
   const formRef = useRef<FormHandles>(null)
 
   const {
-    makeRequest: createTraining,
-    data: trainingCreatedSuccessful,
-    error: createTrainingError,
-    loading: loadingTrainingCreation,
+    makeRequest: editTraining,
+    data: trainingEditedSuccessful,
+    error: editTrainingError,
+    loading: loadingTrainingEdition,
   } = useRequest<FormData>(remoteEditTraining.edit)
 
-  const { makeRequest: getTraining, data: training } = useRequest<ITraining, IGetTrainingParams>(
-    remoteGetTraining.get
-  )
+  const {
+    makeRequest: getTraining,
+    data: training,
+    error: getTrainingError,
+  } = useRequest<ITraining, IGetTrainingParams>(remoteGetTraining.get)
 
   async function handleFormSubmit(data: ITraining) {
     const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
@@ -60,56 +63,17 @@ function EditTrainingPageTemplate({
     if (streamList.length === 0) {
       setIsStreamingListValid(false)
     }
+    console.log('Testando criação de treinamento', data)
 
-    if (error) {
-      formRef?.current?.setErrors(error)
+    if (success && streamList.length > 0) {
+      const dataFormatted = formatTrainingToSubmit(data, streamList)
+      dataFormatted.append('id', String(trainingId))
+      editTraining(dataFormatted)
       return
     }
 
-    if (success && streamList.length > 0) {
-      const formattedStreamings = streamList.map((stream) => ({
-        hour: stream.hour,
-        date: stream.dateISO,
-      }))
-      const formattedData = {
-        ...data,
-        price: Number(onlyNums(data.price)),
-        discount: Number(onlyNums(data.discount)),
-        streamings: formattedStreamings,
-        trainingEndDate: formatDate(new Date(data.trainingEndDate), 'YYYY-MM-DD'),
-        deactiveChatDate: formatDate(new Date(data.deactiveChatDate), 'YYYY-MM-DD'),
-      }
-      const {
-        categoryId,
-        description,
-        discount,
-        name,
-        price,
-        streamings,
-        teacherId,
-        photo,
-        trainingEndDate,
-        deactiveChatDate,
-      } = formattedData
-
-      const formData = new FormData()
-
-      if (photo) {
-        formData.append('image', photo)
-      }
-      formData.append('price', String(price))
-      formData.append('discount', String(discount))
-      formData.append('teacherId', String(teacherId))
-      formData.append('categoryId', String(categoryId))
-      formData.append('name', String(name))
-      formData.append('description', String(description))
-      formData.append('active', String(false))
-      formData.append('trainingEndDate', String(trainingEndDate))
-      formData.append('deactiveChatDate', String(deactiveChatDate))
-      const streamingsString = JSON.stringify(streamings)
-      formData.append('streamings', streamingsString)
-
-      createTraining(formData)
+    if (error) {
+      formRef?.current?.setErrors(error)
     }
   }
 
@@ -149,6 +113,10 @@ function EditTrainingPageTemplate({
     return options
   }
 
+  const handleCancel = () => {
+    router.push(appRoutes.TRAININGS)
+  }
+
   useEffect(() => {
     if (typeof trainingId === 'string') {
       getTraining({ id: trainingId })
@@ -156,13 +124,24 @@ function EditTrainingPageTemplate({
   }, [])
 
   useEffect(() => {
-    if (trainingCreatedSuccessful) {
-      toast.success('Treinamemto Criado Com Sucesso')
+    if (trainingEditedSuccessful) {
+      toast.success('Treinamemto Editado Com Sucesso')
       router.push(appRoutes.TRAININGS)
     }
 
     if (training) {
-      const { streamings, name, description, teacher, price, discount, trainingEndDate } = training
+      const {
+        streamings,
+        name,
+        description,
+        teacher,
+        price,
+        discount,
+        trainingEndDate,
+        deactiveChatDate,
+        category,
+        imageUrl,
+      } = training
 
       const formattedStreamings = streamings.map((streaming) => ({
         ...streaming,
@@ -174,20 +153,26 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('description', description)
       formRef.current?.setFieldValue('teacherId', teacher.id)
       formRef.current?.setFieldValue('teacherId-label', teacher.name)
+      formRef.current?.setFieldValue('categoryId', category.id)
+      formRef.current?.setFieldValue('categoryId-label', category.name)
       formRef.current?.setFieldValue('price', maskedToMoney(price))
       formRef.current?.setFieldValue('discount', maskedToMoney(discount))
       formRef.current?.setFieldValue('trainingEndDate', trainingEndDate)
-
+      formRef.current?.setFieldValue('deactiveChatDate', deactiveChatDate)
+      formRef.current?.setFieldValue('photo', imageUrl)
       setStreamList(formattedStreamings)
-      console.log(training)
     }
-  }, [trainingCreatedSuccessful, training])
+  }, [trainingEditedSuccessful, training])
 
   useEffect(() => {
-    if (createTrainingError) {
-      toast.error(createTrainingError)
+    if (getTrainingError) {
+      toast.error(getTrainingError)
     }
-  }, [createTrainingError])
+
+    if (editTrainingError) {
+      toast.error(editTrainingError)
+    }
+  }, [editTrainingError, getTrainingError])
 
   return (
     <>
@@ -197,10 +182,11 @@ function EditTrainingPageTemplate({
         addStreamingDate={addStreamingDate}
         streamList={streamList}
         onSubmit={handleFormSubmit}
+        onCancel={handleCancel}
         searchTeachers={handleGetAsyncTeachersToSelectInput}
         searchCategories={handleGetAsyncCategoriesToSelectInput}
         isStreamingListValid={isStreamingListValid}
-        loadingSubmit={loadingTrainingCreation}
+        loadingSubmit={loadingTrainingEdition}
       />
     </>
   )

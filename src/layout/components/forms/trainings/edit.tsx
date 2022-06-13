@@ -14,6 +14,7 @@ import { StreamingTable } from '../../tables/streaming-list'
 type FormEditTrainingProps = {
   addStreamingDate: () => void
   onSubmit: (data: any) => void
+  onCancel: () => void
   streamList: IStreaming[]
   removeStreamItem: (index: number) => void
   searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
@@ -26,6 +27,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
   const {
     addStreamingDate,
     onSubmit,
+    onCancel,
     removeStreamItem,
     searchTeachers,
     streamList,
@@ -144,6 +146,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
           title='Cancelar'
           type='button'
           customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          onClick={onCancel}
         />
 
         <CustomButton

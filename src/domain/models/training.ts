@@ -6,6 +6,10 @@ export interface ITraining {
   photo?: Blob
   imageUrl: string
   categoryId: string
+  category: {
+    id: string
+    name: string
+  }
   teacherId: string
   teacher: {
     id: string
@@ -15,7 +19,7 @@ export interface ITraining {
   price: number
   discount: number
   description: string
-  trainingEndDate: Date
-  deactiveChatDate: Date
+  trainingEndDate: string
+  deactiveChatDate: string
   streamings: IStreaming[]
 }

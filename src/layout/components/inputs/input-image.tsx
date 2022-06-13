@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 import { ChangeEvent, useRef, useEffect, useCallback, useState, InputHTMLAttributes } from 'react'
 import { useField } from '@unform/core'
 
 interface IInputImage extends InputHTMLAttributes<HTMLInputElement> {
   name: string
-  handleSingleImageUpload?: (file: File) => void;
+  handleSingleImageUpload?: (file: File) => void
 }
 
 export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputImage) {
@@ -17,13 +18,11 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
     if (!file) {
       setPreview(null)
       return
-    }   
+    }
     const previewURL = URL.createObjectURL(file)
     setPreview(previewURL)
-    
-    if(handleSingleImageUpload)
-       handleSingleImageUpload(file)  
-    
+
+    if (handleSingleImageUpload) handleSingleImageUpload(file)
   }, [])
 
   useEffect(() => {
@@ -43,23 +42,22 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
 
   return (
     <div className='fv-row mb-7'>
-
-    { preview &&
-      <div className='rounded bg-gray-300 min-w-250px min-h-200px mw-250px mh-200px border border-gray-400'>
-        <div>
-          {preview && (
-            <img
-              src={preview}
-              alt='Preview'
-              className='rounded min-w-250px min-h-200px mw-250px mh-200px'
-              style={{
-                objectFit: 'contain',
-              }}
-            />
-          )}
+      {preview && (
+        <div className='rounded bg-gray-300 min-w-250px min-h-200px mw-250px mh-200px border border-gray-400'>
+          <div>
+            {preview && (
+              <img
+                src={preview}
+                alt='Preview'
+                className='rounded min-w-250px min-h-200px mw-250px mh-200px'
+                style={{
+                  objectFit: 'contain',
+                }}
+              />
+            )}
+          </div>
         </div>
-      </div>
-    }
+      )}
 
       {error && <span className='text-danger'>{error}</span>}
 
@@ -75,16 +73,16 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
         />
         Selecionar imagem
       </label>
-      {preview &&
-      <button
-        onClick={() => {
-          setPreview(null)
-        }}
-        className='btn btn-primary ms-5 mt-5'
-      >
-        Remover imagem
-      </button>
-     }
+      {preview && (
+        <button
+          onClick={() => {
+            setPreview(null)
+          }}
+          className='btn btn-primary ms-5 mt-5'
+        >
+          Remover imagem
+        </button>
+      )}
     </div>
   )
 }

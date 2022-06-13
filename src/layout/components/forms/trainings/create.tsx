@@ -20,6 +20,7 @@ type FormCreateTrainingProps = {
   searchCategories: (categoryName: string) => Promise<ISelectOption[]>
   isStreamingListValid: boolean
   loadingSubmit: boolean
+  onCancel: () => void
 }
 
 const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((props, ref) => {
@@ -32,6 +33,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
     searchCategories,
     isStreamingListValid,
     loadingSubmit,
+    onCancel,
   } = props
 
   return (
@@ -100,6 +102,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               name='streamingDate'
               label='Dia da transmissão'
               placeholderText='00/00/000'
+              autoComplete='off'
             />
           </div>
           <div className='col-3'>
@@ -111,7 +114,8 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               showTimeSelectOnly
               timeIntervals={15}
               timeCaption='Horas'
-              dateFormat='hh:mm'
+              dateFormat='HH:mm'
+              autoComplete='off'
             />
           </div>
 
@@ -144,6 +148,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
           title='Cancelar'
           type='button'
           customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          onClick={onCancel}
         />
 
         <CustomButton
