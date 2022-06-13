@@ -1,8 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-
+import { MakeEditTraining } from '../../../application/factories/pages/trainings/edit-training-factory'
 import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
-import { FormEditTrainings } from '../../../layout/components/forms/trainings/edit'
 import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
 
 const EditTrainings: NextPage = () => {
@@ -34,7 +33,7 @@ const EditTrainings: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <FormEditTrainings data={fakeData} />
+              <MakeEditTraining />
             </div>
           </div>
         </div>

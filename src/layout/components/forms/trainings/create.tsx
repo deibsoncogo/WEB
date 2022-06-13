@@ -1,6 +1,7 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import React, { forwardRef } from 'react'
+import { IStreaming } from '../../../../domain/models/streaming'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { KTSVG } from '../../../../helpers'
 import CustomButton from '../../buttons/CustomButton'
@@ -8,13 +9,12 @@ import { DatePicker, Input, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
 import { InputImage } from '../../inputs/input-image'
 import { SelectAsync } from '../../inputs/selectAsync'
-import { LivesTable } from '../../tables/lives-list'
-import { IStreamList } from './type'
+import { StreamingTable } from '../../tables/streaming-list'
 
 type FormCreateTrainingProps = {
   addStreamingDate: () => void
   onSubmit: (data: any) => void
-  streamList: IStreamList[]
+  streamList: IStreaming[]
   removeStreamItem: (index: number) => void
   searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
   searchCategories: (categoryName: string) => Promise<ISelectOption[]>
@@ -136,7 +136,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
       </div>
 
       {streamList.length !== 0 && (
-        <LivesTable streamList={streamList} removeStreamItem={removeStreamItem} />
+        <StreamingTable streamList={streamList} removeStreamItem={removeStreamItem} />
       )}
 
       <div className='d-flex mt-10'>

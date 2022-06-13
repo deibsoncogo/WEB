@@ -23,17 +23,18 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
   useEffect(() => {
     registerField({
       name: fieldName,
-      ref: datepickerRef.current,
-      path: 'props.selected',
-      setValue: (ref: any) => {
-        setDate(defaultValue)
-        ref.current.value = defaultValue
+      ref: datepickerRef,
+      getValue: (ref) => {
+        return ref
+      },
+      setValue: (ref: any, value: string) => {
+        setDate(new Date(value))
+        ref.current.value = value
       },
       clearValue: (ref: any) => {
         ref.clear()
       },
     })
-    setDate(defaultValue)
   }, [fieldName, registerField])
 
   const years = rangeInt(1900, new Date().getFullYear() + 1)
@@ -45,56 +46,60 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
           {label}
         </label>
       )}
-      <ReactDatePicker
-        ref={datepickerRef}
-        className='form-control bg-secondar'
-        selected={date}
-        onChange={setDate}
-        dateFormat='dd/MM/yyyy'
-        {...rest}
-        renderCustomHeader={({
-          date,
-          changeYear,
-          changeMonth,
-          decreaseMonth,
-          increaseMonth,
-          prevMonthButtonDisabled,
-          nextMonthButtonDisabled,
-        }) => (
-          <div className='m-5 d-flex justify-content-center'>
-            <button type='button' onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
-              <AiOutlineLeft />
-            </button>
 
-            <select
-              value={date.getFullYear()}
-              onChange={({ target: { value } }) => changeYear(value)}
-            >
-              {years.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+      <div>
+        <ReactDatePicker
+          ref={datepickerRef}
+          className='form-control bg-secondar'
+          selected={date}
+          onChange={setDate}
+          dateFormat='dd/MM/yyyy'
+          name={name}
+          {...rest}
+          renderCustomHeader={({
+            date,
+            changeYear,
+            changeMonth,
+            decreaseMonth,
+            increaseMonth,
+            prevMonthButtonDisabled,
+            nextMonthButtonDisabled,
+          }) => (
+            <div className='m-5 d-flex justify-content-center'>
+              <button type='button' onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
+                <AiOutlineLeft />
+              </button>
 
-            <select
-              value={months[date.getMonth()]}
-              onChange={({ target: { value } }) => changeMonth(months.indexOf(value))}
-            >
-              {months.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+              <select
+                value={date.getFullYear()}
+                onChange={({ target: { value } }) => changeYear(Number(value))}
+              >
+                {years.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
 
-            <button type='button' onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
-              <AiOutlineRight />
-            </button>
-          </div>
-        )}
-        {...rest}
-      />
+              <select
+                value={months[date.getMonth()]}
+                onChange={({ target: { value } }) => changeMonth(months.indexOf(value))}
+              >
+                {months.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+
+              <button type='button' onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
+                <AiOutlineRight />
+              </button>
+            </div>
+          )}
+          {...rest}
+        />
+      </div>
       {error && <span className='text-danger'>{error}</span>}
     </div>
   )

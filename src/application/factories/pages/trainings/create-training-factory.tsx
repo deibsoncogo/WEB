@@ -6,7 +6,7 @@ import { makeRemoteCreateTreaning } from '../../usecases/trainings/remote-create
 export const MakeCreateTrainingPage = () => {
   return (
     <CreateTrainingPageTemplate
-      makeGetTeachers={makeRemoteGetAllUsers()}
+      remoteGetTeachers={makeRemoteGetAllUsers()}
       remoteGetCategories={makeRemoteGetCategories()}
       remoteCreateTraining={makeRemoteCreateTreaning()}
     />

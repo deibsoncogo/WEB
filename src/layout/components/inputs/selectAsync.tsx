@@ -23,10 +23,13 @@ type OptionsState = {
 
 const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncProps) => {
   const selectRef = useRef(null)
+  const labelRef = useRef<HTMLInputElement>(null)
   const [options, setOptions] = useState<ISelectOption[]>([])
   const [loading, setLoading] = useState(false)
 
+  const labelField = `${name}-label`
   const { fieldName, registerField, error, clearError } = useField(name)
+  const { fieldName: labelName, registerField: registerLabel } = useField(labelField)
 
   const [optionsState, setOptionsState] = useState<OptionsState>({ inputValue: '', isOpen: false })
   const { inputValue, isOpen, selectedOption } = optionsState
@@ -34,12 +37,15 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
   const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setOptionsState((oldState) => ({
       ...oldState,
-      inputValue: event.target.value,
+      inputValue: labelRef?.current?.value || '',
       selectedOption: null,
     }))
   }
 
   const handleSelecOptions = (option: ISelectOption) => {
+    if (labelRef.current) {
+      labelRef.current.value = option.label
+    }
     setOptionsState({
       isOpen: false,
       inputValue: option.label,
@@ -83,6 +89,22 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
     })
   }, [fieldName, registerField])
 
+  useEffect(() => {
+    registerLabel({
+      ref: labelRef,
+      name: labelName,
+      getValue: (ref) => {
+        return ref.current?.value
+      },
+      setValue: (ref, newValue) => {
+        ref.current.value = newValue
+      },
+      clearValue: (ref) => {
+        ref.current.value = ''
+      },
+    })
+  }, [labelName, registerLabel])
+
   return (
     <>
       {isOpen && <div className='custom-select-async-drop' onClick={closeOptions} />}
@@ -103,13 +125,14 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
         <div className='form-control bg-secondary d-flex align-items-center form-control-lg p-0 border-0'>
           <input
             type='text'
+            name={labelField}
             style={{ zIndex: 2 }}
             className='form-select form-select-lg form-select-solid'
             placeholder={placeholder}
             onChange={handleOnChange}
-            value={optionsState.inputValue}
             onFocus={getOptions}
             onChangeCapture={clearError}
+            ref={labelRef}
           />
 
           {loading && (

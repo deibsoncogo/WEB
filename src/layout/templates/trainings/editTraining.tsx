@@ -4,31 +4,41 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
+import { IStreaming } from '../../../domain/models/streaming'
 import { ITraining } from '../../../domain/models/training'
 import { IGetCategories } from '../../../domain/usecases/interfaces/category/getCategories'
-import { ICreateTraining } from '../../../domain/usecases/interfaces/trainings/createTraining'
+import { IEditTraining } from '../../../domain/usecases/interfaces/trainings/editTraining'
+import {
+  IGetTraining,
+  IGetTrainingParams,
+} from '../../../domain/usecases/interfaces/trainings/getTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
 import { formatDate, formatTime } from '../../../helpers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
-import { FormCreateTraining } from '../../components/forms/trainings/create'
-import { IStreamList, trainingFormSchema } from '../../components/forms/trainings/type'
-import { onlyNums } from '../../formatters/currenceFormatter'
+import { FormEditTraining } from '../../components/forms/trainings/edit'
+import { trainingFormSchema } from '../../components/forms/trainings/type'
+import { maskedToMoney, onlyNums } from '../../formatters/currenceFormatter'
 import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from './utils/getAsyncTeachersToSelectInput'
+import { getIsoDateToBRL } from './utils/getIsoDateToBRL'
 
-type CreateTrainingPageProps = {
+type EditTrainingPageProps = {
   remoteGetTeachers: IGetAllUsers
   remoteGetCategories: IGetCategories
-  remoteCreateTraining: ICreateTraining
+  remoteEditTraining: IEditTraining
+  remoteGetTraining: IGetTraining
 }
 
-function CreateTrainingPageTemplate({
+function EditTrainingPageTemplate({
   remoteGetTeachers,
   remoteGetCategories,
-  remoteCreateTraining,
-}: CreateTrainingPageProps) {
+  remoteEditTraining,
+  remoteGetTraining,
+}: EditTrainingPageProps) {
   const router = useRouter()
-  const [streamList, setStreamList] = useState<IStreamList[]>([])
+  const { id: trainingId } = router.query
+
+  const [streamList, setStreamList] = useState<IStreaming[]>([])
   const [isStreamingListValid, setIsStreamingListValid] = useState(true)
 
   const formRef = useRef<FormHandles>(null)
@@ -38,7 +48,11 @@ function CreateTrainingPageTemplate({
     data: trainingCreatedSuccessful,
     error: createTrainingError,
     loading: loadingTrainingCreation,
-  } = useRequest<FormData>(remoteCreateTraining.create)
+  } = useRequest<FormData>(remoteEditTraining.edit)
+
+  const { makeRequest: getTraining, data: training } = useRequest<ITraining, IGetTrainingParams>(
+    remoteGetTraining.get
+  )
 
   async function handleFormSubmit(data: ITraining) {
     const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
@@ -136,11 +150,38 @@ function CreateTrainingPageTemplate({
   }
 
   useEffect(() => {
+    if (typeof trainingId === 'string') {
+      getTraining({ id: trainingId })
+    }
+  }, [])
+
+  useEffect(() => {
     if (trainingCreatedSuccessful) {
       toast.success('Treinamemto Criado Com Sucesso')
       router.push(appRoutes.TRAININGS)
     }
-  }, [trainingCreatedSuccessful])
+
+    if (training) {
+      const { streamings, name, description, teacher, price, discount, trainingEndDate } = training
+
+      const formattedStreamings = streamings.map((streaming) => ({
+        ...streaming,
+        dateISO: streaming.date,
+        date: getIsoDateToBRL(streaming.date),
+      }))
+
+      formRef.current?.setFieldValue('name', name)
+      formRef.current?.setFieldValue('description', description)
+      formRef.current?.setFieldValue('teacherId', teacher.id)
+      formRef.current?.setFieldValue('teacherId-label', teacher.name)
+      formRef.current?.setFieldValue('price', maskedToMoney(price))
+      formRef.current?.setFieldValue('discount', maskedToMoney(discount))
+      formRef.current?.setFieldValue('trainingEndDate', trainingEndDate)
+
+      setStreamList(formattedStreamings)
+      console.log(training)
+    }
+  }, [trainingCreatedSuccessful, training])
 
   useEffect(() => {
     if (createTrainingError) {
@@ -150,7 +191,7 @@ function CreateTrainingPageTemplate({
 
   return (
     <>
-      <FormCreateTraining
+      <FormEditTraining
         ref={formRef}
         removeStreamItem={removeStreamItem}
         addStreamingDate={addStreamingDate}
@@ -165,4 +206,4 @@ function CreateTrainingPageTemplate({
   )
 }
 
-export { CreateTrainingPageTemplate }
+export { EditTrainingPageTemplate }
