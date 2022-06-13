@@ -107,6 +107,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     try {
       await userRegister.updateUser(data)
       router.push('/users')
+      toast.success("Usuário editado com sucesso!")
     } catch (err: any) {
       toast.error(Array.isArray(err.messages) ? err.messages[0] : err.messages)
     }
