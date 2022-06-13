@@ -6,6 +6,7 @@ import { IDeleteRoom } from '../../../../domain/usecases/interfaces/room/deleteR
 import ConfirmationModal from '../../modal/ConfirmationModal'
 import { Switch } from '../../inputs/switch'
 import { Tooltip} from "@nextui-org/react";
+import { IGetRoom } from '../../../../domain/usecases/interfaces/room/getCourse'
 
 interface IRow {
   id: string
@@ -14,33 +15,53 @@ interface IRow {
   price: string | number
   teacher: string
   isActive: boolean
+  getRoom: IGetRoom
   deleteRoom: IDeleteRoom
   handleRefresher: () => void; 
 }
 
-export function Row({ id, name, description, price, teacher, isActive, deleteRoom, handleRefresher}: IRow) {
+export function Row({
+  id,
+  name,
+  description,
+  price,
+  teacher,
+  isActive,
+  getRoom,
+  deleteRoom,
+  handleRefresher,
+}: IRow) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
   const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false)
-  const [loading, setLoading] = useState(false) 
+  const [loading, setLoading] = useState(false)
 
   async function handleDeleteRoom() {
     try {
       setLoading(true)
       await deleteRoom.delete(id)
       setIsModalDeleteOpen(false)
-      toast.success("Sala deletada com sucesso.")
+      toast.success('Sala deletada com sucesso.')
       handleRefresher()
-    } catch{
-           toast.error("Não foi possível deletar a sala.")
-    }
-    finally{
+    } catch {
+      toast.error('Não foi possível deletar a sala.')
+    } finally {
       setLoading(false)
     }
   }
 
   async function handleUpdateRoom() {
-    
- } 
+
+    try {
+      const course = await getRoom.get(id)     
+           
+      toast.success('Sala atualizada com sucesso.')
+    } catch (err) {
+      toast.error('Não foi possível atualizar a sala.')
+    }
+    finally{
+      setLoading(false)
+    }
+  }
 
   return (
     <tr>

@@ -9,15 +9,17 @@ import { Room } from '../../../../interfaces/model/Room'
 import { debounce } from '../../../../helpers/debounce'
 import { IDeleteRoom } from '../../../../domain/usecases/interfaces/room/deleteRoom'
 import { currenceMask } from '../../../formatters/currenceFormatter'
+import { IGetRoom } from '../../../../domain/usecases/interfaces/room/getCourse'
 
 type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 
 type Props =  { 
+  getRoom: IGetRoom
   deleteRoom: IDeleteRoom 
 }
 
 
-export function RoomsTable({deleteRoom}: Props) {
+export function RoomsTable({getRoom, deleteRoom}: Props) {
   const paginationHook = usePagination()
 
   const [error, setError] = useState<any>()
@@ -151,6 +153,7 @@ export function RoomsTable({deleteRoom}: Props) {
                     price={currenceMask(item.price+'')}
                     teacher={item.teacher}
                     isActive={item.isActive}
+                    getRoom={getRoom}
                     deleteRoom={deleteRoom}
                     handleRefresher={handleRefresher}
                   />
