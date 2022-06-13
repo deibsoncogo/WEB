@@ -23,23 +23,22 @@ import { Role } from '../../../../../domain/usecases/interfaces/user/role'
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
 import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
+import { CreateRoom } from '../../../../../domain/models/createRoom'
+import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
+import CustomButton from '../../../buttons/CustomButton'
 
 type Props = {
-  createCourse?: ICreateCourse
+  createRoom: ICreateRoom
   getCategories: IGetCategories
   getUsers: IGetAllUsers
 }
 
-export function FormCreateRoom({getCategories, getUsers}: Props) {
+export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
-  const [categories, setCategories] = useState<ICategory[]>([])
-  const [users, setUsers] = useState<IUserPartialResponse[]>([])
   const [loading, setLoading] = useState(true)
-  const [registerCourse, setRegisterCourse] = useState(false)
-  const [stateEditor, setStateEditor] = useState({ content: '' })
+  const [registerRoom, setRegisterRoom] = useState(false)
   const [imageUpload, setImageUpload] = useState<File>()
-  const [filesUpload, setFilesUpload] = useState<FileUpload[]>([])
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
  
@@ -87,7 +86,7 @@ export function FormCreateRoom({getCategories, getUsers}: Props) {
 
    
       await schema.validate(data, { abortEarly: false })
-      courseClass.length == 0? setHasErrorClass(true): handleCreateCourse(data)      
+      courseClass.length == 0? setHasErrorClass(true): handleCreateRoom(data)      
       
      
      
@@ -102,47 +101,37 @@ export function FormCreateRoom({getCategories, getUsers}: Props) {
       }
     }
   }
-  async function handleCreateCourse(data: IFormRoom) {
-  /*  const price = data.price.replace('.', '').replace(',', '.')
+  async function handleCreateRoom(data: IFormRoom) {
+   const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
-    const course = new CreateCourse(
+    const room = new CreateRoom(
       data.name,
       data.description,
-      data.content,
-      data.categoryId,
       discount,
       data.installments,
       false,
       price,
-      data.accessTime,
       data.userId,
-      courseClass
+      data.categoryId,
     )
 
     const formData = new FormData();
-    if(imageUpload && filesUpload){
+    if(imageUpload){
       formData.append('image', imageUpload); 
-      filesUpload.map(file => {
-        if(file?.file)
-           formData.append('attachments', file.file)
-        formData.append('filesName',  file.name)
-      })
     }       
-    formData.append('course', JSON.stringify(course))    
+    formData.append('room', JSON.stringify(room))
 
-    setRegisterCourse(true)
-    props.createCourse
+    setRegisterRoom(true)
+    createRoom
       .create(formData)
       .then(() => {
-        toast.success('Curso criado com sucesso!')       
-        router.push('/courses')
+        toast.success('Sala criada com sucesso!')       
+        router.push(appRoutes.ROOMS)
       })
-      .catch((error: any) => toast.error('Não foi possível criar o curso!'))
-      .finally(() => setRegisterCourse(false)) 
-     */   
+      .catch(() => toast.error('Não foi possível criar sala!'))
+      .finally(() => setRegisterRoom(false))      
       
   }
-
 
   const searchTeachers = async (teacherName: string) => {
     try {
@@ -166,7 +155,6 @@ export function FormCreateRoom({getCategories, getUsers}: Props) {
     }
         
   }
-
 
   const searchCategories = async (categoryName: string) => {
     try {
@@ -192,7 +180,7 @@ export function FormCreateRoom({getCategories, getUsers}: Props) {
 
   return (
     <>
-      {registerCourse && <Loading />}
+      {registerRoom && <Loading />}
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações da Sala</h3>
         <InputImage name='photo' handleSingleImageUpload={handleSingleImageUpload} />
@@ -259,19 +247,24 @@ export function FormCreateRoom({getCategories, getUsers}: Props) {
         </div>     
 
         <div className='d-flex mt-10'>
-          <button
+
+        <CustomButton
+            customClasses={['btn-secondary', 'mb-5', 'px-20']}
+            title='Cancelar'
             type='button'
+            loading={registerRoom}
             onClick={() => {
               router.push(appRoutes.ROOMS)
             }}
-            className='btn btn-lg btn-secondary w-150px mb-5 ms-auto me-10'
-          >
-            Cancelar
-          </button>
-
-          <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
-            Salvar
-          </button>
+          />
+          
+          <CustomButton
+            type='submit'
+            form='create-category-form'
+            customClasses={['btn-primary', 'w-25']}
+            title='Salvar'
+            loading={registerRoom}
+          />          
         </div>
       </Form>
     </>
