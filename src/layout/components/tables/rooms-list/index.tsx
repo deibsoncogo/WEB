@@ -17,21 +17,18 @@ import { IRoomPartialResponse } from '../../../../interfaces/api-response/roomPa
 import { Loading } from '../../loading/loading'
 import { ItemNotFound } from '../../search/ItemNotFound'
 
-type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 
 type Props =  { 
   getAllRooms: IGetAllRooms 
-  getRoom: IGetRoom
   updateRoom: IUpdateRoom
   deleteRoom: IDeleteRoom 
 }
 
 
-export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props) {
+export function RoomsTable({getAllRooms, updateRoom, deleteRoom}: Props) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
-
  
   const [loading, setLoading] = useState(true)
   const [refresher, setRefresher] = useState(true)
@@ -39,10 +36,6 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
   const [rooms, setRooms] = useState<IRoomPartialResponse[]>([])
   const [roomName, setRoomName] = useState('')
   
-
-  const [column, setColumn] = useState('');
-  const [order, setOrder] = useState<orderOptions>('')
-
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
     return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
@@ -60,7 +53,7 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
       name: roomName,
     } 
        getAllRooms.getAll(paginationParams)
-      .then((data) => {           
+      .then((data) => {               
        setRooms(data.data)
        setTotalPage(data.total)
       })
@@ -133,8 +126,7 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
                     description={item.description}
                     price={currenceMask(item.price+'')}
                     teacher={item.teacherName}
-                    isActive={item.isActive}
-                    getRoom={getRoom}
+                    isActive={item.isActive}                   
                     updateRoom={updateRoom}
                     deleteRoom={deleteRoom}
                     handleRefresher={handleRefresher}

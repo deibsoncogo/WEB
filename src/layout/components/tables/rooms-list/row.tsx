@@ -5,9 +5,10 @@ import { KTSVG } from '../../../../helpers'
 import { IDeleteRoom } from '../../../../domain/usecases/interfaces/room/deleteRoom'
 import ConfirmationModal from '../../modal/ConfirmationModal'
 import { Switch } from '../../inputs/switch'
-import { Tooltip} from "@nextui-org/react";
+import { Tooltip } from '@nextui-org/react'
 import { IGetRoom } from '../../../../domain/usecases/interfaces/room/getCourse'
 import { IUpdateRoom } from '../../../../domain/usecases/interfaces/room/updateRoom'
+import { UpdateRoom } from '../../../../domain/models/updateRoom'
 
 interface IRow {
   id: string
@@ -16,10 +17,9 @@ interface IRow {
   price: string | number
   teacher: string
   isActive: boolean
-  getRoom: IGetRoom
   updateRoom: IUpdateRoom
   deleteRoom: IDeleteRoom
-  handleRefresher: () => void; 
+  handleRefresher: () => void
 }
 
 export function Row({
@@ -29,7 +29,6 @@ export function Row({
   price,
   teacher,
   isActive,
-  getRoom,
   updateRoom,
   deleteRoom,
   handleRefresher,
@@ -53,22 +52,20 @@ export function Row({
   }
 
   async function handleUpdateRoom() {
-
     try {
-
-      setLoading(true) 
+      setLoading(true)      
+      const form = new FormData()
+      form.append('room', JSON.stringify({id: id, isActive: !isActive}))
+      await updateRoom.update(form)
       setIsModalUpdateOpen(false)
-      const course = await getRoom.get(id)           
-      toast.success('Sala atualizada com sucesso.')      
+      toast.success('Sala atualizada com sucesso.')
       handleRefresher()
     } catch (err) {
       toast.error('Não foi possível atualizar a sala.')
-    }
-    finally{
+    } finally {
       setLoading(false)
     }
   }
-
   return (
     <tr>
       <td className='ps-4'>
