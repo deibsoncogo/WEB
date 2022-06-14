@@ -13,6 +13,7 @@ import { toast } from 'react-toastify'
 import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
 import { findCEP } from '../../../utils/findCEP'
 import { restrictNumberInput } from '../../../utils/restrictNumberInput'
+import { ProductsModal } from '../modals/products'
 
 type Props = {
   userRegister: IUserSignUp
@@ -21,6 +22,17 @@ type Props = {
 export function FormCreateUser({ userRegister }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
+
+  const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
+
+  async function handleOpenModal() {
+    try {      
+      setIsProductsModalOpen(false)
+      toast.success('Status alterado com sucesso!')      
+    } catch (err: any) {
+      toast.error(err.messages[0])
+    }
+  }
 
   const [cepObj, setCEPObj] = useState({})
   const [defaultValue, setDefaultValue] = useState({})
@@ -166,7 +178,7 @@ export function FormCreateUser({ userRegister }: Props) {
       </div>
 
       <div className='w-100'>
-        <button type='button' className='btn btn-outline-primary border border-primary w-180px mb-5'>
+        <button type='button' className='btn btn-outline-primary border border-primary w-180px mb-5' onClick={() => {setIsProductsModalOpen(true)}}>
           Adicionar produto grátis
         </button>
       </div>
@@ -186,6 +198,16 @@ export function FormCreateUser({ userRegister }: Props) {
           Salvar
         </button>
       </div>
+
+      <ProductsModal
+        isOpen={isProductsModalOpen}
+        modalTitle = "Adicionar produto grátis"
+        message = "Você tem certeza que deseja alterar o status dessa sala?"
+        action={handleOpenModal}
+        onRequestClose={() => {
+          setIsProductsModalOpen(false)
+        }}
+      />
     </Form>
   )
 }
