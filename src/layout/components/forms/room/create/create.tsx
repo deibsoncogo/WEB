@@ -33,7 +33,7 @@ type Props = {
   getUsers: IGetAllUsers
 }
 
-export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
+export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [loading, setLoading] = useState(true)
@@ -41,12 +41,10 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
   const [imageUpload, setImageUpload] = useState<File>()
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
- 
 
   const handleSingleImageUpload = (file: File) => {
     setImageUpload(file)
   }
-
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
@@ -65,31 +63,26 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
 
   async function handleFormSubmit(data: IFormRoom) {
     if (!formRef.current) throw new Error()
-   
+
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        photo: Yup.mixed().required('Imagem é necessária'),              
+        photo: Yup.mixed().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         price: Yup.string().required('Preço é necessário'),
-        installments: Yup.number().typeError('Quantidade de parcelas deve ser um número')
-        .required('Quantidade de parcelas é necessário')
-        .positive("Quantidade de parcelas deve ser positiva")
-        .integer("Quantidade de parcelas deve ser um número inteiro"),
+        installments: Yup.number()
+          .typeError('Quantidade de parcelas deve ser um número')
+          .required('Quantidade de parcelas é necessário')
+          .positive('Quantidade de parcelas deve ser positiva')
+          .integer('Quantidade de parcelas deve ser um número inteiro'),
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
-      
-       
       })
 
-   
       await schema.validate(data, { abortEarly: false })
-      courseClass.length == 0? setHasErrorClass(true): handleCreateRoom(data)      
-      
-     
-     
+      handleCreateRoom(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -102,7 +95,7 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
     }
   }
   async function handleCreateRoom(data: IFormRoom) {
-   const price = data.price.replace('.', '').replace(',', '.')
+    const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
     const room = new CreateRoom(
       data.name,
@@ -112,25 +105,24 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
       false,
       price,
       data.userId,
-      data.categoryId,
+      data.categoryId
     )
 
-    const formData = new FormData();
-    if(imageUpload){
-      formData.append('image', imageUpload); 
-    }       
+    const formData = new FormData()
+    if (imageUpload) {
+      formData.append('image', imageUpload)
+    }
     formData.append('room', JSON.stringify(room))
 
     setRegisterRoom(true)
     createRoom
       .create(formData)
       .then(() => {
-        toast.success('Sala criada com sucesso!')       
+        toast.success('Sala criada com sucesso!')
         router.push(appRoutes.ROOMS)
       })
       .catch(() => toast.error('Não foi possível criar sala!'))
-      .finally(() => setRegisterRoom(false))      
-      
+      .finally(() => setRegisterRoom(false))
   }
 
   const searchTeachers = async (teacherName: string) => {
@@ -153,7 +145,6 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
       toast.error('Falha em buscar os professores')
       return []
     }
-        
   }
 
   const searchCategories = async (categoryName: string) => {
@@ -175,12 +166,10 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
       toast.error('Falha em buscar as categorias')
       return []
     }
-
   }
 
   return (
     <>
-      {registerRoom && <Loading />}
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações da Sala</h3>
         <InputImage name='photo' handleSingleImageUpload={handleSingleImageUpload} />
@@ -189,7 +178,7 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
             <Input name='name' label='Nome' />
             <SelectAsync
               searchOptions={searchTeachers}
-              name='teacherId'
+              name='userId'
               label='Professor'
               classes='h-75px'
               placeholder='Digite o nome do professor'
@@ -208,7 +197,7 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
               placeholderText='R$ 0,00'
               onChange={() => currencyFormatter('discount')}
             />
-            <Input min ='1' name='installments' label='Quantidade de Parcelas' type='number' />
+            <Input min='1' name='installments' label='Quantidade de Parcelas' type='number' />
           </div>
           <div className='w-50'>
             <TextArea
@@ -228,27 +217,16 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
 
         <h3 className='fs-6 fw-bolder text-dark'>Itens</h3>
         <div className='form-check form-check-inline'>
-          <input
-            className='form-check-input'
-            type='radio'          
-            name='itemRoom'
-            value='option1'
-          />
+          <input className='form-check-input' type='radio' name='itemRoom' value='option1' />
           <label className='form-check-label text-muted fs-6'>Chat</label>
         </div>
         <div className='form-check form-check-inline'>
-          <input
-            className='form-check-input'
-            type='radio'
-            name='itemRoom'
-            value='option2'
-          />
+          <input className='form-check-input' type='radio' name='itemRoom' value='option2' />
           <label className='form-check-label text-muted fs-6'>Transmissão ao vivo</label>
-        </div>     
+        </div>
 
         <div className='d-flex mt-10'>
-
-        <CustomButton
+          <CustomButton
             customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
@@ -257,14 +235,12 @@ export function FormCreateRoom({createRoom, getCategories, getUsers}: Props) {
               router.push(appRoutes.ROOMS)
             }}
           />
-          
           <CustomButton
             type='submit'
-            form='create-category-form'
             customClasses={['w-180px', 'btn-primary']}
             title='Salvar'
             loading={registerRoom}
-          />          
+          />
         </div>
       </Form>
     </>
