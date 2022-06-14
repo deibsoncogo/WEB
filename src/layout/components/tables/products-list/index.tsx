@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { useState } from 'react'
 import { Row } from './row'
 import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
 
@@ -17,8 +16,9 @@ export function ProductsTable({ products }: Props) {
       <table className='table table-striped align-middle gs-0 gy-4'>
         <thead>
           <tr className='fw-bolder text-muted bg-light'>
-            <th className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer`}>Produto</th>
+            <th className={`text-dark ps-4 min-w-300px rounded-start cursor-pointer`}>Produto</th>
             <th className={`text-dark min-w-100px cursor-pointer`}>Data de Expiração</th>
+            <th className={`text-dark cursor-pointer`} />
           </tr>
         </thead>
 

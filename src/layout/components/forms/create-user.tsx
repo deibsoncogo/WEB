@@ -29,7 +29,7 @@ export function FormCreateUser({ userRegister }: Props) {
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
 
-  const [products, setProducts] = useState([
+  const [grantedProducts, setGrantedProducts] = useState([
     {
       id: '1',
       name: 'Boletim Diário',
@@ -194,9 +194,9 @@ export function FormCreateUser({ userRegister }: Props) {
         </div>
       </div>
 
-      <div className='w-100'>
+      <div className='w-50'>
         <h4 className='mb-5'>Acessos concedidos</h4>
-        <ProductsTable products={products} />
+        <ProductsTable products={grantedProducts} />
       </div>
 
       <div className='w-100'>
@@ -229,7 +229,7 @@ export function FormCreateUser({ userRegister }: Props) {
         onRequestClose={() => {
           setIsProductsModalOpen(false)
         }}
-        onAddProduct={setProducts}
+        onAddProduct={setGrantedProducts}
       />
     </Form>
   )
