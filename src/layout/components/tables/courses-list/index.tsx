@@ -16,6 +16,7 @@ import { FormHandles } from '@unform/core'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { Pagination } from '../../pagination/Pagination'
 import { Loading } from '../../loading/loading'
+import { ItemNotFound } from '../../search/ItemNotFound'
 
 type Props =  {
   getAllCourses: IGetAllCourses
@@ -38,7 +39,7 @@ export default function CoursesTable(props: Props) {
   const searchCourseFormRef = useRef<FormHandles>(null)
 
 
-  function handleRefresher() {    
+  function handleRefresher() {  
     setRefresher(!refresher);
   }
 
@@ -120,14 +121,7 @@ export default function CoursesTable(props: Props) {
           </div>
         )}
 
-        {courses.length == 0 && !loading && (
-          <div className='py-14 border mx-4 my-8 d-flex'>
-            <p className='text-center w-100 m-0 font-weight-bold'>
-              <span className='text-danger'>Ops! 😅</span>
-              Nenhum curso encontrado
-            </p>
-          </div>
-        )}
+        {courses.length == 0 && !loading && <ItemNotFound message = 'Nenhum curso encontrado'/>}
 
         {loading && <Loading/>}
 
