@@ -6,7 +6,6 @@ import { makeRemoteUpdateCourse } from "../../usecases/course/remote-updateCours
 
 export const MakeCourseTable = () => {
     return <CoursesTable getAllCourses={makeRemoteGetAllCourses()} deleteCourse = {makeRemoteDeleteCourse()}
-    updateCourse = {makeRemoteUpdateCourse()}
-    getCourse = {makeRemoteGetCourse()}/>
+    updateCourse = {makeRemoteUpdateCourse()}/>
   }
   

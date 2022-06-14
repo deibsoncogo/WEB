@@ -22,7 +22,6 @@ type Props =  {
   getAllCourses: IGetAllCourses
   deleteCourse: IDeleteCourse
   updateCourse: IUpdateCourse
-  getCourse: IGetCourse
 }
 
 export default function CoursesTable(props: Props) {
@@ -130,7 +129,6 @@ export default function CoursesTable(props: Props) {
                         active={item.isActive}
                         deleteCourse={props.deleteCourse}
                         updateCourse={props.updateCourse}
-                        getCourse={props.getCourse}
                         handleRefresher={handleRefresher}
                       />
                     ))}

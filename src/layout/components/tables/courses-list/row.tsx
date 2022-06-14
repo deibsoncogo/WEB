@@ -21,7 +21,6 @@ interface IRow {
   active: boolean
   deleteCourse: IDeleteCourse
   updateCourse: IUpdateCourse
-  getCourse: IGetCourse
   handleRefresher: () => void; 
 }
 
@@ -48,24 +47,9 @@ export function Row(props: IRow) {
 
   async function handleUpdateCourse() {
     try {
-      const course = await props.getCourse.get(props.id)
-
-      const courseUpdate = new UpdateCourse(
-        course.id,
-        course.name,
-        course.description,
-        course.content,
-        course.categoryId,
-        course.discount,
-        course.imageUrl,
-        course.installments,
-        !isActive,
-        course.price,
-        course.accessTime,
-        course.userId
-      )
+   
       const form = new FormData()
-      form.append('course', JSON.stringify(courseUpdate))
+      form.append('course', JSON.stringify({id: props.id, isActive: !isActive}))
       setLoading(true)
       await props.updateCourse.update(form)
       setIsModalUpdateOpen(false)
