@@ -24,6 +24,8 @@ import CoursesInternalTable from './courseInternalTable'
 import FilesInternalTable from './filesUpload/filesInternalTable'
 import { FileUpload } from '../../../../domain/models/fileUpload'
 import { Loading } from '@nextui-org/react'
+import CustomButton from '../../buttons/CustomButton'
+import { appRoutes } from '../../../../application/routing/routes'
 
 type Props = {
   createCourse: ICreateCourse
@@ -54,7 +56,7 @@ export function FormCreateCourse(props: Props) {
       .then((data) => {
         setCategories(data)
       })
-      .catch((error) => toast.error('Não foi possível carregar as categorias de cursos.'))
+      .catch(() => toast.error('Não foi possível carregar as categorias de cursos.'))
       .finally(() => setLoading(false))
   }, [])
 
@@ -65,7 +67,7 @@ export function FormCreateCourse(props: Props) {
       .then((data) => {
         setUsers(data)
       })
-      .catch((error) => toast.error('Não foi possível carregar os Professores.'))
+      .catch(() => toast.error('Não foi possível carregar os Professores.'))
       .finally(() => setLoading(false))
   }, [])
 
@@ -166,7 +168,7 @@ export function FormCreateCourse(props: Props) {
         toast.success('Curso criado com sucesso!')       
         router.push('/courses')
       })
-      .catch((error: any) => toast.error('Não foi possível criar o curso!'))
+      .catch(() => toast.error('Não foi possível criar o curso!'))
       .finally(() => setRegisterCourse(false)) 
         
       
@@ -174,7 +176,7 @@ export function FormCreateCourse(props: Props) {
 
   return (
     <>
-    {registerCourse && <Loading />}
+   
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do Curso</h3>
         <InputImage name='photo' handleSingleImageUpload = {handleSingleImageUpload} />
@@ -244,7 +246,7 @@ export function FormCreateCourse(props: Props) {
           onEditorChange={handleChange}
         />
 
-        <Input name='content' />
+        <Input name='content' hidden={true} />
 
                
         <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>        
@@ -267,20 +269,24 @@ export function FormCreateCourse(props: Props) {
         <CoursesInternalTable courseClassArray={courseClass} />
 
         <div className='d-flex mt-10'>
-          <button
+         
+          <CustomButton
+            customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+            title='Cancelar'
             type='button'
+            loading={registerCourse}
             onClick={() => {
-              router.push('/courses')
+              router.push(appRoutes.COURSES)
             }}
-            className='btn btn-lg btn-secondary w-150px mb-5 ms-auto me-10'
-          >
-            Cancelar
-          </button>
-
-          <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
-            Salvar
-          </button>
-        </div>
+          />
+          <CustomButton
+            type='submit'
+            customClasses={['w-180px', 'btn-primary']}
+            title='Salvar'
+            loading={registerCourse}
+          />
+          
+          </div>
       </Form>
     </>
   )
