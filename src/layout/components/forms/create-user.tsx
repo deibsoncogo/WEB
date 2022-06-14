@@ -14,6 +14,7 @@ import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp
 import { findCEP } from '../../../utils/findCEP'
 import { restrictNumberInput } from '../../../utils/restrictNumberInput'
 import { ProductsModal } from '../modals/products'
+import { ProductsTable } from '../tables/products-list'
 
 type Props = {
   userRegister: IUserSignUp
@@ -109,7 +110,10 @@ export function FormCreateUser({ userRegister }: Props) {
     userRegister
       .signUp(user)
       .then(() => router.push('/users'))
-      .catch((error: any) => toast.error(error.messages[0]))
+      .catch((error: any) => {
+        console.log(error.messages)
+        toast.error(error.messages[0])
+      })
   }
 
   return (
@@ -175,6 +179,11 @@ export function FormCreateUser({ userRegister }: Props) {
             ))}
           </Select>    
         </div>
+      </div>
+
+      <div className='w-100'>
+        <h4 className='mb-5'>Acessos concedidos</h4>
+        <ProductsTable />
       </div>
 
       <div className='w-100'>
