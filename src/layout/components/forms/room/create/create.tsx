@@ -218,11 +218,11 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
         <h3 className='fs-6 fw-bolder text-dark'>Itens</h3>
         <div className='form-check form-check-inline'>
           <input className='form-check-input' type='radio' name='itemRoom' value='option1' />
-          <label className='form-check-label text-muted fs-6'>Chat</label>
+          <label className='form-check-label text-dark  fs-6'>Chat</label>
         </div>
         <div className='form-check form-check-inline'>
           <input className='form-check-input' type='radio' name='itemRoom' value='option2' />
-          <label className='form-check-label text-muted fs-6'>Transmissão ao vivo</label>
+          <label className='form-check-label text-dark fs-6'>Transmissão ao vivo</label>
         </div>
 
         <div className='d-flex mt-10'>
