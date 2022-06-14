@@ -130,6 +130,7 @@ function EditTrainingPageTemplate({
         deactiveChatDate,
         category,
         imageUrl,
+        installments,
       } = training
 
       const formattedStreamings = streamings.map((streaming) => ({
@@ -140,6 +141,7 @@ function EditTrainingPageTemplate({
 
       formRef.current?.setFieldValue('name', name)
       formRef.current?.setFieldValue('description', description)
+      formRef.current?.setFieldValue('installments', installments)
       formRef.current?.setFieldValue('teacherId', teacher.id)
       formRef.current?.setFieldValue('teacherId-label', teacher.name)
       formRef.current?.setFieldValue('categoryId', category.id)

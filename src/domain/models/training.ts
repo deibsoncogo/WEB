@@ -21,5 +21,6 @@ export interface ITraining {
   description: string
   trainingEndDate: string
   deactiveChatDate: string
+  installments: number
   streamings: IStreaming[]
 }

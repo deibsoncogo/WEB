@@ -55,13 +55,19 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
 
             <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
             <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
+            <Input
+              name='installments'
+              label='Quantidade de Parcelas'
+              classes='h-75px'
+              type='number'
+            />
           </div>
 
           <div className='col d-flex flex-column align-items-stretch justify-content-between'>
             <TextArea
               name='description'
               label='Descrição'
-              style={{ minHeight: '246px', margin: 0 }}
+              style={{ minHeight: '240px', margin: 0 }}
             />
             <SelectAsync
               searchOptions={searchCategories}

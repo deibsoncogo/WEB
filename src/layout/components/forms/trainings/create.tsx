@@ -8,6 +8,7 @@ import CustomButton from '../../buttons/CustomButton'
 import { DatePicker, Input, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
 import { InputImage } from '../../inputs/input-image'
+import { InputNumber } from '../../inputs/input-number'
 import { SelectAsync } from '../../inputs/selectAsync'
 import { StreamingTable } from '../../tables/streaming-list'
 
@@ -55,13 +56,14 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
 
             <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
             <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
+            <InputNumber name='installments' label='Quantidade de Parcelas' classes='h-75px' />
           </div>
 
-          <div className='col d-flex flex-column align-items-stretch justify-content-between'>
+          <div className='col d-flex flex-column'>
             <TextArea
               name='description'
               label='Descrição'
-              style={{ minHeight: '246px', margin: 0 }}
+              style={{ minHeight: '240px', margin: 0 }}
             />
             <SelectAsync
               searchOptions={searchCategories}
