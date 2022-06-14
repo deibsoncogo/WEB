@@ -239,7 +239,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
             type='submit'
             customClasses={['w-180px', 'btn-primary']}
             title='Salvar'
-            loading={registerRoom}
+            disabled={registerRoom}
           />
         </div>
       </Form>
