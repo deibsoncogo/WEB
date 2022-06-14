@@ -1,13 +1,11 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-
+import { usePagination } from '../../../application/hooks/usePagination'
+import { GetCategoriesParams } from '../../../domain/usecases/interfaces/category/getCategories'
 import { KTSVG } from '../../../helpers'
 import { debounce } from '../../../helpers/debounce'
-
 import { Search } from '../../components/search/Search'
-import { usePagination } from '../../../application/hooks/usePagination'
 import { TrainingsTable } from '../../components/tables/trainings-list'
-import { GetCategoriesParams } from '../../../domain/usecases/interfaces/category/getCategories'
 
 type TrainingsTemplate = {
   remoteGetAllTrainings: IGetAllTrainings
@@ -37,7 +35,6 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
   })
 
   useEffect(() => {
-    console.log('oie')
     getTrainings()
   }, [pagination.take, pagination.totalPages, currentPage, trainingName])
 
@@ -58,7 +55,11 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
         </div>
       </div>
 
-      <TrainingsTable trainings={trainings} paginationHook={paginationHook} getTrainings={getTrainings} />
+      <TrainingsTable
+        trainings={trainings}
+        paginationHook={paginationHook}
+        getTrainings={getTrainings}
+      />
     </div>
   )
 }

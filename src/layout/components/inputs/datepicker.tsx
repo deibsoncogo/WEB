@@ -18,9 +18,9 @@ interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
 registerLocale('br', br)
 export function DatePicker({ name, label, classes, ...rest }: Props) {
   const datepickerRef = useRef(null)
-  const { fieldName, registerField, defaultValue, error } = useField(name)
+  const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
 
-  const [date, setDate] = useState(defaultValue || null)
+  const [date, setDate] = useState(defaultValue || undefined)
 
   useEffect(() => {
     registerField({
@@ -33,8 +33,8 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
         setDate(value)
         ref.current.value = value
       },
-      clearValue: (ref: any) => {
-        ref.clear()
+      clearValue: () => {
+        setDate(undefined)
       },
     })
   }, [fieldName, registerField])
@@ -58,6 +58,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
           dateFormat='dd/MM/yyyy'
           name={name}
           locale='br'
+          onFocus={clearError}
           {...rest}
           renderCustomHeader={({
             date,

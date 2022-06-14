@@ -4,17 +4,20 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
+import { IStreaming } from '../../../domain/models/streaming'
 import { ITraining } from '../../../domain/models/training'
 import { IGetCategories } from '../../../domain/usecases/interfaces/category/getCategories'
 import { ICreateTraining } from '../../../domain/usecases/interfaces/trainings/createTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
-import { formatDate, formatTime } from '../../../helpers'
+import { formatDate } from '../../../helpers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormCreateTraining } from '../../components/forms/trainings/create'
-import { IStreamList, trainingFormSchema } from '../../components/forms/trainings/type'
+import { trainingFormSchema } from '../../components/forms/trainings/type'
 import { onlyNums } from '../../formatters/currenceFormatter'
+import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
 import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from './utils/getAsyncTeachersToSelectInput'
+import { getStreamingDate } from './utils/getStramingDate'
 
 type CreateTrainingPageProps = {
   remoteGetTeachers: IGetAllUsers
@@ -28,7 +31,7 @@ function CreateTrainingPageTemplate({
   remoteCreateTraining,
 }: CreateTrainingPageProps) {
   const router = useRouter()
-  const [streamList, setStreamList] = useState<IStreamList[]>([])
+  const [streamList, setStreamList] = useState<IStreaming[]>([])
   const [isStreamingListValid, setIsStreamingListValid] = useState(true)
 
   const formRef = useRef<FormHandles>(null)
@@ -42,6 +45,7 @@ function CreateTrainingPageTemplate({
 
   async function handleFormSubmit(data: ITraining) {
     const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
+    console.log(data)
 
     if (streamList.length === 0) {
       setIsStreamingListValid(false)
@@ -53,70 +57,19 @@ function CreateTrainingPageTemplate({
     }
 
     if (success && streamList.length > 0) {
-      const formattedStreamings = streamList.map((stream) => ({
-        hour: stream.hour,
-        date: stream.dateISO,
-      }))
-      const formattedData = {
-        ...data,
-        price: Number(onlyNums(data.price)),
-        discount: Number(onlyNums(data.discount)),
-        streamings: formattedStreamings,
-        trainingEndDate: formatDate(new Date(data.trainingEndDate), 'YYYY-MM-DD'),
-        deactiveChatDate: formatDate(new Date(data.deactiveChatDate), 'YYYY-MM-DD'),
-      }
-      const {
-        categoryId,
-        description,
-        discount,
-        name,
-        price,
-        streamings,
-        teacherId,
-        photo,
-        trainingEndDate,
-        deactiveChatDate,
-      } = formattedData
-
-      const formData = new FormData()
-
-      if (photo) {
-        formData.append('image', photo)
-      }
-      formData.append('price', String(price))
-      formData.append('discount', String(discount))
-      formData.append('teacherId', String(teacherId))
-      formData.append('categoryId', String(categoryId))
-      formData.append('name', String(name))
-      formData.append('description', String(description))
-      formData.append('active', String(false))
-      formData.append('trainingEndDate', String(trainingEndDate))
-      formData.append('deactiveChatDate', String(deactiveChatDate))
-      const streamingsString = JSON.stringify(streamings)
-      formData.append('streamings', streamingsString)
-
-      createTraining(formData)
+      const dataFormatted = formatTrainingToSubmit(data, streamList)
+      createTraining(dataFormatted)
     }
   }
 
   function addStreamingDate() {
-    const liveData = {
-      date: formatDate(formRef.current?.getData().streamingDate, 'DD/MM/YYYY'),
-      hour: formatTime(formRef.current?.getData().streamingHour, 'HH:mm'),
-      dateISO: formatDate(formRef.current?.getData().streamingDate, 'YYYY-MM-DD'),
-      start: false,
+    const streaming = getStreamingDate(formRef)
+    if (streaming) {
+      if (!isStreamingListValid) {
+        setIsStreamingListValid(true)
+      }
+      setStreamList([...streamList, streaming])
     }
-
-    const isInvalidDate = liveData.date === 'Invalid date' || liveData.hour === 'Invalid date'
-    if (isInvalidDate) {
-      return
-    }
-
-    if (!isStreamingListValid) {
-      setIsStreamingListValid(true)
-    }
-
-    setStreamList([...streamList, liveData])
   }
 
   function removeStreamItem(index: number) {

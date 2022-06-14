@@ -13,15 +13,15 @@ import {
   IGetTrainingParams,
 } from '../../../domain/usecases/interfaces/trainings/getTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
-import { formatDate, formatTime } from '../../../helpers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditTraining } from '../../components/forms/trainings/edit'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
-import { maskedToMoney, onlyNums } from '../../formatters/currenceFormatter'
+import { maskedToMoney } from '../../formatters/currenceFormatter'
 import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
 import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from './utils/getAsyncTeachersToSelectInput'
 import { getIsoDateToBRL } from './utils/getIsoDateToBRL'
+import { getStreamingDate } from './utils/getStramingDate'
 
 type EditTrainingPageProps = {
   remoteGetTeachers: IGetAllUsers
@@ -63,7 +63,6 @@ function EditTrainingPageTemplate({
     if (streamList.length === 0) {
       setIsStreamingListValid(false)
     }
-    console.log('Testando criação de treinamento', data)
 
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)
@@ -78,23 +77,13 @@ function EditTrainingPageTemplate({
   }
 
   function addStreamingDate() {
-    const liveData = {
-      date: formatDate(formRef.current?.getData().streamingDate, 'DD/MM/YYYY'),
-      hour: formatTime(formRef.current?.getData().streamingHour, 'HH:mm'),
-      dateISO: formatDate(formRef.current?.getData().streamingDate, 'YYYY-MM-DD'),
-      start: false,
+    const streaming = getStreamingDate(formRef)
+    if (streaming) {
+      if (!isStreamingListValid) {
+        setIsStreamingListValid(true)
+      }
+      setStreamList([...streamList, streaming])
     }
-
-    const isInvalidDate = liveData.date === 'Invalid date' || liveData.hour === 'Invalid date'
-    if (isInvalidDate) {
-      return
-    }
-
-    if (!isStreamingListValid) {
-      setIsStreamingListValid(true)
-    }
-
-    setStreamList([...streamList, liveData])
   }
 
   function removeStreamItem(index: number) {
@@ -157,8 +146,8 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('categoryId-label', category.name)
       formRef.current?.setFieldValue('price', maskedToMoney(price))
       formRef.current?.setFieldValue('discount', maskedToMoney(discount))
-      formRef.current?.setFieldValue('trainingEndDate', trainingEndDate)
-      formRef.current?.setFieldValue('deactiveChatDate', deactiveChatDate)
+      formRef.current?.setFieldValue('trainingEndDate', new Date(trainingEndDate))
+      formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDate))
       formRef.current?.setFieldValue('photo', imageUrl)
       setStreamList(formattedStreamings)
     }
