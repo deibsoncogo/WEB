@@ -15,13 +15,14 @@ import { StreamingTable } from '../../tables/streaming-list'
 type FormCreateTrainingProps = {
   addStreamingDate: () => void
   onSubmit: (data: any) => void
-  streamList: IStreaming[]
+  onCancel: () => void
   removeStreamItem: (index: number) => void
   searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
   searchCategories: (categoryName: string) => Promise<ISelectOption[]>
   isStreamingListValid: boolean
   loadingSubmit: boolean
-  onCancel: () => void
+  streamList: IStreaming[]
+  zoomUsersOptions: ISelectOption[]
 }
 
 const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((props, ref) => {
