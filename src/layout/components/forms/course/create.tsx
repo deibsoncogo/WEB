@@ -300,7 +300,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
             type='submit'
             customClasses={['w-180px', 'btn-primary']}
             title='Salvar'
-            loading={registerCourse}
+            disabled={registerCourse}
           />
           
           </div>

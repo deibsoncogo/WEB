@@ -344,7 +344,7 @@ export function FormUpdateCourse(props: Props) {
               type='submit'
               customClasses={['w-180px', 'btn-primary']}
               title='Salvar'
-              loading={updateCourse}
+              disabled={updateCourse}
             />          
           </div>
         </Form>
