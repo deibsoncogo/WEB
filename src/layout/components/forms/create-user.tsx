@@ -24,7 +24,23 @@ export function FormCreateUser({ userRegister }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
+  const [cepObj, setCEPObj] = useState({})
+  const [defaultValue, setDefaultValue] = useState({})
+
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
+
+  const [products, setProducts] = useState([
+    {
+      id: '1',
+      name: 'Boletim Diário',
+      expireDate: '26/10/2022'
+    },
+    {
+      id: '2',
+      name: 'Planilhas',
+      expireDate: '26/10/2022'
+    },
+  ])
 
   async function handleOpenModal() {
     try {      
@@ -34,9 +50,6 @@ export function FormCreateUser({ userRegister }: Props) {
       toast.error(err.messages[0])
     }
   }
-
-  const [cepObj, setCEPObj] = useState({})
-  const [defaultValue, setDefaultValue] = useState({})
 
   async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
@@ -183,7 +196,7 @@ export function FormCreateUser({ userRegister }: Props) {
 
       <div className='w-100'>
         <h4 className='mb-5'>Acessos concedidos</h4>
-        <ProductsTable />
+        <ProductsTable products={products} />
       </div>
 
       <div className='w-100'>
@@ -216,6 +229,7 @@ export function FormCreateUser({ userRegister }: Props) {
         onRequestClose={() => {
           setIsProductsModalOpen(false)
         }}
+        onAddProduct={setProducts}
       />
     </Form>
   )

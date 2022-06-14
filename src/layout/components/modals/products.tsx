@@ -1,5 +1,6 @@
 import Modal from 'react-modal'
 import { KTSVG } from '../../../helpers'
+import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 import { DatePicker, Select } from '../inputs'
 
 type NewTransactionModalProps = {
@@ -8,9 +9,10 @@ type NewTransactionModalProps = {
   message: string
   action: () => Promise<void>
   onRequestClose: () => void
+  onAddProduct: React.Dispatch<React.SetStateAction<IPartialProductResponse[]>>
 }
 
-export function ProductsModal({ isOpen, modalTitle, message, action, onRequestClose }: NewTransactionModalProps) {
+export function ProductsModal({ isOpen, modalTitle, message, action, onRequestClose, onAddProduct }: NewTransactionModalProps) {
   return (
     <Modal
       isOpen={isOpen}
@@ -74,10 +76,10 @@ export function ProductsModal({ isOpen, modalTitle, message, action, onRequestCl
           </div>
 
           <div className='modal-footer'>
-            <button type='button' className='btn btn-primary' onClick={onRequestClose}>
+            <button type='button' className='btn btn-primary' onClick={action}>
               Adicionar
             </button>
-            <button type='button' className='btn btn-light' onClick={action}>
+            <button type='button' className='btn btn-light' onClick={onRequestClose}>
               Cancelar
             </button>
           </div>

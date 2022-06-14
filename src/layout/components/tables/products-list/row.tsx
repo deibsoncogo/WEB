@@ -1,13 +1,7 @@
 import Link from 'next/link'
+import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
 
-
-type Products = {
-  id: number,
-  name: string,
-  expireDate: string
-}
-
-export function Row({ id, name, expireDate }: Products) {
+export function Row({ id, name, expireDate }: IPartialProductResponse) {
   return (
     <tr>
       <td className='ps-4'>

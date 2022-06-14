@@ -1,24 +1,16 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Row } from './row'
+import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
 
-export function ProductsTable() {
+type Props = {
+  products: IPartialProductResponse[]
+}
+
+export function ProductsTable({ products }: Props) {
 
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
-
-  const [products, setProducts] = useState([
-    {
-      id: '1',
-      name: 'Boletim Diário',
-      expireDate: '26/10/2022'
-    },
-    {
-      id: '2',
-      name: 'Planilhas',
-      expireDate: '26/10/2022'
-    },
-  ])
 
   return (
     <div className='table-responsive border border-secondary mb-6'>
