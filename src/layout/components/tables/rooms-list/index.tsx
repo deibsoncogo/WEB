@@ -11,46 +11,53 @@ import { IDeleteRoom } from '../../../../domain/usecases/interfaces/room/deleteR
 import { currenceMask } from '../../../formatters/currenceFormatter'
 import { IGetRoom } from '../../../../domain/usecases/interfaces/room/getCourse'
 import { IUpdateRoom } from '../../../../domain/usecases/interfaces/room/updateRoom'
+import { GetRoomParams, IGetAllRooms } from '../../../../domain/usecases/interfaces/room/getAllRooms'
+import { toast } from 'react-toastify'
+import { IRoomPartialResponse } from '../../../../interfaces/api-response/roomPartialResponse'
 
 type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 
 type Props =  { 
+  getAllRooms: IGetAllRooms 
   getRoom: IGetRoom
   updateRoom: IUpdateRoom
   deleteRoom: IDeleteRoom 
 }
 
 
-export function RoomsTable({getRoom, updateRoom, deleteRoom}: Props) {
+export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props) {
   const paginationHook = usePagination()
+  const { pagination, setTotalPage } = paginationHook
+  const { take, currentPage} = pagination
 
-  const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
   const [refresher, setRefresher] = useState(true)
 
-  const [rooms, setRooms] = useState([
-    {
-      id: '1',
-      name: 'Boletim Diário',
-      description: 'Boletim completo s...',
-      price: 49.80,
-      teacher: 'Palex',
-      isActive: true,
-    },
-    {
-      id: '2',
-      name: 'Planilhas',
-      description: 'Planilha completas...',
-      price: 84.00,
-      teacher: 'Palex',
-      isActive: false,
-    },
-  ])
+  const [rooms, setRooms] = useState<IRoomPartialResponse[]>([])
+  const [roomName, setRoomName] = useState('')
+  
 
   const [column, setColumn] = useState('');
   const [order, setOrder] = useState<orderOptions>('')
-  const [orderedRooms, setOrderedRooms] = useState<Room[]>(rooms)
+  //const [orderedRooms, setOrderedRooms] = useState<Room[]>(rooms)
 
+
+  useEffect(() => {    
+    const paginationParams: GetRoomParams = {name: roomName, page: currentPage, take, order: 'desc'}
+       getAllRooms
+      .getAll(paginationParams)
+      .then((data) => {           
+       setRooms(data.data)
+       setTotalPage(data.total)
+      })
+      .catch(() => toast.error("Não foi possível listar as salas."))
+      .finally(() => 
+       setTimeout(() => {
+        setLoading(false)
+       }, 500)
+       
+      )
+  }, [refresher, pagination.take, pagination.currentPage, roomName])
 
 
 
@@ -85,6 +92,7 @@ export function RoomsTable({getRoom, updateRoom, deleteRoom}: Props) {
     }
   }
 
+  /*
   useEffect(() => {  
     if (order === '') {
       setOrderedRooms(rooms)      
@@ -96,22 +104,19 @@ export function RoomsTable({getRoom, updateRoom, deleteRoom}: Props) {
       return updatedOrderedRooms
     })    
   }, [order, rooms])
+*/
+  // const [searchText, setSearchText] = useState('')
 
-  const [searchText, setSearchText] = useState('')
+  // const searchRoom = () => {
+  //   const matchingRooms = rooms.filter(room => {      
+  //     return room.name.match(new RegExp(searchText, "i")) || room.description.match(new RegExp(searchText, "i"))
+  //   })
+  //   setOrderedRooms(matchingRooms)
+  // }
 
-  const searchRoom = () => {
-    const matchingRooms = rooms.filter(room => {      
-      return room.name.match(new RegExp(searchText, "i")) || room.description.match(new RegExp(searchText, "i"))
-    })
-    setOrderedRooms(matchingRooms)
-  }
-
-  useEffect(() => {
-    searchRoom();
-  }, [searchText]);
-
+  
   const handleSearchRoom = debounce((text: string) => {
-    setSearchText(text)
+    setRoomName(text)
   })
 
   return (
@@ -147,14 +152,14 @@ export function RoomsTable({getRoom, updateRoom, deleteRoom}: Props) {
 
             <tbody>
               {!loading &&
-                orderedRooms?.map((item) => (
+                rooms?.map((item) => (
                   <Row
                     key={item.id}
                     id={item.id}
                     name={item.name}
                     description={item.description}
                     price={currenceMask(item.price+'')}
-                    teacher={item.teacher}
+                    teacher={item.teacherName}
                     isActive={item.isActive}
                     getRoom={getRoom}
                     updateRoom={updateRoom}
