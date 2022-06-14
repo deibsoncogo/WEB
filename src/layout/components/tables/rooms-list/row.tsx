@@ -55,9 +55,12 @@ export function Row({
   async function handleUpdateRoom() {
 
     try {
-      const course = await getRoom.get(id)     
-           
-      toast.success('Sala atualizada com sucesso.')
+
+      setLoading(true) 
+      setIsModalUpdateOpen(false)
+      const course = await getRoom.get(id)           
+      toast.success('Sala atualizada com sucesso.')      
+      handleRefresher()
     } catch (err) {
       toast.error('Não foi possível atualizar a sala.')
     }
@@ -98,7 +101,7 @@ export function Row({
         <Switch active={isActive} setModalUpdate={setIsModalUpdateOpen} />
       </td>
 
-      <td>
+      <td className='text-end d-flex justify-content-end px-4'>
         <Tooltip content={'Editar'} rounded color='primary'>
           <Link href={`/room/edit/${id}`}>
             <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>

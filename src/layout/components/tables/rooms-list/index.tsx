@@ -29,10 +29,11 @@ type Props =  {
 
 export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props) {
   const paginationHook = usePagination()
-  const { pagination, setTotalPage } = paginationHook
-  const { take, currentPage} = pagination
+  const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
+    paginationHook
 
-  const [loading, setLoading] = useState(false)
+ 
+  const [loading, setLoading] = useState(true)
   const [refresher, setRefresher] = useState(true)
 
   const [rooms, setRooms] = useState<IRoomPartialResponse[]>([])
@@ -41,12 +42,23 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
 
   const [column, setColumn] = useState('');
   const [order, setOrder] = useState<orderOptions>('')
-  //const [orderedRooms, setOrderedRooms] = useState<Room[]>(rooms)
 
+
+  const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
+    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+      name
+    )}`
+  }
 
   useEffect(() => {
 
-    const paginationParams: GetRoomParams = {name: roomName, page: currentPage, take, order: 'desc'}
+    const paginationParams: GetRoomParams = {
+      take: pagination.take,
+      order: pagination.order,
+      orderBy: pagination.orderBy,
+      page: pagination.currentPage,
+      name: roomName,
+    } 
        getAllRooms.getAll(paginationParams)
       .then((data) => {           
        setRooms(data.data)
@@ -59,7 +71,7 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
        }, 500)
        
       )
-  }, [refresher, pagination.take, pagination.currentPage, roomName])
+  }, [refresher, pagination.take, pagination.currentPage, pagination.order, roomName])
 
 
 
@@ -67,56 +79,7 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
     setRefresher(!refresher);
   }
 
-  const handleOrdering = (column: string) => {
-    setColumn(column);
-    switch (order) {
-      case '':        
-        return setOrder('table-sort-asc')
-      case 'table-sort-asc':
-        return setOrder('table-sort-desc')
-      default:
-        setOrder('')
-    }
-  }
-  
-  const handleOrderColumn = (roomA: Room, roomB: Room) => {
-    switch (column) {
-      case 'name':
-        return order === 'table-sort-asc' ? roomA.name.localeCompare(roomB.name, 'pt') : roomB.name.localeCompare(roomA.name, 'pt')
-      case 'price':
-        return order === 'table-sort-asc' ? roomA.price - roomB.price : roomB.price - roomA.price
-      case 'teacher':
-        return order === 'table-sort-asc' ? roomA.teacher.localeCompare(roomB.teacher, 'pt') : roomB.teacher.localeCompare(roomA.teacher, 'pt')
-      case 'isActive':
-        return order === 'table-sort-asc' ? Number(roomA.isActive) - Number(roomB.isActive) : Number(roomB.isActive) - Number(roomA.isActive)
-      default:
-        return 0
-    }
-  }
-
-  /*
-  useEffect(() => {  
-    if (order === '') {
-      setOrderedRooms(rooms)      
-      return
-    }
     
-    setOrderedRooms((oldstate) => {
-      const updatedOrderedRooms = oldstate.sort(handleOrderColumn)      
-      return updatedOrderedRooms
-    })    
-  }, [order, rooms])
-*/
-  // const [searchText, setSearchText] = useState('')
-
-  // const searchRoom = () => {
-  //   const matchingRooms = rooms.filter(room => {      
-  //     return room.name.match(new RegExp(searchText, "i")) || room.description.match(new RegExp(searchText, "i"))
-  //   })
-  //   setOrderedRooms(matchingRooms)
-  // }
-
-  
   const handleSearchRoom = debounce((text: string) => {
     setRoomName(text)
   })
@@ -144,13 +107,19 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
           <table className='table align-middle gs-0 gy-4'>
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
-                <th className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${column === 'name' ? order : null}`} onClick={() => handleOrdering('name')}>Nome</th>
-                <th className='text-dark min-w-100px'>Descrição</th>
-                <th className={`text-dark min-w-100px cursor-pointer ${column === 'price' ? order : null}`} onClick={() => handleOrdering('price')}>Preço</th>
-                <th className={`text-dark min-w-150px cursor-pointer ${column === 'teacher' ? order : null}`} onClick={() => handleOrdering('teacher')}>Professor</th>
+              <th className={getColumnHeaderClasses('name')}
+                    onClick={() => handleOrdenation('name')}
+                    >Nome</th>
+                <th className={getColumnHeaderClasses('description', 'min-w-150px')}
+                     onClick={() => handleOrdenation('description')}>Descrição</th>
+                <th className={getColumnHeaderClasses('price')}
+                     onClick={() => handleOrdenation('price')}>Preço</th>
+                <th className={getColumnHeaderClasses('teacher')}
+                     onClick={() => handleOrdenation('teacher')}>Professor</th>
                 <th className='text-dark min-w-100px'>Chat</th>
-                <th className={`text-dark min-w-100px cursor-pointer ${column === 'isActive' ? order : null}`} onClick={() => handleOrdering('isActive')}>Ativo</th>
-                <th className='text-dark min-w-50px text-end rounded-end' />
+                <th className={getColumnHeaderClasses('isActive', 'min-w-110px')}
+                     onClick={() => handleOrdenation('isActive')}>Ativo</th>
+                <th className='text-dark min-w-50px text-center rounded-end'>Ação</th>
               </tr>
             </thead>
 
@@ -176,7 +145,7 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
         </div>
       </div>)}
 
-      {rooms.length == 0 && !loading && <ItemNotFound message = 'Nenhuma sala encontrada'/>}
+       {rooms.length == 0 && !loading && <ItemNotFound message = 'Nenhuma sala encontrada'/>}
 
        {loading && <Loading/>}
 
