@@ -42,10 +42,10 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
   //const [orderedRooms, setOrderedRooms] = useState<Room[]>(rooms)
 
 
-  useEffect(() => {    
+  useEffect(() => {
+       
     const paginationParams: GetRoomParams = {name: roomName, page: currentPage, take, order: 'desc'}
-       getAllRooms
-      .getAll(paginationParams)
+       getAllRooms.getAll(paginationParams)
       .then((data) => {           
        setRooms(data.data)
        setTotalPage(data.total)

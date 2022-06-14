@@ -4,7 +4,7 @@ import { makeRemoteGetAllRooms } from "../../usecases/room/remote-getAllRooms-fa
 import { makeRemoteGetRoom } from "../../usecases/room/remote-getRoom-factory"
 import { makeRemoteUpdateRoom } from "../../usecases/room/remote-updateRoom-factory"
 
-export const MakeCourseTable = () => {
+export const MakeRoomTable = () => {
     return <RoomsTable getAllRooms = {makeRemoteGetAllRooms()} getRoom = {makeRemoteGetRoom()} updateRoom = {makeRemoteUpdateRoom()}  deleteRoom = {makeRemoteDeleteRoom()}/>
   }
   
