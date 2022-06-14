@@ -31,10 +31,10 @@ export default function CoursesTable(props: Props) {
   const [loading, setLoading] = useState(true)
   const [refresher, setRefresher] = useState(true)
 
-  const [filters, setFilters] = useState<Partial<Course>>({} as Course)
+  const [courseName, setCourseName] = useState('')
   const paginationHook = usePagination()
-  const { pagination, setTotalPage } = paginationHook
-  const { take, currentPage } = pagination
+  const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
+    paginationHook
   
   const searchCourseFormRef = useRef<FormHandles>(null)
 
@@ -44,11 +44,23 @@ export default function CoursesTable(props: Props) {
   }
 
   const handleSearchCourse = debounce((text: string) => {    
-    setFilters({ name: text })
+    setCourseName(text)
   })
 
+  const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
+    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+      name
+    )}`
+  }
+
     useEffect(() => {    
-      const paginationParams: GetCoursesParams = { page: currentPage, take, ...filters}
+      const paginationParams: GetCoursesParams = {
+        take: pagination.take,
+        order: pagination.order,
+        orderBy: pagination.orderBy,
+        page: pagination.currentPage,
+        name: courseName,
+      }     
       props.getAllCourses
         .getAll(paginationParams)
         .then((data) => {           
@@ -62,7 +74,7 @@ export default function CoursesTable(props: Props) {
          }, 500)
          
         )
-    }, [refresher, pagination.take, pagination.currentPage, filters])
+    }, [refresher, pagination.take, pagination.currentPage, pagination.order, courseName])
 
   return (
     <>
@@ -87,13 +99,20 @@ export default function CoursesTable(props: Props) {
               <table className='table align-middle gs-0 gy-4'>
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
-                    <th className='text-dark ps-4 min-w-100px rounded-start'>Nome</th>
-                    <th className='text-dark min-w-150px'>Descrição</th>
-                    <th className='text-dark min-w-100px'>Preço</th>
-                    <th className='text-dark min-w-100px'>Desconto</th>
-                    <th className='text-dark min-w-100px'>Professor</th>
-                    <th className='text-dark min-w-110px'>Ativo</th>
-                    <th className='text-dark min-w-50px text-end rounded-end' />
+                    <th className={getColumnHeaderClasses('name')}
+                    onClick={() => handleOrdenation('name')}
+                    >Nome</th>
+                    <th className={getColumnHeaderClasses('description', 'min-w-150px')}
+                     onClick={() => handleOrdenation('description')}>Descrição</th>
+                    <th className={getColumnHeaderClasses('price')}
+                     onClick={() => handleOrdenation('price')}>Preço</th>
+                    <th className={getColumnHeaderClasses('discount')}
+                     onClick={() => handleOrdenation('discount')}>Desconto</th>
+                    <th className={getColumnHeaderClasses('teacher')}
+                     onClick={() => handleOrdenation('teacher')}>Professor</th>
+                    <th className={getColumnHeaderClasses('isActive', 'min-w-110px')}
+                     onClick={() => handleOrdenation('isActive')}>Ativo</th>
+                    <th className='text-dark min-w-50px text-center rounded-end'>Ação</th>
                   </tr>
                 </thead>
 
