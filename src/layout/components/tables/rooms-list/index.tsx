@@ -14,6 +14,8 @@ import { IUpdateRoom } from '../../../../domain/usecases/interfaces/room/updateR
 import { GetRoomParams, IGetAllRooms } from '../../../../domain/usecases/interfaces/room/getAllRooms'
 import { toast } from 'react-toastify'
 import { IRoomPartialResponse } from '../../../../interfaces/api-response/roomPartialResponse'
+import { Loading } from '../../loading/loading'
+import { ItemNotFound } from '../../search/ItemNotFound'
 
 type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 
@@ -43,7 +45,7 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
 
 
   useEffect(() => {
-       
+
     const paginationParams: GetRoomParams = {name: roomName, page: currentPage, take, order: 'desc'}
        getAllRooms.getAll(paginationParams)
       .then((data) => {           
@@ -120,6 +122,8 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
   })
 
   return (
+
+    <>
     <div className='card mb-5 mb-xl-8'>
       <div className='card-header border-0 pt-5'>
         <h3 className='card-title align-items-start flex-column'>
@@ -135,7 +139,7 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
         </div>
       </div>
 
-      <div className='card-body py-3'>
+      {rooms.length > 0 && (<div className='card-body py-3'>
         <div className='table-responsive'>
           <table className='table align-middle gs-0 gy-4'>
             <thead>
@@ -170,7 +174,11 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
             </tbody>
           </table>
         </div>
-      </div>
+      </div>)}
+
+      {rooms.length == 0 && !loading && <ItemNotFound message = 'Nenhuma sala encontrada'/>}
+
+       {loading && <Loading/>}
 
       <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
         <div />        
@@ -178,5 +186,7 @@ export function RoomsTable({getAllRooms, getRoom, updateRoom, deleteRoom}: Props
         <Pagination paginationHook={paginationHook} />
       </div>
     </div>
+
+    </>
   )
 }
