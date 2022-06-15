@@ -20,7 +20,12 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
   const { take, currentPage } = pagination
-  const paginationParams: GetCategoriesParams = { page: currentPage, take, name: trainingName, order: undefined }
+  const paginationParams: GetCategoriesParams = {
+    page: currentPage,
+    take,
+    name: trainingName,
+    order: undefined,
+  }
 
   async function getTrainings() {
     try {
@@ -37,7 +42,6 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
   })
 
   useEffect(() => {
-    console.log('oie')
     getTrainings()
   }, [pagination.take, pagination.totalPages, currentPage, trainingName])
 
@@ -58,7 +62,11 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
         </div>
       </div>
 
-      <TrainingsTable trainings={trainings} paginationHook={paginationHook} getTrainings={getTrainings} />
+      <TrainingsTable
+        trainings={trainings}
+        paginationHook={paginationHook}
+        getTrainings={getTrainings}
+      />
     </div>
   )
 }

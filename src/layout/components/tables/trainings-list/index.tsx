@@ -58,8 +58,8 @@ export function TrainingsTable({ trainings, paginationHook, getTrainings }: Trai
       {trainings.length === 0 && (
         <div className='py-14 border mx-4 my-8 d-flex'>
           <p className='text-center w-100 m-0 font-weight-bold'>
-            <span className='text-danger'>Ops! 😅</span>
-            Nenhum curso encontrado
+            <span className='text-danger'>Ops! 😅 </span>
+            Nenhum treinamento encontrado
           </p>
         </div>
       )}
