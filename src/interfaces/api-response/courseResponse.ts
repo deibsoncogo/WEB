@@ -2,12 +2,12 @@
 export interface ICourseResponse{
     id: string;
     name: string;
-    image: string;
+    imageUrl: string;
     description: string;
     price: string; 
     installments: string;
     discount: string;
-    accessTime: number;
+    accessTime: string;
     userId: string;
     content: string;
     isActive: boolean;

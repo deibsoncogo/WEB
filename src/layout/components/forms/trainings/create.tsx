@@ -1,136 +1,138 @@
-import { useRef, useState } from 'react'
-import { useRouter } from 'next/router'
-
-import * as Yup from 'yup'
-import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-
-import { formatDate, formatTime, KTSVG } from '../../../../helpers'
-import { levelOptions } from '../../../../utils/selectOptions'
-
-import { DatePicker, Input, Select, TextArea } from '../../inputs'
+import { Form } from '@unform/web'
+import React, { forwardRef } from 'react'
+import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
+import { KTSVG } from '../../../../helpers'
+import CustomButton from '../../buttons/CustomButton'
+import { DatePicker, Input, TextArea } from '../../inputs'
+import { InputCurrence } from '../../inputs/input-currence'
 import { InputImage } from '../../inputs/input-image'
+import { SelectAsync } from '../../inputs/selectAsync'
 import { LivesTable } from '../../tables/lives-list'
+import { IStreamList } from './type'
 
-interface IStreamList {
-  liveDate: string
-  time: string
-  start: boolean
+type FormCreateTrainingProps = {
+  addStreamingDate: () => void
+  onSubmit: (data: any) => void
+  streamList: IStreamList[]
+  removeStreamItem: (index: number) => void
+  searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
+  searchCategories: (categoryName: string) => Promise<ISelectOption[]>
+  isStreamingListValid: boolean
+  loadingSubmit: boolean
 }
 
-export function FormCreateTrainings() {
-  const router = useRouter()
-  const formRef = useRef<FormHandles>(null)
-
-  const [defaultValue, setDefaultValue] = useState({})
-  const [streamList, setStreamList] = useState<IStreamList[]>([])
-
-  async function handleFormSubmit(data: any) {
-    if (!formRef.current) throw new Error()
-
-    try {
-      formRef.current.setErrors({})
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é Nescessário'),
-        teacher: Yup.string().required('Professor é nescessário'),
-        price: Yup.number().required('Preço é nescessário'),
-        description: Yup.string().required('Descriçao é nescessário'),
-        categories: Yup.string().required('Selecione uma categoria'),
-        finishDate: Yup.date().nullable().required('Data é nescessária'),
-        liveDate: Yup.date().nullable().required('Data é nescessária'),
-        chatTime: Yup.date().nullable().required('Data é nescessária'),
-        time: Yup.date().nullable().required('Hora é nescessária'),
-      })
-      await schema.validate(data, { abortEarly: false })
-      console.log(data)
-    } catch (err) {
-      const validationErrors = {}
-      if (err instanceof Yup.ValidationError) {
-        err.inner.forEach((error) => {
-          // @ts-ignore
-          validationErrors[error.path] = error.message
-        })
-        formRef.current.setErrors(validationErrors)
-      }
-    }
-  }
-
-  function addLiveTime() {
-    const liveData = {
-      liveDate: formatDate(formRef.current?.getData().liveDate, 'DD/MM/YYYY'),
-      time: formatTime(formRef.current?.getData().time, 'HH:mm'),
-      start: false,
-    }
-    if (liveData.liveDate === 'Invalid date' || liveData.time === 'Invalid date') return
-    setStreamList([...streamList, liveData])
-  }
-
-  function removeStreamItem(index: number) {
-    const temp = streamList.slice()
-    temp.splice(index, 1)
-    setStreamList(temp)
-  }
+const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((props, ref) => {
+  const {
+    addStreamingDate,
+    onSubmit,
+    removeStreamItem,
+    searchTeachers,
+    streamList,
+    searchCategories,
+    isStreamingListValid,
+    loadingSubmit,
+  } = props
 
   return (
-    <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+    <Form className='form' ref={ref} onSubmit={onSubmit}>
       <h3 className='mb-5'>Informações do Treinamento</h3>
       <InputImage name='photo' />
 
-      <div className='d-flex flex-row gap-5 w-100'>
-        <div className='w-50'>
-          <Input name='name' label='Nome' />
-          <Input name='teacher' label='Professor' />
-          <Input name='price' label='Preço' type='number' />
-          <Input name='discount' label='Desconto' type='number' />
-        </div>
+      <div className='container p-0'>
+        <div className='row'>
+          <div className='col d-flex justify-content-between flex-column'>
+            <Input name='name' label='Nome' classes='h-75px' />
+            <SelectAsync
+              searchOptions={searchTeachers}
+              name='teacherId'
+              label='Professor'
+              classes='h-75px'
+              placeholder='Digite o nome do professor'
+            />
 
-        <div className='w-50'>
-          <TextArea name='description' label='Descrição' rows={10} />
-          <Select name='categories' label='Categorias'>
-            <option value='' disabled selected>
-              Selecione
-            </option>
-            {levelOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+            <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
+            <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
+          </div>
+
+          <div className='col d-flex flex-column align-items-stretch justify-content-between'>
+            <TextArea
+              name='description'
+              label='Descrição'
+              style={{ minHeight: '246px', margin: 0 }}
+            />
+            <SelectAsync
+              searchOptions={searchCategories}
+              name='categoryId'
+              label='Categoria'
+              classes='h-75px'
+              placeholder='Digite o nome da categoria'
+            />
+          </div>
+
+          <div className='row'></div>
         </div>
       </div>
 
       <h3 className='mb-5 mt-5'>Datas do Treinamento</h3>
-      <div className='d-flex flex-row gap-5 w-100'>
-        <div className='w-25'>
-          <DatePicker
-            name='finishDate'
-            label='Data de Termino do Treinamento'
-            placeholderText='00/00/000'
-          />
-          <DatePicker name='liveDate' label='Dia da Transmição' placeholderText='00/00/000' />
-        </div>
-        <div className='w-25'>
-          <DatePicker name='chatTime' label='Desativação do chat' placeholderText='00/00/000' />
-          <DatePicker
-            name='time'
-            label='Horário'
-            placeholderText='00:00'
-            showTimeSelect
-            showTimeSelectOnly
-            timeIntervals={15}
-            timeCaption='Horas'
-            dateFormat='hh:mm'
-          />
+
+      <div className='container p-0'>
+        <div className='row'>
+          <div className='col-3'>
+            <DatePicker
+              name='trainingEndDate'
+              label='Data de Termino'
+              placeholderText='00/00/000'
+            />
+          </div>
+          <div className='col-3'>
+            <DatePicker
+              name='deactiveChatDate'
+              label='Desativação do chat'
+              placeholderText='00/00/000'
+            />
+          </div>
         </div>
 
-        <button
-          type='button'
-          onClick={addLiveTime}
-          className='btn btn-lg btn-primary h-45px mb-7 mt-auto'
-        >
-          <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-          Adicionar Data
-        </button>
+        <div className='row d-flex'>
+          <div className='col-3'>
+            <DatePicker
+              name='streamingDate'
+              label='Dia da transmissão'
+              placeholderText='00/00/000'
+            />
+          </div>
+          <div className='col-3'>
+            <DatePicker
+              name='streamingHour'
+              label='Horário'
+              placeholderText='00:00'
+              showTimeSelect
+              showTimeSelectOnly
+              timeIntervals={15}
+              timeCaption='Horas'
+              dateFormat='hh:mm'
+            />
+          </div>
+
+          <div className='col-3 pt-8'>
+            <button
+              type='button'
+              onClick={addStreamingDate}
+              className='btn btn-lg btn-primary h-45px mb-7 mt-auto'
+              style={{ marginTop: '22px' }}
+            >
+              <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+              Adicionar Data
+            </button>
+          </div>
+
+          {!isStreamingListValid && (
+            <span className='text-danger' style={{ marginTop: '-14px' }}>
+              Insira pelo menos uma transmissão
+            </span>
+          )}
+        </div>
       </div>
 
       {streamList.length !== 0 && (
@@ -138,20 +140,23 @@ export function FormCreateTrainings() {
       )}
 
       <div className='d-flex mt-10'>
-        <button
+        <CustomButton
+          title='Cancelar'
           type='button'
-          onClick={() => {
-            router.push('/trainings')
-          }}
-          className='btn btn-lg btn-secondary w-150px mb-5 ms-auto me-10'
-        >
-          Cancelar
-        </button>
+          customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+        />
 
-        <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
-          Salvar
-        </button>
+        <CustomButton
+          type='submit'
+          title='Salvar'
+          customClasses={['w-180px', 'btn-primary']}
+          loading={loadingSubmit}
+        />
       </div>
     </Form>
   )
-}
+})
+
+FormCreateTraining.displayName = 'FormCreateTraining'
+
+export { FormCreateTraining }

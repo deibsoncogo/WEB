@@ -9,8 +9,6 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Modal from 'react-modal'
 import { Suspense } from 'react'
-import { NextUIProvider } from '@nextui-org/react';
-
 
 Modal.setAppElement('#__next')
 
@@ -20,23 +18,18 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
-      
       <LayoutProvider>
         <PageDataProvider>
-        <ToastContainer theme='light' autoClose={2000}/>
-       
+          <ToastContainer theme='light' autoClose={2000} />
+
           {unprotectedRoutes.includes(currentPath) ? (
             <Component {...pageProps} />
-          ) : (
-           
-            <AuthWrapper>
-              <Component {...pageProps} />
-            </AuthWrapper>
-         
+          ) : (        
+              <AuthWrapper>
+                <Component {...pageProps} />
+              </AuthWrapper>        
           )}
-        
         </PageDataProvider>
-      
       </LayoutProvider>
     </Suspense>
   )

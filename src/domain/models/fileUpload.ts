@@ -1,7 +1,8 @@
 export class FileUpload {  
     name: string;
     originalName: string;
-    file: File;
+    fileKey?: string
+    file?: File;
   
   
   

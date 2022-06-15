@@ -6,7 +6,7 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { formatDate } from '../../../helpers'
+import { formatDateToUTC } from '../../../helpers'
 import { levelOptions, roleOptions } from '../../../utils/selectOptions'
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
 import { api } from '../../../application/services/api'
@@ -30,7 +30,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
 
-  async function handleFormSubmit(data: IFormCreateUser) {
+  async function handleFormSubmit(data: IFormCreateUser) {    
     if (!formRef.current) throw new Error()
 
     try {
@@ -66,7 +66,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     }
   }
 
-  function formatDataToSend(data: any) {
+  function formatDataToSend(data: any) {       
     const matchesCPF = data.cpf.match(/\d*/g)
     const cpf = matchesCPF?.join('')
 
@@ -74,7 +74,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     const phoneNumber = matchesPhone?.join('')
 
     const matchesCEP = data.zipCode.match(/\d*/g)
-    const zipCode = matchesCEP?.join('')
+    const zipCode = matchesCEP?.join('')  
 
     const userData = {
       id,
@@ -82,7 +82,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       email: data.email,
       cpf: cpf,
       photo: data.photo,
-      birthDate: (data.birthDate as Date).toISOString().split('T')[0],
+      birthDate: formatDateToUTC(data.birthDate).toISOString().split('T')[0],
       phoneNumber: phoneNumber,
       role: data.role,
       address: [
@@ -96,19 +96,27 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           complement: data.complement,
         },
       ],
-    }
+    }      
 
     return userData
   }
 
-  async function handleCreateUser(data: any) {
+  async function handleCreateUser(data: any) {    
     setHasError(false)
     try {
       await userRegister.updateUser(data)
       router.push('/users')
+      toast.success("Usuário editado com sucesso!")
     } catch (err: any) {
       toast.error(Array.isArray(err.messages) ? err.messages[0] : err.messages)
     }
+  }
+
+  function setKeys(obj: any) {
+    Object.keys(obj).forEach(key => {        
+      formRef.current?.setFieldValue(key, obj[key])
+    })
+    formRef.current?.setErrors({})
   }
 
   useEffect(() => {
@@ -118,7 +126,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       const newData: any = {
         name: res.name,
         email: res.email,
-        //birthDate: res.birthDate, // doesn't work, idk why
+        birthDate: res.birthDate,
         cpf: res.cpf,
         phoneNumber: res.phoneNumber,
         level: res.level,
@@ -129,14 +137,16 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
         city: res.address[0]?.city || '',
         state: res.address[0]?.state || '',
         number: res.address[0]?.number || '',
-      }
-      Object.keys(newData).forEach(key => {
-        formRef.current?.setFieldValue(key, newData[key])
-      })
-      formRef.current?.setErrors({})
+        complement: res.address[0]?.complement || '',
+      }  
+      setKeys(newData)
     })
     .catch((err) => toast.error(err.messages))
-  }, [formRef.current])
+  }, [])  
+
+  useEffect(() => {
+    setKeys(defaultValue)
+  }, [defaultValue])
 
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>

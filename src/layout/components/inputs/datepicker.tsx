@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react'
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import { useField } from '@unform/core'
 
-import { rangeInt } from '../../../helpers'
+import { formatDateToUTC, rangeInt } from '../../../helpers'
 import { months } from '../../../utils/months'
 
 import 'react-datepicker/dist/react-datepicker.css'
@@ -22,20 +22,22 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
 
   useEffect(() => {
     registerField({
+      ref: datepickerRef,
       name: fieldName,
-      ref: datepickerRef.current,
-      path: 'props.selected',
-      setValue: (ref: any) => {
-        setDate(defaultValue)
-        ref.current.value = defaultValue
+      getValue: (ref) => {
+        return ref.current?.props.selected
       },
-      clearValue: (ref: any) => {
-        ref.clear()
+      setValue: (ref, newValue) => {
+        ref.current.value = newValue
+        const newDate = formatDateToUTC(newValue as string)
+        setDate(newDate)
+      },
+      clearValue: (ref) => {
+        ref.current.value = ''
       },
     })
-    setDate(defaultValue)
   }, [fieldName, registerField])
-
+  
   const years = rangeInt(1900, new Date().getFullYear() + 1)
 
   return (
@@ -49,8 +51,9 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
         ref={datepickerRef}
         className='form-control bg-secondar'
         selected={date}
-        onChange={setDate}
+        onChange={setDate}        
         dateFormat='dd/MM/yyyy'
+        placeholderText={error && error}
         {...rest}
         renderCustomHeader={({
           date,
@@ -70,6 +73,9 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
               value={date.getFullYear()}
               onChange={({ target: { value } }) => changeYear(parseInt(value))}
             >
+              <option value='' hidden disabled selected>
+                {error ? error : 'Selecione'}
+              </option>
               {years.map((option) => (
                 <option key={option} value={option}>
                   {option}
@@ -95,7 +101,6 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
         )}
         {...rest}
       />
-      {error && <span className='text-danger'>{error}</span>}
     </div>
   )
 }

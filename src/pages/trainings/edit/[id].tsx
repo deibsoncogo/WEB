@@ -9,20 +9,18 @@ const EditTrainings: NextPage = () => {
   const fakeData: ITrainings = {
     id: 'string',
     name: 'string',
-    teacher: { id: '123', name: 'teacher' },
     description: 'string',
-    //categories: 'string',
     price: 20,
     discount: 10,
-    //chatTime: new Date('02/02/2000'),
-    //finishDate: new Date('02/02/2000'),
-    //liveDate: new Date('02/02/2000'),
-    //time: new Date('02/02/2000'),
     categoryId: '123',
-    imageUrl: '123',
+    imageUrl: '',
     isChatActive: true,
-    streamingDate: new Date('02/02/2000').toDateString(),
-    streamingHour: new Date('02/02/2000').toTimeString(),
+    streamingDate: '',
+    streamingHour: '',
+    teacher: {
+      id: '123',
+      name: '123',
+    }
   }
 
   return (
