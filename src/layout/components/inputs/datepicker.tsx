@@ -29,7 +29,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
       },
       setValue: (ref, newValue) => {
         ref.current.value = newValue
-        const newDate = formatDateToUTC(newValue)
+        const newDate = formatDateToUTC(newValue as string)
         setDate(newDate)
       },
       clearValue: (ref) => {
