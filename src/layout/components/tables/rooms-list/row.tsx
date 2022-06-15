@@ -100,7 +100,7 @@ export function Row({
 
       <td className='text-end d-flex justify-content-end px-4'>
         <Tooltip content={'Editar'} rounded color='primary'>
-          <Link href={`/room/edit/${id}`}>
+          <Link href={`/rooms/edit/${id}`}>
             <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
               <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
             </button>
