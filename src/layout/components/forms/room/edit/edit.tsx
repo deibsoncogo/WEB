@@ -26,21 +26,26 @@ import { appRoutes } from '../../../../../application/routing/routes'
 import { CreateRoom } from '../../../../../domain/models/createRoom'
 import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
 import CustomButton from '../../../buttons/CustomButton'
+import { IGetRoom } from '../../../../../domain/usecases/interfaces/room/getCourse'
+import { IUpdateRoom } from '../../../../../domain/usecases/interfaces/room/updateRoom'
+import { IRoomResponse } from '../../../../../interfaces/api-response/roomResponse'
 
 type Props = {
-  createRoom: ICreateRoom
+  id: string| string[] | undefined
+  getRoom: IGetRoom
+  updateRoom: IUpdateRoom  
   getCategories: IGetCategories
   getUsers: IGetAllUsers
-  id: string | string[] | undefined
 }
 
-export function FormUpdateRoom({ createRoom, getCategories, getUsers }: Props) {
+export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [loading, setLoading] = useState(true)
-  const [updateRoom, setupdateRoom] = useState(false)
+  const [update, setUpdate] = useState(false)
   const [imageUpload, setImageUpload] = useState<File>()
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
+  const [defaultValue, setDefaultValue] = useState<IRoomResponse>()
   const [hasErrorClass, setHasErrorClass] = useState(false)
 
   const handleSingleImageUpload = (file: File) => {
@@ -115,15 +120,15 @@ export function FormUpdateRoom({ createRoom, getCategories, getUsers }: Props) {
     }
     formData.append('room', JSON.stringify(room))
 
-    setupdateRoom(true)
-    createRoom
-      .create(formData)
+    setUpdate(true)
+    updateRoom
+      .update(formData)
       .then(() => {
         toast.success('Sala atualizada com sucesso!')
         router.push(appRoutes.ROOMS)
       })
       .catch(() => toast.error('Não foi possível atualizar sala!'))
-      .finally(() => setupdateRoom(false))
+      .finally(() => setUpdate(false))
   }
 
   const searchTeachers = async (teacherName: string) => {
@@ -172,25 +177,18 @@ export function FormUpdateRoom({ createRoom, getCategories, getUsers }: Props) {
   async function fetchData() {
     try{      
 
-    //   if (typeof props.id == 'string') {
-    //    const data =  await props.getCourse.get(props.id)
-    //    setDefaultValue(data)
-    //    setStateEditor({ content: data.content })
-    //    setAttachment(await props.getAttachments.getAllByCourseId(props.id))
-    //    setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
-    //   }       
-    //   setCategories(await props.getCategories.get())
-    //   setUsers(await props.getUsers.getAllByRole(new UserQueryRole(roles.TEACHER)))     
+       if (typeof id == 'string') {
+        const data =  await getRoom.get(id)
+        setDefaultValue(data)  
+       }  
     }
     catch(error){
       toast.error("Não foi possível carregar os dados")
     }
     finally{
-      setLoading(false)
-    }
+      setLoading(false)    }
 
-  }
- 
+  } 
   useEffect(() => {
     fetchData()      
   }, [])
@@ -257,7 +255,7 @@ export function FormUpdateRoom({ createRoom, getCategories, getUsers }: Props) {
             customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
-            loading={updateRoom}
+            loading={update}
             onClick={() => {
               router.push(appRoutes.ROOMS)
             }}
@@ -266,7 +264,7 @@ export function FormUpdateRoom({ createRoom, getCategories, getUsers }: Props) {
             type='submit'
             customClasses={['w-180px', 'btn-primary']}
             title='Salvar'
-            disabled={updateRoom}
+            disabled={update}
           />
         </div>
       </Form>
