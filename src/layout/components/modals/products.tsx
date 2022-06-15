@@ -1,5 +1,5 @@
 import Modal from 'react-modal'
-import { formatDateToUTC, KTSVG } from '../../../helpers'
+import { KTSVG } from '../../../helpers'
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 import { DatePicker, Select } from '../inputs'
 import { Dispatch, SetStateAction, useState } from 'react'
@@ -128,9 +128,9 @@ export function ProductsModal({ isOpen, modalTitle, message, action, onRequestCl
 
           <div className='modal-footer'>
             <button type='button' className='btn btn-primary' onClick={action}>
-              Adicionar
+              Confirmar
             </button>
-            <button type='button' className='btn btn-light'>
+            <button type='button' className='btn btn-light' onClick={onRequestClose}>
               Cancelar
             </button>
           </div>

@@ -50,7 +50,7 @@ export function FormCreateUser({ userRegister }: Props) {
   async function handleOpenModal() {
     try {      
       setIsProductsModalOpen(false)
-      toast.success('Status alterado com sucesso!')      
+      toast.success('Produtos adicionados com sucesso!')      
     } catch (err: any) {
       toast.error(err.messages[0])
     }
