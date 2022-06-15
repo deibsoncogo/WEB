@@ -40,7 +40,8 @@ export function ProductsModal({ isOpen, modalTitle, message, action, onRequestCl
       id: '1',
       name: 'Day Trade - Do básico ao avançado',
       expireDate: '26/10/2022',
-      type: 'Cursos'
+      label: 'Cursos',
+      type: 'courses'
     },
   ])
 
@@ -69,7 +70,7 @@ export function ProductsModal({ isOpen, modalTitle, message, action, onRequestCl
               selectedProducts.map(product => (
                 <div key={product.id} className='d-flex align-items-center gap-18'>
                   <div className='w-25'>
-                    <Select name='courses' label={product.type} fixedValue={product.name} disabled>
+                    <Select name={product.type} label={product.label} fixedValue={product.name} disabled>
                       <option>
                         {product.name}
                       </option>
