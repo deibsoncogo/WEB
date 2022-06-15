@@ -190,12 +190,12 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
 
   } 
   useEffect(() => {
-    fetchData()      
+    fetchData() 
   }, [])
 
   return (
     <>
-      <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
+      <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações da Sala</h3>
         <InputImage name='photo' handleSingleImageUpload={handleSingleImageUpload} />
         <div className='d-flex flex-row gap-5 w-100'>
