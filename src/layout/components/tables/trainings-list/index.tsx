@@ -1,26 +1,30 @@
-import { useState } from 'react'
-
-import { Row } from './row'
+import { Loading } from '../../loading/loading'
 import { Pagination } from '../../pagination/Pagination'
 import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { MakeTrainingsRow } from '../../../../application/factories/components/rows/trainingsRow'
 
 type TrainingsTable = {
+  loading: boolean
   trainings: ITrainings[]
   paginationHook: usePaginationType
   getTrainings(): Promise<void>
+  handleRefresher: () => void
 }
 
-export function TrainingsTable({ trainings, paginationHook, getTrainings }: TrainingsTable) {
-  const [loading, setLoading] = useState(false)
-
+export function TrainingsTable({
+  loading,
+  trainings,
+  paginationHook,
+  getTrainings,
+  handleRefresher,
+}: TrainingsTable) {
   return (
     <>
       {trainings.length !== 0 && (
         <>
           <div className='card-body py-3'>
             <div className='table-responsive'>
-              <table className='table table-striped align-middle gs-0 gy-4'>
+              <table className='table align-middle gs-0 gy-4'>
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th className='text-dark ps-4 min-w-100px rounded-start'>Nome</th>
@@ -43,12 +47,16 @@ export function TrainingsTable({ trainings, paginationHook, getTrainings }: Trai
                         description={item.description}
                         price={item.price}
                         teacher={item.teacher}
+                        active={item.active}
                         getTrainings={getTrainings}
+                        handleRefresher={handleRefresher}
                       />
                     ))}
                 </tbody>
               </table>
             </div>
+
+            {loading && <Loading />}
           </div>
           <div className='ms-auto'>
             <Pagination paginationHook={paginationHook} />

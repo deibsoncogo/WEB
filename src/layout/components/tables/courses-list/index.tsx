@@ -96,7 +96,7 @@ export default function CoursesTable(props: Props) {
           <>
             <div className='card-body py-3'>
               <div className='table-responsive'>
-                <table className='table table-striped align-middle gs-0 gy-4'>
+                <table className='table align-middle gs-0 gy-4'>
                   <thead>
                     <tr className='fw-bolder text-muted bg-light'>
                       <th

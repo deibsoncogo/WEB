@@ -14,6 +14,8 @@ type TrainingsTemplate = {
 }
 
 export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) {
+  const [loading, setLoading] = useState(false)
+  const [refresher, setRefresher] = useState(true)
   const [trainings, setTrainings] = useState<ITrainings[]>([] as ITrainings[])
   const [trainingName, setTrainingName] = useState('')
 
@@ -28,6 +30,7 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
   }
 
   async function getTrainings() {
+    setLoading(true)
     try {
       const { total, data } = await remoteGetAllTrainings.getAll(paginationParams)
       setTotalPage(total)
@@ -35,15 +38,20 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
     } catch (err) {
       console.log(err)
     }
+    setLoading(false)
   }
 
   const handleSearch = debounce((text: string) => {
     setTrainingName(text)
   })
 
+  function handleRefresher() {
+    setRefresher(!refresher)
+  }
+
   useEffect(() => {
     getTrainings()
-  }, [pagination.take, pagination.totalPages, currentPage, trainingName])
+  }, [refresher, pagination.take, pagination.totalPages, currentPage, trainingName])
 
   return (
     <div className='card mb-5 mb-xl-8'>
@@ -63,9 +71,11 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
       </div>
 
       <TrainingsTable
+        loading={loading}
         trainings={trainings}
         paginationHook={paginationHook}
         getTrainings={getTrainings}
+        handleRefresher={handleRefresher}
       />
     </div>
   )
