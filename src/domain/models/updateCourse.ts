@@ -14,8 +14,8 @@ export class UpdateCourse {
   price?: string
   accessTime: string
   userId: string
-  courseClass: CourseClass[]
-  deleteFiles: DeleteFileUpload[]
+  courseClass?: CourseClass[]
+  deleteFiles?: DeleteFileUpload[]
 
   constructor(
     id: string | undefined,
@@ -30,8 +30,8 @@ export class UpdateCourse {
     price: string,
     accessTime: string,
     userId: string,
-    courseClass: CourseClass[],
-    deleteFiles: DeleteFileUpload[]
+    courseClass?: CourseClass[],
+    deleteFiles?: DeleteFileUpload[]
   ) {
     this.id = id
     this.name = name

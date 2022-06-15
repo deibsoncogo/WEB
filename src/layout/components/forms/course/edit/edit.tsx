@@ -28,6 +28,8 @@ import CoursesInternalTable from './courseClass/courseInternalTable'
 import { CourseClass } from '../../../../../domain/models/courseClass'
 import FilesInternalTable from './filesUpload/filesInternalTable'
 import { DeleteFileUpload } from '../../../../../domain/models/deleteFile'
+import { appRoutes } from '../../../../../application/routing/routes'
+import CustomButton from '../../../buttons/CustomButton'
 
 type Props = {
   updateCourse: IUpdateCourse
@@ -51,6 +53,7 @@ export function FormUpdateCourse(props: Props) {
   const [imageUpload, setImageUpload] = useState<File>()
 
   const [loading, setLoading] = useState(true)
+  const [updateCourse, setUpdateCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
 
   const [IdDeletedFiles] = useState<DeleteFileUpload[]>([])
@@ -164,6 +167,7 @@ export function FormUpdateCourse(props: Props) {
     }
     formData.append('course', JSON.stringify(course))
 
+    setUpdateCourse(true)
     props.updateCourse
       .update(formData)
       .then(() => {
@@ -171,6 +175,7 @@ export function FormUpdateCourse(props: Props) {
         router.push('/courses')
       })
       .catch(() => toast.error('Não foi possível atualizar o curso!'))
+      .finally(() => setUpdateCourse(false))
   }
 
   async function fetchData() {
@@ -296,7 +301,7 @@ export function FormUpdateCourse(props: Props) {
             onEditorChange={handleChange}
           />
 
-          <Input name='content' className='d-none' />
+          <Input name='content' hidden={true} />
 
           <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>
           <FilesInternalTable
@@ -326,19 +331,21 @@ export function FormUpdateCourse(props: Props) {
           />
 
           <div className='d-flex mt-10'>
-            <button
+            <CustomButton
+              customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+              title='Cancelar'
               type='button'
+              loading={updateCourse}
               onClick={() => {
-                router.push('/courses')
+                router.push(appRoutes.COURSES)
               }}
-              className='btn btn-lg btn-secondary w-150px mb-5 ms-auto me-10'
-            >
-              Cancelar
-            </button>
-
-            <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
-              Salvar
-            </button>
+            />
+            <CustomButton
+              type='submit'
+              customClasses={['w-180px', 'btn-primary']}
+              title='Salvar'
+              disabled={updateCourse}
+            />          
           </div>
         </Form>
       )}
