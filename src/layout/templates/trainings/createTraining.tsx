@@ -34,7 +34,6 @@ function CreateTrainingPageTemplate({
 }: CreateTrainingPageProps) {
   const router = useRouter()
   const [streamList, setStreamList] = useState<IStreaming[]>([])
-  const [isStreamingListValid, setIsStreamingListValid] = useState(true)
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
 
   const formRef = useRef<FormHandles>(null)
@@ -55,12 +54,12 @@ function CreateTrainingPageTemplate({
   async function handleFormSubmit(data: ITraining) {
     const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
 
-    if (streamList.length === 0) {
-      setIsStreamingListValid(false)
-    }
+    if (error || streamList.length === 0) {
+      formRef?.current?.setErrors(error || {})
 
-    if (error) {
-      formRef?.current?.setErrors(error)
+      if (streamList.length === 0) {
+        formRef.current?.setFieldError('streamingDate', 'Insira pelo menos uma transmissão')
+      }
       return
     }
 
@@ -73,9 +72,6 @@ function CreateTrainingPageTemplate({
   function addStreamingDate() {
     const streaming = getStreamingDate(formRef)
     if (streaming) {
-      if (!isStreamingListValid) {
-        setIsStreamingListValid(true)
-      }
       setStreamList([...streamList, streaming])
     }
   }
@@ -140,7 +136,6 @@ function CreateTrainingPageTemplate({
         searchTeachers={handleGetAsyncTeachersToSelectInput}
         searchCategories={handleGetAsyncCategoriesToSelectInput}
         streamList={streamList}
-        isStreamingListValid={isStreamingListValid}
         loadingSubmit={loadingTrainingCreation}
         zoomUsersOptions={zoomUsersOptions}
       />

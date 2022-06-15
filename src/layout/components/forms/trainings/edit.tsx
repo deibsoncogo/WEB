@@ -5,7 +5,7 @@ import { IStreaming } from '../../../../domain/models/streaming'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { KTSVG } from '../../../../helpers'
 import CustomButton from '../../buttons/CustomButton'
-import { DatePicker, Input, TextArea } from '../../inputs'
+import { DatePicker, Input, Select, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
 import { InputImage } from '../../inputs/input-image'
 import { SelectAsync } from '../../inputs/selectAsync'
@@ -15,12 +15,12 @@ type FormEditTrainingProps = {
   addStreamingDate: () => void
   onSubmit: (data: any) => void
   onCancel: () => void
-  streamList: IStreaming[]
   removeStreamItem: (index: number) => void
   searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
   searchCategories: (categoryName: string) => Promise<ISelectOption[]>
-  isStreamingListValid: boolean
   loadingSubmit: boolean
+  streamList: IStreaming[]
+  zoomUsersOptions: ISelectOption[]
 }
 
 const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, ref) => {
@@ -32,8 +32,8 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
     searchTeachers,
     streamList,
     searchCategories,
-    isStreamingListValid,
     loadingSubmit,
+    zoomUsersOptions,
   } = props
 
   return (
@@ -104,42 +104,55 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
 
         <div className='row d-flex'>
           <div className='col-3'>
-            <DatePicker
-              name='streamingDate'
-              label='Dia da transmissão'
-              placeholderText='00/00/000'
-            />
-          </div>
-          <div className='col-3'>
-            <DatePicker
-              name='streamingHour'
-              label='Horário'
-              placeholderText='00:00'
-              showTimeSelect
-              showTimeSelectOnly
-              timeIntervals={15}
-              timeCaption='Horas'
-              dateFormat='hh:mm'
-            />
+            <Select name='zoomUserId' label='Usuário do Zoom'>
+              <option disabled selected>
+                Selecione
+              </option>
+              {zoomUsersOptions.map(({ label, value }) => (
+                <option value={value} key={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
           </div>
 
-          <div className='col-3 pt-8'>
-            <button
-              type='button'
-              onClick={addStreamingDate}
-              className='btn btn-lg btn-primary h-45px mb-7 mt-auto'
-              style={{ marginTop: '22px' }}
-            >
-              <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-              Adicionar Data
-            </button>
-          </div>
+          <div className='col-9'>
+            <div className='row'>
+              <div className='col-4'>
+                <DatePicker
+                  name='streamingDate'
+                  label='Dia da transmissão'
+                  placeholderText='00/00/000'
+                  autoComplete='off'
+                />
+              </div>
+              <div className='col-4'>
+                <DatePicker
+                  name='streamingHour'
+                  label='Horário'
+                  placeholderText='00:00'
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={15}
+                  timeCaption='Horas'
+                  dateFormat='HH:mm'
+                  autoComplete='off'
+                />
+              </div>
 
-          {!isStreamingListValid && (
-            <span className='text-danger' style={{ marginTop: '-14px' }}>
-              Insira pelo menos uma transmissão
-            </span>
-          )}
+              <div className='col-4'>
+                <button
+                  type='button'
+                  onClick={addStreamingDate}
+                  className='btn btn-lg btn-primary h-45px mb-7 text-nowrap'
+                  style={{ marginTop: '22px' }}
+                >
+                  <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+                  Adicionar Data
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

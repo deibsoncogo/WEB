@@ -4,6 +4,7 @@ export interface ITraining {
   id?: string
   name: string
   photo?: Blob
+  zoomUserId: string
   imageUrl: string
   categoryId: string
   category: {

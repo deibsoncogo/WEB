@@ -6,6 +6,7 @@ import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
 import { IStreaming } from '../../../domain/models/streaming'
 import { ITraining } from '../../../domain/models/training'
+import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetCategories } from '../../../domain/usecases/interfaces/category/getCategories'
 import { IEditTraining } from '../../../domain/usecases/interfaces/trainings/editTraining'
 import {
@@ -13,6 +14,7 @@ import {
   IGetTrainingParams,
 } from '../../../domain/usecases/interfaces/trainings/getTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
+import { IGetZoomUsers } from '../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditTraining } from '../../components/forms/trainings/edit'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
@@ -28,6 +30,7 @@ type EditTrainingPageProps = {
   remoteGetCategories: IGetCategories
   remoteEditTraining: IEditTraining
   remoteGetTraining: IGetTraining
+  remoteGetZoomUsers: IGetZoomUsers
 }
 
 function EditTrainingPageTemplate({
@@ -40,7 +43,7 @@ function EditTrainingPageTemplate({
   const { id: trainingId } = router.query
 
   const [streamList, setStreamList] = useState<IStreaming[]>([])
-  const [isStreamingListValid, setIsStreamingListValid] = useState(true)
+  const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
 
   const formRef = useRef<FormHandles>(null)
 
@@ -59,10 +62,7 @@ function EditTrainingPageTemplate({
 
   async function handleFormSubmit(data: ITraining) {
     const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
-
-    if (streamList.length === 0) {
-      setIsStreamingListValid(false)
-    }
+    console.log(data)
 
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)
@@ -71,17 +71,18 @@ function EditTrainingPageTemplate({
       return
     }
 
-    if (error) {
-      formRef?.current?.setErrors(error)
+    if (error || streamList.length === 0) {
+      formRef?.current?.setErrors(error || {})
+
+      if (streamList.length === 0) {
+        formRef.current?.setFieldError('streamingDate', 'Insira pelo menos uma transmissão')
+      }
     }
   }
 
   function addStreamingDate() {
     const streaming = getStreamingDate(formRef)
     if (streaming) {
-      if (!isStreamingListValid) {
-        setIsStreamingListValid(true)
-      }
       setStreamList([...streamList, streaming])
     }
   }
@@ -131,6 +132,7 @@ function EditTrainingPageTemplate({
         category,
         imageUrl,
         installments,
+        zoomUserId,
       } = training
 
       const formattedStreamings = streamings.map((streaming) => ({
@@ -151,6 +153,7 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('trainingEndDate', new Date(trainingEndDate))
       formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDate))
       formRef.current?.setFieldValue('photo', imageUrl)
+      formRef.current?.setFieldValue('zoomUserId', zoomUserId)
       setStreamList(formattedStreamings)
     }
   }, [trainingEditedSuccessful, training])
@@ -176,8 +179,8 @@ function EditTrainingPageTemplate({
         onCancel={handleCancel}
         searchTeachers={handleGetAsyncTeachersToSelectInput}
         searchCategories={handleGetAsyncCategoriesToSelectInput}
-        isStreamingListValid={isStreamingListValid}
         loadingSubmit={loadingTrainingEdition}
+        zoomUsersOptions={zoomUsersOptions}
       />
     </>
   )

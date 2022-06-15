@@ -1,7 +1,5 @@
-import { InputHTMLAttributes, useEffect, useRef, useState } from 'react'
 import { useField } from '@unform/core'
-
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
+import { InputHTMLAttributes, useEffect, useRef } from 'react'
 
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
