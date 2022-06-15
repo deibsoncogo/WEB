@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { Row } from './row'
 import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
 
 type Props = {
   products: IPartialProductResponse[]
+  setProducts: Dispatch<SetStateAction<IPartialProductResponse[]>>
 }
 
-export function ProductsTable({ products }: Props) {
+export function ProductsTable({ products, setProducts }: Props) {
 
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
@@ -30,6 +31,7 @@ export function ProductsTable({ products }: Props) {
                 id={item.id}
                 name={item.name}
                 expireDate={item.expireDate}
+                setProducts={setProducts}
               />
             ))}
         </tbody>

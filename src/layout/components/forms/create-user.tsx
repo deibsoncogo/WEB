@@ -32,12 +32,17 @@ export function FormCreateUser({ userRegister }: Props) {
   const [grantedProducts, setGrantedProducts] = useState([
     {
       id: '1',
-      name: 'Boletim Diário',
+      name: 'Day Trade - Do básico ao avançado',
       expireDate: '26/10/2022'
     },
     {
       id: '2',
-      name: 'Planilhas',
+      name: 'Análises de Criptomoedas',
+      expireDate: '26/10/2022'
+    },
+    {
+      id: '3',
+      name: 'Segue o gráfico - Mensal',
       expireDate: '26/10/2022'
     },
   ])
@@ -196,7 +201,7 @@ export function FormCreateUser({ userRegister }: Props) {
 
       <div className='w-50'>
         <h4 className='mb-5'>Acessos concedidos</h4>
-        <ProductsTable products={grantedProducts} />
+        <ProductsTable products={grantedProducts} setProducts={setGrantedProducts} />
       </div>
 
       <div className='w-100'>
