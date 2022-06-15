@@ -29,23 +29,7 @@ export function FormCreateUser({ userRegister }: Props) {
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
 
-  const [grantedProducts, setGrantedProducts] = useState([
-    {
-      id: '1',
-      name: 'Day Trade - Do básico ao avançado',
-      expireDate: '26/10/2022'
-    },
-    {
-      id: '2',
-      name: 'Análises de Criptomoedas',
-      expireDate: '26/10/2022'
-    },
-    {
-      id: '3',
-      name: 'Segue o gráfico - Mensal',
-      expireDate: '26/10/2022'
-    },
-  ])
+  const [grantedProducts, setGrantedProducts] = useState()
 
   async function handleOpenModal() {
     try {      
@@ -199,10 +183,12 @@ export function FormCreateUser({ userRegister }: Props) {
         </div>
       </div>
 
-      <div className='w-50'>
-        <h4 className='mb-5'>Acessos concedidos</h4>
-        <ProductsTable products={grantedProducts} setProducts={setGrantedProducts} />
-      </div>
+      {grantedProducts && (
+        <div className='w-50'>
+          <h4 className='mb-5'>Acessos concedidos</h4>
+          <ProductsTable products={grantedProducts} setProducts={setGrantedProducts} />
+        </div>
+      )}
 
       <div className='w-100'>
         <button type='button' className='btn btn-outline-primary border border-primary w-180px mb-5' onClick={() => {setIsProductsModalOpen(true)}}>
@@ -229,7 +215,6 @@ export function FormCreateUser({ userRegister }: Props) {
       <ProductsModal
         isOpen={isProductsModalOpen}
         modalTitle = "Adicionar produto grátis"
-        message = "Você tem certeza que deseja alterar o status dessa sala?"
         action={handleOpenModal}
         onRequestClose={() => {
           setIsProductsModalOpen(false)
