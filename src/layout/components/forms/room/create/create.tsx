@@ -26,6 +26,7 @@ import { appRoutes } from '../../../../../application/routing/routes'
 import { CreateRoom } from '../../../../../domain/models/createRoom'
 import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
 import CustomButton from '../../../buttons/CustomButton'
+import RoomInternalTable from './roomInternalTable'
 
 type Props = {
   createRoom: ICreateRoom
@@ -38,6 +39,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
   const formRef = useRef<FormHandles>(null)
   const [loading, setLoading] = useState(true)
   const [registerRoom, setRegisterRoom] = useState(false)
+  const [isToShowStreaming, setIsToShowStreaming] = useState(false)
   const [imageUpload, setImageUpload] = useState<File>()
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
@@ -168,6 +170,10 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
     }
   }
 
+  const callAlert = () =>{
+    alert("É babado")
+  }
+
   return (
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
@@ -217,13 +223,27 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
 
         <h3 className='fs-6 fw-bolder text-dark'>Itens</h3>
         <div className='form-check form-check-inline'>
-          <input className='form-check-input' type='radio' name='itemRoom' value='option1' />
+          <input className='form-check-input' type='checkbox' name='itemChat' value='option1' />
           <label className='form-check-label text-dark  fs-6'>Chat</label>
         </div>
         <div className='form-check form-check-inline'>
-          <input className='form-check-input' type='radio' name='itemRoom' value='option2' />
+          <input
+            className='form-check-input'
+            type='checkbox'
+            name='itemRoom'
+            value='option2'
+            onChange={() => setIsToShowStreaming(!isToShowStreaming)}
+          />
           <label className='form-check-label text-dark fs-6'>Transmissão ao vivo</label>
         </div>
+
+        {isToShowStreaming && (
+          <div >
+            <h3 className='mb-5 mt-5 text-muted'>Datas da Transmissão</h3>
+
+            <RoomInternalTable courseClassArray={courseClass} />
+          </div>
+        )}
 
         <div className='d-flex mt-10'>
           <CustomButton
