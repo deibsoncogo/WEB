@@ -100,6 +100,7 @@ function EditTrainingPageTemplate({
 
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
     const options = await getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers })
+    console.log(options)
     return options
   }
 

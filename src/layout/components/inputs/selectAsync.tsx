@@ -13,6 +13,7 @@ type SelectAsyncProps = {
   label?: string
   classes?: string
   placeholder: string
+  defaultOptions?: ISelectOption[]
 }
 
 type OptionsState = {
@@ -20,10 +21,16 @@ type OptionsState = {
   selectedOption?: ISelectOption | null
 }
 
-const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncProps) => {
+const SelectAsync = ({
+  searchOptions,
+  label,
+  name,
+  placeholder,
+  defaultOptions = [],
+}: SelectAsyncProps) => {
   const selectRef = useRef<HTMLInputElement>(null)
-  const labelRef = useRef<HTMLInputElement>(null)
-  const [options, setOptions] = useState<ISelectOption[]>([])
+  const textInputRef = useRef<HTMLInputElement>(null)
+  const [options, setOptions] = useState<ISelectOption[]>(defaultOptions)
   const [loading, setLoading] = useState(false)
 
   const labelField = `${name}-label`
@@ -31,7 +38,7 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
   const { fieldName: labelName, registerField: registerLabel } = useField(labelField)
 
   const [optionsState, setOptionsState] = useState<OptionsState>({ isOpen: false })
-  const { isOpen, selectedOption } = optionsState
+  const { isOpen } = optionsState
 
   const handleOnChange = async () => {
     setOptionsState((oldState) => ({
@@ -43,8 +50,8 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
   }
 
   const handleSelecOptions = (option: ISelectOption) => {
-    if (labelRef.current && selectRef.current) {
-      labelRef.current.value = option.label
+    if (textInputRef.current && selectRef.current) {
+      textInputRef.current.value = option.label
       selectRef.current.value = option.value
     }
     setOptionsState({
@@ -54,9 +61,9 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
   }
 
   const getOptions = debounce(async () => {
-    if (selectRef.current) {
+    if (textInputRef.current) {
       setLoading(true)
-      const optionsArr = await searchOptions(selectRef?.current.value || '')
+      const optionsArr = await searchOptions(textInputRef?.current.value || '')
 
       setOptions(optionsArr)
       setOptionsState((oldState) => ({ ...oldState, isOpen: true }))
@@ -67,6 +74,10 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
 
   const closeOptions = () => {
     setOptionsState((oldState) => ({ ...oldState, isOpen: false }))
+  }
+
+  const openOptions = () => {
+    setOptionsState((oldState) => ({ ...oldState, isOpen: true }))
   }
 
   useEffect(() => {
@@ -87,7 +98,7 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
 
   useEffect(() => {
     registerLabel({
-      ref: labelRef,
+      ref: textInputRef,
       name: labelName,
       getValue: (ref) => {
         return ref.current?.value
@@ -100,6 +111,12 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
       },
     })
   }, [labelName, registerLabel])
+
+  useEffect(() => {
+    if (defaultOptions.length > 0) {
+      setOptions(defaultOptions)
+    }
+  }, [defaultOptions])
 
   return (
     <>
@@ -123,7 +140,9 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
             onChange={handleOnChange}
             onFocus={getOptions}
             onChangeCapture={clearError}
-            ref={labelRef}
+            ref={textInputRef}
+            autoComplete='off'
+            onClick={openOptions}
           />
 
           {loading && (

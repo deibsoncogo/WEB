@@ -35,6 +35,8 @@ function CreateTrainingPageTemplate({
   const router = useRouter()
   const [streamList, setStreamList] = useState<IStreaming[]>([])
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
+  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
+  const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
   const formRef = useRef<FormHandles>(null)
 
@@ -92,12 +94,21 @@ function CreateTrainingPageTemplate({
     return options
   }
 
+  const handlePopulateSelectInputs = async () => {
+    const teacherOptions = await handleGetAsyncTeachersToSelectInput('')
+    const categoryOptions = await handleGetAsyncCategoriesToSelectInput('')
+
+    setDefaultTeacherOptions(teacherOptions)
+    setDefaultCategoryOptions(categoryOptions)
+  }
+
   const handleCancel = () => {
     router.push(appRoutes.TRAININGS)
   }
 
   useEffect(() => {
     getZoomUsers()
+    handlePopulateSelectInputs()
   }, [])
 
   useEffect(() => {
@@ -138,6 +149,8 @@ function CreateTrainingPageTemplate({
         streamList={streamList}
         loadingSubmit={loadingTrainingCreation}
         zoomUsersOptions={zoomUsersOptions}
+        defaultCategoryOptions={defaultCategoryOptions}
+        defaultTeacherOptions={defaultTeacherOptions}
       />
     </>
   )

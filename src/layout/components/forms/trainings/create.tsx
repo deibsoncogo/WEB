@@ -22,6 +22,8 @@ type FormCreateTrainingProps = {
   loadingSubmit: boolean
   streamList: IStreaming[]
   zoomUsersOptions: ISelectOption[]
+  defaultCategoryOptions: ISelectOption[]
+  defaultTeacherOptions: ISelectOption[]
 }
 
 const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((props, ref) => {
@@ -30,11 +32,13 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
     onSubmit,
     removeStreamItem,
     searchTeachers,
-    streamList,
     searchCategories,
-    loadingSubmit,
     onCancel,
+    streamList,
+    loadingSubmit,
     zoomUsersOptions,
+    defaultCategoryOptions,
+    defaultTeacherOptions,
   } = props
 
   return (
@@ -52,6 +56,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               label='Professor'
               classes='h-75px'
               placeholder='Digite o nome do professor'
+              defaultOptions={defaultTeacherOptions}
             />
 
             <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
@@ -71,6 +76,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               label='Categoria'
               classes='h-75px'
               placeholder='Digite o nome da categoria'
+              defaultOptions={defaultCategoryOptions}
             />
           </div>
 
