@@ -21,6 +21,7 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
     }
     const previewURL = URL.createObjectURL(file)
     setPreview(previewURL)
+    e.target.value = ''
 
     if (handleSingleImageUpload) handleSingleImageUpload(file)
   }, [])
