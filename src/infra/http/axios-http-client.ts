@@ -9,7 +9,7 @@ export class AxiosHttpClient implements HttpClient {
         url: data.url,
         method: data.method,
         data: data.body,
-        headers: data.headers? data.headers: this.getAuthHeaders(),
+        headers: this.getAuthHeaders(),
         params: data.params,
         responseType: data.responseType,
       })
@@ -25,14 +25,16 @@ export class AxiosHttpClient implements HttpClient {
   }
   //'content-type': 'multipart/form-data'
 
-  getAuthHeaders(): AxiosRequestHeaders {
+  getAuthHeaders(currentHeaders = {}): AxiosRequestHeaders {
     // return authorization header with basic auth credentials
     let token = localStorage.getItem('access_token')
+    const headers = { ...currentHeaders } as any
+
     if (token) {
-      return { authorization: `Bearer ${token}` }
-    } else {
-      return {}
+      headers.authorization = `Bearer ${token}`
     }
+
+    return headers
   }
 
 }
