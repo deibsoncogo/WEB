@@ -7,9 +7,10 @@ type SelectFace = SelectHTMLAttributes<HTMLSelectElement> & {
   children: ReactNode
   label?: string
   classes?: string
+  fixedValue?: string
 }
 
-export function Select({ name, label, classes, children, ...rest }: SelectFace) {
+export function Select({ name, label, classes, fixedValue, children, ...rest }: SelectFace) {
   const selectRef = useRef(null)
 
   const { fieldName, defaultValue, registerField, error, clearError } = useField(name)
@@ -48,7 +49,7 @@ export function Select({ name, label, classes, children, ...rest }: SelectFace) 
         {...rest}
       >
         <option value='' hidden disabled selected>
-          {error ? error : 'Selecione'}
+          {error ? error : fixedValue ? fixedValue : 'Selecione'}
         </option>
         {children}
       </select>
