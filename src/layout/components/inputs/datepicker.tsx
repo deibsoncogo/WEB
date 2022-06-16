@@ -73,9 +73,6 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
               value={date.getFullYear()}
               onChange={({ target: { value } }) => changeYear(parseInt(value))}
             >
-              <option value='' hidden disabled selected>
-                {error ? error : 'Selecione'}
-              </option>
               {years.map((option) => (
                 <option key={option} value={option}>
                   {option}

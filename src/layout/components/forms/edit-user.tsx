@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import axios from 'axios'
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
+import { toast } from 'react-toastify'
 import { FormHandles } from '@unform/core'
 
+import { findCEP } from '../../../utils/findCEP'
 import { formatDateToUTC } from '../../../helpers'
 import { levelOptions, roleOptions } from '../../../utils/selectOptions'
+
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
-import { api } from '../../../application/services/api'
-import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
-import { findCEP } from '../../../utils/findCEP'
+
 import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
-import { toast } from 'react-toastify'
+import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
 
 type IFormEditUser = {
   id: string
@@ -30,7 +30,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
 
-  async function handleFormSubmit(data: IFormCreateUser) {    
+  async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
 
     try {
@@ -66,7 +66,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     }
   }
 
-  function formatDataToSend(data: any) {       
+  function formatDataToSend(data: any) {
     const matchesCPF = data.cpf.match(/\d*/g)
     const cpf = matchesCPF?.join('')
 
@@ -74,7 +74,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     const phoneNumber = matchesPhone?.join('')
 
     const matchesCEP = data.zipCode.match(/\d*/g)
-    const zipCode = matchesCEP?.join('')  
+    const zipCode = matchesCEP?.join('')
 
     const userData = {
       id,
@@ -96,24 +96,24 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           complement: data.complement,
         },
       ],
-    }      
+    }
 
     return userData
   }
 
-  async function handleCreateUser(data: any) {    
+  async function handleCreateUser(data: any) {
     setHasError(false)
     try {
       await userRegister.updateUser(data)
       router.push('/users')
-      toast.success("Usuário editado com sucesso!")
+      toast.success('Usuário editado com sucesso!')
     } catch (err: any) {
       toast.error(Array.isArray(err.messages) ? err.messages[0] : err.messages)
     }
   }
 
   function setKeys(obj: any) {
-    Object.keys(obj).forEach(key => {        
+    Object.keys(obj).forEach((key) => {
       formRef.current?.setFieldValue(key, obj[key])
     })
     formRef.current?.setErrors({})
@@ -121,28 +121,29 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
 
   useEffect(() => {
     if (!formRef.current) return
-    getUser.getOne()
-    .then((res) => {
-      const newData: any = {
-        name: res.name,
-        email: res.email,
-        birthDate: res.birthDate,
-        cpf: res.cpf,
-        phoneNumber: res.phoneNumber,
-        level: res.level,
-        role: res.role,
-        zipCode: res.address[0]?.zipCode || '',
-        street: res.address[0]?.street || '',
-        neighborhood: res.address[0]?.neighborhood || '',
-        city: res.address[0]?.city || '',
-        state: res.address[0]?.state || '',
-        number: res.address[0]?.number || '',
-        complement: res.address[0]?.complement || '',
-      }  
-      setKeys(newData)
-    })
-    .catch((err) => toast.error(err.messages))
-  }, [])  
+    getUser
+      .getOne()
+      .then((res) => {
+        const newData: any = {
+          name: res.name,
+          email: res.email,
+          birthDate: res.birthDate,
+          cpf: res.cpf,
+          phoneNumber: res.phoneNumber,
+          level: res.level,
+          role: res.role,
+          zipCode: res.address[0]?.zipCode || '',
+          street: res.address[0]?.street || '',
+          neighborhood: res.address[0]?.neighborhood || '',
+          city: res.address[0]?.city || '',
+          state: res.address[0]?.state || '',
+          number: res.address[0]?.number || '',
+          complement: res.address[0]?.complement || '',
+        }
+        setKeys(newData)
+      })
+      .catch((err) => toast.error(err.messages))
+  }, [])
 
   useEffect(() => {
     setKeys(defaultValue)
