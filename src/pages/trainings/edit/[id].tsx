@@ -14,13 +14,12 @@ const EditTrainings: NextPage = () => {
     discount: 10,
     categoryId: '123',
     imageUrl: '',
-    isChatActive: true,
-    streamingDate: '',
-    streamingHour: '',
     teacher: {
       id: '123',
       name: '123',
-    }
+    },
+    active: true,
+    streamings: [],
   }
 
   return (
