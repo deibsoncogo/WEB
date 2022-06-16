@@ -35,7 +35,7 @@ type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
 const BooksTable = ({ remoteGetAllBooks, remoteDeleteBook, remoteUpdateBook }: Props) => {
   const [loading, setLoading] = useState(true)
   const [books, setBooks] = useState<IBookResponse[]>([])
-
+  
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
 
@@ -166,6 +166,10 @@ const BooksTable = ({ remoteGetAllBooks, remoteDeleteBook, remoteUpdateBook }: P
                   role='columnheader'
                 >
                   Estoque
+                </th>
+
+                <th className={`text-dark  min-w-150px cursor-pointer ${order}`}>
+                  Ativo
                 </th>
 
                 <th className='text-dark min-w-150px text-end rounded-end' />

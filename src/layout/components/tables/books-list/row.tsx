@@ -80,6 +80,8 @@ export function Row({
             checked={isActiveCurrent}
           />
         </div>
+      </td>
+      <td>
         <Link href={`/books/edit/${id}`}>
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
             <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
