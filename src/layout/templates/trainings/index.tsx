@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePagination } from '../../../application/hooks/usePagination'
+import { ITraining } from '../../../domain/models/training'
 import { GetCategoriesParams } from '../../../domain/usecases/interfaces/category/getCategories'
 import { KTSVG } from '../../../helpers'
 import { debounce } from '../../../helpers/debounce'
@@ -12,19 +13,24 @@ type TrainingsTemplate = {
 }
 
 export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) {
-  const [trainings, setTrainings] = useState<ITrainings[]>([] as ITrainings[])
+  const [trainings, setTrainings] = useState<ITraining[]>([] as ITraining[])
   const [trainingName, setTrainingName] = useState('')
 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
-  const { take, currentPage } = pagination
-  const paginationParams: GetCategoriesParams = { page: currentPage, take, name: trainingName }
+  const { take, currentPage, order } = pagination
+  const paginationParams: GetCategoriesParams = {
+    page: currentPage,
+    take,
+    name: trainingName,
+    order,
+  }
 
   async function getTrainings() {
     try {
       const { total, data } = await remoteGetAllTrainings.getAll(paginationParams)
       setTotalPage(total)
-      setTrainings(data)
+      setTrainings(data as ITraining[])
     } catch (err) {
       console.log(err)
     }

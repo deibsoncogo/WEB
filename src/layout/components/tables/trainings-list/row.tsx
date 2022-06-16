@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { IToggleTrainingStatus } from '../../../../domain/usecases/interfaces/trainings/toggleTrainingStatus'
 import { KTSVG } from '../../../../helpers'
 import ConfirmationModal from '../../modal/ConfirmationModal'
 
@@ -10,8 +11,10 @@ interface IRow {
   description: string
   price: string | number
   teacherName: string
+  active: boolean
   deleteTraining: IDeleteTraining
   getTrainings(): Promise<void>
+  remoteToggleTrainingStatus: IToggleTrainingStatus
 }
 
 export function Row({
@@ -21,6 +24,8 @@ export function Row({
   price,
   teacherName,
   deleteTraining,
+  active,
+  remoteToggleTrainingStatus,
   getTrainings,
 }: IRow) {
   const [loading, setLoading] = useState(false)
@@ -28,12 +33,28 @@ export function Row({
 
   async function handleDeleteTraining() {
     try {
+      setLoading(true)
       await deleteTraining.deleteTraining()
       getTrainings()
       toast.success('Treinamento excluído com sucesso')
     } catch (err) {
       console.log(err)
       toast.error('Erro ao deletar o treinamento Treinamento')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleToggleTrainingStatus() {
+    try {
+      setLoading(true)
+      await remoteToggleTrainingStatus.toggle({ id, active: active ? 'false' : 'true' })
+      getTrainings()
+      toast.success('Status do treinamento atualizado com sucesso.')
+    } catch {
+      toast.error('Error ao alterar o status do treinamento')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -63,7 +84,13 @@ export function Row({
       </td>
       <td>
         <div className='form-check form-switch form-check-custom form-check-solid'>
-          <input className='form-check-input' type='checkbox' value='' id='flexSwitchDefault' />
+          <input
+            className='form-check-input'
+            type='checkbox'
+            checked={active}
+            id='flexSwitchDefault'
+            onChange={handleToggleTrainingStatus}
+          />
         </div>
       </td>
 

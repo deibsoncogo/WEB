@@ -1,14 +1,20 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import {
+  IToggleTrainingStatus,
+  IToggleTrainingStatusParams,
+} from '../../../domain/usecases/interfaces/trainings/toggleTrainingStatus'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteDeleteTraining implements IDeleteTraining {
+export class RemoteToggleTrainingStatus implements IToggleTrainingStatus {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<void>) {}
 
-  async deleteTraining() {
+  toggle = async (params: IToggleTrainingStatusParams) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
-      method: 'delete',
+      method: 'put',
+      body: params,
     })
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body

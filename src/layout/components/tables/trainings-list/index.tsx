@@ -4,9 +4,10 @@ import { Row } from './row'
 import { Pagination } from '../../pagination/Pagination'
 import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { MakeTrainingsRow } from '../../../../application/factories/components/rows/trainingsRow'
+import { ITraining } from '../../../../domain/models/training'
 
 type TrainingsTable = {
-  trainings: ITrainings[]
+  trainings: ITraining[]
   paginationHook: usePaginationType
   getTrainings(): Promise<void>
 }
@@ -38,11 +39,12 @@ export function TrainingsTable({ trainings, paginationHook, getTrainings }: Trai
                     trainings?.map((item) => (
                       <MakeTrainingsRow
                         key={item.id}
-                        id={item.id}
+                        id={item.id as string}
                         name={item.name}
                         description={item.description}
                         price={item.price}
                         teacher={item.teacher}
+                        active={item.active}
                         getTrainings={getTrainings}
                       />
                     ))}
