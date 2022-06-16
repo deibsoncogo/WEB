@@ -21,7 +21,6 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
   const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
 
   const [date, setDate] = useState(defaultValue || undefined)
-  const [forceRender, setForceRender] = useState('a')
 
   const handleDateRawChange = (e: FocusEvent<HTMLInputElement, Element>) => {
     const reggex = new RegExp(/[^\d|^\/]/g)
@@ -60,7 +59,6 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
           {label}
         </label>
       )}
-      <span>{forceRender}</span>
       <div>
         <ReactDatePicker
           ref={datepickerRef}
