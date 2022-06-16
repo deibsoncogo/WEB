@@ -94,7 +94,7 @@ export function Row({
         </div>
       </td>
 
-      <td className='text-end'>
+      <td>
         <Link href={`/trainings/edit/${id}`}>
           <button
             title='Editar'
