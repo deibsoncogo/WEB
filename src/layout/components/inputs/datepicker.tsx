@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, FocusEvent } from 'react'
 import ReactDatePicker, { ReactDatePickerProps, registerLocale } from 'react-datepicker'
 import br from 'date-fns/locale/pt-BR'
 import { useField } from '@unform/core'
@@ -21,6 +21,18 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
   const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
 
   const [date, setDate] = useState(defaultValue || undefined)
+  const [forceRender, setForceRender] = useState('a')
+
+  const handleDateRawChange = (e: FocusEvent<HTMLInputElement, Element>) => {
+    const reggex = new RegExp(/[^\d|^\/]/g)
+
+    if (reggex.test(e.target.value)) {
+      // with only one call to target value the clear input dont work
+      e.target.value = ''
+      e.target.value = ''
+      clearError()
+    }
+  }
 
   useEffect(() => {
     registerField({
@@ -48,7 +60,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
           {label}
         </label>
       )}
-
+      <span>{forceRender}</span>
       <div>
         <ReactDatePicker
           ref={datepickerRef}
@@ -58,6 +70,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
           dateFormat='dd/MM/yyyy'
           name={name}
           locale='br'
+          onChangeRaw={handleDateRawChange}
           onFocus={clearError}
           {...rest}
           renderCustomHeader={({
