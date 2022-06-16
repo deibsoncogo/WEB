@@ -30,8 +30,8 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
     onCancel,
     removeStreamItem,
     searchTeachers,
-    streamList,
     searchCategories,
+    streamList,
     loadingSubmit,
     zoomUsersOptions,
   } = props
@@ -105,7 +105,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
         <div className='row d-flex'>
           <div className='col-3'>
             <Select name='zoomUserId' label='Usuário do Zoom'>
-              <option disabled selected>
+              <option value='' disabled>
                 Selecione
               </option>
               {zoomUsersOptions.map(({ label, value }) => (

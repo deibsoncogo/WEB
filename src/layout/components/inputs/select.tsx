@@ -26,7 +26,7 @@ export function Select({ name, label, classes, children, ...rest }: SelectFace) 
         ref.current.value = newValue
       },
       clearValue: (ref) => {
-        ref.current.value = undefined
+        ref.current.value = ''
       },
     })
   }, [fieldName, registerField])
@@ -42,6 +42,7 @@ export function Select({ name, label, classes, children, ...rest }: SelectFace) 
       <select
         id={fieldName}
         ref={selectRef}
+        name={name}
         className='form-select form-select-solid'
         onChangeCapture={clearError}
         {...rest}

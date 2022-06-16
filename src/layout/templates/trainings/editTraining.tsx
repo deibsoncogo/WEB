@@ -14,10 +14,12 @@ import {
   IGetTrainingParams,
 } from '../../../domain/usecases/interfaces/trainings/getTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
-import { IGetZoomUsers } from '../../../domain/usecases/interfaces/zoom/getZoomUsers'
+import { IGetZoomUsers, IZoomUser } from '../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditTraining } from '../../components/forms/trainings/edit'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
+import { FullLoading } from '../../components/FullLoading/FullLoading'
+import { Loading } from '../../components/loading/loading'
 import { maskedToMoney } from '../../formatters/currenceFormatter'
 import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
 import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
@@ -38,12 +40,14 @@ function EditTrainingPageTemplate({
   remoteGetCategories,
   remoteEditTraining,
   remoteGetTraining,
+  remoteGetZoomUsers,
 }: EditTrainingPageProps) {
   const router = useRouter()
   const { id: trainingId } = router.query
 
   const [streamList, setStreamList] = useState<IStreaming[]>([])
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
+  const [loadingPageData, setLoadingPageData] = useState(true)
 
   const formRef = useRef<FormHandles>(null)
 
@@ -58,11 +62,20 @@ function EditTrainingPageTemplate({
     makeRequest: getTraining,
     data: training,
     error: getTrainingError,
+    loading: getTrainingLoading,
+    cleanUp: getTrainingCleanUp,
   } = useRequest<ITraining, IGetTrainingParams>(remoteGetTraining.get)
+
+  const {
+    makeRequest: getZoomUsers,
+    data: zoomUsers,
+    error: getZoomUsersError,
+    loading: getZoomUsersLoading,
+    cleanUp: getZoomUsersCleanUp,
+  } = useRequest<IZoomUser[]>(remoteGetZoomUsers.get)
 
   async function handleFormSubmit(data: ITraining) {
     const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
-    console.log(data)
 
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)
@@ -100,7 +113,6 @@ function EditTrainingPageTemplate({
 
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
     const options = await getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers })
-    console.log(options)
     return options
   }
 
@@ -109,9 +121,7 @@ function EditTrainingPageTemplate({
   }
 
   useEffect(() => {
-    if (typeof trainingId === 'string') {
-      getTraining({ id: trainingId })
-    }
+    getZoomUsers()
   }, [])
 
   useEffect(() => {
@@ -156,21 +166,41 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('photo', imageUrl)
       formRef.current?.setFieldValue('zoomUserId', zoomUserId)
       setStreamList(formattedStreamings)
+      setLoadingPageData(false)
+      getTrainingCleanUp()
     }
-  }, [trainingEditedSuccessful, training])
+
+    if (zoomUsers) {
+      const options: ISelectOption[] = zoomUsers.map((user) => ({
+        label: `${user.first_name} ${user.last_name}`,
+        value: user.id,
+      }))
+      setZoomUsersOptions(options)
+      getTraining({ id: trainingId as string })
+      getZoomUsersCleanUp()
+    }
+  }, [trainingEditedSuccessful, training, zoomUsers])
 
   useEffect(() => {
     if (getTrainingError) {
       toast.error(getTrainingError)
+      router.push(appRoutes.TRAININGS)
     }
 
     if (editTrainingError) {
       toast.error(editTrainingError)
+      setLoadingPageData(false)
     }
-  }, [editTrainingError, getTrainingError])
+
+    if (getZoomUsersError) {
+      toast.error(getZoomUsersError)
+      setLoadingPageData(false)
+    }
+  }, [editTrainingError, getTrainingError, getZoomUsersError])
 
   return (
     <>
+      {loadingPageData && <FullLoading />}
       <FormEditTraining
         ref={formRef}
         removeStreamItem={removeStreamItem}
