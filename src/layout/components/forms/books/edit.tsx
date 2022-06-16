@@ -38,7 +38,7 @@ export function FormUpdateBook({
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [isOpenModal, setIsOpenModal] = useState(false)
-  const [formValue, setFormValue] = useState<IFormBook>()
+  const [bookData, setBookData] = useState<FormData>()
 
   const [loading, setLoading] = useState(false)
 
@@ -48,7 +48,22 @@ export function FormUpdateBook({
   const [book, setBook] = useState<IBookResponse>()
 
   async function handleCreateBook(data: IFormBook) {
-    setFormValue(data)
+    const formData = new FormData()
+
+    if (data.image) {
+      formData.append('image', data.image)
+    }
+
+    formData.append('name', String(data.name))
+    formData.append('author', String(data.autor))
+    formData.append('stock', String(data.stock))
+    formData.append('price', String(data.price))
+    formData.append('discount', String(data.discount))
+    formData.append('description', String(data.description))
+    formData.append('categoryId', String(data.categoryId))
+    formData.append('id', String(data.id))
+
+    setBookData(formData)
   }
 
   const getCategories = async () => {
@@ -102,8 +117,7 @@ export function FormUpdateBook({
         handleCreateBook(res)
       })
     } catch (err) {
-      toast.error('Erro ao validar dados.')
-      console.log(err)
+      toast.error('Erro ao validar dados')
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
@@ -116,16 +130,14 @@ export function FormUpdateBook({
   }
 
   async function handleActionButton() {
-    if (formValue)
+    if (bookData)
       try {
-        await updateBook.update({ data: formValue }).then((res: any) => {
-          console.log(res)
-          setIsOpenModal(false)
-          toast.success('Livro criado com sucesso!')
-        })
+        await updateBook.update({ data: bookData })
+        
+        setIsOpenModal(false)
+        toast.success('Livro atualizado com sucesso!')
       } catch (error) {
-        console.log(error)
-        toast.error('Erro ao criar livro.!')
+        toast.error('Erro ao atualizar livro')
       }
   }
 
