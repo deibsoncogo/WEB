@@ -1,5 +1,4 @@
 import { IBookResponse } from '../../../../interfaces/api-response/bookResponse'
-import { IFormBook } from '../../../../interfaces/forms/create-book'
 
 export interface GetBookParams {
   id?: string | string[] | undefined
@@ -13,7 +12,7 @@ export interface GetBookParamsById {
 }
 
 export interface UpdateBookParams {
-  data: IFormBook
+  data: FormData
 }
 export interface OutputPagination {
   data: IBookResponse[]

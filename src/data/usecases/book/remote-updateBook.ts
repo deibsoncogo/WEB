@@ -6,11 +6,13 @@ export class RemoteUpdateBook implements IUpdateBook {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<string>) {}
 
   update = async (params: UpdateBookParams) => {
-    console.log('params', params)
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'put',
-      body: params,
+      body: params.data,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     })
 
     switch (httpResponse.statusCode) {
