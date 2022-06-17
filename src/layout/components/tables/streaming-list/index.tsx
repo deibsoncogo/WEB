@@ -7,7 +7,6 @@ interface IStreamingTable {
 }
 
 export function StreamingTable({ streamList, removeStreamItem }: IStreamingTable) {
-  console.log(streamList)
   return (
     <div className='card mb-5 mb-xl-8'>
       <div className='py-3'>
