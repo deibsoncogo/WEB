@@ -8,53 +8,81 @@ import { IStreaming } from '../../../domain/models/streaming'
 import { ITraining } from '../../../domain/models/training'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetCategories } from '../../../domain/usecases/interfaces/category/getCategories'
-import { ICreateTraining } from '../../../domain/usecases/interfaces/trainings/createTraining'
+import { IEditTraining } from '../../../domain/usecases/interfaces/trainings/editTraining'
+import {
+  IGetTraining,
+  IGetTrainingParams,
+} from '../../../domain/usecases/interfaces/trainings/getTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
 import { IGetZoomUsers, IZoomUser } from '../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
-import { FormCreateTraining } from '../../components/forms/trainings/create'
+import { FormEditTraining } from '../../components/forms/trainings/edit'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
+import { FullLoading } from '../../components/FullLoading/FullLoading'
+import { Loading } from '../../components/loading/loading'
+import { maskedToMoney } from '../../formatters/currenceFormatter'
 import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
 import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from './utils/getAsyncTeachersToSelectInput'
+import { getIsoDateToBRL } from './utils/getIsoDateToBRL'
 import { getStreamingDate } from './utils/getStramingDate'
 
-type CreateTrainingPageProps = {
+type EditTrainingPageProps = {
   remoteGetTeachers: IGetAllUsers
   remoteGetCategories: IGetCategories
-  remoteCreateTraining: ICreateTraining
+  remoteEditTraining: IEditTraining
+  remoteGetTraining: IGetTraining
   remoteGetZoomUsers: IGetZoomUsers
 }
 
-function CreateTrainingPageTemplate({
+function EditTrainingPageTemplate({
   remoteGetTeachers,
   remoteGetCategories,
-  remoteCreateTraining,
+  remoteEditTraining,
+  remoteGetTraining,
   remoteGetZoomUsers,
-}: CreateTrainingPageProps) {
+}: EditTrainingPageProps) {
   const router = useRouter()
+  const { id: trainingId } = router.query
+
   const [streamList, setStreamList] = useState<IStreaming[]>([])
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
-  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
-  const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
+  const [loadingPageData, setLoadingPageData] = useState(true)
 
   const formRef = useRef<FormHandles>(null)
 
   const {
-    makeRequest: createTraining,
-    data: trainingCreatedSuccessful,
-    error: createTrainingError,
-    loading: loadingTrainingCreation,
-  } = useRequest<FormData>(remoteCreateTraining.create)
+    makeRequest: editTraining,
+    data: trainingEditedSuccessful,
+    error: editTrainingError,
+    loading: loadingTrainingEdition,
+  } = useRequest<FormData>(remoteEditTraining.edit)
+
+  const {
+    makeRequest: getTraining,
+    data: training,
+    error: getTrainingError,
+    loading: getTrainingLoading,
+    cleanUp: getTrainingCleanUp,
+  } = useRequest<ITraining, IGetTrainingParams>(remoteGetTraining.get)
 
   const {
     makeRequest: getZoomUsers,
     data: zoomUsers,
     error: getZoomUsersError,
+    loading: getZoomUsersLoading,
+    cleanUp: getZoomUsersCleanUp,
   } = useRequest<IZoomUser[]>(remoteGetZoomUsers.get)
 
   async function handleFormSubmit(data: ITraining) {
     const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
+
+    if (success && streamList.length > 0) {
+      const dataFormatted = formatTrainingToSubmit(data, streamList)
+      dataFormatted.append('id', String(trainingId))
+      editTraining(dataFormatted)
+      return
+    }
 
     if (error || streamList.length === 0) {
       formRef?.current?.setErrors(error || {})
@@ -62,12 +90,6 @@ function CreateTrainingPageTemplate({
       if (streamList.length === 0) {
         formRef.current?.setFieldError('streamingDate', 'Insira pelo menos uma transmissão')
       }
-      return
-    }
-
-    if (success && streamList.length > 0) {
-      const dataFormatted = formatTrainingToSubmit(data, streamList)
-      createTraining(dataFormatted)
     }
   }
 
@@ -94,27 +116,58 @@ function CreateTrainingPageTemplate({
     return options
   }
 
-  const handlePopulateSelectInputs = async () => {
-    const teacherOptions = await handleGetAsyncTeachersToSelectInput('')
-    const categoryOptions = await handleGetAsyncCategoriesToSelectInput('')
-
-    setDefaultTeacherOptions(teacherOptions)
-    setDefaultCategoryOptions(categoryOptions)
-  }
-
   const handleCancel = () => {
     router.push(appRoutes.TRAININGS)
   }
 
   useEffect(() => {
     getZoomUsers()
-    handlePopulateSelectInputs()
   }, [])
 
   useEffect(() => {
-    if (trainingCreatedSuccessful) {
-      toast.success('Treinamemto Criado Com Sucesso')
+    if (trainingEditedSuccessful) {
+      toast.success('Treinamemto Editado Com Sucesso')
       router.push(appRoutes.TRAININGS)
+    }
+
+    if (training) {
+      const {
+        streamings,
+        name,
+        description,
+        teacher,
+        price,
+        discount,
+        trainingEndDate,
+        deactiveChatDate,
+        category,
+        imageUrl,
+        installments,
+        zoomUserId,
+      } = training
+
+      const formattedStreamings = streamings.map((streaming) => ({
+        ...streaming,
+        dateISO: streaming.date,
+        date: getIsoDateToBRL(streaming.date),
+      }))
+
+      formRef.current?.setFieldValue('name', name)
+      formRef.current?.setFieldValue('description', description)
+      formRef.current?.setFieldValue('installments', installments)
+      formRef.current?.setFieldValue('teacherId', teacher.id)
+      formRef.current?.setFieldValue('teacherId-label', teacher.name)
+      formRef.current?.setFieldValue('categoryId', category.id)
+      formRef.current?.setFieldValue('categoryId-label', category.name)
+      formRef.current?.setFieldValue('price', maskedToMoney(price))
+      formRef.current?.setFieldValue('discount', maskedToMoney(discount))
+      formRef.current?.setFieldValue('trainingEndDate', new Date(trainingEndDate))
+      formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDate))
+      formRef.current?.setFieldValue('photo', imageUrl)
+      formRef.current?.setFieldValue('zoomUserId', zoomUserId)
+      setStreamList(formattedStreamings)
+      setLoadingPageData(false)
+      getTrainingCleanUp()
     }
 
     if (zoomUsers) {
@@ -123,37 +176,45 @@ function CreateTrainingPageTemplate({
         value: user.id,
       }))
       setZoomUsersOptions(options)
+      getTraining({ id: trainingId as string })
+      getZoomUsersCleanUp()
     }
-  }, [trainingCreatedSuccessful, zoomUsers])
+  }, [trainingEditedSuccessful, training, zoomUsers])
 
   useEffect(() => {
-    if (createTrainingError) {
-      toast.error(createTrainingError)
+    if (getTrainingError) {
+      toast.error(getTrainingError)
+      router.push(appRoutes.TRAININGS)
+    }
+
+    if (editTrainingError) {
+      toast.error(editTrainingError)
+      setLoadingPageData(false)
     }
 
     if (getZoomUsersError) {
       toast.error(getZoomUsersError)
+      setLoadingPageData(false)
     }
-  }, [createTrainingError, getZoomUsersError])
+  }, [editTrainingError, getTrainingError, getZoomUsersError])
 
   return (
     <>
-      <FormCreateTraining
+      {loadingPageData && <FullLoading />}
+      <FormEditTraining
         ref={formRef}
         removeStreamItem={removeStreamItem}
         addStreamingDate={addStreamingDate}
+        streamList={streamList}
         onSubmit={handleFormSubmit}
         onCancel={handleCancel}
         searchTeachers={handleGetAsyncTeachersToSelectInput}
         searchCategories={handleGetAsyncCategoriesToSelectInput}
-        streamList={streamList}
-        loadingSubmit={loadingTrainingCreation}
+        loadingSubmit={loadingTrainingEdition}
         zoomUsersOptions={zoomUsersOptions}
-        defaultCategoryOptions={defaultCategoryOptions}
-        defaultTeacherOptions={defaultTeacherOptions}
       />
     </>
   )
 }
 
-export { CreateTrainingPageTemplate }
+export { EditTrainingPageTemplate }

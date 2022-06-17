@@ -1,12 +1,12 @@
-import { IStreamList } from '../../forms/trainings/type'
+import { IStreaming } from '../../../../domain/models/streaming'
 import { Row } from './row'
 
-interface ILivesTable {
-  streamList: IStreamList[]
+interface IStreamingTable {
+  streamList: IStreaming[]
   removeStreamItem: (index: number) => void
 }
 
-export function LivesTable({ streamList, removeStreamItem }: ILivesTable) {
+export function StreamingTable({ streamList, removeStreamItem }: IStreamingTable) {
   return (
     <div className='card mb-5 mb-xl-8'>
       <div className='py-3'>

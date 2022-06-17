@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, FocusEvent } from 'react'
 import ReactDatePicker, { ReactDatePickerProps, registerLocale } from 'react-datepicker'
 import br from 'date-fns/locale/pt-BR'
 import { useField } from '@unform/core'
@@ -8,21 +8,30 @@ import { months } from '../../../utils/months'
 
 import 'react-datepicker/dist/react-datepicker.css'
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai'
-import { InputMasked } from './input-mask'
 
 interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
   name: string
   label: string
-  mask?: string
   classes?: string
 }
 
 registerLocale('br', br)
-export function DatePicker({ name, label, mask, classes, ...rest }: Props) {
+export function DatePicker({ name, label, classes, ...rest }: Props) {
   const datepickerRef = useRef(null)
   const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
 
   const [date, setDate] = useState(defaultValue || undefined)
+
+  const handleDateRawChange = (e: FocusEvent<HTMLInputElement, Element>) => {
+    const reggex = new RegExp(/[^\d|^\/]/g)
+
+    if (reggex.test(e.target.value)) {
+      // with only one call to target value the clear input dont work
+      e.target.value = ''
+      e.target.value = ''
+      clearError()
+    }
+  }
 
   useEffect(() => {
     registerField({
@@ -50,7 +59,6 @@ export function DatePicker({ name, label, mask, classes, ...rest }: Props) {
           {label}
         </label>
       )}
-
       <div>
         <ReactDatePicker
           ref={datepickerRef}
@@ -60,9 +68,9 @@ export function DatePicker({ name, label, mask, classes, ...rest }: Props) {
           dateFormat='dd/MM/yyyy'
           name={name}
           locale='br'
+          onChangeRaw={handleDateRawChange}
           onFocus={clearError}
           {...rest}
-          customInput = {<InputMasked name={name} mask={mask ? mask: ''}/>}
           renderCustomHeader={({
             date,
             changeYear,

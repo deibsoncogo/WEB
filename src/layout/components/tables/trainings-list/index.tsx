@@ -4,15 +4,23 @@ import { Row } from './row'
 import { Pagination } from '../../pagination/Pagination'
 import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { MakeTrainingsRow } from '../../../../application/factories/components/rows/trainingsRow'
+import { ITraining } from '../../../../domain/models/training'
 
 type TrainingsTable = {
-  trainings: ITrainings[]
+  trainings: ITraining[]
   paginationHook: usePaginationType
   getTrainings(): Promise<void>
 }
 
 export function TrainingsTable({ trainings, paginationHook, getTrainings }: TrainingsTable) {
+  const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
   const [loading, setLoading] = useState(false)
+
+  const getColumnHeaderClasses = (name: string) => {
+    return `text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+      name
+    )}`
+  }
 
   return (
     <>
@@ -23,13 +31,38 @@ export function TrainingsTable({ trainings, paginationHook, getTrainings }: Trai
               <table className='table table-striped align-middle gs-0 gy-4'>
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
-                    <th className='text-dark ps-4 min-w-100px rounded-start'>Nome</th>
-                    <th className='text-dark min-w-100px'>Descrição</th>
-                    <th className='text-dark min-w-100px'>Preço</th>
-                    <th className='text-dark min-w-150px'>Professor</th>
+                    <th
+                      className={getColumnHeaderClasses('name')}
+                      onClick={() => handleOrdenation('name')}
+                    >
+                      Nome
+                    </th>
+                    <th
+                      className={getColumnHeaderClasses('description')}
+                      onClick={() => handleOrdenation('description')}
+                    >
+                      Descrição
+                    </th>
+                    <th
+                      className={getColumnHeaderClasses('price')}
+                      onClick={() => handleOrdenation('price')}
+                    >
+                      Preço
+                    </th>
+                    <th
+                      className={getColumnHeaderClasses('teacher')}
+                      onClick={() => handleOrdenation('teacher')}
+                    >
+                      Professor
+                    </th>
                     <th className='text-dark min-w-100px'>Chat</th>
-                    <th className='text-dark min-w-100px'>Ativo</th>
-                    <th className='text-dark min-w-50px text-end rounded-end' />
+                    <th
+                      className={getColumnHeaderClasses('active')}
+                      onClick={() => handleOrdenation('active')}
+                    >
+                      Ativo
+                    </th>
+                    <th className='text-dark min-w-50px rounded-end'>Ações</th>
                   </tr>
                 </thead>
 
@@ -38,11 +71,12 @@ export function TrainingsTable({ trainings, paginationHook, getTrainings }: Trai
                     trainings?.map((item) => (
                       <MakeTrainingsRow
                         key={item.id}
-                        id={item.id}
+                        id={item.id as string}
                         name={item.name}
                         description={item.description}
                         price={item.price}
                         teacher={item.teacher}
+                        active={item.active}
                         getTrainings={getTrainings}
                       />
                     ))}

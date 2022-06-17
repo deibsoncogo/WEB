@@ -1,14 +1,20 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import { IEditTraining } from '../../../domain/usecases/interfaces/trainings/editTraining'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteDeleteTraining implements IDeleteTraining {
+export class RemoteEditTraining implements IEditTraining {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<void>) {}
 
-  async deleteTraining() {
+  edit = async (data: FormData) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
-      method: 'delete',
+      method: 'put',
+      body: data,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     })
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body
