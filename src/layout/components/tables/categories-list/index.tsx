@@ -18,8 +18,6 @@ type Props = {
   order: 'asc' | 'desc' | undefined
 }
 
-type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
-
 export default function CategoriesTable({
   categories = [],
   paginationHook,
@@ -27,9 +25,8 @@ export default function CategoriesTable({
   loadingDeletion,
   setSelectedCategory,
   openUpdateCategoryDrawer,
-  onOrder,
-  order,
 }: Props) {
+  const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
   const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false)
 
   const handleOpenIsDeleteCategoryModal = (category: Category) => {
@@ -51,10 +48,10 @@ export default function CategoriesTable({
     openUpdateCategoryDrawer(category)
   }
 
-  let orderClass = ''
-
-  if (order) {
-    orderClass = order === 'asc' ? 'table-sort-asc' : 'table-sort-desc'
+  const getColumnHeaderClasses = (name: string) => {
+    return `text-dark ps-4 rounded-start cursor-pointer cursor-pointer min-w-200px ${getClassToCurrentOrderColumn(
+      name
+    )}`
   }
 
   return (
@@ -72,15 +69,17 @@ export default function CategoriesTable({
           <div className='table-responsive'>
             <table className='table align-middle gs-0 gy-4 datatable'>
               <thead>
-                <tr className='fw-bolder text-muted bg-light'>
+                <tr className='fw-bolder text-muted bg-light d-flex justify-content-between'>
                   <th
-                    className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${orderClass}`}
                     role='columnheader'
-                    onClick={onOrder}
+                    className={getColumnHeaderClasses('name')}
+                    onClick={() => handleOrdenation('name')}
                   >
                     Nome
                   </th>
-                  <th className='text-dark min-w-150px text-end rounded-end' />
+                  <th className='text-dark rounded-end' style={{ minWidth: '150px' }}>
+                    Ações
+                  </th>
                 </tr>
               </thead>
 
