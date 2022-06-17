@@ -46,7 +46,7 @@ export function InputNumber({
 
       <div className='form-control d-flex align-items-center form-control-lg bg-secondary p-0 m-0 border-0'>
         <input
-          className='form-control form-control-lg form-control-solid border-transparent bg-secondary'
+          className='form-control form-control-lg form-control-solid border-transparent bg-secondary no-spinner'
           name={name}
           placeholder={placeholderText}
           ref={inputRef}
