@@ -7,6 +7,7 @@ interface IStreamingTable {
 }
 
 export function StreamingTable({ streamList, removeStreamItem }: IStreamingTable) {
+  console.log(streamList)
   return (
     <div className='card mb-5 mb-xl-8'>
       <div className='py-3'>
@@ -28,7 +29,7 @@ export function StreamingTable({ streamList, removeStreamItem }: IStreamingTable
                   index={index}
                   liveDate={item.date}
                   time={item.hour}
-                  start={item.start}
+                  start={item.showStartLink}
                   removeStreamItem={removeStreamItem}
                 />
               ))}

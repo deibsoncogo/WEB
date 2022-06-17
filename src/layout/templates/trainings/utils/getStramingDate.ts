@@ -23,6 +23,9 @@ export function getStreamingDate(formRef: RefObject<FormHandles>): IStreaming | 
   formRef.current?.clearField('streamingHour')
   formRef.current?.setFieldError('streamingDate', '')
 
+  console.log('dateISO', formatDate(formRef.current?.getData().streamingDate, 'YYYY-MM-DD'))
+  console.log(streamingDate)
+
   const formattedStreamingDate = formatDate(streamingDate, 'DD/MM/YYYY')
   const formattedStreamingHour = formatTime(streamingHour, 'HH:mm')
 

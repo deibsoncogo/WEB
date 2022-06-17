@@ -3,5 +3,7 @@ export interface IStreaming {
   date: string
   hour: string
   start?: boolean
+  startUrl?: string
   dateISO: string
+  showStartLink?: boolean
 }

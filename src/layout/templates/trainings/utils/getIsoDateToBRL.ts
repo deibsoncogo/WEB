@@ -1,7 +1,4 @@
 export function getIsoDateToBRL(date: string) {
-  return new Date(date).toLocaleDateString('pt-BR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  })
+  const [year, month, day] = date.split('-')
+  return `${day}/${month}/${year}`
 }
