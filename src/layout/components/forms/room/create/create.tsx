@@ -27,6 +27,7 @@ import { CreateRoom } from '../../../../../domain/models/createRoom'
 import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
 import CustomButton from '../../../buttons/CustomButton'
 import RoomInternalTable from './roomInternalTable'
+import { InputNumber } from '../../../inputs/input-number'
 
 type Props = {
   createRoom: ICreateRoom
@@ -63,7 +64,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
     if (value == 'NaN') formRef.current?.setFieldValue(name, '')
   }
 
-  async function handleFormSubmit(data: IFormRoom) {
+  async function handleFormSubmit(data: IFormRoom) {  
     if (!formRef.current) throw new Error()
 
     try {
@@ -74,15 +75,15 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
         userId: Yup.string().required('Selecione um professor'),
         price: Yup.string().required('Preço é necessário'),
         installments: Yup.number()
-          .typeError('Quantidade de parcelas deve ser um número')
+          .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1') 
+          .typeError('Quantidade de parcelas deve ser um número')          
           .required('Quantidade de parcelas é necessário')
-          .positive('Quantidade de parcelas deve ser positiva')
-          .integer('Quantidade de parcelas deve ser um número inteiro'),
-        discount: Yup.string().required('Desconto é necessário'),
+          .integer('Quantidade de parcelas deve ser um número inteiro'),        
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
-
+      console.log("Babado")
+      console.log(data.installments)
       await schema.validate(data, { abortEarly: false })
       handleCreateRoom(data)
     } catch (err) {
@@ -203,13 +204,13 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
               placeholderText='R$ 0,00'
               onChange={() => currencyFormatter('discount')}
             />
-            <Input min='1' name='installments' label='Quantidade de Parcelas' type='number' />
+            <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
           <div className='w-50'>
             <TextArea
               name='description'
               label='Descrição'
-              style={{ minHeight: '246px', margin: 0 }}
+              style={{ minHeight: '238px', margin: 0 }}
             />
             <SelectAsync
               searchOptions={searchCategories}
