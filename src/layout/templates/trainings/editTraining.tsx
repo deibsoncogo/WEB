@@ -120,6 +120,26 @@ function EditTrainingPageTemplate({
     router.push(appRoutes.TRAININGS)
   }
 
+  const formatStreamingList = (streamings: IStreaming[]): IStreaming[] => {
+    const formattedStreamings = streamings.map((streaming) => {
+      const date = new Date(`${streaming.date}:${streaming.hour}`)
+      const dateNow = new Date()
+
+      const timeLeft = (date.getTime() - dateNow.getTime()) / 1000 / 60
+      const fourtyMinutesToStart = 40
+      const isToShowStartUrl = timeLeft < fourtyMinutesToStart
+
+      return {
+        ...streaming,
+        dateISO: streaming.date,
+        date: getIsoDateToBRL(streaming.date),
+        showStartLink: isToShowStartUrl,
+      }
+    })
+
+    return formattedStreamings
+  }
+
   useEffect(() => {
     getZoomUsers()
   }, [])
@@ -146,11 +166,7 @@ function EditTrainingPageTemplate({
         zoomUserId,
       } = training
 
-      const formattedStreamings = streamings.map((streaming) => ({
-        ...streaming,
-        dateISO: streaming.date,
-        date: getIsoDateToBRL(streaming.date),
-      }))
+      const formattedStreamings = formatStreamingList(streamings)
 
       formRef.current?.setFieldValue('name', name)
       formRef.current?.setFieldValue('description', description)

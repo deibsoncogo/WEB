@@ -28,7 +28,7 @@ export function StreamingTable({ streamList, removeStreamItem }: IStreamingTable
                   index={index}
                   liveDate={item.date}
                   time={item.hour}
-                  start={item.start}
+                  start={item.showStartLink}
                   removeStreamItem={removeStreamItem}
                 />
               ))}
