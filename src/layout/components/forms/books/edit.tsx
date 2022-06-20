@@ -132,7 +132,7 @@ export function FormUpdateBook({
   async function handleActionButton() {
     if (bookData)
       try {
-        await updateBook.update({ data: bookData })
+        await updateBook.update({ data: bookData }).then(() => router.push('/books'))        
         
         setIsOpenModal(false)
         toast.success('Livro atualizado com sucesso!')
