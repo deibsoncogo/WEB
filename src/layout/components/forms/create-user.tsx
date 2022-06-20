@@ -15,6 +15,7 @@ import { findCEP } from '../../../utils/findCEP'
 import { restrictNumberInput } from '../../../utils/restrictNumberInput'
 import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
+import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 
 type Props = {
   userRegister: IUserSignUp
@@ -29,7 +30,7 @@ export function FormCreateUser({ userRegister }: Props) {
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
 
-  const [grantedProducts, setGrantedProducts] = useState()
+  const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
 
   async function handleOpenModal() {
     try {      

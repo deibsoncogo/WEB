@@ -14,7 +14,7 @@ export function currenceMaskOnlyValue(value?: string) {
 
 export const onlyNums = (value: any) => value.replace(/[^\d]/g, '')
 
-export const maskedToMoney = (value: any) => {
+const maskedToMoney = (value: any) => {
   const number = onlyNums(`${value}`)
 
   return `R$ ${(number / 100)
@@ -26,3 +26,5 @@ export const maskedToMoney = (value: any) => {
     .reverse()
     .join('')}`
 }
+
+export { maskedToMoney }

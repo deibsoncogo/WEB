@@ -1,14 +1,15 @@
 import { Row } from '../../../../layout/components/tables/trainings-list/row'
+import { makeRemoteDeleteTrainings } from '../../usecases/trainings/remote-deleteTrainings-factory'
+import { makeRemoteToggleTrainingStatus } from '../../usecases/trainings/remote-toggleTrainingStatus-factory'
 import { makeRemoteUpdateTraining } from '../../usecases/trainings/remote-updateTrainings'
-import { makeRemoteDeleteTrainings } from '../../usecases/trainings/remote-deleteTrainings-factory copy'
 
-type MakeTrainingsRow = {
+type IMakeTrainingsRow = {
   id: string
   name: string
+  active: boolean
   description: string
   price: string | number
   teacher: { name: string }
-  active: boolean
   getTrainings(): Promise<void>
   handleRefresher: () => void
 }
@@ -22,7 +23,7 @@ export function MakeTrainingsRow({
   active,
   getTrainings,
   handleRefresher,
-}: MakeTrainingsRow) {
+}: IMakeTrainingsRow) {
   return (
     <Row
       id={id}
@@ -34,6 +35,7 @@ export function MakeTrainingsRow({
       deleteTraining={makeRemoteDeleteTrainings(id)}
       updateStatusOfTraining={makeRemoteUpdateTraining()}
       getTrainings={getTrainings}
+      remoteToggleTrainingStatus={makeRemoteToggleTrainingStatus()}
       handleRefresher={handleRefresher}
     />
   )

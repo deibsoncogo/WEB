@@ -4,34 +4,39 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
+import { IStreaming } from '../../../domain/models/streaming'
+import { ITraining } from '../../../domain/models/training'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetCategories } from '../../../domain/usecases/interfaces/category/getCategories'
-import {
-  ICreateTraining,
-  ICreateTrainingParams,
-} from '../../../domain/usecases/interfaces/trainings/createTraining'
+import { ICreateTraining } from '../../../domain/usecases/interfaces/trainings/createTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
-import { Role } from '../../../domain/usecases/interfaces/user/role'
-import { formatDate, formatTime } from '../../../helpers'
+import { IGetZoomUsers, IZoomUser } from '../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormCreateTraining } from '../../components/forms/trainings/create'
-import { IStreamList, trainingFormSchema } from '../../components/forms/trainings/type'
-import { onlyNums } from '../../formatters/currenceFormatter'
+import { trainingFormSchema } from '../../components/forms/trainings/type'
+import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
+import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
+import { getAsyncTeachersToSelectInput } from './utils/getAsyncTeachersToSelectInput'
+import { getStreamingDate } from './utils/getStramingDate'
 
 type CreateTrainingPageProps = {
-  makeGetTeachers: IGetAllUsers
+  remoteGetTeachers: IGetAllUsers
   remoteGetCategories: IGetCategories
   remoteCreateTraining: ICreateTraining
+  remoteGetZoomUsers: IGetZoomUsers
 }
 
 function CreateTrainingPageTemplate({
-  makeGetTeachers,
+  remoteGetTeachers,
   remoteGetCategories,
   remoteCreateTraining,
+  remoteGetZoomUsers,
 }: CreateTrainingPageProps) {
   const router = useRouter()
-  const [streamList, setStreamList] = useState<IStreamList[]>([])
-  const [isStreamingListValid, setIsStreamingListValid] = useState(true)
+  const [streamList, setStreamList] = useState<IStreaming[]>([])
+  const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
+  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
+  const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
   const formRef = useRef<FormHandles>(null)
 
@@ -42,86 +47,35 @@ function CreateTrainingPageTemplate({
     loading: loadingTrainingCreation,
   } = useRequest<FormData>(remoteCreateTraining.create)
 
-  async function handleFormSubmit(data: ICreateTrainingParams) {
-    const { error, success } = await applyYupValidation<ICreateTrainingParams>(
-      trainingFormSchema,
-      data
-    )
+  const {
+    makeRequest: getZoomUsers,
+    data: zoomUsers,
+    error: getZoomUsersError,
+  } = useRequest<IZoomUser[]>(remoteGetZoomUsers.get)
 
-    if (streamList.length === 0) {
-      setIsStreamingListValid(false)
-    }
+  async function handleFormSubmit(data: ITraining) {
+    const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
 
-    if (error) {
-      formRef?.current?.setErrors(error)
+    if (error || streamList.length === 0) {
+      formRef?.current?.setErrors(error || {})
+
+      if (streamList.length === 0) {
+        formRef.current?.setFieldError('streamingDate', 'Insira pelo menos uma transmissão')
+      }
       return
     }
 
     if (success && streamList.length > 0) {
-      const formattedStreamings = streamList.map((stream) => ({
-        hour: stream.hour,
-        date: stream.dateISO,
-      }))
-      const formattedData = {
-        ...data,
-        price: Number(onlyNums(data.price)),
-        discount: Number(onlyNums(data.discount)),
-        streamings: formattedStreamings,
-        trainingEndDate: formatDate(new Date(data.trainingEndDate), 'YYYY-MM-DD'),
-        deactiveChatDate: formatDate(new Date(data.deactiveChatDate), 'YYYY-MM-DD'),
-      }
-      const {
-        categoryId,
-        description,
-        discount,
-        name,
-        price,
-        streamings,
-        teacherId,
-        photo,
-        trainingEndDate,
-        deactiveChatDate,
-      } = formattedData
-
-      const formData = new FormData()
-
-      if (photo) {
-        formData.append('image', photo)
-      }
-      formData.append('price', String(price))
-      formData.append('discount', String(discount))
-      formData.append('teacherId', String(teacherId))
-      formData.append('categoryId', String(categoryId))
-      formData.append('name', String(name))
-      formData.append('description', String(description))
-      formData.append('active', String(false))
-      formData.append('trainingEndDate', String(trainingEndDate))
-      formData.append('deactiveChatDate', String(deactiveChatDate))
-      const streamingsString = JSON.stringify(streamings)
-      formData.append('streamings', streamingsString)
-
-      createTraining(formData)
+      const dataFormatted = formatTrainingToSubmit(data, streamList)
+      createTraining(dataFormatted)
     }
   }
 
   function addStreamingDate() {
-    const liveData = {
-      date: formatDate(formRef.current?.getData().streamingDate, 'DD/MM/YYYY'),
-      hour: formatTime(formRef.current?.getData().streamingHour, 'HH:mm'),
-      dateISO: formatDate(formRef.current?.getData().streamingDate, 'YYYY-MM-DD'),
-      start: false,
+    const streaming = getStreamingDate(formRef)
+    if (streaming) {
+      setStreamList([...streamList, streaming])
     }
-
-    const isInvalidDate = liveData.date === 'Invalid date' || liveData.hour === 'Invalid date'
-    if (isInvalidDate) {
-      return
-    }
-
-    if (!isStreamingListValid) {
-      setIsStreamingListValid(true)
-    }
-
-    setStreamList([...streamList, liveData])
   }
 
   function removeStreamItem(index: number) {
@@ -131,60 +85,56 @@ function CreateTrainingPageTemplate({
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    try {
-      const { data } = await remoteGetCategories.get({
-        name: categoryName,
-        order: 'asc',
-        page: 1,
-        take: 5,
-      })
-
-      const categoryOptions: ISelectOption[] = data.map((category) => ({
-        label: category.name,
-        value: category.id,
-      }))
-
-      return categoryOptions
-    } catch {
-      toast.error('Falha em buscar as categorias')
-      return []
-    }
+    const options = await getAsyncCategoiesToSelectInput({ categoryName, remoteGetCategories })
+    return options
   }
 
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
-    try {
-      const { data } = await makeGetTeachers.getAll({
-        name: teacherName,
-        order: 'asc',
-        page: 1,
-        take: 5,
-        role: Role.Teacher,
-      })
-
-      const teacherOptions: ISelectOption[] = data.map((teacher) => ({
-        label: teacher.name,
-        value: teacher.id,
-      }))
-
-      return teacherOptions
-    } catch {
-      toast.error('Falha em buscar os professores')
-      return []
-    }
+    const options = await getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers })
+    return options
   }
+
+  const handlePopulateSelectInputs = async () => {
+    const teacherOptions = await handleGetAsyncTeachersToSelectInput('')
+    const categoryOptions = await handleGetAsyncCategoriesToSelectInput('')
+
+    setDefaultTeacherOptions(teacherOptions)
+    setDefaultCategoryOptions(categoryOptions)
+  }
+
+  const handleCancel = () => {
+    router.push(appRoutes.TRAININGS)
+  }
+
+  useEffect(() => {
+    getZoomUsers()
+    handlePopulateSelectInputs()
+  }, [])
 
   useEffect(() => {
     if (trainingCreatedSuccessful) {
       toast.success('Treinamemto Criado Com Sucesso')
       router.push(appRoutes.TRAININGS)
     }
-  }, [trainingCreatedSuccessful])
+
+    if (zoomUsers) {
+      const options: ISelectOption[] = zoomUsers.map((user) => ({
+        label: `${user.first_name} ${user.last_name}`,
+        value: user.id,
+      }))
+      setZoomUsersOptions(options)
+    }
+  }, [trainingCreatedSuccessful, zoomUsers])
 
   useEffect(() => {
     if (createTrainingError) {
       toast.error(createTrainingError)
     }
-  }, [createTrainingError])
+
+    if (getZoomUsersError) {
+      toast.error(getZoomUsersError)
+    }
+  }, [createTrainingError, getZoomUsersError])
 
   return (
     <>
@@ -192,12 +142,15 @@ function CreateTrainingPageTemplate({
         ref={formRef}
         removeStreamItem={removeStreamItem}
         addStreamingDate={addStreamingDate}
-        streamList={streamList}
         onSubmit={handleFormSubmit}
+        onCancel={handleCancel}
         searchTeachers={handleGetAsyncTeachersToSelectInput}
         searchCategories={handleGetAsyncCategoriesToSelectInput}
-        isStreamingListValid={isStreamingListValid}
+        streamList={streamList}
         loadingSubmit={loadingTrainingCreation}
+        zoomUsersOptions={zoomUsersOptions}
+        defaultCategoryOptions={defaultCategoryOptions}
+        defaultTeacherOptions={defaultTeacherOptions}
       />
     </>
   )
