@@ -26,10 +26,10 @@ export function InputCheckbox({ name, label, classes, setIsToShowStreaming, ...r
       name: fieldName,
       ref: inputRef,
       getValue: (ref) => {
-        return Boolean(ref.current.value)
+        return ref.current.value === "true"? true: false
       },
       setValue: (ref, value) => {        
-        ref.current.value =  Boolean(value)
+        ref.current.value =  value
       },
       clearValue: (ref) => {
         ref.current.value = false
