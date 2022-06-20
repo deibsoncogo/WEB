@@ -4,7 +4,7 @@ import { useField } from '@unform/core'
 
 interface IInputImage extends InputHTMLAttributes<HTMLInputElement> {
   name: string
-  handleSingleImageUpload?: (file: File) => void
+  handleSingleImageUpload?: (file?: File) => void
 }
 
 export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputImage) {
@@ -79,6 +79,7 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
         <button
           onClick={() => {
             setPreview(null)
+            if (handleSingleImageUpload) handleSingleImageUpload()            
           }}
           className='btn btn-primary ms-5 mt-5'
         >
