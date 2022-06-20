@@ -1,5 +1,5 @@
 import { useField } from '@unform/core'
-import { InputHTMLAttributes, useEffect, useRef } from 'react'
+import { InputHTMLAttributes, useEffect, useRef, useState } from 'react'
 
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
@@ -18,7 +18,16 @@ export function InputNumber({
   ...rest
 }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { fieldName, registerField, defaultValue = 0, error, clearError } = useField(name)
+  const { fieldName, registerField, defaultValue = '', error, clearError } = useField(name)
+
+  const [valueInput, setValueInput] = useState(defaultValue)
+  
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (inputRef.current) {   
+      if(event.currentTarget.value != '') 
+        setValueInput(event.currentTarget.value)       
+    }   
+  }
 
   useEffect(() => {
     registerField({
@@ -28,10 +37,10 @@ export function InputNumber({
         return Number(ref.current.value)
       },
       setValue: (ref, value) => {
-        ref.current.value = Number(value)
+        ref.current.value = value
       },
       clearValue: (ref) => {
-        ref.current.value = 0
+        ref.current.value = ''
       },
     })
   }, [fieldName, registerField])
@@ -50,7 +59,9 @@ export function InputNumber({
           name={name}
           placeholder={placeholderText}
           ref={inputRef}
-          onChange={onChange}
+          value={valueInput}
+          onChange={onChange} 
+          onInput= {handleOnChange}         
           onChangeCapture={clearError}
           defaultValue={defaultValue}
           type='number'
