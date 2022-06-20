@@ -50,8 +50,6 @@ export function FormUpdateBook({
   async function handleCreateBook(data: IFormBook) {
     const formData = new FormData()
 
-    console.log(data)
-
     if (data.image) {
       formData.append('image', data.image)
     }
