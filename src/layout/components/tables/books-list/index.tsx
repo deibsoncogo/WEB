@@ -172,7 +172,9 @@ const BooksTable = ({ remoteGetAllBooks, remoteDeleteBook, remoteUpdateBook }: P
                   Ativo
                 </th>
 
-                <th className='text-dark min-w-150px text-end rounded-end' />
+                <th className='text-dark min-w-150px text-left rounded-end'>
+                  Ação
+                </th>
               </tr>
             </thead>
 
