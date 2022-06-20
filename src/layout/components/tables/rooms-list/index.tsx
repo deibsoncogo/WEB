@@ -109,10 +109,10 @@ export function RoomsTable({getAllRooms, updateRoom, deleteRoom}: Props) {
                      onClick={() => handleOrdenation('price')}>Preço</th>
                 <th className={getColumnHeaderClasses('teacher')}
                      onClick={() => handleOrdenation('teacher')}>Professor</th>
-                <th className='text-dark min-w-100px'>Chat</th>
-                <th className={getColumnHeaderClasses('isActive', 'min-w-110px')}
+                <th className='text-dark min-w-50px'>Chat</th>
+                <th className={getColumnHeaderClasses('isActive', 'min-w-80px')}
                      onClick={() => handleOrdenation('isActive')}>Ativo</th>
-                <th className='text-dark min-w-50px text-center rounded-end'>Ação</th>
+                <th className='text-dark min-w-80px text-start rounded-end'>Ação</th>
               </tr>
             </thead>
 
