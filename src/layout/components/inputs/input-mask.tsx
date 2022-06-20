@@ -17,7 +17,7 @@ type IInputProps = InputHTMLAttributes<HTMLInputElement> &
 export function InputMasked({ name, label, classes, mask, onChange, ...rest }: IInputProps) {
   const inputRef = useRef(null)
 
-  const { fieldName, defaultValue = '', registerField, error } = useField(name)
+  const { fieldName, defaultValue = '', registerField, error, clearError } = useField(name)
 
   useEffect(() => {
     registerField({
@@ -48,6 +48,7 @@ export function InputMasked({ name, label, classes, mask, onChange, ...rest }: I
         placeholder={error && error}
         className={`form-control form-control-lg form-control-solid border-transparent bg-secondary ${error && 'placeholder-red'}`}
         defaultValue={defaultValue}
+        onChangeCapture={clearError}
         onChange={onChange}
         {...rest}
       />
