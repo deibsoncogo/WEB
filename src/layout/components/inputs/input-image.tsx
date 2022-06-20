@@ -10,7 +10,7 @@ interface IInputImage extends InputHTMLAttributes<HTMLInputElement> {
 export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputImage) {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { fieldName, registerField, defaultValue, error } = useField(name)
+  const { fieldName, registerField, defaultValue, error, clearError} = useField(name)
   const [preview, setPreview] = useState(defaultValue)
 
   const handlePreview = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +69,7 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
           accept='image/*'
           ref={inputRef}
           onChange={handlePreview}
+          onChangeCapture={clearError}
           className='mt-5 d-none'
           {...rest}
         />
