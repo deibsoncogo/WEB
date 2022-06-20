@@ -137,6 +137,7 @@ export function FormUpdateBook({
         setIsOpenModal(false)
         toast.success('Livro atualizado com sucesso!')
       } catch (error) {
+        setIsOpenModal(false)
         toast.error('Erro ao atualizar livro')
       }
   }
