@@ -4,13 +4,14 @@ import { useField } from '@unform/core'
 interface IInputImage extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   handleSingleImageUpload?: (file: File) => void;
+  defaultPreview?: string
 }
 
-export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputImage) {
+export function InputImage({ name, handleSingleImageUpload, defaultPreview, ...rest }: IInputImage) {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const { fieldName, registerField, defaultValue, error } = useField(name)
-  const [preview, setPreview] = useState(defaultValue)
+  const [preview, setPreview] = useState(defaultPreview ? defaultPreview : defaultValue)
 
   const handlePreview = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

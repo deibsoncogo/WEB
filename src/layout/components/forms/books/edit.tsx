@@ -156,7 +156,7 @@ export function FormUpdateBook({
                     marginRight: '10%',
                   }}
                 >
-                  <InputImage name='image' type={'file'} />
+                  <InputImage name='image' type={'file'} defaultPreview={book.imageUrl} />
                   <Input name='name' label='Título' type='text' defaultValue={book.name} />
                   <Input name='author' label='Autor' type='text' defaultValue={book.author} />
                   <Input name='stock' label='Estoque' type='number' defaultValue={book.stock} />
