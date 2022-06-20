@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { SetStateAction } from 'react'
+import { toast } from 'react-toastify'
 
 export async function findCEP(cep: any, setDefaultValue: (value: SetStateAction<{}>) => void) {
   const matches = cep.match(/\d*/g)
@@ -18,6 +19,6 @@ export async function findCEP(cep: any, setDefaultValue: (value: SetStateAction<
     }
     setDefaultValue(data)
   } catch (err) {
-    console.log(err)
+    toast.error('Erro ao buscar CEP.')
   }
 }

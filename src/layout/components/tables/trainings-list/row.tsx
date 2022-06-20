@@ -46,7 +46,6 @@ export function Row({
       getTrainings()
       toast.success('Treinamento excluído com sucesso')
     } catch (err) {
-      console.log(err)
       toast.error('Erro ao deletar o treinamento Treinamento')
     } finally {
       setLoading(false)
@@ -79,7 +78,6 @@ export function Row({
       handleRefresher()
       toast.success('Status atualizado com sucesso')
     } catch (err) {
-      console.log(err)
       toast.error('Erro ao atualizar o treinamento Treinamento')
     }
     setIsModalUpdateOpen(false)

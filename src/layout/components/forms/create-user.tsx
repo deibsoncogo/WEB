@@ -33,9 +33,9 @@ export function FormCreateUser({ userRegister }: Props) {
   const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
 
   async function handleOpenModal() {
-    try {      
+    try {
       setIsProductsModalOpen(false)
-      toast.success('Produtos adicionados com sucesso!')      
+      toast.success('Produtos adicionados com sucesso!')
     } catch (err: any) {
       toast.error(err.messages[0])
     }
@@ -114,7 +114,6 @@ export function FormCreateUser({ userRegister }: Props) {
       .signUp(user)
       .then(() => router.push('/users'))
       .catch((error: any) => {
-        console.log(error.messages)
         toast.error(error.messages[0])
       })
   }
@@ -127,9 +126,20 @@ export function FormCreateUser({ userRegister }: Props) {
 
           <Input classes='h-75px' name='name' label='Nome' type='text' />
           <Input classes='h-75px' name='email' label='Email' type='email' />
-          <DatePicker classes='h-75px' name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
+          <DatePicker
+            classes='h-75px'
+            name='birthDate'
+            label='Data de Nascimento'
+            maxDate={new Date()}
+          />
           <InputMasked classes='h-75px' name='cpf' label='CPF' type='text' mask='999.999.999-99' />
-          <InputMasked classes='h-75px' name='phoneNumber' label='Telefone' type='text' mask='(99) 9 9999-9999' />
+          <InputMasked
+            classes='h-75px'
+            name='phoneNumber'
+            label='Telefone'
+            type='text'
+            mask='(99) 9 9999-9999'
+          />
 
           <Select classes='h-75px' name='level' label='Nível de Conhecimento'>
             <option value='' disabled selected>
@@ -141,7 +151,7 @@ export function FormCreateUser({ userRegister }: Props) {
               </option>
             ))}
           </Select>
-          <Input classes='h-75px'name='password' label='Senha' type='password' />
+          <Input classes='h-75px' name='password' label='Senha' type='password' />
 
           <Select classes='h-75px' name='role' label='Permissão'>
             <option value='' disabled selected>
@@ -167,7 +177,14 @@ export function FormCreateUser({ userRegister }: Props) {
             }}
           />
           <Input classes='h-75px' name='street' label='Logradouro' />
-          <Input classes='h-75px' name='number' label='Número' type='number' onKeyDown={restrictNumberInput} min="0" />
+          <Input
+            classes='h-75px'
+            name='number'
+            label='Número'
+            type='number'
+            onKeyDown={restrictNumberInput}
+            min='0'
+          />
           <Input classes='h-75px' name='complement' label='Complemento' />
           <Input classes='h-75px' name='neighborhood' label='Bairro' />
           <Input classes='h-75px' name='city' label='Cidade' />
@@ -180,7 +197,7 @@ export function FormCreateUser({ userRegister }: Props) {
                 {option.label}
               </option>
             ))}
-          </Select>    
+          </Select>
         </div>
       </div>
 
@@ -192,7 +209,13 @@ export function FormCreateUser({ userRegister }: Props) {
       )}
 
       <div className='w-100'>
-        <button type='button' className='btn btn-outline-primary border border-primary w-180px mb-5' onClick={() => {setIsProductsModalOpen(true)}}>
+        <button
+          type='button'
+          className='btn btn-outline-primary border border-primary w-180px mb-5'
+          onClick={() => {
+            setIsProductsModalOpen(true)
+          }}
+        >
           Adicionar produto grátis
         </button>
       </div>
@@ -215,7 +238,7 @@ export function FormCreateUser({ userRegister }: Props) {
 
       <ProductsModal
         isOpen={isProductsModalOpen}
-        modalTitle = "Adicionar produto grátis"
+        modalTitle='Adicionar produto grátis'
         action={handleOpenModal}
         onRequestClose={() => {
           setIsProductsModalOpen(false)

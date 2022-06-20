@@ -244,7 +244,7 @@ export function UsersTable({
                       >
                         Endereço
                       </th>
-                      <th className='text-dark min-w-150px text-end rounded-end px-4'>Ação</th>
+                      <th className={getColumnHeaderClasses('actions')}>Ação</th>
                     </tr>
                   </thead>
 

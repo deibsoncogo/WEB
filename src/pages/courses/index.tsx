@@ -2,8 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
-import { MakeUserTable } from '../../application/factories/components/userTable-factory'
-import CoursesTable from '../../layout/components/tables/courses-list'
+
 import { MakeCourseTable } from '../../application/factories/components/course/courseTable-factory'
 
 const Courses: NextPage = () => {
@@ -20,7 +19,7 @@ const Courses: NextPage = () => {
           <HeaderWrapper title='Cursos' />
 
           <div id='kt_content_container' className='container'>
-          {MakeCourseTable()}
+            {MakeCourseTable()}
           </div>
         </div>
       </div>

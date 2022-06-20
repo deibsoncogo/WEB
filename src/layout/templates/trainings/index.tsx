@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import { usePagination } from '../../../application/hooks/usePagination'
 import { ITraining } from '../../../domain/models/training'
 import {
@@ -37,7 +38,7 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: ITrainingsTemplate)
       setTotalPage(total)
       setTrainings(data)
     } catch (err) {
-      console.log(err)
+      toast.error('Erro ao buscar treinamentos.')
     }
   }
 
