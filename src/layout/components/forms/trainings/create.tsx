@@ -1,25 +1,29 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import React, { forwardRef } from 'react'
+import { IStreaming } from '../../../../domain/models/streaming'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { KTSVG } from '../../../../helpers'
 import CustomButton from '../../buttons/CustomButton'
-import { DatePicker, Input, TextArea } from '../../inputs'
+import { DatePicker, Input, Select, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
 import { InputImage } from '../../inputs/input-image'
+import { InputNumber } from '../../inputs/input-number'
 import { SelectAsync } from '../../inputs/selectAsync'
-import { LivesTable } from '../../tables/lives-list'
-import { IStreamList } from './type'
+import { StreamingTable } from '../../tables/streaming-list'
 
 type FormCreateTrainingProps = {
   addStreamingDate: () => void
   onSubmit: (data: any) => void
-  streamList: IStreamList[]
+  onCancel: () => void
   removeStreamItem: (index: number) => void
   searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
   searchCategories: (categoryName: string) => Promise<ISelectOption[]>
-  isStreamingListValid: boolean
   loadingSubmit: boolean
+  streamList: IStreaming[]
+  zoomUsersOptions: ISelectOption[]
+  defaultCategoryOptions: ISelectOption[]
+  defaultTeacherOptions: ISelectOption[]
 }
 
 const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((props, ref) => {
@@ -28,10 +32,13 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
     onSubmit,
     removeStreamItem,
     searchTeachers,
-    streamList,
     searchCategories,
-    isStreamingListValid,
+    onCancel,
+    streamList,
     loadingSubmit,
+    zoomUsersOptions,
+    defaultCategoryOptions,
+    defaultTeacherOptions,
   } = props
 
   return (
@@ -49,17 +56,19 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               label='Professor'
               classes='h-75px'
               placeholder='Digite o nome do professor'
+              defaultOptions={defaultTeacherOptions}
             />
 
             <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
             <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
+            <InputNumber name='installments' label='Quantidade de Parcelas' classes='h-75px' />
           </div>
 
-          <div className='col d-flex flex-column align-items-stretch justify-content-between'>
+          <div className='col d-flex flex-column'>
             <TextArea
               name='description'
               label='Descrição'
-              style={{ minHeight: '246px', margin: 0 }}
+              style={{ minHeight: '240px', margin: 0 }}
             />
             <SelectAsync
               searchOptions={searchCategories}
@@ -67,6 +76,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               label='Categoria'
               classes='h-75px'
               placeholder='Digite o nome da categoria'
+              defaultOptions={defaultCategoryOptions}
             />
           </div>
 
@@ -96,47 +106,61 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
 
         <div className='row d-flex'>
           <div className='col-3'>
-            <DatePicker
-              name='streamingDate'
-              label='Dia da transmissão'
-              placeholderText='00/00/000'
-            />
-          </div>
-          <div className='col-3'>
-            <DatePicker
-              name='streamingHour'
-              label='Horário'
-              placeholderText='00:00'
-              showTimeSelect
-              showTimeSelectOnly
-              timeIntervals={15}
-              timeCaption='Horas'
-              dateFormat='hh:mm'
-            />
+            <Select name='zoomUserId' label='Usuário do Zoom' defaultValue=''>
+              <option disabled value=''>
+                Selecione
+              </option>
+              {zoomUsersOptions.map(({ label, value }) => (
+                <option value={value} key={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
           </div>
 
-          <div className='col-3 pt-8'>
-            <button
-              type='button'
-              onClick={addStreamingDate}
-              className='btn btn-lg btn-primary h-45px mb-7 mt-auto'
-              style={{ marginTop: '22px' }}
-            >
-              <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-              Adicionar Data
-            </button>
-          </div>
+          <div className='col-9'>
+            <div className='row'>
+              <div className='col-4'>
+                <DatePicker
+                  name='streamingDate'
+                  label='Dia da transmissão'
+                  placeholderText='00/00/000'
+                  autoComplete='off'
+                />
+              </div>
 
-          {!isStreamingListValid && (
-            <span className='text-danger' style={{ marginTop: '-14px' }}>
-              Insira pelo menos uma transmissão
-            </span>
-          )}
+              <div className='col-4'>
+                <DatePicker
+                  name='streamingHour'
+                  label='Horário'
+                  placeholderText='00:00'
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={15}
+                  timeCaption='Horas'
+                  dateFormat='HH:mm'
+                  autoComplete='off'
+                />
+              </div>
+
+              <div className='col-4 d-flex mb-6'>
+                <button
+                  type='button'
+                  onClick={addStreamingDate}
+                  className='btn btn-lg btn-primary h-45px text-nowrap'
+                  style={{ marginTop: '22px' }}
+                >
+                  <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+                  Adicionar Data
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       {streamList.length !== 0 && (
-        <LivesTable streamList={streamList} removeStreamItem={removeStreamItem} />
+        <StreamingTable streamList={streamList} removeStreamItem={removeStreamItem} />
       )}
 
       <div className='d-flex mt-10'>
@@ -144,6 +168,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
           title='Cancelar'
           type='button'
           customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          onClick={onCancel}
         />
 
         <CustomButton

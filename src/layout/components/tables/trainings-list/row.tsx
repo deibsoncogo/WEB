@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import { toast } from 'react-toastify'
+import { IToggleTrainingStatus } from '../../../../domain/usecases/interfaces/trainings/toggleTrainingStatus'
 import { KTSVG } from '../../../../helpers'
-import { Switch } from '../../inputs'
 import ConfirmationModal from '../../modal/ConfirmationModal'
 
 interface IRow {
@@ -17,6 +17,7 @@ interface IRow {
   deleteTraining: IDeleteTraining
   updateStatusOfTraining: IUpdateTraining
   getTrainings(): Promise<void>
+  remoteToggleTrainingStatus: IToggleTrainingStatus
   handleRefresher: () => void
 }
 
@@ -28,6 +29,7 @@ export function Row({
   teacherName,
   active,
   deleteTraining,
+  remoteToggleTrainingStatus,
   updateStatusOfTraining,
   getTrainings,
   handleRefresher,
@@ -39,12 +41,28 @@ export function Row({
   async function handleDeleteTraining() {
     setLoading(true)
     try {
+      setLoading(true)
       await deleteTraining.deleteTraining()
       getTrainings()
       toast.success('Treinamento excluído com sucesso')
     } catch (err) {
       console.log(err)
       toast.error('Erro ao deletar o treinamento Treinamento')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleToggleTrainingStatus() {
+    try {
+      setLoading(true)
+      await remoteToggleTrainingStatus.toggle({ id, active: active ? 'false' : 'true' })
+      getTrainings()
+      toast.success('Status do treinamento atualizado com sucesso.')
+    } catch {
+      toast.error('Error ao alterar o status do treinamento')
+    } finally {
+      setLoading(false)
     }
     setLoading(false)
   }
@@ -103,22 +121,28 @@ export function Row({
         </Tooltip>
       </td>
       <td>
-        <Switch active={active} setModalUpdate={setIsModalUpdateOpen} />
+        <div className='form-check form-switch form-check-custom form-check-solid'>
+          <input
+            className='form-check-input'
+            type='checkbox'
+            checked={active}
+            id='flexSwitchDefault'
+            onChange={handleToggleTrainingStatus}
+          />
+        </div>
       </td>
 
-      <td className='text-end'>
-        <Tooltip content='Editar' rounded color='primary'>
-          <Link href={`/trainings/edit/${id}`}>
-            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-              <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-            </button>
-          </Link>
-        </Tooltip>
-
-        <Tooltip
-          content='Deletar'
-          rounded
-          color='primary'
+      <td>
+        <Link href={`/trainings/edit/${id}`}>
+          <button
+            title='Editar'
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+          >
+            <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+          </button>
+        </Link>
+        <button
+          title='Deletar'
           onClick={() => {
             setIsDeleteCategoryModalOpen(true)
           }}
@@ -126,7 +150,7 @@ export function Row({
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
           </button>
-        </Tooltip>
+        </button>
       </td>
 
       <ConfirmationModal

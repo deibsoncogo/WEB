@@ -83,8 +83,8 @@ export function ProductsModal({ isOpen, modalTitle, action, onRequestClose, onAd
           <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={() => {}}>
             <div className='modal-body'>
               {selectedProducts && (
-                selectedProducts.map((product, index) => (
-                  <div key={index} className='d-flex align-items-center gap-18'>
+                selectedProducts.map(product => (
+                  <div key={product.name} className='d-flex align-items-center gap-18'>
                     <div className='w-25'>
                       <Select name={product.name} label={product.label} fixedValue={product.name} disabled>
                         <option>

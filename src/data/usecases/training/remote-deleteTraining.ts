@@ -2,10 +2,7 @@ import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteDeleteTraining implements IDeleteTraining {
-  constructor(
-    private readonly url: string,
-    private readonly httpClient: HttpClient<ITrainingsResponse[]>
-  ) {}
+  constructor(private readonly url: string, private readonly httpClient: HttpClient<void>) {}
 
   async deleteTraining() {
     const httpResponse = await this.httpClient.request({

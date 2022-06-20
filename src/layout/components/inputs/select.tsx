@@ -13,7 +13,7 @@ type SelectFace = SelectHTMLAttributes<HTMLSelectElement> & {
 export function Select({ name, label, classes, fixedValue, children, ...rest }: SelectFace) {
   const selectRef = useRef(null)
 
-  const { fieldName, defaultValue, registerField, error, clearError } = useField(name)
+  const { fieldName, registerField, error, clearError } = useField(name)
 
   useEffect(() => {
     registerField({
@@ -42,8 +42,8 @@ export function Select({ name, label, classes, fixedValue, children, ...rest }: 
       <select
         id={fieldName}
         ref={selectRef}
-        className={`form-select form-select-solid ${error && 'option-invalid'}`}        
-        defaultValue={defaultValue}
+        name={name}
+        className='form-select form-select-solid'
         onChangeCapture={clearError}
         onChange={() => clearError()}
         {...rest}
