@@ -50,12 +50,14 @@ export function FormUpdateBook({
   async function handleCreateBook(data: IFormBook) {
     const formData = new FormData()
 
+    console.log(data)
+
     if (data.image) {
       formData.append('image', data.image)
     }
 
     formData.append('name', String(data.name))
-    formData.append('author', String(data.autor))
+    formData.append('author', String(data.author))
     formData.append('stock', String(data.stock))
     formData.append('price', String(data.price))
     formData.append('discount', String(data.discount))

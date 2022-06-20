@@ -2,7 +2,7 @@ export interface IFormBook {
   id: string
   image: string
   name: string
-  autor: string
+  author: string
   price: number
   discount: number
   description: string
