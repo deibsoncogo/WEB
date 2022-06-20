@@ -59,9 +59,7 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
           </div>
         </div>
       )}
-
-      {error && <span className='text-danger'>{error}</span>}
-
+      
       <label htmlFor='upload-photo' className='btn btn-primary mt-5'>
         <input
           id='upload-photo'
@@ -74,7 +72,9 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
           {...rest}
         />
         Selecionar imagem
+        
       </label>
+      
       {preview && (
         <button
           onClick={() => {
@@ -85,6 +85,10 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
           Remover imagem
         </button>
       )}
+    <div>
+      {error && <span className='text-danger'>{error}</span>}
     </div>
+    </div>
+    
   )
 }
