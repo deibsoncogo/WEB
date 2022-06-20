@@ -21,6 +21,7 @@ import { currencyFormatter } from '../../../../utils/currencyFormatter'
 import { toast } from 'react-toastify'
 
 import { Loading } from '../../loading/loading'
+import { getOnlyNums } from '../../../../utils/getOnlyNums'
 
 type FormCreateBookProps = {
   getAllCategories: IGetCategoriesNoPagination
@@ -57,8 +58,8 @@ export function FormUpdateBook({
     formData.append('name', String(data.name))
     formData.append('author', String(data.author))
     formData.append('stock', String(data.stock))
-    formData.append('price', String(data.price))
-    formData.append('discount', String(data.discount))
+    formData.append('price', getOnlyNums(String(data.price)))
+    formData.append('discount', getOnlyNums(String(data.discount)))
     formData.append('description', String(data.description))
     formData.append('categoryId', String(data.categoryId))
     formData.append('id', String(data.id))
@@ -104,8 +105,8 @@ export function FormUpdateBook({
         name: Yup.string().required('Título é necessário'),
         author: Yup.string().required('Autor é necessário'),
         stock: Yup.number().required('Estoque é necessário'),
-        price: Yup.number().required('Preço é necessário'),
-        discount: Yup.number().required('Desconto é necessária'),
+        price: Yup.string().required('Preço é necessário'),
+        discount: Yup.string().required('Desconto é necessária'),
         description: Yup.string().required('Descrição é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         id: Yup.string().required('Id é necessário.'),
