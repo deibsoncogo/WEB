@@ -9,6 +9,7 @@ export class CreateRoom{
     installments: string;
     isActive: boolean;
     isChatActive: boolean;
+    isStreamingRoomActive: boolean;
     price: string; 
     userId: string;
     categoryId: string;    
@@ -16,7 +17,7 @@ export class CreateRoom{
 
 
     constructor(name: string, description: string, discount: string, installments: string,
-         isActive: boolean, isChatActive: boolean,  price: string, userId: string, categoryId: string, streamings?: IStreamingRoom[])
+         isActive: boolean, isChatActive: boolean, isStreamingRoomActive: boolean,  price: string, userId: string, categoryId: string, streamings?: IStreamingRoom[])
     {
         this.name = name;
         this.description = description;        
@@ -24,6 +25,7 @@ export class CreateRoom{
         this.installments = installments;
         this.isActive = isActive;
         this.isChatActive = isChatActive;
+        this.isStreamingRoomActive = isStreamingRoomActive;
         this.price = price;
         this.userId = userId;   
         this.categoryId = categoryId;   

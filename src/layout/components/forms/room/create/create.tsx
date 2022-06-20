@@ -114,6 +114,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
       data.installments,
       false,
       data.itemChat,
+      data.itemRoom,
       price,
       data.userId,
       data.categoryId,
