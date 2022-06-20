@@ -35,8 +35,8 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
 
   useEffect(() => {
     registerField({
-      name: fieldName,
       ref: datepickerRef,
+      name: fieldName,
       getValue: (ref) => {
         return ref.current.props.selected
       },
@@ -49,7 +49,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
       },
     })
   }, [fieldName, registerField])
-
+  
   const years = rangeInt(1900, new Date().getFullYear() + 1)
 
   return (
@@ -100,8 +100,8 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
                 value={months[date.getMonth()]}
                 onChange={({ target: { value } }) => changeMonth(months.indexOf(value))}
               >
-                {months.map((option) => (
-                  <option key={option} value={option}>
+                {months.map((option, index) => (
+                  <option key={index} value={option}>
                     {option}
                   </option>
                 ))}
