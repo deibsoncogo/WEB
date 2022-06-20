@@ -19,8 +19,6 @@ type Props = {
   order: 'asc' | 'desc' | undefined
 }
 
-type orderOptions = 'table-sort-asc' | 'table-sort-desc' | ''
-
 export default function CategoriesTable({
   categories = [],
   paginationHook,
@@ -28,9 +26,8 @@ export default function CategoriesTable({
   loadingDeletion,
   setSelectedCategory,
   openUpdateCategoryDrawer,
-  onOrder,
-  order,
 }: Props) {
+  const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
   const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false)
 
   const handleOpenIsDeleteCategoryModal = (category: Category) => {
@@ -52,10 +49,10 @@ export default function CategoriesTable({
     openUpdateCategoryDrawer(category)
   }
 
-  let orderClass = ''
-
-  if (order) {
-    orderClass = order === 'asc' ? 'table-sort-asc' : 'table-sort-desc'
+  const getColumnHeaderClasses = (name: string) => {
+    return `text-dark ps-4 rounded-start cursor-pointer cursor-pointer min-w-200px ${getClassToCurrentOrderColumn(
+      name
+    )}`
   }
 
   return (
@@ -68,23 +65,24 @@ export default function CategoriesTable({
         content='Você tem ceterza que deseja excluir esta categoria?'
         title='Deletar'
       />
-      {categories.length > 0 && (
-        <>
-          <div className='card-body py-3'>
-            <div className='table-responsive'>
-              <table className='table align-middle gs-0 gy-4'>
-                <thead>
-                  <tr className='fw-bolder text-muted bg-light'>
-                    <th
-                      className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer ${orderClass}`}
-                      role='columnheader'
-                      onClick={onOrder}
-                    >
-                      Nome
-                    </th>
-                    <th className='text-dark min-w-150px text-end rounded-end' />
-                  </tr>
-                </thead>
+      {categories.length > 0 && (<>
+        <div className='card-body py-3'>
+          <div className='table-responsive'>
+            <table className='table align-middle gs-0 gy-4 datatable'>
+              <thead>
+                <tr className='fw-bolder text-muted bg-light d-flex justify-content-between'>
+                  <th
+                    role='columnheader'
+                    className={getColumnHeaderClasses('name')}
+                    onClick={() => handleOrdenation('name')}
+                  >
+                    Nome
+                  </th>
+                  <th className='text-dark rounded-end' style={{ minWidth: '150px' }}>
+                    Ações
+                  </th>
+                </tr>
+              </thead>
 
                 <tbody className='w-100'>
                   {categories?.map((category) => (
