@@ -23,10 +23,12 @@ export function InputNumber({
   const [valueInput, setValueInput] = useState(defaultValue)
   
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (inputRef.current) {   
-      if(event.currentTarget.value != '') 
-        setValueInput(event.currentTarget.value)       
-    }   
+    const reggex = new RegExp(/[^\d]/g)
+    if (inputRef.current) {           
+      if(!reggex.test(event.currentTarget.value)) 
+         setValueInput(event.currentTarget.value)         
+    }  
+    
   }
 
   useEffect(() => {
@@ -64,7 +66,7 @@ export function InputNumber({
           onInput= {handleOnChange}         
           onChangeCapture={clearError}
           defaultValue={defaultValue}
-          type='number'
+          type='text'
           {...rest}
         />
       </div>
