@@ -94,7 +94,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
   }
 
 
-  const handleSingleImageUpload = (file: File) => {
+  const handleSingleImageUpload = (file?: File) => {
     setImageUpload(file)
   }
 

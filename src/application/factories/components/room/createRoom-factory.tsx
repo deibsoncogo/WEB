@@ -3,12 +3,14 @@ import { makeRemoteGetCategories } from "../../usecases/categories/remote-getCat
 
 import { makeRemoteGetAllUsers } from "../../usecases/remote-getAllUsers-factory";
 import { makeRemoteCreateRoom } from "../../usecases/room/remote-createRoom-factory";
+import { makeRemoteGetZoomUsers } from "../../usecases/zoom/remote-getZoomUsers-factory";
 
 
 export const MakeFormCreateRoom = () => {
     return (<FormCreateRoom
      createRoom = {makeRemoteCreateRoom()}
      getCategories = {makeRemoteGetCategories()}
-     getUsers = {makeRemoteGetAllUsers()}/> );
+     getUsers = {makeRemoteGetAllUsers()}
+     getZoomUsers={makeRemoteGetZoomUsers()}/> );
   };
   
