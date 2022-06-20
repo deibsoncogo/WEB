@@ -19,7 +19,6 @@ import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditTraining } from '../../components/forms/trainings/edit'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
 import { FullLoading } from '../../components/FullLoading/FullLoading'
-import { Loading } from '../../components/loading/loading'
 import { maskedToMoney } from '../../formatters/currenceFormatter'
 import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
 import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
@@ -76,6 +75,7 @@ function EditTrainingPageTemplate({
 
   async function handleFormSubmit(data: ITraining) {
     const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
+    console.log(data)
 
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)

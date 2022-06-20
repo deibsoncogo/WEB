@@ -36,9 +36,7 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
 
   const formData = new FormData()
 
-  if (photo) {
-    formData.append('image', photo)
-  }
+  formData.append('image', photo)
   formData.append('price', String(price))
   formData.append('discount', String(discount))
   formData.append('teacherId', String(teacherId))
