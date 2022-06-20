@@ -1,18 +1,18 @@
-import { useState } from 'react'
-
-import { Row } from './row'
+import { Loading } from '../../loading/loading'
 import { Pagination } from '../../pagination/Pagination'
 import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { MakeTrainingsRow } from '../../../../application/factories/components/rows/trainingsRow'
 import { ITraining } from '../../../../domain/models/training'
+import { useState } from 'react'
 
-type TrainingsTable = {
+type ITrainingsTable = {
   trainings: ITraining[]
   paginationHook: usePaginationType
   getTrainings(): Promise<void>
+  handleRefresher: () => void
 }
 
-export function TrainingsTable({ trainings, paginationHook, getTrainings }: TrainingsTable) {
+export function TrainingsTable({ trainings, paginationHook, getTrainings, handleRefresher }: ITrainingsTable) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
   const [loading, setLoading] = useState(false)
 
@@ -28,7 +28,7 @@ export function TrainingsTable({ trainings, paginationHook, getTrainings }: Trai
         <>
           <div className='card-body py-3'>
             <div className='table-responsive'>
-              <table className='table table-striped align-middle gs-0 gy-4'>
+              <table className='table align-middle gs-0 gy-4'>
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th
@@ -78,11 +78,14 @@ export function TrainingsTable({ trainings, paginationHook, getTrainings }: Trai
                         teacher={item.teacher}
                         active={item.active}
                         getTrainings={getTrainings}
+                        handleRefresher={handleRefresher}
                       />
                     ))}
                 </tbody>
               </table>
             </div>
+
+            {loading && <Loading />}
           </div>
           <div className='ms-auto'>
             <Pagination paginationHook={paginationHook} />
@@ -92,8 +95,8 @@ export function TrainingsTable({ trainings, paginationHook, getTrainings }: Trai
       {trainings.length === 0 && (
         <div className='py-14 border mx-4 my-8 d-flex'>
           <p className='text-center w-100 m-0 font-weight-bold'>
-            <span className='text-danger'>Ops! 😅</span>
-            Nenhum curso encontrado
+            <span className='text-danger'>Ops! 😅 </span>
+            Nenhum treinamento encontrado
           </p>
         </div>
       )}
