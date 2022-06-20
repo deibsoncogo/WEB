@@ -26,7 +26,6 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
     
   }, [])
 
-  console.log(preview)
   useEffect(() => {
     registerField({
       name: fieldName,
@@ -70,6 +69,7 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
           accept='image/*'
           ref={inputRef}
           onChange={handlePreview}
+          onClick={() => inputRef.current!.value = ''}
           className='mt-5 d-none'
           {...rest}
         />
