@@ -1,5 +1,6 @@
 import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { IPlan } from '../../../../domain/models/plan'
+import { Pagination } from '../../pagination/Pagination'
 import PlanTableRow from './row'
 
 type PlansTableProps = {
@@ -25,11 +26,12 @@ export function PlansTable({ plans = [], paginationHook }: PlansTableProps) {
     <>
       <div className='card-body py-3'>
         <div className='table-responsive'>
-          <table className='table align-middle gs-0 gy-4 datatable'>
+          <table className='table align-middle gs-0 gy-4'>
             <thead>
               <tr className='fw-bolder text-muted bg-light'>
                 <th
                   role='columnheader'
+                  scope='col'
                   className={getColumnHeaderClasses({ title: 'name' })}
                   onClick={() => handleOrdenation('name')}
                 >
@@ -37,6 +39,7 @@ export function PlansTable({ plans = [], paginationHook }: PlansTableProps) {
                 </th>
                 <th
                   role='columnheader'
+                  scope='col'
                   className={getColumnHeaderClasses({ title: 'description' })}
                   onClick={() => handleOrdenation('description')}
                 >
@@ -44,6 +47,7 @@ export function PlansTable({ plans = [], paginationHook }: PlansTableProps) {
                 </th>
                 <th
                   role='columnheader'
+                  scope='col'
                   className={getColumnHeaderClasses({ title: 'price' })}
                   onClick={() => handleOrdenation('price')}
                 >
@@ -51,6 +55,7 @@ export function PlansTable({ plans = [], paginationHook }: PlansTableProps) {
                 </th>
                 <th
                   role='columnheader'
+                  scope='col'
                   className={getColumnHeaderClasses({
                     title: 'intervalPaymentMonths',
                   })}
@@ -61,6 +66,7 @@ export function PlansTable({ plans = [], paginationHook }: PlansTableProps) {
                 </th>
                 <th
                   role='columnheader'
+                  scope='col'
                   className={getColumnHeaderClasses({ title: 'intervalAccessMonths' })}
                   style={{ maxWidth: '130px' }}
                   onClick={() => handleOrdenation('intervalAccessMonths')}
@@ -86,6 +92,9 @@ export function PlansTable({ plans = [], paginationHook }: PlansTableProps) {
             </tbody>
           </table>
         </div>
+      </div>
+      <div className='card d-flex flex-row justify-content-end align-items-center ps-9 pe-9 pb-5'>
+        <Pagination paginationHook={paginationHook} />
       </div>
     </>
   )

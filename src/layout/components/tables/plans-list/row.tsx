@@ -10,23 +10,23 @@ type PlanTableRowProps = {
 const PlanTableRow = ({ plan }: PlanTableRowProps) => {
   return (
     <tr>
-      <td className='ps-4'>
+      <td className='ps-4' scope='row'>
         <span className='w-bold d-block fs-7'>{plan.name}</span>
       </td>
 
-      <td className='ps-4'>
+      <td className='ps-4' scope='row'>
         <span className='w-bold d-block fs-7'>{plan.description}</span>
       </td>
 
-      <td className='ps-4'>
+      <td className='ps-4' scope='row'>
         <span className='fw-bold d-block fs-7'>{maskedToMoney(plan.price)}</span>
       </td>
 
-      <td className='ps-4'>
+      <td className='ps-4' scope='row'>
         <span className='fw-bold d-block fs-7'>{plan.intervalPaymentMonths}</span>
       </td>
 
-      <td className='ps-4'>
+      <td className='ps-4' scope='row'>
         <span className='fw-bold d-block fs-7'>{plan.intervalAccessMonths}</span>
       </td>
 

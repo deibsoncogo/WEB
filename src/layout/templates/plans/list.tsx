@@ -72,7 +72,7 @@ export function ListPlansTemplate({ remoteGetPlans }: Props) {
           <Link href='/plans/create'>
             <button className='btn btn-sm btn-light-primary'>
               <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-              Nova Categoria
+              Novo Plano
             </button>
           </Link>
         </div>
