@@ -3,5 +3,5 @@ import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfac
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteGetCategoriesNoPagination = (): IGetCategoriesNoPagination => {
-  return new RemoteGetCategoriesNoPagination(makeApiUrl('/category/getAllNoPagination'), makeAxiosHttpClient())
+  return new RemoteGetCategoriesNoPagination(makeApiUrl('category/getAllNoPagination'), makeAxiosHttpClient())
 }

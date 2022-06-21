@@ -3,4 +3,4 @@ import { IExportAllUsersToXLSX } from '../../../domain/usecases/interfaces/user/
 import { makeApiUrl, makeAxiosHttpClient } from '../http'
 
 export const makeRemoteExportAllUsersToXLSX = (): IExportAllUsersToXLSX =>
-  new RemoteExportAllUserToXLSX(makeApiUrl('/user/export'), makeAxiosHttpClient())
+  new RemoteExportAllUserToXLSX(makeApiUrl('user/export'), makeAxiosHttpClient())

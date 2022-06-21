@@ -5,4 +5,4 @@ import { makeApiUrl } from "../../http";
 
 
 export const makeRemoteGetAllCourses = (): IGetAllCourses =>
-  new RemoteGetAllCourses(makeApiUrl('/courses'), makeAxiosHttpClient());
+  new RemoteGetAllCourses(makeApiUrl('courses'), makeAxiosHttpClient());

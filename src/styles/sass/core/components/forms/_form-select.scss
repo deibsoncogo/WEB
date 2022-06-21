@@ -42,4 +42,12 @@
       color: $input-color;
     }
   }
+
+  &.option-invalid {
+    color: $red !important;
+
+    & > option:not(:first-of-type) {
+      color: $input-color;
+    }
+  }
 }

@@ -4,4 +4,4 @@ import { RemoteGetAllUsersByRole } from './../../../data/usecases/user/remote-ge
 
 
 export const makeRemoteGetAllUsersByRole = (): IGetAllUsersByRole =>
-  new RemoteGetAllUsersByRole(makeApiUrl('/user/getAllByRole'), makeAxiosHttpClient());
+  new RemoteGetAllUsersByRole(makeApiUrl('user/getAllByRole'), makeAxiosHttpClient());
