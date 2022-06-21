@@ -1,11 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Spinner } from 'react-bootstrap'
-import AsyncSelect from 'react-select/async'
+import { useField } from '@unform/core'
+import { useEffect, useRef, useState } from 'react'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { debounce } from '../../../helpers/debounce'
-import { Loading } from '../loading/loading'
-import { Select } from './select'
-import { useField } from '@unform/core'
 
 type SelectAsyncProps = {
   searchOptions: (inputVlaue: string) => Promise<any[]>
@@ -45,7 +41,7 @@ const SelectAsync = ({
       ...oldState,
       selectedOption: null,
     }))
-
+    clearError()
     getOptions()
   }
 
@@ -58,6 +54,7 @@ const SelectAsync = ({
       isOpen: false,
       selectedOption: option,
     })
+    clearError()
   }
 
   const getOptions = debounce(async () => {
@@ -139,7 +136,6 @@ const SelectAsync = ({
             placeholder={placeholder}
             onChange={handleOnChange}
             onFocus={getOptions}
-            onChangeCapture={clearError}
             ref={textInputRef}
             autoComplete='off'
             onClick={openOptions}

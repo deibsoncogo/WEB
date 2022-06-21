@@ -8,22 +8,32 @@ interface IInputImage extends InputHTMLAttributes<HTMLInputElement> {
 
 export function InputSingleImage({ name, ...rest }: IInputImage) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const inputRefPreview = useRef<HTMLInputElement>(null)
 
-  const { fieldName, registerField, error } = useField(name)
-  const [preview, setPreview] = useState<string | null>(null)
+  const { fieldName, registerField, error, clearError } = useField(name)
+
+  const {
+    fieldName: filedNamePreview,
+    registerField: registerFiledPreview,
+    error: errorPreview,
+    clearError: clearErrorPreview,
+  } = useField(`${name}Preview`)
+
+  const [preview, setPreview] = useState<string>('')
 
   const handlePreview = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) {
-      setPreview(null)
+      setPreview('')
       return
     }
     const previewURL = URL.createObjectURL(file)
     setPreview(previewURL)
+    clearErrorPreview()
   }, [])
 
   const handleRemoveFile = () => {
-    setPreview(null)
+    setPreview('')
     if (inputRef.current) {
       inputRef.current.value = ''
     }
@@ -36,15 +46,26 @@ export function InputSingleImage({ name, ...rest }: IInputImage) {
       getValue: (ref) => {
         return ref.current.files[0]
       },
-      setValue(_: any, value: any) {
-        setPreview(value)
-      },
       clearValue(ref: HTMLInputElement) {
         ref.value = ''
-        setPreview(null)
+        setPreview('')
       },
     })
   }, [fieldName, registerField])
+
+  useEffect(() => {
+    registerFiledPreview({
+      name: filedNamePreview,
+      ref: inputRefPreview,
+      getValue: (ref) => ref.current.value,
+      setValue(_: any, value: any) {
+        setPreview(value)
+      },
+      clearValue() {
+        setPreview('')
+      },
+    })
+  }, [filedNamePreview, registerFiledPreview])
 
   return (
     <div className='fv-row mb-7'>
@@ -64,27 +85,36 @@ export function InputSingleImage({ name, ...rest }: IInputImage) {
           </div>
         </div>
       )}
-
-      {error && <span className='text-danger'>{error}</span>}
-
-      <label htmlFor='upload-photo' className='btn btn-primary mt-5'>
-        <input
-          id='upload-photo'
-          type='file'
-          accept='image/*'
-          ref={inputRef}
-          onChange={handlePreview}
-          className='mt-5 d-none'
-          {...rest}
-          name={name}
-        />
-        Selecionar imagem
-      </label>
-      {preview && (
-        <button onClick={handleRemoveFile} className='btn btn-primary ms-5 mt-5'>
-          Remover imagem
-        </button>
-      )}
+      <div className='mb-1'>
+        <label htmlFor='upload-photo' className='btn btn-primary mt-5'>
+          <input
+            type='text'
+            ref={inputRefPreview}
+            hidden
+            name={`${name}Preview`}
+            onChangeCapture={clearErrorPreview}
+            value={preview}
+          />
+          <input
+            id='upload-photo'
+            type='file'
+            accept='image/*'
+            ref={inputRef}
+            onChange={handlePreview}
+            className='mt-5 d-none'
+            onChangeCapture={clearError}
+            {...rest}
+            name={name}
+          />
+          Selecionar imagem
+        </label>
+        {preview && (
+          <button onClick={handleRemoveFile} className='btn btn-primary ms-5 mt-5'>
+            Remover imagem
+          </button>
+        )}
+      </div>
+      {(error || errorPreview) && <span className='text-danger'>{error || errorPreview}</span>}
     </div>
   )
 }
