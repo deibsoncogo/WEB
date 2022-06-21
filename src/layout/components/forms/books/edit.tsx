@@ -89,6 +89,10 @@ export function FormUpdateBook({
     }
   }, [getBookById, getAllCategories])
 
+  useEffect(() => {
+    formRef.current?.setFieldValue('image', book?.imageUrl)
+  }, [book])
+
   async function handleFormSubmit(data: IFormBook) {
     if (!formRef.current) throw new Error()
 
