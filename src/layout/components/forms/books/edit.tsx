@@ -7,7 +7,6 @@ import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
 import { Input, Select, TextArea } from '../../inputs'
-import { InputImage } from '../../inputs/input-image'
 import { ActionModal } from '../../modals/action'
 
 import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
@@ -21,7 +20,8 @@ import { currencyFormatter } from '../../../../utils/currencyFormatter'
 import { toast } from 'react-toastify'
 
 import { Loading } from '../../loading/loading'
-import { getOnlyNums } from '../../../../utils/getOnlyNums'
+import { InputSingleImage } from '../../inputs/input-single-image'
+import { maskedToMoney, onlyNums } from '../../../formatters/currenceFormatter'
 
 type FormCreateBookProps = {
   getAllCategories: IGetCategoriesNoPagination
@@ -51,15 +51,12 @@ export function FormUpdateBook({
   async function handleCreateBook(data: IFormBook) {
     const formData = new FormData()
 
-    if (data.image) {
-      formData.append('image', data.image)
-    }
-
+    formData.append('image', data.image)
     formData.append('name', String(data.name))
     formData.append('author', String(data.author))
     formData.append('stock', String(data.stock))
-    formData.append('price', getOnlyNums(String(data.price)))
-    formData.append('discount', getOnlyNums(String(data.discount)))
+    formData.append('price', onlyNums(String(data.price)))
+    formData.append('discount', onlyNums(String(data.discount)))
     formData.append('description', String(data.description))
     formData.append('categoryId', String(data.categoryId))
     formData.append('id', String(data.id))
@@ -85,7 +82,7 @@ export function FormUpdateBook({
     try {
       setLoading(true)
       getBook()
-      getCategories()
+      getCategories()      
       setLoading(false)
     } catch (error) {
       toast.error('Erro ao carregar os dados.')
@@ -157,7 +154,7 @@ export function FormUpdateBook({
                     marginRight: '10%',
                   }}
                 >
-                  <InputImage name='image' type={'file'} defaultPreview={book.imageUrl} />
+                  <InputSingleImage name='image' />
                   <Input name='name' label='Título' type='text' defaultValue={book.name} />
                   <Input name='author' label='Autor' type='text' defaultValue={book.author} />
                   <Input name='stock' label='Estoque' type='number' defaultValue={book.stock} />
@@ -167,15 +164,15 @@ export function FormUpdateBook({
                     type='text'
                     placeholderText='R$'
                     onChange={() => currencyFormatter('price', formRef.current)}
-                    defaultValue={book.price}
+                    defaultValue={maskedToMoney(book.price)}
                   />
                   <Input
                     name='discount'
                     label='Desconto'
                     type='text'
                     placeholderText='R$'
-                    onChange={() => currencyFormatter('price', formRef.current)}
-                    defaultValue={book.discount}
+                    onChange={() => currencyFormatter('discount', formRef.current)}
+                    defaultValue={maskedToMoney(book.discount)}
                   />
                 </div>
                 <div className='d-flex justify-content-start flex-column w-100'>
