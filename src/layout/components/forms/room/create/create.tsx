@@ -64,6 +64,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
 
   async function handleFormSubmit(data: IFormRoom) {
     if (!formRef.current) throw new Error()
+   
     setHasErrorRoom(false)
     if (imageUpload) {
       data.photo = imageUpload
@@ -91,7 +92,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
     } catch (err) {
       const validationErrors = {}
 
-      if ((!data.itemChat && !data.itemRoom) || streamingRoom.length == 0) {
+      if ((!data.itemChat && !data.itemRoom) || (!data.itemChat && streamingRoom.length == 0)) {
         setHasErrorRoom(true)
       }
 
