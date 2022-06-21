@@ -4,14 +4,13 @@ import { useField } from '@unform/core'
 
 interface IInputImage extends InputHTMLAttributes<HTMLInputElement> {
   name: string
-  handleSingleImageUpload?: (file: File) => void
 }
 
-export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputImage) {
+export function InputSingleImage({ name, ...rest }: IInputImage) {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { fieldName, registerField, defaultValue, error } = useField(name)
-  const [preview, setPreview] = useState(defaultValue)
+  const { fieldName, registerField, error } = useField(name)
+  const [preview, setPreview] = useState<string | null>(null)
 
   const handlePreview = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -21,22 +20,28 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
     }
     const previewURL = URL.createObjectURL(file)
     setPreview(previewURL)
-    e.target.value = ''
-
-    if (handleSingleImageUpload) handleSingleImageUpload(file)
   }, [])
+
+  const handleRemoveFile = () => {
+    setPreview(null)
+    if (inputRef.current) {
+      inputRef.current.value = ''
+    }
+  }
 
   useEffect(() => {
     registerField({
       name: fieldName,
-      ref: inputRef.current,
-      path: 'files[0]',
+      ref: inputRef,
+      getValue: (ref) => {
+        return ref.current.files[0]
+      },
+      setValue(_: any, value: any) {
+        setPreview(value)
+      },
       clearValue(ref: HTMLInputElement) {
         ref.value = ''
         setPreview(null)
-      },
-      setValue(_: HTMLInputElement, value: string) {
-        setPreview(value)
       },
     })
   }, [fieldName, registerField])
@@ -71,16 +76,12 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
           onChange={handlePreview}
           className='mt-5 d-none'
           {...rest}
+          name={name}
         />
         Selecionar imagem
       </label>
       {preview && (
-        <button
-          onClick={() => {
-            setPreview(null)
-          }}
-          className='btn btn-primary ms-5 mt-5'
-        >
+        <button onClick={handleRemoveFile} className='btn btn-primary ms-5 mt-5'>
           Remover imagem
         </button>
       )}
