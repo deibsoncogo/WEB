@@ -7,12 +7,13 @@ type SelectFace = SelectHTMLAttributes<HTMLSelectElement> & {
   children: ReactNode
   label?: string
   classes?: string
+  fixedValue?: string
 }
 
-export function Select({ name, label, classes, children, ...rest }: SelectFace) {
+export function Select({ name, label, classes, fixedValue, children, ...rest }: SelectFace) {
   const selectRef = useRef(null)
 
-  const { fieldName, defaultValue, registerField, error, clearError } = useField(name)
+  const { fieldName, registerField, error, clearError } = useField(name)
 
   useEffect(() => {
     registerField({
@@ -41,14 +42,14 @@ export function Select({ name, label, classes, children, ...rest }: SelectFace) 
       <select
         id={fieldName}
         ref={selectRef}
-        className={`form-select form-select-solid ${error && 'option-invalid'}`}        
-        defaultValue={defaultValue}
+        name={name}
+        className='form-select form-select-solid'
         onChangeCapture={clearError}
         onChange={() => clearError()}
         {...rest}
       >
         <option value='' hidden disabled selected>
-          {error ? error : 'Selecione'}
+          {error ? error : fixedValue ? fixedValue : 'Selecione'}
         </option>
         {children}
       </select>

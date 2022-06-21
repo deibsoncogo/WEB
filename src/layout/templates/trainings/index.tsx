@@ -1,26 +1,35 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-
+import { usePagination } from '../../../application/hooks/usePagination'
+import { ITraining } from '../../../domain/models/training'
+import {
+  IGetAllTrainings,
+  IGetAllTrainingsParams,
+} from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { KTSVG } from '../../../helpers'
 import { debounce } from '../../../helpers/debounce'
-
 import { Search } from '../../components/search/Search'
-import { usePagination } from '../../../application/hooks/usePagination'
 import { TrainingsTable } from '../../components/tables/trainings-list'
-import { GetCategoriesParams } from '../../../domain/usecases/interfaces/category/getCategories'
 
-type TrainingsTemplate = {
+type ITrainingsTemplate = {
   remoteGetAllTrainings: IGetAllTrainings
 }
 
-export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) {
-  const [trainings, setTrainings] = useState<ITrainings[]>([] as ITrainings[])
+export function TrainingsTemplate({ remoteGetAllTrainings }: ITrainingsTemplate) {
+  const [refresher, setRefresher] = useState(true)
+  const [trainings, setTrainings] = useState<ITraining[]>([] as ITraining[])
   const [trainingName, setTrainingName] = useState('')
 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
-  const { take, currentPage } = pagination
-  const paginationParams: GetCategoriesParams = { page: currentPage, take, name: trainingName, order: undefined }
+  const { take, currentPage, order } = pagination
+  const paginationParams: IGetAllTrainingsParams = {
+    page: currentPage,
+    name: trainingName,
+    take,
+    order,
+    orderBy: pagination.orderBy,
+  }
 
   async function getTrainings() {
     try {
@@ -36,10 +45,20 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
     setTrainingName(text)
   })
 
+  function handleRefresher() {
+    setRefresher(!refresher)
+  }
+
   useEffect(() => {
-    console.log('oie')
     getTrainings()
-  }, [pagination.take, pagination.totalPages, currentPage, trainingName])
+  }, [
+    pagination.take,
+    pagination.totalPages,
+    pagination.order,
+    pagination.orderBy,
+    currentPage,
+    trainingName,
+  ])
 
   return (
     <div className='card mb-5 mb-xl-8'>
@@ -58,7 +77,12 @@ export function TrainingsTemplate({ remoteGetAllTrainings }: TrainingsTemplate) 
         </div>
       </div>
 
-      <TrainingsTable trainings={trainings} paginationHook={paginationHook} getTrainings={getTrainings} />
+      <TrainingsTable
+        trainings={trainings}
+        paginationHook={paginationHook}
+        getTrainings={getTrainings}
+        handleRefresher={handleRefresher}
+      />
     </div>
   )
 }

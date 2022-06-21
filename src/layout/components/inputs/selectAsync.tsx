@@ -13,59 +13,72 @@ type SelectAsyncProps = {
   label?: string
   classes?: string
   placeholder: string
+  defaultOptions?: ISelectOption[]
 }
 
 type OptionsState = {
   isOpen: boolean
   selectedOption?: ISelectOption | null
-  inputValue: string
 }
 
-const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncProps) => {
-  const selectRef = useRef(null)
-  const [options, setOptions] = useState<ISelectOption[]>([])
+const SelectAsync = ({
+  searchOptions,
+  label,
+  name,
+  placeholder,
+  defaultOptions = [],
+}: SelectAsyncProps) => {
+  const selectRef = useRef<HTMLInputElement>(null)
+  const textInputRef = useRef<HTMLInputElement>(null)
+  const [options, setOptions] = useState<ISelectOption[]>(defaultOptions)
   const [loading, setLoading] = useState(false)
 
+  const labelField = `${name}-label`
   const { fieldName, registerField, error, clearError } = useField(name)
+  const { fieldName: labelName, registerField: registerLabel } = useField(labelField)
 
-  const [optionsState, setOptionsState] = useState<OptionsState>({ inputValue: '', isOpen: false })
-  const { inputValue, isOpen, selectedOption } = optionsState
+  const [optionsState, setOptionsState] = useState<OptionsState>({ isOpen: false })
+  const { isOpen } = optionsState
 
-  const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOnChange = async () => {
     setOptionsState((oldState) => ({
       ...oldState,
-      inputValue: event.target.value,
       selectedOption: null,
     }))
+
+    getOptions()
   }
 
   const handleSelecOptions = (option: ISelectOption) => {
+    if (textInputRef.current && selectRef.current) {
+      textInputRef.current.value = option.label
+      selectRef.current.value = option.value
+    }
     setOptionsState({
       isOpen: false,
-      inputValue: option.label,
       selectedOption: option,
     })
   }
 
   const getOptions = debounce(async () => {
-    setLoading(true)
-    const optionsArr = await searchOptions(inputValue)
+    if (textInputRef.current) {
+      setLoading(true)
+      const optionsArr = await searchOptions(textInputRef?.current.value || '')
 
-    setOptions(optionsArr)
-    setOptionsState((oldState) => ({ ...oldState, isOpen: true }))
+      setOptions(optionsArr)
+      setOptionsState((oldState) => ({ ...oldState, isOpen: true }))
 
-    setLoading(false)
+      setLoading(false)
+    }
   })
 
   const closeOptions = () => {
     setOptionsState((oldState) => ({ ...oldState, isOpen: false }))
   }
 
-  useEffect(() => {
-    if (inputValue && inputValue !== selectedOption?.label) {
-      getOptions()
-    }
-  }, [inputValue])
+  const openOptions = () => {
+    setOptionsState((oldState) => ({ ...oldState, isOpen: true }))
+  }
 
   useEffect(() => {
     registerField({
@@ -83,6 +96,28 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
     })
   }, [fieldName, registerField])
 
+  useEffect(() => {
+    registerLabel({
+      ref: textInputRef,
+      name: labelName,
+      getValue: (ref) => {
+        return ref.current?.value
+      },
+      setValue: (ref, newValue) => {
+        ref.current.value = newValue
+      },
+      clearValue: (ref) => {
+        ref.current.value = ''
+      },
+    })
+  }, [labelName, registerLabel])
+
+  useEffect(() => {
+    if (defaultOptions.length > 0) {
+      setOptions(defaultOptions)
+    }
+  }, [defaultOptions])
+
   return (
     <>
       {isOpen && <div className='custom-select-async-drop' onClick={closeOptions} />}
@@ -93,23 +128,21 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
           </label>
         )}
 
-        <input
-          type='hidden'
-          name={name}
-          value={optionsState?.selectedOption?.value || ''}
-          ref={selectRef}
-        />
+        <input type='hidden' name={name} ref={selectRef} />
 
         <div className='form-control bg-secondary d-flex align-items-center form-control-lg p-0 border-0'>
           <input
             type='text'
+            name={labelField}
             style={{ zIndex: 2 }}
             className='form-select form-select-lg form-select-solid'
             placeholder={placeholder}
             onChange={handleOnChange}
-            value={optionsState.inputValue}
             onFocus={getOptions}
             onChangeCapture={clearError}
+            ref={textInputRef}
+            autoComplete='off'
+            onClick={openOptions}
           />
 
           {loading && (
@@ -123,7 +156,7 @@ const SelectAsync = ({ searchOptions, label, name, placeholder }: SelectAsyncPro
 
         {error && <span className='text-danger'>{error}</span>}
 
-        {isOpen && optionsState.inputValue.length > 0 && (
+        {isOpen && (
           <div className='options'>
             {options.map((option) => {
               return (

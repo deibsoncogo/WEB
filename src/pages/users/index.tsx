@@ -18,7 +18,7 @@ const Users: NextPage = () => {
           <HeaderWrapper title='Usuários' />
 
           <div id='kt_content_container' className='container'>
-           {MakeUserTable()}
+            <MakeUserTable />
           </div>
         </div>
       </div>

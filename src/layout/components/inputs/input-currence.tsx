@@ -22,10 +22,11 @@ export function InputCurrence({
 }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const { fieldName, registerField, error, clearError } = useField(name)
-  const [inputValue, setInputValue] = useState('R$ 0,00')
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(maskedToMoney(event.target.value))
+    if (inputRef.current) {
+      inputRef.current.value = maskedToMoney(event.target.value)
+    }
   }
 
   useEffect(() => {
@@ -53,14 +54,14 @@ export function InputCurrence({
       )}
       <div className='form-control d-flex align-items-center form-control-lg p-0 m-0 border-0'>
         <input
+          ref={inputRef}
           className='form-control form-control-lg form-control-solid border-transparent bg-secondary'
           type='text'
           name={name}
           placeholder={placeholderText}
-          ref={inputRef}
           onChange={handleOnChange}
           onChangeCapture={clearError}
-          value={inputValue}
+          defaultValue='R$ 0,00'
           {...rest}
         />
       </div>

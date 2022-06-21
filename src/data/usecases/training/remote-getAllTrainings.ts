@@ -1,4 +1,6 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
+import { ITrainingsResponse } from '../../../interfaces/api-response/trainingsResponse'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteGetAllTrainings implements IGetAllTrainings {

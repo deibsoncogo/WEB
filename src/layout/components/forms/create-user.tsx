@@ -13,6 +13,9 @@ import { toast } from 'react-toastify'
 import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
 import { findCEP } from '../../../utils/findCEP'
 import { restrictNumberInput } from '../../../utils/restrictNumberInput'
+import { ProductsModal } from '../modals/products'
+import { ProductsTable } from '../tables/products-list'
+import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 
 type Props = {
   userRegister: IUserSignUp
@@ -24,6 +27,19 @@ export function FormCreateUser({ userRegister }: Props) {
 
   const [cepObj, setCEPObj] = useState({})
   const [defaultValue, setDefaultValue] = useState({})
+
+  const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
+
+  const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
+
+  async function handleOpenModal() {
+    try {      
+      setIsProductsModalOpen(false)
+      toast.success('Produtos adicionados com sucesso!')      
+    } catch (err: any) {
+      toast.error(err.messages[0])
+    }
+  }
 
   async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
@@ -97,7 +113,10 @@ export function FormCreateUser({ userRegister }: Props) {
     userRegister
       .signUp(user)
       .then(() => router.push('/users'))
-      .catch((error: any) => toast.error(error.messages[0]))
+      .catch((error: any) => {
+        console.log(error.messages)
+        toast.error(error.messages[0])
+      })
   }
 
   return (
@@ -165,6 +184,19 @@ export function FormCreateUser({ userRegister }: Props) {
         </div>
       </div>
 
+      {grantedProducts && (
+        <div className='w-50'>
+          <h4 className='mb-5'>Acessos concedidos</h4>
+          <ProductsTable products={grantedProducts} setProducts={setGrantedProducts} />
+        </div>
+      )}
+
+      <div className='w-100'>
+        <button type='button' className='btn btn-outline-primary border border-primary w-180px mb-5' onClick={() => {setIsProductsModalOpen(true)}}>
+          Adicionar produto grátis
+        </button>
+      </div>
+
       <div className='mb-10 d-flex justify-content-between '>
         <button
           type='button'
@@ -180,6 +212,16 @@ export function FormCreateUser({ userRegister }: Props) {
           Salvar
         </button>
       </div>
+
+      <ProductsModal
+        isOpen={isProductsModalOpen}
+        modalTitle = "Adicionar produto grátis"
+        action={handleOpenModal}
+        onRequestClose={() => {
+          setIsProductsModalOpen(false)
+        }}
+        onAddProduct={setGrantedProducts}
+      />
     </Form>
   )
 }
