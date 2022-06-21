@@ -5,7 +5,7 @@ export class UpdateBook {
   content: string
   categoryId: string
   discount?: number
-  image: string
+  image: Blob
   installments: number
   isActive?: boolean
   price?: number
@@ -19,7 +19,7 @@ export class UpdateBook {
     content: string,
     categoryId: string,
     discount: number | undefined,
-    image: string,
+    image: Blob,
     installments: number,
     isActive: boolean | undefined,
     price: number | undefined,
