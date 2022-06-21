@@ -6,4 +6,4 @@ import { makeApiUrl } from "../../http";
 
 
 export const makeRemoteDeleteRoom = (): IDeleteRoom =>
-  new RemoteDeleteRoom(makeApiUrl(`/room`), makeAxiosHttpClient())
+  new RemoteDeleteRoom(makeApiUrl(`room`), makeAxiosHttpClient())

@@ -5,4 +5,4 @@ import { makeApiUrl, makeAxiosHttpClient } from '../../http';
 
 
 export const makeRemoteUpdateRoom = (): IUpdateRoom =>
-  new RemoteUpdateRoom(makeApiUrl('/room'), makeAxiosHttpClient());
+  new RemoteUpdateRoom(makeApiUrl('room'), makeAxiosHttpClient());

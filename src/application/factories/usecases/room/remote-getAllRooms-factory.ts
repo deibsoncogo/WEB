@@ -5,4 +5,4 @@ import { RemoteGetAllRooms } from '../../../../data/usecases/room/remote-getAllR
 
 
 export const makeRemoteGetAllRooms = (): IGetAllRooms =>
-  new RemoteGetAllRooms(makeApiUrl('/room'), makeAxiosHttpClient());
+  new RemoteGetAllRooms(makeApiUrl('room'), makeAxiosHttpClient());
