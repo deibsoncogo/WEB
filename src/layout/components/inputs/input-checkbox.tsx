@@ -10,16 +10,21 @@ interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export function InputCheckbox({ name, label, classes, setIsToShowStreaming, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { fieldName, registerField, defaultValue = false, error, clearError } = useField(name)
-  const [valueCheck, setValueCheck] = useState(defaultValue)
+  const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
+  
+ 
 
-  const handleOnChange = () => {    
-    setValueCheck(!valueCheck)
-
-      if(setIsToShowStreaming){
-        setIsToShowStreaming(!valueCheck)
-      }  
-   }
+   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  
+    if (inputRef.current) {      
+        inputRef.current.checked = event.currentTarget.checked       
+        if(setIsToShowStreaming){
+          setIsToShowStreaming(inputRef.current.checked)
+        } 
+        inputRef.current.value = event.currentTarget.checked+''  
+     
+    }   
+}
 
   useEffect(() => {
     registerField({
@@ -43,11 +48,10 @@ export function InputCheckbox({ name, label, classes, setIsToShowStreaming, ...r
         className='form-check-input'
         name={name}
         ref={inputRef}
-        value={valueCheck}
-        defaultChecked={defaultValue}
         onChange={handleOnChange}
         onChangeCapture={clearError}
-        type='checkbox'
+        defaultChecked={false}        
+        type='checkbox'     
         {...rest}
       />
 
