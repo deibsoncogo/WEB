@@ -18,18 +18,21 @@ export function InputNumber({
   ...rest
 }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { fieldName, registerField, defaultValue = '', error, clearError } = useField(name)
-
-  const [valueInput, setValueInput] = useState(defaultValue)
+  const { fieldName, registerField, error, defaultValue, clearError } = useField(name)
   
+  const [valueInput, setValueInput] = useState(defaultValue)
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reggex = new RegExp(/[^\d]/g)
     if (inputRef.current) {           
-      if(!reggex.test(event.currentTarget.value)) 
-         setValueInput(event.currentTarget.value)         
-    }  
-    
-  }
+      if(!reggex.test(event.currentTarget.value)){
+        inputRef.current.value = event.currentTarget.value 
+        setValueInput(event.currentTarget.value ) 
+      }
+      else{
+        inputRef.current.value = valueInput   
+      }  
+    }   
+}
 
   useEffect(() => {
     registerField({
@@ -61,11 +64,9 @@ export function InputNumber({
           name={name}
           placeholder={placeholderText}
           ref={inputRef}
-          value={valueInput}
-          onChange={onChange} 
-          onInput= {handleOnChange}         
+          onChange={handleOnChange} 
           onChangeCapture={clearError}
-          defaultValue={defaultValue}
+          defaultValue={valueInput}
           type='text'
           {...rest}
         />
