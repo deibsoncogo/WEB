@@ -18,7 +18,7 @@ export function InputNumber({
   ...rest
 }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { fieldName, registerField, error, defaultValue, clearError } = useField(name)
+  const { fieldName, registerField, error, defaultValue = '', clearError } = useField(name)
   
   const [valueInput, setValueInput] = useState(defaultValue)
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
