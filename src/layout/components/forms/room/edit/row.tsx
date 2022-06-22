@@ -1,6 +1,4 @@
 import { Tooltip } from '@nextui-org/react'
-import { CourseClass } from '../../../../../domain/models/courseClass'
-import { IStreaming } from '../../../../../domain/models/streaming'
 import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
 import { KTSVG } from '../../../../../helpers'
 
@@ -19,15 +17,15 @@ interface IRow {
 export function Row({index, liveDate, time, start, startUrl, streamingRoomArray,idDeletedStreamingRoom,
   streamRoomUpdate, handleRefresher}: IRow) {
 
-  const deleteStream = (index: number) => {
-    const elementTemp = streamingRoomArray.splice(index, 1) 
+  const deleteStream = (indexArray: number) => {
+    const elementTemp = streamingRoomArray.splice(indexArray, 1) 
     if(elementTemp[0]?.id){
       idDeletedStreamingRoom.push(elementTemp[0]?.id)
     }
     else{
-      const index = streamRoomUpdate.indexOf(elementTemp[0], 0)
-      if (index > -1) {
-        streamRoomUpdate.splice(index, 1)
+      const indexArrayTemp = streamRoomUpdate.indexOf(elementTemp[0], 0)
+      if (indexArrayTemp > -1) {
+        streamRoomUpdate.splice(indexArrayTemp, 1)
       }
       
     }

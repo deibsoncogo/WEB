@@ -1,11 +1,11 @@
 import { FormHandles } from '@unform/core'
-import { RefObject, useEffect, useState } from 'react'
+import { RefObject, useState } from 'react'
 import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { dateMask } from '../../../../formatters/dateFormatter'
 import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
-import { DatePicker, Input, InputMasked, Select } from '../../../inputs'
+import { DatePicker, Select } from '../../../inputs'
 import { Row } from './row'
 
 type props = {
@@ -28,8 +28,6 @@ export default function RoomInternalTable({
   const [refresher, setRefresher] = useState<boolean>(false)
   const [hasError, setHasError] = useState<boolean>(false)
   const [messageError, setMessageError] = useState<string>('')
-
-  useEffect(() => {}, [refresher])
 
   const handleRefresher = () => {
     setRefresher(!refresher)
