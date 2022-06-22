@@ -1,7 +1,7 @@
 import { Course } from '../../interfaces/model/Course'
 import { ITraining } from './training'
 
-enum PlanType {
+export enum PlanType {
   SINGLE_PAYMENT = 'single_payment',
   RECURRING_PAYMENT = 'recurring_payment',
 }
@@ -9,12 +9,13 @@ enum PlanType {
 export interface IPlan {
   id?: string
   name: string
+  image?: Blob
   imageUrl?: string
   imageKey?: string
   description: string
   price: number
   intervalPaymentMonths?: number
-  installments: number
+  installments?: number
   intervalAccessMonths: number
   isActive: boolean
   planType: PlanType
