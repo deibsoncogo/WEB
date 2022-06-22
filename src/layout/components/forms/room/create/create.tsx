@@ -47,12 +47,27 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
   const [streamingRoom] = useState<IStreamingRoom[]>([])
   const [hasErrorRoom, setHasErrorRoom] = useState(false)
 
+  const [errorMessage, setMessageError] = useState('')
+
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
   const handleSingleImageUpload = (file?: File) => {
     setImageUpload(file)
+  }
+
+  async function verifyErrorStreamingRoom(data: IFormRoom) {    
+  
+    if (!data.itemChat && !data.itemRoom)
+      setMessageError('Você precisa adicionar, no mínimo, um dos itens')
+    else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
+      setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
+    else {     
+      return false
+    }
+    return true;    
+  
   }
 
   const currencyFormatter = (name: string) => {
@@ -85,17 +100,12 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
 
+      const hasError = await verifyErrorStreamingRoom(data) 
       await schema.validate(data, { abortEarly: false })
-      data.itemChat || (data.itemRoom && streamingRoom.length > 0)
-        ? handleCreateRoom(data)
-        : setHasErrorRoom(true)
+      hasError? setHasErrorRoom(hasError): handleCreateRoom(data)
+          
     } catch (err) {
-      const validationErrors = {}
-
-      if ((!data.itemChat && !data.itemRoom) || (!data.itemChat && streamingRoom.length == 0)) {
-        setHasErrorRoom(true)
-      }
-
+      const validationErrors = {}    
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
           // @ts-ignore
@@ -223,7 +233,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
         {hasErrorRoom && (
           <ErrorMandatoryItem
             mainMessage='Não é possível criar Sala!'
-            secondaryMessage='Você precisa adicionar, no mínimo, um item.'
+            secondaryMessage={errorMessage}
             setHasError={setHasErrorRoom}
           />
         )}

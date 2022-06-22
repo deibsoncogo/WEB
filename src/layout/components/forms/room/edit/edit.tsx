@@ -56,6 +56,7 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
   const [streamingRoom, setStreamingRoom] = useState<IStreamingRoom[]>([])
   const [hasErrorRoom, setHasErrorRoom] = useState(false)
 
+  const [errorMessage, setMessageError] = useState('')
 
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
@@ -66,6 +67,18 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
   
   const handleSingleImageUpload = (file?: File) => {
     setImageUpload(file)
+  } 
+  async function verifyErrorStreamingRoom(data: IFormRoom) {    
+  
+    if (!data.itemChat && !data.itemRoom)
+      setMessageError('Você precisa adicionar, no mínimo, um dos itens')
+    else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
+      setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
+    else {     
+      return false
+    }
+    return true;    
+  
   }
 
   const currencyFormatter = (name: string) => {
@@ -87,18 +100,17 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
         installments: Yup.number()
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário')
-          .positive('Quantidade de parcelas deve ser positiva')
-          .integer('Quantidade de parcelas deve ser um número inteiro'),
+          .positive('Quantidade de parcelas deve ser positiva'),         
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
-      console.log(data)
-
+      
+      const hasError = await verifyErrorStreamingRoom(data) 
       await schema.validate(data, { abortEarly: false })
-      handleUpdateRoom(data)
-    } catch (err) {
+      hasError? setHasErrorRoom(hasError): handleUpdateRoom(data)
     
-      const validationErrors = {}
+    } catch (err) {    
+      const validationErrors = {}     
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
           // @ts-ignore
@@ -269,8 +281,8 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
         <h3 className='fs-6 fw-bolder text-dark'>Itens</h3>
         {hasErrorRoom && (
           <ErrorMandatoryItem
-            mainMessage='Não é possível criar Sala!'
-            secondaryMessage='Você precisa adicionar, no mínimo, um item.'
+            mainMessage='Não é possível atualizar Sala!'
+            secondaryMessage= {errorMessage}
             setHasError={setHasErrorRoom}
           />
         )}
