@@ -37,9 +37,10 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
   const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
+
   const [purchases, setPurchases] = useState<IPartialPurchaseResponse[]>([
     {
-      date: '22-06-2022',
+      date: '2022-06-22',
       transactionId: '123456',
       totalPrice: 'R$1.200',
       status: 'Pago'
@@ -243,7 +244,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
 
           <div className='w-50'>
             <h4 className='mb-5'>Compras Realizadas</h4>
-            <PurchasesTable purchases={purchases} setPurchases={setPurchases} />
+            <PurchasesTable purchases={purchases} />
           </div>
         </div>
 
