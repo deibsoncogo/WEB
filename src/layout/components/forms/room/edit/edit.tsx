@@ -7,7 +7,7 @@ import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
 
-import { InputImage } from '../../../inputs/input-image'
+
 import { Input, TextArea } from '../../../inputs'
 import { SelectAsync } from '../../../inputs/selectAsync'
 import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
@@ -34,6 +34,7 @@ import {startStreamingRoomHelper} from '../../../../../helpers/startStreamingRoo
 
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import RoomInternalTable from './roomInternalTable'
+import { InputSingleImage } from '../../../inputs/input-single-image'
 
 type Props = {
   id: string| string[] | undefined
@@ -52,7 +53,6 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
   const [defaultValue, setDefaultValue] = useState<IRoomResponse>()
 
   const [isToShowStreaming, setIsToShowStreaming] = useState(false)
-  const [imageUpload, setImageUpload] = useState<File>()
   const [streamingRoom, setStreamingRoom] = useState<IStreamingRoom[]>([])
   const [hasErrorRoom, setHasErrorRoom] = useState(false)
 
@@ -65,9 +65,20 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
   const [idDeletedStreamingRoom] = useState<string[]>([])
   const [streamRoomUpdate] = useState<IStreamingRoom[]>([])
   
-  const handleSingleImageUpload = (file?: File) => {
-    setImageUpload(file)
-  } 
+
+
+  const searchTeachers = async (teacherName: string) => {
+    return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
+  }
+
+  const searchCategories = async (categoryName: string) => {
+    return getAsyncCategoiesToSelectInput({
+      categoryName,
+      remoteGetCategories: getCategories,
+    })
+  }
+
+  
   async function verifyErrorStreamingRoom(data: IFormRoom) {    
   
     if (!data.itemChat && !data.itemRoom)
@@ -93,7 +104,8 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
     
     try {
       formRef.current.setErrors({})
-      const schema = Yup.object().shape({       
+      const schema = Yup.object().shape({     
+        imagePreview: Yup.string().required('Imagem é necessária'),  
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         price: Yup.string().required('Preço é necessário'),
@@ -141,8 +153,8 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
     )
 
     const formData = new FormData()
-    if (imageUpload) {
-      formData.append('image', imageUpload)
+    if (data?.image) {
+      formData.append('image', data.image)
     }
     if (idDeletedStreamingRoom.length > 0) {
       idDeletedStreamingRoom.forEach((idRoom) => {
@@ -162,27 +174,16 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
       .finally(() => setUpdate(false))
   }
 
-  const searchTeachers = async (teacherName: string) => {
-    return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
-  }
-
-  const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesToSelectInput({
-      categoryName,
-      remoteGetCategories: getCategories,
-    })
-  }
-
-
+ 
   useEffect(() => {
-    try{  
+    const fetchData = async () => {     
       if (typeof id == 'string') {
-       getRoom.get(id).then((data) => {
+        const data = await getRoom.get(id)
         formRef.current?.setFieldValue('userId', data.userId)
         formRef.current?.setFieldValue('userId-label', data.teacherName)
         formRef.current?.setFieldValue('categoryId', data.categoryId)
         formRef.current?.setFieldValue('categoryId-label', data.categoryName)
-        formRef.current?.setFieldValue('photo', data.imageUrl)
+        formRef.current?.setFieldValue('imagePreview', data.imageUrl)       
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
         inputRefChat.current.checked = data.isChatActive
         inputRefChat.current.value = data.isChatActive
@@ -192,35 +193,30 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
         setIsToShowStreaming(data.isStreamingRoomActive)
         setStreamingRoom(startStreamingRoomHelper(data?.streamingsRoom))
         setDefaultValue(data)
-       }).finally(()=>{
-          searchTeachers('').then((data) =>{
-          setDefaultTeacherOptions(data)
-        })
-  
-        searchCategories('').then((data) =>{
-          setDefaultCategoryOptions(data)
-        })
-       
-       })      
-      }           
-      getZoomUsers.get().then((zoomUsers) => {
-        if (zoomUsers) {
-          const options: ISelectOption[] = zoomUsers.map((user) => ({
+      }
+
+      const dataTeachers = await searchTeachers('')
+      setDefaultTeacherOptions(dataTeachers )
+
+      const dataCategories = await searchCategories('')
+      setDefaultCategoryOptions(dataCategories)
+
+      const zoomLisUsers = await getZoomUsers.get()
+        if (zoomLisUsers) {
+          const options: ISelectOption[] = zoomLisUsers.map((user) => ({
             label: `${user.first_name} ${user.last_name}`,
             value: user.id,
           }))
           setZoomUsersOptions(options)
         }
-      })   
-   }
-   catch(error){
-     toast.error("Não foi possível carregar os dados")
-   }
-   finally{   
-    setTimeout(() => {
+    }
+        
+    fetchData().
+    catch(() => toast.error("Não foi possível carregar os dados"))
+    .finally(() => setTimeout(() => {
       setLoading(false)
-     }, 500)     
-   }
+     }, 500) ) 
+         
   }, [])
 
   return (
@@ -228,7 +224,7 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
      {loading && <FullLoading />}
      <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações da Sala</h3>
-        <InputImage name='photo' handleSingleImageUpload={handleSingleImageUpload} />
+        <InputSingleImage name='image' />
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />

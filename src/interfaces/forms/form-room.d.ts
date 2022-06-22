@@ -1,6 +1,7 @@
 interface IFormRoom {
   name: string;
-  photo?: Blob
+  image?: Blob
+  imagePreview:string;
   description: string;    
   discount: string; 
   installments: string;

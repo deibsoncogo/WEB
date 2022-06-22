@@ -6,7 +6,6 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { InputImage } from '../../../inputs/input-image'
 import { Input, TextArea } from '../../../inputs'
 import { SelectAsync } from '../../../inputs/selectAsync'
 import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
@@ -29,6 +28,7 @@ import { InputCheckbox } from '../../../inputs/input-checkbox'
 import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
 import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
 import { currencyInputFormmater } from '../../../../formatters/currencyInputFormatter'
+import { InputSingleImage } from '../../../inputs/input-single-image'
 
 type Props = {
   createRoom: ICreateRoom
@@ -43,7 +43,6 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
 
   const [registerRoom, setRegisterRoom] = useState(false)
   const [isToShowStreaming, setIsToShowStreaming] = useState(false)
-  const [imageUpload, setImageUpload] = useState<File>()
   const [streamingRoom] = useState<IStreamingRoom[]>([])
   const [hasErrorRoom, setHasErrorRoom] = useState(false)
 
@@ -53,59 +52,47 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
-  const handleSingleImageUpload = (file?: File) => {
-    setImageUpload(file)
-  }
-
-  async function verifyErrorStreamingRoom(data: IFormRoom) {    
-  
+  async function verifyErrorStreamingRoom(data: IFormRoom) {
     if (!data.itemChat && !data.itemRoom)
       setMessageError('Você precisa adicionar, no mínimo, um dos itens')
     else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
       setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
-    else {     
+    else {
       return false
     }
-    return true;    
-  
+    return true
   }
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
-    value = currencyInputFormmater(value) 
+    value = currencyInputFormmater(value)
     formRef.current?.setFieldValue(name, value)
     if (value == 'NaN') formRef.current?.setFieldValue(name, '')
   }
 
   async function handleFormSubmit(data: IFormRoom) {
     if (!formRef.current) throw new Error()
-   
-    setHasErrorRoom(false)
-    if (imageUpload) {
-      data.photo = imageUpload
-    }
+
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        photo: Yup.mixed().required('Imagem é necessária'),
+        imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         price: Yup.string().required('Preço é necessário'),
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1')
           .typeError('Quantidade de parcelas deve ser um número')
-          .required('Quantidade de parcelas é necessário')
-          .integer('Quantidade de parcelas deve ser um número inteiro'),
+          .required('Quantidade de parcelas é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
 
-      const hasError = await verifyErrorStreamingRoom(data) 
+      const hasError = await verifyErrorStreamingRoom(data)
       await schema.validate(data, { abortEarly: false })
-      hasError? setHasErrorRoom(hasError): handleCreateRoom(data)
-          
+      hasError ? setHasErrorRoom(hasError) : handleCreateRoom(data)
     } catch (err) {
-      const validationErrors = {}    
+      const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
           // @ts-ignore
@@ -134,7 +121,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
 
     const formData = new FormData()
 
-    if (data?.photo) formData.append('image', data.photo)
+    if (data?.image) formData.append('image', data.image)
     formData.append('room', JSON.stringify(room))
     setRegisterRoom(true)
     createRoom
@@ -148,11 +135,11 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
   }
 
   const searchTeachers = async (teacherName: string) => {
-    return await getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
+    return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
   }
 
   const searchCategories = async (categoryName: string) => {
-    return await getAsyncCategoiesToSelectInput({
+    return getAsyncCategoiesToSelectInput({
       categoryName,
       remoteGetCategories: getCategories,
     })
@@ -184,7 +171,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações da Sala</h3>
-        <InputImage name='photo' handleSingleImageUpload={handleSingleImageUpload} />
+        <InputSingleImage name='image' />
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />

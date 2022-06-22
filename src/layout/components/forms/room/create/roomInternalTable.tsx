@@ -5,7 +5,7 @@ import { ISelectOption } from '../../../../../domain/shared/interface/SelectOpti
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { dateMask } from '../../../../formatters/dateFormatter'
 import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
-import { DatePicker, Input, InputMasked, Select } from '../../../inputs'
+import { DatePicker, Select } from '../../../inputs'
 import { Row } from './row'
 
 type props = {
@@ -23,8 +23,7 @@ export default function RoomInternalTable({
   const [hasError, setHasError] = useState<boolean>(false)
   const [messageError, setMessageError] = useState<string>('')
 
-  useEffect(() => {}, [refresher])
-
+ 
   const handleRefresher = () => {
     setRefresher(!refresher)
   }
