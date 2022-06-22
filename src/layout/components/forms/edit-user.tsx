@@ -17,6 +17,8 @@ import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
+import { IPartialPurchaseResponse } from '../../../interfaces/api-response/purchasePartialResponse'
+import { PurchasesTable } from '../tables/purchashes-list'
 
 type IFormEditUser = {
   id: string
@@ -35,6 +37,14 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
   const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
+  const [purchases, setPurchases] = useState<IPartialPurchaseResponse[]>([
+    {
+      date: '22-06-2022',
+      transactionId: '123456',
+      totalPrice: 'R$1.200',
+      status: 'Pago'
+    }
+  ])
 
   async function handleOpenModal() {
     try {
@@ -225,12 +235,17 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           </div>
         </div>
 
-        {grantedProducts.length > 0 && (
+        <div className='d-flex justify-content-between gap-5'>
           <div className='w-50'>
             <h4 className='mb-5'>Acessos concedidos</h4>
             <ProductsTable products={grantedProducts} setProducts={setGrantedProducts} />
           </div>
-        )}
+
+          <div className='w-50'>
+            <h4 className='mb-5'>Compras Realizadas</h4>
+            <PurchasesTable purchases={purchases} setPurchases={setPurchases} />
+          </div>
+        </div>
 
         <div className='w-100'>
           <button
