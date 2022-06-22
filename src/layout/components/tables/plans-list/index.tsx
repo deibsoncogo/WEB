@@ -1,11 +1,13 @@
 import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { IPlan } from '../../../../domain/models/plan'
+import { ITogglePlanStatusParams } from '../../../../domain/usecases/interfaces/plan/togglePlanStatus'
 import { Pagination } from '../../pagination/Pagination'
 import PlanTableRow from './row'
 
 type PlansTableProps = {
   plans: IPlan[]
   paginationHook: usePaginationType
+  togglePlanStatus: (params: ITogglePlanStatusParams) => void
 }
 
 type HandleClassesParam = {
@@ -13,7 +15,7 @@ type HandleClassesParam = {
   extraClases?: string
 }
 
-export function PlansTable({ plans = [], paginationHook }: PlansTableProps) {
+export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: PlansTableProps) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
   const getColumnHeaderClasses = ({ title, extraClases = '' }: HandleClassesParam) => {
@@ -25,10 +27,10 @@ export function PlansTable({ plans = [], paginationHook }: PlansTableProps) {
   return (
     <>
       <div className='card-body py-3'>
-        <div className='table-responsive'>
-          <table className='table align-middle gs-0 gy-4'>
+        <div className='table-responsive w-100'>
+          <table className='table gs-0 gy-4 w-100'>
             <thead>
-              <tr className='fw-bolder text-muted bg-light'>
+              <tr className='fw-bolder text-muted bg-light '>
                 <th
                   role='columnheader'
                   scope='col'
@@ -87,7 +89,7 @@ export function PlansTable({ plans = [], paginationHook }: PlansTableProps) {
 
             <tbody className='w-100'>
               {plans?.map((plan) => (
-                <PlanTableRow key={plan.id} plan={plan} />
+                <PlanTableRow key={plan.id} plan={plan} togglePlanStatus={togglePlanStatus} />
               ))}
             </tbody>
           </table>

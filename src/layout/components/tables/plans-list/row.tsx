@@ -1,13 +1,18 @@
-import { IPlan } from '../../../../domain/models/plan'
 import { Tooltip } from '@nextui-org/react'
-import { KTSVG } from '../../../../helpers'
 import Link from 'next/link'
+import { IPlan } from '../../../../domain/models/plan'
+import { ITogglePlanStatusParams } from '../../../../domain/usecases/interfaces/plan/togglePlanStatus'
+import { KTSVG } from '../../../../helpers'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 
 type PlanTableRowProps = {
   plan: IPlan
+  togglePlanStatus: (params: ITogglePlanStatusParams) => void
 }
-const PlanTableRow = ({ plan }: PlanTableRowProps) => {
+const PlanTableRow = ({ plan, togglePlanStatus }: PlanTableRowProps) => {
+  const handlePlanStatusChange = () => {
+    togglePlanStatus({ id: String(plan.id) })
+  }
   return (
     <tr>
       <td className='ps-4' scope='row'>
@@ -37,6 +42,7 @@ const PlanTableRow = ({ plan }: PlanTableRowProps) => {
             type='checkbox'
             checked={plan.isActive}
             id='flexSwitchDefault'
+            onChange={handlePlanStatusChange}
           />
         </div>
       </td>
