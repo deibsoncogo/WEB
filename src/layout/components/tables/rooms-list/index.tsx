@@ -38,13 +38,10 @@ export function RoomsTable({getAllRooms, updateRoom, deleteRoom}: Props) {
   
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
-    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-      name
-    )}`
+    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(name)}`
   }
 
   useEffect(() => {
-
     const paginationParams: GetRoomParams = {
       take: pagination.take,
       order: pagination.order,
@@ -53,7 +50,7 @@ export function RoomsTable({getAllRooms, updateRoom, deleteRoom}: Props) {
       name: roomName,
     } 
        getAllRooms.getAll(paginationParams)
-      .then((data) => {               
+      .then((data) => {              
        setRooms(data.data)
        setTotalPage(data.total)
       })
@@ -69,8 +66,7 @@ export function RoomsTable({getAllRooms, updateRoom, deleteRoom}: Props) {
 
 
   function handleRefresher() {    
-    setRefresher(!refresher);
-  }
+    setRefresher(!refresher);  }
 
     
   const handleSearchRoom = debounce((text: string) => {
@@ -129,6 +125,7 @@ export function RoomsTable({getAllRooms, updateRoom, deleteRoom}: Props) {
                     isActive={item.isActive}                   
                     updateRoom={updateRoom}
                     deleteRoom={deleteRoom}
+                    isChatActive={item.isChatActive}
                     handleRefresher={handleRefresher}
                   />
                 ))}

@@ -17,6 +17,7 @@ interface IRow {
   price: string | number
   teacher: string
   isActive: boolean
+  isChatActive: boolean
   updateRoom: IUpdateRoom
   deleteRoom: IDeleteRoom
   handleRefresher: () => void
@@ -29,6 +30,7 @@ export function Row({
   price,
   teacher,
   isActive,
+  isChatActive,
   updateRoom,
   deleteRoom,
   handleRefresher,
@@ -67,6 +69,7 @@ export function Row({
     }
   }
   return (
+    <>
     <tr>
       <td className='ps-4'>
         <span className='text-dark fw-bold d-block fs-7'>{name}</span>
@@ -86,13 +89,15 @@ export function Row({
         <span className='text-dark fw-bold d-block fs-7'>{teacher}</span>
       </td>
       <td>
+        {isChatActive && (
         <Tooltip content={'Chat'} rounded color='primary'>
           <Link href={`/rooms/chat/${id}`}>
             <button className='btn btn-icon btn-active-color-primary btn-sm me-1'>
               <KTSVG path='/icons/com003.svg' className='svg-icon-3' />
             </button>
           </Link>
-        </Tooltip>
+        </Tooltip>)
+       }
       </td>
       <td>
         <Switch active={isActive} setModalUpdate={setIsModalUpdateOpen} />
@@ -141,5 +146,6 @@ export function Row({
         title='Confirmação'
       />
     </tr>
+    </>
   )
 }

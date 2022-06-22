@@ -6,5 +6,6 @@ export interface IRoomPartialResponse{
     price: string,   
     discount: string,   
     isActive: boolean,
+    isChatActive: boolean,
     teacherName: string     
 }
