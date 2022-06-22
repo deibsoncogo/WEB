@@ -1,8 +1,15 @@
 import axios from 'axios'
-import { SetStateAction } from 'react'
 import { toast } from 'react-toastify'
 
-export async function findCEP(cep: any, setDefaultValue: (value: SetStateAction<{}>) => void) {
+export type ZipCodeProps = {
+  zipCode: string
+  street: string
+  neighborhood: string
+  city: string
+  state: string
+}
+
+export async function findCEP(cep: any) {
   const matches = cep.match(/\d*/g)
   const number = matches?.join('')
 
@@ -10,14 +17,16 @@ export async function findCEP(cep: any, setDefaultValue: (value: SetStateAction<
 
   try {
     const resp = await axios.get(`https://viacep.com.br/ws/${number}/json/`)
-    const data = {
+
+    const data: ZipCodeProps = {
       zipCode: resp.data.cep,
       street: resp.data.logradouro,
       neighborhood: resp.data.bairro,
       city: resp.data.localidade,
       state: resp.data.uf,
     }
-    setDefaultValue(data)
+
+    return data
   } catch (err) {
     toast.error('Erro ao buscar CEP.')
   }

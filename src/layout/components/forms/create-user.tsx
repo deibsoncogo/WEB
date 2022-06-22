@@ -11,7 +11,7 @@ import { UserSignUp } from '../../../domain/models/userSignUp'
 import { levelOptions, roleOptions, stateOptions } from '../../../utils/selectOptions'
 import { toast } from 'react-toastify'
 import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
-import { findCEP } from '../../../utils/findCEP'
+import { findCEP, ZipCodeProps } from '../../../utils/findCEP'
 import { restrictNumberInput } from '../../../utils/restrictNumberInput'
 import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
@@ -26,7 +26,7 @@ export function FormCreateUser({ userRegister }: Props) {
   const formRef = useRef<FormHandles>(null)
 
   const [cepObj, setCEPObj] = useState({})
-  const [defaultValue, setDefaultValue] = useState({})
+  const [defaultValue, setDefaultValue] = useState<ZipCodeProps>()
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
 
@@ -118,6 +118,12 @@ export function FormCreateUser({ userRegister }: Props) {
       })
   }
 
+  async function handleInputZipCode() {
+    const zipCode = formRef.current?.getData().zipCode
+    const result = await findCEP(zipCode)
+    setDefaultValue(result)
+  }
+
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
       <div className='d-flex flex-row gap-5 w-100'>
@@ -172,9 +178,7 @@ export function FormCreateUser({ userRegister }: Props) {
             name='zipCode'
             label='CEP'
             mask='99999-999'
-            onChange={async () => {
-              findCEP(formRef.current?.getData().zipCode, setDefaultValue)
-            }}
+            onChange={handleInputZipCode}
           />
           <Input classes='h-75px' name='street' label='Logradouro' />
           <Input
@@ -188,12 +192,17 @@ export function FormCreateUser({ userRegister }: Props) {
           <Input classes='h-75px' name='complement' label='Complemento' />
           <Input classes='h-75px' name='neighborhood' label='Bairro' />
           <Input classes='h-75px' name='city' label='Cidade' />
+
           <Select classes='h-75px' name='state' label='Estado'>
-            <option value='' disabled selected>
+            <option value='' selected={!!defaultValue?.state}>
               Selecione
             </option>
             {stateOptions.map((option) => (
-              <option key={option.value} value={option.value}>
+              <option
+                key={option.value}
+                value={option.value}
+                selected={defaultValue?.state === option.value}
+              >
                 {option.label}
               </option>
             ))}
