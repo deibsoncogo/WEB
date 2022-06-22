@@ -49,7 +49,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
       },
     })
   }, [fieldName, registerField])
-  
+
   const years = rangeInt(1900, new Date().getFullYear() + 1)
 
   return (
