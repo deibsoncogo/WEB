@@ -82,7 +82,7 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                   Ativo
                 </th>
                 <th className='text-dark rounded-end align-middle' style={{ minWidth: '100px' }}>
-                  Ações
+                  Ação
                 </th>
               </tr>
             </thead>
@@ -93,6 +93,8 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
               ))}
             </tbody>
           </table>
+
+          {plans.length === 0 && <p className='text-center my-8 pt-2'>Nenhum plano encontrado</p>}
         </div>
       </div>
       <div className='card d-flex flex-row justify-content-end align-items-center ps-9 pe-9 pb-5'>
