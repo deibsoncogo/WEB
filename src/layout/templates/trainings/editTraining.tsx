@@ -19,8 +19,7 @@ import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditTraining } from '../../components/forms/trainings/edit'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
 import { FullLoading } from '../../components/FullLoading/FullLoading'
-import { Loading } from '../../components/loading/loading'
-import { maskedToMoney } from '../../formatters/currenceFormatter'
+import { maskedToMoney, onlyNums } from '../../formatters/currenceFormatter'
 import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
 import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from './utils/getAsyncTeachersToSelectInput'
@@ -62,7 +61,6 @@ function EditTrainingPageTemplate({
     makeRequest: getTraining,
     data: training,
     error: getTrainingError,
-    loading: getTrainingLoading,
     cleanUp: getTrainingCleanUp,
   } = useRequest<ITraining, IGetTrainingParams>(remoteGetTraining.get)
 
@@ -70,12 +68,14 @@ function EditTrainingPageTemplate({
     makeRequest: getZoomUsers,
     data: zoomUsers,
     error: getZoomUsersError,
-    loading: getZoomUsersLoading,
     cleanUp: getZoomUsersCleanUp,
   } = useRequest<IZoomUser[]>(remoteGetZoomUsers.get)
 
   async function handleFormSubmit(data: ITraining) {
-    const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
+    const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, {
+      ...data,
+      price: onlyNums(data.price),
+    })
 
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)
@@ -107,13 +107,11 @@ function EditTrainingPageTemplate({
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    const options = await getAsyncCategoiesToSelectInput({ categoryName, remoteGetCategories })
-    return options
+    return getAsyncCategoiesToSelectInput({ categoryName, remoteGetCategories })
   }
 
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
-    const options = await getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers })
-    return options
+    return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers })
   }
 
   const handleCancel = () => {
@@ -121,7 +119,7 @@ function EditTrainingPageTemplate({
   }
 
   const formatStreamingList = (streamings: IStreaming[]): IStreaming[] => {
-    const formattedStreamings = streamings.map((streaming) => {
+    return streamings.map((streaming) => {
       const date = new Date(`${streaming.date}:${streaming.hour}`)
       const dateNow = new Date()
 
@@ -136,8 +134,6 @@ function EditTrainingPageTemplate({
         showStartLink: isToShowStartUrl,
       }
     })
-
-    return formattedStreamings
   }
 
   useEffect(() => {
@@ -179,7 +175,7 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('discount', maskedToMoney(discount))
       formRef.current?.setFieldValue('trainingEndDate', new Date(trainingEndDate))
       formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDate))
-      formRef.current?.setFieldValue('photo', imageUrl)
+      formRef.current?.setFieldValue('imagePreview', imageUrl)
       formRef.current?.setFieldValue('zoomUserId', zoomUserId)
       setStreamList(formattedStreamings)
       setLoadingPageData(false)

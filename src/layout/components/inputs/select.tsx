@@ -10,7 +10,7 @@ type SelectFace = SelectHTMLAttributes<HTMLSelectElement> & {
   fixedValue?: string
 }
 
-export function Select({ name, label, classes, fixedValue, children, ...rest }: SelectFace) {
+export function Select({ name, label, classes, children, ...rest }: SelectFace) {
   const selectRef = useRef(null)
 
   const { fieldName, registerField, error, clearError } = useField(name)
@@ -48,11 +48,12 @@ export function Select({ name, label, classes, fixedValue, children, ...rest }: 
         onChange={() => clearError()}
         {...rest}
       >
-        <option value='' hidden disabled selected>
-          {error ? error : fixedValue ? fixedValue : 'Selecione'}
+        <option value='' hidden disabled>
+          Selecione
         </option>
         {children}
       </select>
+      {error && <span className='text-danger'>{error}</span>}
     </div>
   )
 }

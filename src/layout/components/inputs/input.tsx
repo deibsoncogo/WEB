@@ -55,10 +55,10 @@ export function Input({ name, label, placeholderText, classes, onChange, ...rest
       {name != 'content' ? (
         <div className='form-control d-flex align-items-center form-control-lg bg-secondary p-0 m-0 border-0'>
           <input
-            className={`form-control form-control-lg form-control-solid border-transparent bg-secondary ${error && 'placeholder-red'}`}
+            className={`form-control form-control-lg form-control-solid border-transparent bg-secondary`}
             type='text'
             name={name}
-            placeholder={error ? error : placeholderText}
+            placeholder={placeholderText}
             ref={inputRef}
             defaultValue={defaultValue}
             onChange={onChange}
@@ -84,6 +84,7 @@ export function Input({ name, label, placeholderText, classes, onChange, ...rest
           {...rest}
         />
       )}
+      {error && <span className='text-danger'>{error}</span>}
     </div>
   )
 }
