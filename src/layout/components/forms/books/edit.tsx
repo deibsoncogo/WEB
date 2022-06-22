@@ -90,7 +90,7 @@ export function FormUpdateBook({
   }, [getBookById, getAllCategories])
 
   useEffect(() => {
-    formRef.current?.setFieldValue('image', book?.imageUrl)
+    formRef.current?.setFieldValue('imagePreview', book?.imageUrl)
   }, [book])
 
   async function handleFormSubmit(data: IFormBook) {
@@ -102,7 +102,7 @@ export function FormUpdateBook({
       formRef.current.setErrors({})
 
       const schema = Yup.object().shape({
-        image: Yup.string().required('Imagem é necessária.'),
+        imagePreview: Yup.string().required('Imagem é necessária.'),
         name: Yup.string().required('Título é necessário'),
         author: Yup.string().required('Autor é necessário'),
         stock: Yup.number().required('Estoque é necessário'),
