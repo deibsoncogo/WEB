@@ -1,11 +1,11 @@
 export class CreateChatRoom {
-  idRoom: string;
+  roomId: string;
   message: string
   hour: string
   date: string
 
-  constructor(idRoom: string, message: string, hour: string, date: string){
-    this.idRoom = idRoom;
+  constructor(roomId: string, message: string, hour: string, date: string){
+    this.roomId = roomId;
     this.message = message;
     this.hour = hour;
     this.date = date;
