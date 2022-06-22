@@ -53,6 +53,7 @@ export function Select({ name, label, classes, fixedValue, children, ...rest }: 
         </option>
         {children}
       </select>
+      {error && <span className='text-danger'>{error}</span>}
     </div>
   )
 }

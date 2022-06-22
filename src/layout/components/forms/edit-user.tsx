@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import { FormHandles } from '@unform/core'
 
 import { findCEP } from '../../../utils/findCEP'
-import { formatDateToUTC } from '../../../helpers'
+import { formatDateToUTC, validateStringWithNumber } from '../../../helpers'
 import { levelOptions, roleOptions } from '../../../utils/selectOptions'
 
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
@@ -51,7 +51,9 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é Nescessário'),
+        name: Yup.string()
+          .test('no number', 'O campo não deve conter números', validateStringWithNumber)
+          .required('Nome é necessário'),
         email: Yup.string().email('Insira um email válido.').required('Email é nescessário'),
         birthDate: Yup.string().required('Data de nascimento é nescessária'),
         cpf: Yup.string().required('CPF é nescessário'),
