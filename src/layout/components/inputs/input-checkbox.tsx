@@ -10,7 +10,7 @@ interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export function InputCheckbox({ name, label, classes, setIsToShowStreaming, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
+  const { fieldName, registerField, clearError } = useField(name)
   
  
 
