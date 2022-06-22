@@ -1,3 +1,5 @@
+import { Tooltip } from '@nextui-org/react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { ICreateChatRoom } from '../../../../../domain/usecases/interfaces/chatRoom/createRoom'
@@ -13,7 +15,18 @@ import {
 import { Message } from './message'
 
 let bufferMessages: Array<MessageModel>  =  [
-
+  {
+    user: 2,
+    type: 'in',
+    text: 'How likely are you to recommend our company to your friends and family ?',
+    time: '2 mins',
+  },
+  {
+    user: 2,
+    type: 'in',
+    text: 'Hey there, we’re just writing to let you know that you’ve been subscribed to a repository on GitHub.',
+    time: '5 mins',
+  }
 ]
 
 
@@ -40,7 +53,7 @@ export function ChatInner({getAllChatRooms, createChatRoom}: props) {
       time: '2m',
     }
 
-    messages.push(newMessage)
+    bufferMessages.push(newMessage)
     setMessages(bufferMessages)
     setMessage('')
    }
@@ -78,7 +91,7 @@ export function ChatInner({getAllChatRooms, createChatRoom}: props) {
           data-bs-toggle='tooltip'
           title='Coming soon'
         >
-          <KTSVG path='/icons/com008.svg' className='svg-icon-3' />
+          <KTSVG path='/icons/com008.svg' className='svg-icon svg-icon-2  svg-icon-primary' />
         </button>
 
         <textarea
@@ -90,9 +103,28 @@ export function ChatInner({getAllChatRooms, createChatRoom}: props) {
           onKeyDown={onEnterPress}
         />
 
-        <button type='button' title='Enviar' className='btn btn-primary' onClick={handleSendMessage}>
-          <KTSVG path='/icons/gen016.svg' className='svg-icon-3' />
+        <button type='button' title='Enviar' className='btn btn-sm btn-icon btn-active-light-primary' onClick={handleSendMessage}>
+          <KTSVG path='/icons/gen016.svg' className='svg-icon svg-icon-2  svg-icon-primary' />
         </button>
+  
+
+        <Tooltip content={'Voltar'} rounded color='primary'>
+          <Link href='/rooms'>
+          <button
+          className='btn btn-sm btn-icon btn-active-light-primary'
+          type='button'        
+        >
+          
+          <KTSVG path='/icons/reply.svg' className='svg-icon svg-icon-2 svg-icon-primary ' />
+        </button>
+          </Link>
+        </Tooltip>
+
+
+
+
+
+
       </div>
     </>
   )
