@@ -12,12 +12,18 @@ type props = {
   formRef: RefObject<FormHandles>
   streamingRoomArray: IStreamingRoom[]
   zoomUsersOptions: ISelectOption[]
+
+  idDeletedStreamingRoom: string[]
+  streamRoomUpdate: IStreamingRoom[]
 }
 
 export default function RoomInternalTable({
   formRef,
   streamingRoomArray,
   zoomUsersOptions,
+  idDeletedStreamingRoom,
+  streamRoomUpdate,
+
 }: props) {
   const [refresher, setRefresher] = useState<boolean>(false)
   const [hasError, setHasError] = useState<boolean>(false)
@@ -44,6 +50,7 @@ export default function RoomInternalTable({
         zoomUserId: zoomUserId,
       }
       streamingRoomArray.push(streaming)
+      streamRoomUpdate.push(streaming)
       formRef.current?.clearField('streamingDate')
       formRef.current?.clearField('streamingHour')
       formRef.current?.clearField('zoomUserId')
@@ -111,7 +118,7 @@ export default function RoomInternalTable({
         </div>
       </div>
 
-      {streamingRoomArray.length > 0 && (
+      {streamingRoomArray?.length > 0 && (
         <div className='card mb-5 mb-xl-8'>
           <div className='py-3 float-start'>
             <div className='table-responsive'>
@@ -135,7 +142,10 @@ export default function RoomInternalTable({
                       liveDate={dateMask(item.date)}
                       time={item.hour}
                       start={item.showStartLink}
+                      startUrl={item.startUrl}
                       streamingRoomArray={streamingRoomArray}
+                      idDeletedStreamingRoom={idDeletedStreamingRoom}
+                      streamRoomUpdate={streamRoomUpdate}
                       handleRefresher={handleRefresher}
                     />
                   ))}

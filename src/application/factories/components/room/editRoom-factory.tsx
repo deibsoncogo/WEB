@@ -3,6 +3,7 @@ import { makeRemoteGetCategories } from "../../usecases/categories/remote-getCat
 import { makeRemoteGetAllUsers } from "../../usecases/remote-getAllUsers-factory";
 import { makeRemoteGetRoom } from "../../usecases/room/remote-getRoom-factory";
 import { makeRemoteUpdateRoom } from "../../usecases/room/remote-updateRoom-factory";
+import { makeRemoteGetZoomUsers } from "../../usecases/zoom/remote-getZoomUsers-factory";
 
 interface param {
     id: string| string[] | undefined
@@ -15,6 +16,7 @@ export const MakeFormUpdateRoom = (query: param) => {
      updateRoom = {makeRemoteUpdateRoom()}
      getCategories = {makeRemoteGetCategories()}
      getUsers = {makeRemoteGetAllUsers()}
+     getZoomUsers={makeRemoteGetZoomUsers()}
      /> );
   };
   
