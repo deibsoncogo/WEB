@@ -20,11 +20,10 @@ export function Switch({active, setModalUpdate}: ISwitch) {
             className='form-check-input'
             type='checkbox'
             checked={active}
+            readOnly
           />
         </div>
-      </div>
-
-    
+      </div>    
     </>
   )
 }
