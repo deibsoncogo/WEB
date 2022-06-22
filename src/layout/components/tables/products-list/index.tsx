@@ -14,7 +14,7 @@ export function ProductsTable({ products, setProducts }: Props) {
 
   return (
     <div className='table-responsive border border-secondary mb-6'>
-      <table className='table table-striped align-middle gs-0 gy-4'>
+      <table className='table table-striped align-middle gs-0 gy-4 mb-0'>
         <thead>
           <tr className='fw-bolder text-muted bg-light'>
             <th className={`text-dark ps-4 min-w-300px rounded-start cursor-pointer`}>Produto</th>
@@ -24,6 +24,13 @@ export function ProductsTable({ products, setProducts }: Props) {
         </thead>
 
         <tbody>
+          {products.length === 0 && (
+            <tr>
+              <td colSpan={3} className='text-center fs-7'>
+                Nenhum produto foi concedido!
+              </td>
+            </tr>
+          )}
           {!loading &&
             products?.map((item) => (
               <Row

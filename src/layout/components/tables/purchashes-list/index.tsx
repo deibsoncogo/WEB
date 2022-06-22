@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import { Row } from './row'
 import { IPartialPurchaseResponse } from '../../../../interfaces/api-response/purchasePartialResponse'
 
@@ -13,7 +13,7 @@ export function PurchasesTable({ purchases }: Props) {
 
   return (
     <div className='table-responsive border border-secondary mb-6'>
-      <table className='table table-striped align-middle gs-0 gy-4'>
+      <table className='table table-striped align-middle gs-0 gy-4 mb-0'>
         <thead>
           <tr className='fw-bolder text-muted bg-light'>
             <th className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer`}>Data</th>
@@ -25,6 +25,13 @@ export function PurchasesTable({ purchases }: Props) {
         </thead>
 
         <tbody>
+          {purchases.length === 0 && (
+            <tr>
+              <td colSpan={5} className='text-center fs-7'>
+                Nenhuma compra feita!
+              </td>
+            </tr>
+          )}
           {!loading &&
             purchases?.map((item) => (
               <Row
