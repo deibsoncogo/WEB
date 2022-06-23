@@ -2,9 +2,9 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { MakeFormUpdateUser } from '../../../application/factories/components/updateUser-factory'
-import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
-import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
+import { MakeFormUpdateUser } from '../../../../application/factories/components/updateUser-factory'
+import { AsideDefault } from '../../../../layout/components/aside/AsideDefault'
+import { HeaderWrapper } from '../../../../layout/components/header/HeaderWrapper'
 
 const EditUser: NextPage = () => {
   const router = useRouter()

@@ -4,10 +4,11 @@ import { formatDate, formatDateToUTC, KTSVG } from "../../../helpers"
 import { PurchaseItems } from "../tables/purchaseItems-list"
 
 type Props = {
+  userId: string
   transactionId: string
 }
 
-export function PurchaseDetails({ transactionId }: Props) {
+export function PurchaseDetails({ userId, transactionId }: Props) {
 
   const [data, setData] = useState({
     transactionId,

@@ -3,7 +3,11 @@ import { formatDate, formatDateToUTC } from '../../../../helpers'
 import { IPartialPurchaseResponse } from '../../../../interfaces/api-response/purchasePartialResponse'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 
-export function Row({ date, transactionId, totalPrice, status }: IPartialPurchaseResponse) {
+type Props = {
+  userId: string
+}
+
+export function Row({ date, transactionId, totalPrice, status, userId }: IPartialPurchaseResponse & Props) {  
   return (
     <tr>
       <td className='ps-4'>
@@ -25,7 +29,7 @@ export function Row({ date, transactionId, totalPrice, status }: IPartialPurchas
         </span>
       </td>
       <td>
-        <Link href={`/purchase/${transactionId}`}>
+        <Link href={`/users/edit/${userId}/purchase/${transactionId}`}>
           Visualizar
         </Link>
       </td>

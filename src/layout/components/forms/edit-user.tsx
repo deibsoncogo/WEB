@@ -244,7 +244,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
 
           <div className='w-50'>
             <h4 className='mb-5'>Compras Realizadas</h4>
-            <PurchasesTable purchases={purchases} />
+            <PurchasesTable userId={id} purchases={purchases} />
           </div>
         </div>
 

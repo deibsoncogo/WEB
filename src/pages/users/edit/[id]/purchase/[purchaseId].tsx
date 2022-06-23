@@ -2,15 +2,15 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { MakePurchaseView } from '../../application/factories/components/getPurchase-factory'
-import { AsideDefault } from '../../layout/components/aside/AsideDefault'
-import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
+import { MakePurchaseView } from '../../../../../application/factories/components/getPurchase-factory'
+import { AsideDefault } from '../../../../../layout/components/aside/AsideDefault'
+import { HeaderWrapper } from '../../../../../layout/components/header/HeaderWrapper'
 
 const Purchase: NextPage = () => {
   const router = useRouter()
-  const { id } = router.query
+  const { id, purchaseId } = router.query
 
-  useEffect(() => {}, [id])
+  useEffect(() => {}, [purchaseId])
 
   return (
     <>
@@ -26,7 +26,7 @@ const Purchase: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <MakePurchaseView transactionId={id as string} />
+              <MakePurchaseView userId={id} transactionId={purchaseId as string} />
             </div>
           </div>
         </div>

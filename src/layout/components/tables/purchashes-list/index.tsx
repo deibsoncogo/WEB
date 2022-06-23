@@ -3,10 +3,11 @@ import { Row } from './row'
 import { IPartialPurchaseResponse } from '../../../../interfaces/api-response/purchasePartialResponse'
 
 type Props = {
+  userId: string
   purchases: IPartialPurchaseResponse[]
 }
 
-export function PurchasesTable({ purchases }: Props) {
+export function PurchasesTable({ userId, purchases }: Props) {
 
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
@@ -36,6 +37,7 @@ export function PurchasesTable({ purchases }: Props) {
             purchases?.map((item) => (
               <Row
                 key={item.transactionId}
+                userId={userId}
                 date={item.date}
                 transactionId={item.transactionId}
                 totalPrice={item.totalPrice}
