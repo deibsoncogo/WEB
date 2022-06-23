@@ -16,6 +16,7 @@ import { restrictNumberInput } from '../../../utils/restrictNumberInput'
 import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
+import { validateStringWithNumber } from '../../../helpers'
 
 type Props = {
   userRegister: IUserSignUp
@@ -47,7 +48,9 @@ export function FormCreateUser({ userRegister }: Props) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é necessário'),
+        name: Yup.string()
+          .test('no number', 'O campo não deve conter números', validateStringWithNumber)
+          .required('Nome é necessário'),
         email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
         birthDate: Yup.string().required('Data de nascimento é necessária'),
         cpf: Yup.string().required('CPF é necessário'),
