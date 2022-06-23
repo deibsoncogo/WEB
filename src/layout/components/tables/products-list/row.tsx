@@ -23,10 +23,10 @@ export function Row({ id, name, expireDate, setProducts }: Props) {
   return (
     <tr>
       <td className='ps-4'>
-        <span className='text-dark fw-bold d-block fs-7'>{name}</span>
+        <span className='text-black-50 d-block fs-7'>{name}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>
+        <span className='text-black-50 d-block fs-7 mw-200px text-overflow-custom'>
           {expireDate}
         </span>
       </td>

@@ -238,7 +238,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
 
         <div className='d-flex justify-content-between gap-5'>
           <div className='w-50'>
-            <h4 className='mb-5'>Acessos concedidos</h4>
+            <h4 className='mb-5'>Acessos Concedidos</h4>
             <ProductsTable products={grantedProducts} setProducts={setGrantedProducts} />
           </div>
 

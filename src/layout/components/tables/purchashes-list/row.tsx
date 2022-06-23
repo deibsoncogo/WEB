@@ -7,20 +7,20 @@ export function Row({ date, transactionId, totalPrice, status }: IPartialPurchas
   return (
     <tr>
       <td className='ps-4'>
-        <span className='text-dark fw-bold d-block fs-7'>{formatDate(formatDateToUTC(date), 'DD/MM/YYYY')}</span>
+        <span className='text-black-50 d-block fs-7'>{formatDate(formatDateToUTC(date), 'DD/MM/YYYY')}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>
+        <span className='text-black-50 d-block fs-7 mw-200px text-overflow-custom'>
           {transactionId}
         </span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>
+        <span className='text-black-50 d-block fs-7 mw-200px text-overflow-custom'>
           {maskedToMoney(totalPrice)}
         </span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>
+        <span className='text-black-50 d-block fs-7 mw-200px text-overflow-custom'>
           {status}
         </span>
       </td>
