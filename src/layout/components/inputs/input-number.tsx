@@ -11,7 +11,7 @@ interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export function InputNumber({ name, label, placeholderText, classes, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { fieldName, registerField, defaultValue = 0, error, clearError } = useField(name)
+  const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (inputRef.current) {

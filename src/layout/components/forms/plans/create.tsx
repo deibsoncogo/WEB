@@ -7,9 +7,9 @@ import { onlyNums } from '../../../formatters/currenceFormatter'
 import CustomButton from '../../buttons/CustomButton'
 import { Input, Select, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
-import { InputImage } from '../../inputs/input-image'
 import { SelectMulti } from '../../inputs/input-multi-select'
 import { InputNumber } from '../../inputs/input-number'
+import { InputSingleImage } from '../../inputs/input-single-image'
 
 type FormCreatePlansProps = {
   onSubmit: (data: any) => void
@@ -19,6 +19,7 @@ type FormCreatePlansProps = {
   loadBooksOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadRoomsOptions: (searchValue: string) => Promise<ISelectOption[]>
   hasAtLastOneProduct: boolean
+  loadingFormSubmit: boolean
 }
 
 const planOptions: ISelectOption[] = [
@@ -35,6 +36,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
     loadBooksOptions,
     loadRoomsOptions,
     hasAtLastOneProduct,
+    loadingFormSubmit,
   } = props
 
   const handleSubmit = (data: IPlan) => {
@@ -57,7 +59,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
       <div className='container p-0 m-0'>
         <div className='row'>
           <div className='col'>
-            <InputImage name='photo' />
+            <InputSingleImage name='image' />
           </div>
         </div>
 
@@ -155,7 +157,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
           type='submit'
           title='Salvar'
           customClasses={['w-180px', 'btn-primary']}
-          // loading={loadingSubmit}
+          loading={loadingFormSubmit}
         />
       </div>
     </Form>
