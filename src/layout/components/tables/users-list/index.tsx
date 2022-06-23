@@ -1,20 +1,28 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { RiFileExcel2Line } from 'react-icons/ri'
 import { toast } from 'react-toastify'
-import { MakeUserRow } from '../../../../application/factories/components/deleteModal-factory'
-import { usePagination } from '../../../../application/hooks/usePagination'
+import { RiFileExcel2Line } from 'react-icons/ri'
+
 import { useRequest } from '../../../../application/hooks/useRequest'
-import { OutputPagination } from '../../../../domain/shared/interface/OutputPagination'
+import { usePagination } from '../../../../application/hooks/usePagination'
+import { MakeUserRow } from '../../../../application/factories/components/deleteModal-factory'
+
+import { KTSVG } from '../../../../helpers'
+import { debounce } from '../../../../helpers/debounce'
+import { cpfMask } from '../../../formatters/cpfFormatter'
+import { dateMask } from '../../../formatters/dateFormatter'
+import { addressMask } from '../../../formatters/addressFormatter'
+import { getCurrentDate } from '../../../../helpers/getCurrentDate'
+import { IResetPassowrdForm, ResetPasswordModal } from '../../modal/ResetPasswordModal'
+
+import { Search } from '../../search/Search'
+import { ItemNotFound } from '../../search/ItemNotFound'
+import { Pagination } from '../../pagination/Pagination'
+
 import {
   IDeleteUser,
   IDeleteUserParams,
 } from '../../../../domain/usecases/interfaces/user/deleteUser'
-import {
-  IExportAllUsersParams,
-  IExportAllUsersToXLSX,
-  IExportAllUserToXLSXResponse,
-} from '../../../../domain/usecases/interfaces/user/exportAllUsersToXLSX'
 import {
   IGetAllUsers,
   IGetAllUsersParams,
@@ -23,17 +31,13 @@ import {
   IResetUserPassword,
   IResetUserPasswordParams,
 } from '../../../../domain/usecases/interfaces/user/resetUserPassword'
-import { KTSVG } from '../../../../helpers'
-import { debounce } from '../../../../helpers/debounce'
-import { getCurrentDate } from '../../../../helpers/getCurrentDate'
+import {
+  IExportAllUsersParams,
+  IExportAllUsersToXLSX,
+  IExportAllUserToXLSXResponse,
+} from '../../../../domain/usecases/interfaces/user/exportAllUsersToXLSX'
 import { IUserResponse } from '../../../../interfaces/api-response'
-import { addressMask } from '../../../formatters/addressFormatter'
-import { cpfMask } from '../../../formatters/cpfFormatter'
-import { dateMask } from '../../../formatters/dateFormatter'
-import { FullLoading } from '../../FullLoading/FullLoading'
-import { IResetPassowrdForm, ResetPasswordModal } from '../../modal/ResetPasswordModal'
-import { Pagination } from '../../pagination/Pagination'
-import { Search } from '../../search/Search'
+import { OutputPagination } from '../../../../domain/shared/interface/OutputPagination'
 
 type Props = {
   getAllUsers: IGetAllUsers
@@ -47,7 +51,7 @@ type ResetPasswordModalState = {
   userId: string | null
 }
 
-export default function UsersTable({
+export function UsersTable({
   getAllUsers,
   makeExportAllUserToXLSX,
   makeDeleteUser,
@@ -186,14 +190,7 @@ export default function UsersTable({
 
   return (
     <>
-      <ResetPasswordModal
-        isOpen={resetPasswordModalState.isOpen}
-        resetPassword={handleResetUserPassword}
-        onRequestClose={handleCloseResetUserPasswordModal}
-        loading={resetUserPasswordLoading}
-      />
       <div className='card mb-5 mb-xl-8'>
-        {loading && <FullLoading />}
         <div className='card-header border-0 pt-5'>
           <h3 className='card-title align-items-start flex-column'>
             <Search onChangeText={onSearchTextChanged} />
@@ -208,80 +205,93 @@ export default function UsersTable({
           </div>
         </div>
 
-        <div className='card-body py-3'>
-          <div className='table-responsive'>
-            <table className='table align-middle gs-0 gy-4'>
-              <thead>
-                <tr className='fw-bolder text-muted bg-light'>
-                  <th
-                    className={getColumnHeaderClasses('name')}
-                    onClick={() => handleOrdenation('name')}
-                  >
-                    Nome
-                  </th>
-                  <th
-                    className={getColumnHeaderClasses('email')}
-                    onClick={() => handleOrdenation('email')}
-                  >
-                    Email
-                  </th>
-                  <th
-                    className={getColumnHeaderClasses('birthDate')}
-                    onClick={() => handleOrdenation('birthDate')}
-                  >
-                    Nascimento
-                  </th>
-                  <th
-                    className={getColumnHeaderClasses('cpf')}
-                    onClick={() => handleOrdenation('cpf')}
-                  >
-                    CPF
-                  </th>
-                  <th
-                    className={getColumnHeaderClasses('address')}
-                    onClick={() => handleOrdenation('address')}
-                  >
-                    Endereço
-                  </th>
-                  <th className='text-dark min-w-150px text-end rounded-end px-4'>Ação</th>
-                </tr>
-              </thead>
+        {users.length !== 0 && (
+          <>
+            <div className='card-body py-3'>
+              <div className='table-responsive'>
+                <table className='table align-middle gs-0 gy-4'>
+                  <thead>
+                    <tr className='fw-bolder text-muted bg-light'>
+                      <th
+                        className={getColumnHeaderClasses('name')}
+                        onClick={() => handleOrdenation('name')}
+                      >
+                        Nome
+                      </th>
+                      <th
+                        className={getColumnHeaderClasses('email')}
+                        onClick={() => handleOrdenation('email')}
+                      >
+                        Email
+                      </th>
+                      <th
+                        className={getColumnHeaderClasses('birthDate')}
+                        onClick={() => handleOrdenation('birthDate')}
+                      >
+                        Nascimento
+                      </th>
+                      <th
+                        className={getColumnHeaderClasses('cpf')}
+                        onClick={() => handleOrdenation('cpf')}
+                      >
+                        CPF
+                      </th>
+                      <th
+                        className={getColumnHeaderClasses('address')}
+                        onClick={() => handleOrdenation('address')}
+                      >
+                        Endereço
+                      </th>
+                      <th className={getColumnHeaderClasses('actions')}>Ação</th>
+                    </tr>
+                  </thead>
 
-              <tbody>
-                {!loading &&
-                  users?.map((item) => (
-                    <MakeUserRow
-                      key={item.id}
-                      id={item.id}
-                      name={item.name}
-                      email={item.email}
-                      birthDate={dateMask(item.birthDate)}
-                      cpf={cpfMask(item.cpf)}
-                      address={addressMask(item.address[0])}
-                      deleteUser={deleteUser}
-                      openResetUserPasswordModal={handleOpenResetPasswordModal}
-                    />
-                  ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                  <tbody>
+                    {!loading &&
+                      users.map((item) => (
+                        <MakeUserRow
+                          key={item.id}
+                          id={item.id}
+                          name={item.name}
+                          email={item.email}
+                          birthDate={dateMask(item.birthDate)}
+                          cpf={cpfMask(item.cpf)}
+                          address={addressMask(item.address[0])}
+                          deleteUser={deleteUser}
+                          openResetUserPasswordModal={handleOpenResetPasswordModal}
+                        />
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-        <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
-          <div className='d-flex justify-center align-items-center'>
-            <p className='m-0 text-gray-600 lh-1 text-center'>Download:</p>
-            <button
-              className='btn border border-gray-900 ms-5 p-1'
-              title='Exportar Exel'
-              onClick={handleClickDownlondExcelClick}
-            >
-              <RiFileExcel2Line size={20} className='svg-icon-2 mh-50px' />
-            </button>
-          </div>
+            <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
+              <div className='d-flex justify-center align-items-center'>
+                <p className='m-0 text-gray-600 lh-1 text-center'>Download:</p>
+                <button
+                  className='btn border border-gray-900 ms-5 p-1'
+                  title='Exportar Exel'
+                  onClick={handleClickDownlondExcelClick}
+                >
+                  <RiFileExcel2Line size={20} className='svg-icon-2 mh-50px' />
+                </button>
+              </div>
 
-          <Pagination paginationHook={paginationHook} />
-        </div>
+              <Pagination paginationHook={paginationHook} />
+            </div>
+          </>
+        )}
+
+        {users.length === 0 && !loading && <ItemNotFound message='Nenhum usuário encontrado' />}
       </div>
+
+      <ResetPasswordModal
+        isOpen={resetPasswordModalState.isOpen}
+        resetPassword={handleResetUserPassword}
+        onRequestClose={handleCloseResetUserPasswordModal}
+        loading={resetUserPasswordLoading}
+      />
     </>
   )
 }

@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import axios from 'axios'
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
+import { toast } from 'react-toastify'
 import { FormHandles } from '@unform/core'
 
-import { levelOptions, roleOptions } from '../../../utils/selectOptions'
-import { DatePicker, Input, InputMasked, Select } from '../inputs'
-import { api } from '../../../application/services/api'
-import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
 import { findCEP } from '../../../utils/findCEP'
+import { formatDateToUTC } from '../../../helpers'
+import { levelOptions, roleOptions } from '../../../utils/selectOptions'
+
+import { DatePicker, Input, InputMasked, Select } from '../inputs'
+
 import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
-import { toast } from 'react-toastify'
+import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
 
 type IFormEditUser = {
   id: string
@@ -81,7 +82,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       email: data.email,
       cpf: cpf,
       photo: data.photo,
-      birthDate: (data.birthDate as Date).toISOString().split('T')[0],
+      birthDate: formatDateToUTC(data.birthDate).toISOString().split('T')[0],
       phoneNumber: phoneNumber,
       role: data.role,
       address: [
@@ -105,9 +106,17 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     try {
       await userRegister.updateUser(data)
       router.push('/users')
+      toast.success('Usuário editado com sucesso!')
     } catch (err: any) {
       toast.error(Array.isArray(err.messages) ? err.messages[0] : err.messages)
     }
+  }
+
+  function setKeys(obj: any) {
+    Object.keys(obj).forEach((key) => {
+      formRef.current?.setFieldValue(key, obj[key])
+    })
+    formRef.current?.setErrors({})
   }
 
   useEffect(() => {
@@ -118,7 +127,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
         const newData: any = {
           name: res.name,
           email: res.email,
-          //birthDate: res.birthDate, // doesn't work, idk why
+          birthDate: res.birthDate,
           cpf: res.cpf,
           phoneNumber: res.phoneNumber,
           level: res.level,
@@ -129,14 +138,16 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           city: res.address[0]?.city || '',
           state: res.address[0]?.state || '',
           number: res.address[0]?.number || '',
+          complement: res.address[0]?.complement || '',
         }
-        Object.keys(newData).forEach((key) => {
-          formRef.current?.setFieldValue(key, newData[key])
-        })
-        formRef.current?.setErrors({})
+        setKeys(newData)
       })
       .catch((err) => toast.error(err.messages))
-  }, [formRef.current])
+  }, [])
+
+  useEffect(() => {
+    setKeys(defaultValue)
+  }, [defaultValue])
 
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
@@ -179,8 +190,8 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
             name='zipCode'
             label='CEP'
             mask='99999-999'
-            onChange={() => {
-              findCEP(formRef.current?.getData().zipCode, setDefaultValue)
+            onChange={async () => {
+              setDefaultValue(findCEP(formRef.current?.getData().zipCode))
             }}
           />
           <Input name='street' label='Logradouro' />

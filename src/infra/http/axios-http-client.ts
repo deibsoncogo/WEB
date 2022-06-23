@@ -1,5 +1,5 @@
 import { HttpRequest, HttpResponse, HttpClient } from '../../data/protocols/http-client'
-import axios, { AxiosRequestHeaders, AxiosResponse } from 'axios'
+import axios, { AxiosRequestHeaders, AxiosResponse, HeadersDefaults } from 'axios'
 
 export class AxiosHttpClient implements HttpClient {
   async request(data: HttpRequest): Promise<HttpResponse> {
@@ -9,7 +9,7 @@ export class AxiosHttpClient implements HttpClient {
         url: data.url,
         method: data.method,
         data: data.body,
-        headers: this.getAuthHeaders(),
+        headers: this.getAuthHeaders(data.headers),
         params: data.params,
         responseType: data.responseType,
       })
@@ -36,5 +36,4 @@ export class AxiosHttpClient implements HttpClient {
 
     return headers
   }
-
 }

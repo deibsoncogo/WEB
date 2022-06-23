@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 import { usePagination } from '../../../application/hooks/usePagination'
 import { useRequest } from '../../../application/hooks/useRequest'
+import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
 import {
   CreateCategoryParams,
   ICreateCategory,
@@ -15,7 +16,6 @@ import {
 import {
   GetCategoriesParams,
   IGetCategories,
-  OutputPagination,
 } from '../../../domain/usecases/interfaces/category/getCategories'
 import {
   IUpdateCategory,
@@ -79,7 +79,7 @@ function CategoriesTemplate({
     makeRequest: getCategories,
     error: getCategoriesError,
     data: paginatedCategories,
-  } = useRequest<OutputPagination, GetCategoriesParams>(remoteGetCategories.get)
+  } = useRequest<OutputPagination<Category>, GetCategoriesParams>(remoteGetCategories.get)
 
   const {
     makeRequest: deleteCategory,

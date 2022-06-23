@@ -1,13 +1,12 @@
 import { apiPaginationResponse } from "../../../../interfaces/api-response/apiPaginationResponse";
 import { IPartialCourseResponse } from "../../../../interfaces/api-response/coursePartialResponse";
 import { Course } from "../../../../interfaces/model/Course";
+import { InputPagination } from "../../../shared/interface/InputPagination";
 
 
-export interface GetCoursesParams {
-    filters?: Partial<Course>
-    take: number
-    page: number
-  }
+export interface GetCoursesParams extends InputPagination {
+  name: string  
+}
 
 export interface IGetAllCourses {
     getAll:(params: GetCoursesParams) => Promise<apiPaginationResponse<IPartialCourseResponse>>

@@ -1,17 +1,12 @@
+import { IStreaming } from '../../../../domain/models/streaming'
 import { Row } from './row'
 
-interface IStreamList {
-  liveDate: string
-  time: string
-  start: boolean
-}
-
-interface ILivesTable {
-  streamList: IStreamList[]
+interface IStreamingTable {
+  streamList: IStreaming[]
   removeStreamItem: (index: number) => void
 }
 
-export function LivesTable({ streamList, removeStreamItem }: ILivesTable) {
+export function StreamingTable({ streamList, removeStreamItem }: IStreamingTable) {
   return (
     <div className='card mb-5 mb-xl-8'>
       <div className='py-3'>
@@ -31,9 +26,9 @@ export function LivesTable({ streamList, removeStreamItem }: ILivesTable) {
                 <Row
                   key={index}
                   index={index}
-                  liveDate={item.liveDate}
-                  time={item.time}
-                  start={item.start}
+                  liveDate={item.date}
+                  time={item.hour}
+                  start={item.showStartLink}
                   removeStreamItem={removeStreamItem}
                 />
               ))}

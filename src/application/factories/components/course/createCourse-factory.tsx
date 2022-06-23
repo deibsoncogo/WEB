@@ -1,13 +1,13 @@
 import { FormCreateCourse } from "../../../../layout/components/forms/course/create";
-import { makeRemoteGetCategoriesNoPagination } from "../../usecases/categories/remote-getCategoriesNoPagination-factory";
+import { makeRemoteGetCategories } from "../../usecases/categories/remote-getCategories-factory";
 
 import { makeRemoteCreateCourse } from "../../usecases/course/remote-createCourse-factory";
-import { makeRemoteGetAllUsersByRole } from "../../usecases/remote-getAllUsersByRole-factory";
+import { makeRemoteGetAllUsers } from "../../usecases/remote-getAllUsers-factory";
 
 
 export const MakeFormCreateCourse = () => {
     return (<FormCreateCourse createCourse={makeRemoteCreateCourse()} 
-     getCategories = {makeRemoteGetCategoriesNoPagination()}
-     getUsers = {makeRemoteGetAllUsersByRole()}/> );
+     getCategories = {makeRemoteGetCategories()}
+     getUsers = {makeRemoteGetAllUsers()}/> );
   };
   

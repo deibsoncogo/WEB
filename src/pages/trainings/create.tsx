@@ -1,8 +1,9 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { MakeCreateTrainingPage } from '../../application/factories/pages/trainings/create-training-factory'
 
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
-import { FormCreateTrainings } from '../../layout/components/forms/trainings/create'
+
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 
 const CreateTrainings: NextPage = () => {
@@ -20,7 +21,7 @@ const CreateTrainings: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <FormCreateTrainings />
+              <MakeCreateTrainingPage />
             </div>
           </div>
         </div>

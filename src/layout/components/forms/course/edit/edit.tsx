@@ -1,33 +1,42 @@
 import { useEffect, useRef, useState } from 'react'
-
 import { useRouter } from 'next/router'
-
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-
-import { Input, Select, TextArea } from '../../inputs'
-import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
-import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { Input, Select, TextArea } from '../../../inputs'
+import { ICategory } from '../../../../../interfaces/api-response/categoryResponse'
+import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { toast } from 'react-toastify'
-import { IGetAllUsersByRole } from '../../../../domain/usecases/interfaces/user/getAllUsersByRole'
-import { IUserPartialResponse } from '../../../../interfaces/api-response/userPartialResponse'
-import { roles } from '../../../../application/wrappers/authWrapper'
-import { UserQueryRole } from '../../../../domain/models/userQueryRole'
-import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
-import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
-import { ICourseResponse } from '../../../../interfaces/api-response/courseResponse'
-import { currenceMaskOnlyValue } from '../../../formatters/currenceFormatter'
-import { UpdateCourse } from '../../../../domain/models/updateCourse'
-import { InputImage } from '../../inputs/input-image'
+import { IGetAllUsersByRole } from '../../../../../domain/usecases/interfaces/user/getAllUsersByRole'
+import { IUserPartialResponse } from '../../../../../interfaces/api-response/userPartialResponse'
+import { roles } from '../../../../../application/wrappers/authWrapper'
+import { UserQueryRole } from '../../../../../domain/models/userQueryRole'
+import { IUpdateCourse } from '../../../../../domain/usecases/interfaces/course/upDateCourse'
+import { IGetCourse } from '../../../../../domain/usecases/interfaces/course/getCourse'
+import { ICourseResponse } from '../../../../../interfaces/api-response/courseResponse'
+import { currenceMaskOnlyValue } from '../../../../formatters/currenceFormatter'
+import { UpdateCourse } from '../../../../../domain/models/updateCourse'
+import { InputImage } from '../../../inputs/input-image'
 import { Editor } from '@tinymce/tinymce-react'
-import { Loading } from '../../loading/loading'
-import { currencyFormatter } from '../../../../utils/currencyFormatter'
+import { Loading } from '../../../loading/loading'
+import { IGetAllAttachmentByCourseId } from '../../../../../domain/usecases/interfaces/courseAttachment/getAllAttachmentByCourseId'
+import { IGetAllCourseClassByCourseId } from '../../../../../domain/usecases/interfaces/courseClass/getAllCourseClassByCourseId'
+import { ICourseAttachmentResponse } from '../../../../../interfaces/api-response/courseAttachmentResponse'
+import { ICourseClassResponse } from '../../../../../interfaces/api-response/courseClassResponse'
+import { FileUpload } from '../../../../../domain/models/fileUpload'
+import CoursesInternalTable from './courseClass/courseInternalTable'
+import { CourseClass } from '../../../../../domain/models/courseClass'
+import FilesInternalTable from './filesUpload/filesInternalTable'
+import { DeleteFileUpload } from '../../../../../domain/models/deleteFile'
+import { appRoutes } from '../../../../../application/routing/routes'
+import CustomButton from '../../../buttons/CustomButton'
 
 type Props = {
   updateCourse: IUpdateCourse
   getCategories: IGetCategoriesNoPagination
   getUsers: IGetAllUsersByRole
+  getAttachments: IGetAllAttachmentByCourseId
+  getCourseClass: IGetAllCourseClassByCourseId
   getCourse: IGetCourse
   id: string | string[] | undefined
 }
@@ -37,45 +46,21 @@ export function FormUpdateCourse(props: Props) {
   const formRef = useRef<FormHandles>(null)
   const [categories, setCategories] = useState<ICategory[]>([])
   const [users, setUsers] = useState<IUserPartialResponse[]>([])
+  const [attachments, setAttachment] = useState<ICourseAttachmentResponse[]>([])
+  const [courseClass, setCourseClass] = useState<ICourseClassResponse[]>([])
+  const [hasErrorClass, setHasErrorClass] = useState(false)
   const [defaultValue, setDefaultValue] = useState<ICourseResponse>()
-  const [loadingCourse, setLoadingCourse] = useState(true)
-  const [loadingCategories, setLoadingCategoris] = useState(true)
-  const [loadingUsers, setLoadingUsers] = useState(true)
+  const [imageUpload, setImageUpload] = useState<File | null>(null)
+
+  const [loading, setLoading] = useState(true)
+  const [updateCourse, setUpdateCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
 
-  useEffect(() => {
-    if (typeof props.id == 'string') {
-      props.getCourse
-        .get(props.id)
-        .then((data) => {
-          setDefaultValue(data)
-          setStateEditor({ content: data.content })
-        })
-        .catch((error) => toast.error('Não foi possível carregar o curso.'))
-        .finally(() => setLoadingCourse(false))
-    }
-  }, [])
+  const [IdDeletedFiles] = useState<DeleteFileUpload[]>([])
+  const [filesUploadUpdate] = useState<FileUpload[]>([])
 
-  useEffect(() => {
-    props.getCategories
-      .get()
-      .then((data) => {
-        setCategories(data)
-      })
-      .catch((error) => toast.error('Não foi possível carregar as categorias de cursos.'))
-      .finally(() => setLoadingCategoris(false))
-  }, [])
-
-  useEffect(() => {
-    const userQuery = new UserQueryRole(roles.TEACHER)
-    props.getUsers
-      .getAllByRole(userQuery)
-      .then((data) => {
-        setUsers(data)
-      })
-      .catch((error) => toast.error('Não foi possível carregar os Professores.'))
-      .finally(() => setLoadingUsers(false))
-  }, [])
+  const [IdDeletedCourseClass] = useState<string[]>([])
+  const [courseClassUpdate] = useState<CourseClass[]>([])
 
   const findCategoryById = (id: string) => {
     return categories.find((category) => category.id == id)
@@ -85,6 +70,20 @@ export function FormUpdateCourse(props: Props) {
     setStateEditor({ content: event })
   }
 
+  const currencyFormatter = (name: string) => {
+    var value = formRef.current?.getFieldValue(name)
+    value = value + ''
+    value = parseInt(value.replace(/[\D]+/g, ''))
+    value = value + ''
+    value = value.replace(/([0-9]{2})$/g, ',$1')
+
+    if (value.length > 6) {
+      value = value.replace(/([0-9]{3}),([0-9]{2}$)/g, '.$1,$2')
+    }
+    formRef.current?.setFieldValue(name, value)
+    if (value == 'NaN') formRef.current?.setFieldValue(name, '')
+  }
+
   async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
 
@@ -92,6 +91,7 @@ export function FormUpdateCourse(props: Props) {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome é necessário'),
+        userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number()
           .typeError('Tempo de acesso deve ser um número')
           .required('Tempo de acesso é necessário')
@@ -107,11 +107,11 @@ export function FormUpdateCourse(props: Props) {
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         content: Yup.string().required('Conteúdo progrmático é necessário'),
-        userId: Yup.string().optional(),
       })
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
-      handleUpdateCourse(data)
+      if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
+      courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -120,13 +120,14 @@ export function FormUpdateCourse(props: Props) {
           validationErrors[error.path] = error.message
         })
         formRef.current.setErrors(validationErrors)
+        if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
       }
     }
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
-    const price = parseFloat(data.price.replace('.', '').replace(',', '.'))
-    const discount = parseFloat(data.discount.replace('.', '').replace(',', '.'))
+    const price = data.price.replace('.', '').replace(',', '.')
+    const discount = data.discount.replace('.', '').replace(',', '.')
 
     const course = new UpdateCourse(
       defaultValue?.id,
@@ -135,30 +136,79 @@ export function FormUpdateCourse(props: Props) {
       data.content,
       data.categoryId,
       discount,
-      'teste1.jpg',
-      parseInt(data.installments),
+      defaultValue?.imageUrl,
+      data.installments,
       defaultValue?.isActive,
       price,
-      parseInt(data.accessTime),
-      data.userId
+      data.accessTime,
+      data.userId,
+      courseClassUpdate,
+      IdDeletedFiles
     )
+
+    const formData = new FormData()
+    if (imageUpload) {
+      formData.append('image', imageUpload)
+    }
+
+    if (filesUploadUpdate) {
+      filesUploadUpdate?.map((file) => {
+        if (file?.file) formData.append('attachments', file.file)
+        formData.append('filesName', file.name)
+      })
+    }
+
+    if (IdDeletedCourseClass.length > 0) {
+      IdDeletedCourseClass.map((id) => {
+        formData.append('deleteCourses', id)
+      })
+    }
+    formData.append('course', JSON.stringify(course))
+
+    setUpdateCourse(true)
     props.updateCourse
-      .update(course)
+      .update(formData)
       .then(() => {
         toast.success('Curso atualizado com sucesso!')
         router.push('/courses')
       })
-      .catch((error: any) => toast.error('Não foi possível atualizar o curso!'))
+      .catch(() => toast.error('Não foi possível atualizar o curso!'))
+      .finally(() => setUpdateCourse(false))
   }
 
+  async function fetchData() {
+    try{      
+
+      if (typeof props.id == 'string') {
+       const data =  await props.getCourse.get(props.id)
+       setDefaultValue(data)
+       setStateEditor({ content: data.content })
+       setAttachment(await props.getAttachments.getAllByCourseId(props.id))
+       setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
+      }       
+      setCategories(await props.getCategories.get())
+      setUsers(await props.getUsers.getAllByRole(new UserQueryRole(roles.TEACHER)))     
+    }
+    catch(error){
+      toast.error("Não foi possível carregar os dados")
+    }
+    finally{
+      setLoading(false)
+    }
+
+  }
+ 
+  useEffect(() => {
+    fetchData()      
+  }, [])
+
+  
   return (
     <>
-      {loadingCourse && loadingCategories && loadingUsers && <Loading />}
-
-      {!(loadingCourse && loadingCategories && loadingUsers) && (
-        <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+      {loading? <Loading />:        
+        (<Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
           <h3 className='mb-5'>Informações do Curso</h3>
-          <InputImage name='photo' />
+          <InputImage name='photo' handleSingleImageUpload={setImageUpload} />
           <div className='d-flex flex-row gap-5 w-100'>
             <div className='w-50'>
               <Input name='name' label='Nome' />
@@ -189,7 +239,7 @@ export function FormUpdateCourse(props: Props) {
                 label='Preço'
                 type='text'
                 placeholderText='R$'
-                onChange={() => currencyFormatter('price', formRef.current)}
+                onChange={() => currencyFormatter('price')}
               />
               <Input
                 name='discount'
@@ -249,22 +299,51 @@ export function FormUpdateCourse(props: Props) {
             onEditorChange={handleChange}
           />
 
-          <Input name='content' />
+          <Input name='content' hidden={true} />
+
+          <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>
+          <FilesInternalTable
+            filesUpload={attachments}
+            IdDeletedFiles={IdDeletedFiles}
+            filesUploadUpdate={filesUploadUpdate}
+          />
+
+          {hasErrorClass && (
+            <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
+              <strong>Não é possível atualizar o curso!</strong>O curso deve possuir, no mínimo, uma
+              aula.
+              <button
+                type='button'
+                onClick={() => setHasErrorClass(false)}
+                className='btn-close'
+                data-bs-dismiss='alert'
+                aria-label='Close'
+              ></button>
+            </div>
+          )}
+          <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
+          <CoursesInternalTable
+            courseClassArray={courseClass}
+            IdDeletedCourseClass={IdDeletedCourseClass}
+            courseClassUpdate={courseClassUpdate}
+          />
 
           <div className='d-flex mt-10'>
-            <button
+            <CustomButton
+              customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+              title='Cancelar'
               type='button'
+              loading={updateCourse}
               onClick={() => {
-                router.push('/courses')
+                router.push(appRoutes.COURSES)
               }}
-              className='btn btn-lg btn-secondary w-150px mb-5 ms-auto me-10'
-            >
-              Cancelar
-            </button>
-
-            <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
-              Salvar
-            </button>
+            />
+            <CustomButton
+              type='submit'
+              customClasses={['w-180px', 'btn-primary']}
+              title='Salvar'
+              disabled={updateCourse}
+            />          
           </div>
         </Form>
       )}

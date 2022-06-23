@@ -1,20 +1,15 @@
 import { KTSVG } from '../../../../helpers'
 
-interface IStreamList {
-  liveDate: string
-  time: string
-  start: boolean
-}
-
 interface IRow {
   index: number
   liveDate: string
   time: string
   start?: boolean
+  startUrl?: string
   removeStreamItem: (index: number) => void
 }
 
-export function Row({ index, liveDate, time, start, removeStreamItem }: IRow) {
+export function Row({ index, liveDate, time, start, startUrl, removeStreamItem }: IRow) {
   return (
     <tr>
       <td className='ps-4'>
@@ -25,12 +20,14 @@ export function Row({ index, liveDate, time, start, removeStreamItem }: IRow) {
       </td>
       <td>
         {start && (
-          <button
-            type='button'
-            className='btn btn-bg-light btn-active-color-primary btn-sm text-info border border-gray-400'
-          >
-            Começar aula ao vivo
-          </button>
+          <a href={startUrl} target='_blank' rel='noreferrer'>
+            <button
+              type='button'
+              className='btn btn-bg-light btn-active-color-primary btn-sm text-info border border-gray-400'
+            >
+              Começar aula ao vivo
+            </button>
+          </a>
         )}
       </td>
 
