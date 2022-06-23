@@ -110,6 +110,7 @@ export function FormUpdateCourse(props: Props) {
       })
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
+      if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
       courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
     } catch (err) {
       const validationErrors = {}
@@ -119,6 +120,7 @@ export function FormUpdateCourse(props: Props) {
           validationErrors[error.path] = error.message
         })
         formRef.current.setErrors(validationErrors)
+        if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
       }
     }
   }
@@ -206,7 +208,7 @@ export function FormUpdateCourse(props: Props) {
       {loading? <Loading />:        
         (<Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
           <h3 className='mb-5'>Informações do Curso</h3>
-          <InputImage name='imageUrl' handleSingleImageUpload={setImageUpload} />
+          <InputImage name='photo' handleSingleImageUpload={setImageUpload} />
           <div className='d-flex flex-row gap-5 w-100'>
             <div className='w-50'>
               <Input name='name' label='Nome' />

@@ -1,25 +1,25 @@
+import type { NextPage } from 'next'
 import Head from 'next/head'
-import React from 'react'
-import { MakeCategoryPage } from '../../application/factories/pages/categories/categories-factory'
-
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 
-function Categories() {
+import { MakeBookPage } from '../../application/factories/pages/books/book-factory'
+
+const Books: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Categorias</title>
+        <title>Livros</title>
       </Head>
 
       <div className='page d-flex flex-row flex-column-fluid'>
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Categorias' />
+          <HeaderWrapper title='Livros' />
 
           <div id='kt_content_container' className='container'>
-            <MakeCategoryPage />
+            <MakeBookPage />
           </div>
         </div>
       </div>
@@ -27,4 +27,4 @@ function Categories() {
   )
 }
 
-export default Categories
+export default Books

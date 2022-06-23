@@ -6,20 +6,18 @@ import {
   GetCoursesParams,
   IGetAllCourses,
 } from '../../../../domain/usecases/interfaces/course/getAllCourses'
-import { IPartialCourseResponse } from '../../../../interfaces/api-response/coursePartialResponse'
 import { currenceMask } from '../../../formatters/currenceFormatter'
 import { toast } from 'react-toastify'
 import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
 import { Row } from './row'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
-import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
-import { Course } from '../../../../interfaces/model/Course'
 import { debounce } from '../../../../helpers/debounce'
 import { FormHandles } from '@unform/core'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { Pagination } from '../../pagination/Pagination'
-import { Loading } from '../../loading/loading'
+import { IPartialCourseResponse } from '../../../../interfaces/api-response/coursePartialResponse'
 import { ItemNotFound } from '../../search/ItemNotFound'
+import { Loading } from '../../loading/loading'
 
 type Props = {
   getAllCourses: IGetAllCourses

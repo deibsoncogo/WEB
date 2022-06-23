@@ -26,12 +26,11 @@ export function FormLogin(props: Props) {
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
 
-  const onChangeError = () =>{
-        if(formRef.current){
-          formRef.current.setErrors({})
-        }
+  const onChangeError = () => {
+    if (formRef.current) {
+      formRef.current.setErrors({})
+    }
   }
-
 
   async function handleFormSubmit(data: IFormLogin) {
     if (!formRef.current) throw new Error()
@@ -60,18 +59,18 @@ export function FormLogin(props: Props) {
   async function handleSignIn(data: IFormLogin) {
     setHasError(false)
     try {
-      const response = await props.userLogin.signIn(new UserSignIn(data.email, data.password));
+      const response = await props.userLogin.signIn(new UserSignIn(data.email, data.password))
       localStorage.setItem('name', response.name)
       localStorage.setItem('email', response.email)
       localStorage.setItem('access_token', response.accessToken)
-      localStorage.setItem('expiration', jwtDecode<IToken>(response.accessToken).exp)      
+      localStorage.setItem('expiration', jwtDecode<IToken>(response.accessToken).exp)
       router.push('/dashboard')
-      toast.success("Login efetuado com sucesso")
-    } catch (err: any) {     
+      toast.success('Login efetuado com sucesso')
+    } catch (err: any) {
       setHasError(true)
-      setMessage(err.message)      
+      setMessage(err.message)
     }
-}
+  }
   return (
     <Form className='form w-100' ref={formRef} onSubmit={handleFormSubmit}>
       {hasError && (
@@ -80,7 +79,7 @@ export function FormLogin(props: Props) {
         </div>
       )}
 
-      <Input name='email' label='E-mail' placeholder='E-mail' onChange={onChangeError}/>
+      <Input name='email' label='E-mail' placeholder='E-mail' onChange={onChangeError} />
       <Input name='password' label='Senha' placeholder='Senha' type='password' />
 
       <div className='mb-10 d-flex justify-content-between '>

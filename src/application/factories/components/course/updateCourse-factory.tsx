@@ -7,7 +7,7 @@ import { makeRemoteGetAllCourseClassByCourseId } from "../../usecases/courseClas
 import { makeRemoteGetAllUsersByRole } from "../../usecases/remote-getAllUsersByRole-factory";
 
 interface param {
-    id: string| string[] | undefined
+  id: string | string[] | undefined
 }
 
 export const MakeFormUpdateCourse= (query: param) => {
