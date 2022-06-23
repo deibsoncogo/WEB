@@ -11,7 +11,7 @@ import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAl
 import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan'
 import { IGetPlan, IGetPlanParams } from '../../../domain/usecases/interfaces/plan/getPlan'
 import { IEditPlan } from '../../../domain/usecases/interfaces/plan/updatePlan'
-import { IGetAllRooms } from '../../../domain/usecases/interfaces/rooms/getAllRooms'
+import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditPlan } from '../../components/forms/plans/edit'
@@ -161,7 +161,7 @@ const EditPlanPageTemplate = ({
     if (getPlanError) {
       toast.error(getPlanError)
     }
-  }, [editPlanError])
+  }, [editPlanError, getPlanError])
 
   useEffect(() => {
     if (plan) {
