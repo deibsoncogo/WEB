@@ -209,7 +209,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
               label='CEP'
               mask='99999-999'
               onChange={async () => {
-                findCEP(formRef.current?.getData().zipCode, setDefaultValue)
+                setDefaultValue(findCEP(formRef.current?.getData().zipCode))
               }}
             />
             <Input name='street' label='Logradouro' />
