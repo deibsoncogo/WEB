@@ -10,6 +10,7 @@ import { IGetAllBooks } from '../../../domain/usecases/interfaces/books/getAllBo
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
 import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan'
 import { IGetPlan, IGetPlanParams } from '../../../domain/usecases/interfaces/plan/getPlan'
+import { IEditPlan } from '../../../domain/usecases/interfaces/plan/updatePlan'
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/rooms/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
@@ -21,8 +22,8 @@ import { formatPlanToSubmit } from './utils/formatPlanToSubmit'
 import { getOptionsFromSearchRequest } from './utils/getOptionsFromSearchRequest'
 
 type Props = {
-  remoteCreatePlan: ICreatePlan
   remoteGetPlan: IGetPlan
+  remoteEditPlan: IEditPlan
   remoteGetCourses: IGetAllCourses
   remoteGetTrainings: IGetAllTrainings
   remoteGetBooks: IGetAllBooks
@@ -34,8 +35,8 @@ const EditPlanPageTemplate = ({
   remoteGetTrainings,
   remoteGetBooks,
   remoteGetRooms,
-  remoteCreatePlan,
   remoteGetPlan,
+  remoteEditPlan,
 }: Props) => {
   const router = useRouter()
   const { id: planId } = router.query
@@ -47,12 +48,12 @@ const EditPlanPageTemplate = ({
   const editPlanFormRef = useRef<FormHandles>(null)
 
   const {
-    makeRequest: createPlan,
-    data: createPlanSuccessful,
-    loading: createPlanLoading,
-    error: createPlanError,
-    cleanUp: cleanUpCreatePlan,
-  } = useRequest<void, FormData>(remoteCreatePlan.create)
+    makeRequest: editPlan,
+    data: editPlanSuccessful,
+    loading: editPlanLoading,
+    error: editPlanError,
+    cleanUp: cleanUpEditPlan,
+  } = useRequest<void, FormData>(remoteEditPlan.edit)
 
   const {
     makeRequest: getPlan,
@@ -83,7 +84,9 @@ const EditPlanPageTemplate = ({
 
     if (success) {
       const dataFormatted = formatPlanToSubmit(success)
-      createPlan(dataFormatted)
+      dataFormatted.append('id', String(planId))
+      dataFormatted.append('isActive', String(plan?.isActive))
+      editPlan(dataFormatted)
     }
   }
 
@@ -137,9 +140,9 @@ const EditPlanPageTemplate = ({
   }, [])
 
   useEffect(() => {
-    if (createPlanSuccessful) {
+    if (editPlanSuccessful) {
       toast.success('Plano criado com sucesso')
-      cleanUpCreatePlan()
+      cleanUpEditPlan()
       router.push(appRoutes.PLANS)
     }
 
@@ -147,18 +150,18 @@ const EditPlanPageTemplate = ({
       setPlan(getPlanSuccessful)
       cleanUpGetPlan()
     }
-  }, [createPlanSuccessful, getPlanSuccessful])
+  }, [editPlanSuccessful, getPlanSuccessful])
 
   useEffect(() => {
-    if (createPlanError) {
-      toast.error(createPlanError)
-      cleanUpCreatePlan()
+    if (editPlanError) {
+      toast.error(editPlanError)
+      cleanUpEditPlan()
     }
 
     if (getPlanError) {
       toast.error(getPlanError)
     }
-  }, [createPlanError])
+  }, [editPlanError])
 
   useEffect(() => {
     if (plan) {
@@ -206,7 +209,7 @@ const EditPlanPageTemplate = ({
       loadBooksOptions={handleGetBooksOptions}
       loadRoomsOptions={handleGetRoomsOptions}
       hasAtLastOneProduct={hasAtLastOneProduct}
-      loadingFormSubmit={createPlanLoading}
+      loadingFormSubmit={editPlanLoading}
       planType={planType as PlanType}
       planTypeChange={handlePlanTypeChange}
     />

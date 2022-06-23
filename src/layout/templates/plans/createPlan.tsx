@@ -66,6 +66,7 @@ const CreatePlanPageTemplate = ({
 
     if (success) {
       const dataFormatted = formatPlanToSubmit(success)
+      dataFormatted.append('isActive', String(false))
       createPlan(dataFormatted)
     }
   }
