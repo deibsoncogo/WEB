@@ -1,4 +1,5 @@
 import { PurchaseDetails } from '../../../layout/components/purchase'
+import { makeRemoteGetUser } from '../usecases/remote-getUser-factory'
 
 interface IMakePurchaseView {
   userId: string
@@ -6,5 +7,5 @@ interface IMakePurchaseView {
 }
 
 export const MakePurchaseView = ({ userId, transactionId }: IMakePurchaseView) => {
-  return <PurchaseDetails userId={userId} transactionId={transactionId} />
+  return <PurchaseDetails transactionId={transactionId} getUser={makeRemoteGetUser(userId)} />
 }

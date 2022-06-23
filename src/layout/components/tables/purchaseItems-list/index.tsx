@@ -2,20 +2,20 @@ import { useState } from "react";
 import { maskedToMoney } from "../../../formatters/currenceFormatter";
 import { ItemRow } from "./row";
 
-export function PurchaseItems() {
+type Props = {
+  items: {
+    id: string
+    name: string
+    price: number
+    quantity: number
+    total: number
+  }[]
+}
+
+export function PurchaseItems({ items }: Props) {
 
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
-
-  const [items, setItems] = useState([
-    {
-      id: '1',
-      name: 'Day Trade - Do básico ao avançado',
-      price: 1000,
-      quantity: 10,
-      total: 10000
-    }
-  ])
 
   return (
     <>
@@ -30,7 +30,7 @@ export function PurchaseItems() {
         </thead>
         <tbody>
           {!loading &&
-            items.map((item) => (
+            items?.map((item) => (
               <ItemRow key={item.id} name={item.name} price={item.price} quantity={item.quantity} total={item.total} />
             ))}
         </tbody>
@@ -39,7 +39,7 @@ export function PurchaseItems() {
         <span className='d-flex align-items-center gap-2 fw-bolder fs-4'>
           Total do Pedido: 
           <span className='text-black-50 fs-4 fw-light'>
-            {maskedToMoney(items.reduce((acc, currentItem) => acc + currentItem.total, 0))}
+            {maskedToMoney(items?.reduce((acc, currentItem) => acc + currentItem.total, 0))}
           </span>
         </span>
       </div>

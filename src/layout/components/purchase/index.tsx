@@ -1,27 +1,27 @@
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
+import { IGetUser } from "../../../domain/usecases/interfaces/user/getUser"
 import { formatDate, formatDateToUTC, KTSVG } from "../../../helpers"
+import { IUserResponse } from "../../../interfaces/api-response"
+import { cpfMask } from "../../formatters/cpfFormatter"
+import { phoneMask } from "../../formatters/phoneFormatter"
 import { PurchaseItems } from "../tables/purchaseItems-list"
 
 type Props = {
-  userId: string
   transactionId: string
+  getUser: IGetUser
 }
 
-export function PurchaseDetails({ userId, transactionId }: Props) {
+export function PurchaseDetails({ transactionId, getUser }: Props) {
+  const [user, setUser] = useState<IUserResponse>()
 
-  const [data, setData] = useState({
+  const [purchases, setPurchases] = useState({
     transactionId,
     date: '2022-04-27',
     status: 'Pago',
     paymentMethod: 'Boleto',
     barCode: '00000.00000.00000.00000.00000.000000 0 00000000000000',
-    user: {
-      name: 'Clara Holman',
-      CPF: '810.212.658-29',
-      email: 'holman@hotmail.com',
-      phone: '(51) 91234-5678'
-    },
     paymentAddress: {
       street: 'Rua Gonçalo de Carvalho',
       number: '123',
@@ -39,8 +39,32 @@ export function PurchaseDetails({ userId, transactionId }: Props) {
       cep: '90570-150',
       city: 'Porto Alegre',
       state: 'RS'
-    }
+    },
+    purchaseItems: [
+      {
+        id: '1',
+        name: 'Day Trade - Do básico ao avançado',
+        price: 1000,
+        quantity: 10,
+        total: 10000
+      }
+    ]
   })
+
+  useEffect(() => {
+    getUser
+      .getOne()
+      .then((res) => {
+        const userData: any = {
+          name: res.name,
+          email: res.email,
+          cpf: res.cpf,
+          phoneNumber: res.phoneNumber,
+        }
+        setUser(userData)
+      })
+      .catch((err) => toast.error(err.messages))
+  }, [])
 
   return (
     <div className='border border-secondary p-5'>
@@ -58,25 +82,25 @@ export function PurchaseDetails({ userId, transactionId }: Props) {
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Data:
             <span className='text-black-50 fs-5 fw-light'>
-              {formatDate(formatDateToUTC(data.date), 'DD/MM/YYYY')}
+              {formatDate(formatDateToUTC(purchases.date), 'DD/MM/YYYY')}
             </span>
           </span>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Status:
             <span className='text-black-50 fs-5 fw-light'>
-              {data.status}
+              {purchases.status}
             </span>
           </span>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Método de pagamento:
             <span className='text-black-50 fs-5 fw-light'>
-              {data.paymentMethod}
+              {purchases.paymentMethod}
             </span>
           </span>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Código de barras:
             <span className='text-black-50 fs-5 fw-light'>
-              {data.barCode}
+              {purchases.barCode}
             </span>
           </span>
           <Link href='/'>
@@ -97,25 +121,25 @@ export function PurchaseDetails({ userId, transactionId }: Props) {
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Nome:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.user.name}
+                {user?.name}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               CPF:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.user.CPF}
+                {cpfMask(user?.cpf!)}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               E-mail:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.user.email}
+                {user?.email}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Telefone:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.user.phone}
+                {phoneMask(user?.phoneNumber!)}
               </span>
             </span>
           </div>
@@ -127,43 +151,43 @@ export function PurchaseDetails({ userId, transactionId }: Props) {
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Logradouro:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.paymentAddress.street}
+                {purchases.paymentAddress.street}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Número:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.paymentAddress.number}
+                {purchases.paymentAddress.number}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Complemento:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.paymentAddress.complement}
+                {purchases.paymentAddress.complement}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Bairro:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.paymentAddress.neighborhood}
+                {purchases.paymentAddress.neighborhood}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               CEP:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.paymentAddress.cep}
+                {purchases.paymentAddress.cep}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Cidade:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.paymentAddress.city}
+                {purchases.paymentAddress.city}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Estado:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.paymentAddress.state}
+                {purchases.paymentAddress.state}
               </span>
             </span>
           </div>
@@ -175,43 +199,43 @@ export function PurchaseDetails({ userId, transactionId }: Props) {
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Logradouro:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.deliveryAddress.street}
+                {purchases.deliveryAddress.street}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Número:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.deliveryAddress.number}
+                {purchases.deliveryAddress.number}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Complemento:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.deliveryAddress.complement}
+                {purchases.deliveryAddress.complement}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Bairro:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.deliveryAddress.neighborhood}
+                {purchases.deliveryAddress.neighborhood}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               CEP:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.deliveryAddress.cep}
+                {purchases.deliveryAddress.cep}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Cidade:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.deliveryAddress.city}
+                {purchases.deliveryAddress.city}
               </span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Estado:
               <span className='text-black-50 fs-5 fw-light'>
-                {data.deliveryAddress.state}
+                {purchases.deliveryAddress.state}
               </span>
             </span>
           </div>
@@ -220,7 +244,7 @@ export function PurchaseDetails({ userId, transactionId }: Props) {
           <span className='text-dark fw-bolder d-flex align-items-center fs-1 mb-10'>
             Informações do Pedido
           </span>
-          <PurchaseItems />
+          <PurchaseItems items={purchases.purchaseItems} />
         </div>
       </div>
     </div>

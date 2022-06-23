@@ -26,7 +26,7 @@ const Purchase: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <MakePurchaseView userId={id} transactionId={purchaseId as string} />
+              <MakePurchaseView userId={id as string} transactionId={purchaseId as string} />
             </div>
           </div>
         </div>
