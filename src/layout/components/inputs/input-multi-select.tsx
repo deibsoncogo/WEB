@@ -1,25 +1,26 @@
-import { ReactNode, SelectHTMLAttributes, useEffect, useRef } from 'react'
-
 import { useField } from '@unform/core'
+import { useEffect, useRef } from 'react'
+import AsyncSelect from 'react-select/async'
+import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 
-type SelectFace = SelectHTMLAttributes<HTMLSelectElement> & {
+type SelectMultiProps = {
   name: string
-  children: ReactNode
-  label?: string
+  label: string
   classes?: string
+  loadOptions: (searchValue: string) => Promise<ISelectOption[]>
 }
 
-export function Select({ name, label, classes, children, ...rest }: SelectFace) {
+const SelectMulti = ({ loadOptions, name, label, classes }: SelectMultiProps) => {
   const selectRef = useRef(null)
 
-  const { fieldName, registerField, error, clearError } = useField(name)
+  const { fieldName, registerField, error } = useField(name)
 
   useEffect(() => {
     registerField({
       ref: selectRef,
       name: fieldName,
       getValue: (ref) => {
-        return ref.current?.value
+        return ref.current?.state?.selectValue.map((value: any) => value.value)
       },
       setValue: (ref, newValue) => {
         ref.current.value = newValue
@@ -29,7 +30,6 @@ export function Select({ name, label, classes, children, ...rest }: SelectFace) 
       },
     })
   }, [fieldName, registerField])
-
   return (
     <div className={`${classes} fv-row mb-7`}>
       {label && (
@@ -37,19 +37,20 @@ export function Select({ name, label, classes, children, ...rest }: SelectFace) 
           {label}
         </label>
       )}
-
-      <select
-        id={fieldName}
+      <AsyncSelect
         ref={selectRef}
+        isMulti
         name={name}
-        className='form-select form-select-solid'
-        onChangeCapture={clearError}
-        {...rest}
-      >
-        {children}
-      </select>
-
+        cacheOptions
+        defaultOptions
+        loadOptions={loadOptions}
+        className='basic-multi-select'
+        classNamePrefix='select'
+        placeholder='Selecione'
+      />
       {error && <span className='text-danger'>{error}</span>}
     </div>
   )
 }
+
+export { SelectMulti }

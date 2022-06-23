@@ -1,19 +1,19 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import { IRoom } from '../../../domain/models/room'
 import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
 import {
-  GetCategoriesParams,
-  IGetCategories,
-} from '../../../domain/usecases/interfaces/category/getCategories'
-import { Category } from '../../../interfaces/model/Category'
+  IGetAllRooms,
+  IGetAllRoomsParams,
+} from '../../../domain/usecases/interfaces/rooms/getAllRooms'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteGetCategories implements IGetCategories {
+export class RemoteGetAllRooms implements IGetAllRooms {
   constructor(
     private readonly url: string,
-    private readonly httpClient: HttpClient<OutputPagination<Category>>
+    private readonly httpClient: HttpClient<OutputPagination<IRoom>>
   ) {}
 
-  get = async (params: GetCategoriesParams) => {
+  getAll = async (params: IGetAllRoomsParams) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',

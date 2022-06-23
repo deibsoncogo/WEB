@@ -1,17 +1,24 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import { ChangeEvent, forwardRef, useState } from 'react'
-import { PlanType } from '../../../../domain/models/plan'
+import { IPlan, PlanType } from '../../../../domain/models/plan'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
-import { getOptionsFromEnum } from '../../../../helpers/getOptionsFromEnum'
+import { onlyNums } from '../../../formatters/currenceFormatter'
 import CustomButton from '../../buttons/CustomButton'
 import { Input, Select, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
 import { InputImage } from '../../inputs/input-image'
+import { SelectMulti } from '../../inputs/input-multi-select'
 import { InputNumber } from '../../inputs/input-number'
 
 type FormCreatePlansProps = {
   onSubmit: (data: any) => void
+  onCancel: () => void
+  loadCoursesOptions: (searchValue: string) => Promise<ISelectOption[]>
+  loadTrainingsOptions: (searchValue: string) => Promise<ISelectOption[]>
+  loadBooksOptions: (searchValue: string) => Promise<ISelectOption[]>
+  loadRoomsOptions: (searchValue: string) => Promise<ISelectOption[]>
+  hasAtLastOneProduct: boolean
 }
 
 const planOptions: ISelectOption[] = [
@@ -20,7 +27,22 @@ const planOptions: ISelectOption[] = [
 ]
 
 const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref) => {
-  const { onSubmit } = props
+  const {
+    onSubmit,
+    onCancel,
+    loadCoursesOptions,
+    loadTrainingsOptions,
+    loadBooksOptions,
+    loadRoomsOptions,
+    hasAtLastOneProduct,
+  } = props
+
+  const handleSubmit = (data: IPlan) => {
+    onSubmit({
+      ...data,
+      price: onlyNums(data.price),
+    })
+  }
 
   const [planType, setPlanType] = useState<PlanType | ''>('')
 
@@ -29,7 +51,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
   }
 
   return (
-    <Form className='form' ref={ref} onSubmit={onSubmit}>
+    <Form className='form' ref={ref} onSubmit={handleSubmit}>
       <h3 className='mb-5'>Informações do Plano</h3>
 
       <div className='container p-0 m-0'>
@@ -44,7 +66,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
             <Input name='name' label='Nome' classes='h-75px' />
             <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
             <Select
-              name='plaType'
+              name='planType'
               label='Tipo de Plano'
               classes='h-75px'
               defaultValue=''
@@ -88,6 +110,37 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
             )}
           </div>
         </div>
+
+        <h3 className='mb-5 mt-5'>Itens Inclusos no Plano</h3>
+        {!hasAtLastOneProduct && (
+          <div
+            className='text-danger'
+            style={{
+              position: 'relative',
+              top: '-15px',
+            }}
+          >
+            Selecione pelo menos um produto
+          </div>
+        )}
+
+        <div className='row'>
+          <div className='col'>
+            <SelectMulti loadOptions={loadCoursesOptions} name='courses' label='Cursos' />
+          </div>
+          <div className='col'>
+            <SelectMulti loadOptions={loadTrainingsOptions} name='trainings' label='Treinamentos' />
+          </div>
+        </div>
+
+        <div className='row'>
+          <div className='col'>
+            <SelectMulti loadOptions={loadBooksOptions} name='books' label='Livros' />
+          </div>
+          <div className='col'>
+            <SelectMulti loadOptions={loadRoomsOptions} name='rooms' label='Salas' />
+          </div>
+        </div>
       </div>
 
       <div className='d-flex mt-10'>
@@ -95,7 +148,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
           title='Cancelar'
           type='button'
           customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
-          // onClick={onCancel}
+          onClick={onCancel}
         />
 
         <CustomButton

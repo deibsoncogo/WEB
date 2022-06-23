@@ -1,13 +1,19 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import { ITraining } from '../../../domain/models/training'
+import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
+import {
+  IGetAllTrainings,
+  IGetAllTrainingsParams,
+} from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteGetAllTrainings implements IGetAllTrainings {
   constructor(
     private readonly url: string,
-    private readonly httpClient: HttpClient<ITrainingsResponse[]>
+    private readonly httpClient: HttpClient<OutputPagination<ITraining>>
   ) {}
 
-  async getAll(params: any) {
+  getAll = async (params: IGetAllTrainingsParams) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',

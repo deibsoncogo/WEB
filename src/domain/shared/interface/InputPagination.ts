@@ -3,4 +3,5 @@ export interface InputPagination {
   page: number
   order: 'asc' | 'desc' | undefined
   orderBy?: string
+  name?: string
 }

@@ -1,15 +1,15 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
 import { IPlan } from '../../../domain/models/plan'
-import {
-  GetCategoriesParams,
-  IGetCategories,
-} from '../../../domain/usecases/interfaces/category/getCategories'
+import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
+import { GetCategoriesParams } from '../../../domain/usecases/interfaces/category/getCategories'
 import { IGetPlans } from '../../../domain/usecases/interfaces/plan/getPlans'
-import { Category } from '../../../interfaces/model/Category'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteGetPlanss implements IGetPlans {
-  constructor(private readonly url: string, private readonly httpClient: HttpClient<IPlan[]>) {}
+  constructor(
+    private readonly url: string,
+    private readonly httpClient: HttpClient<OutputPagination<IPlan>>
+  ) {}
 
   get = async (params: GetCategoriesParams) => {
     const httpResponse = await this.httpClient.request({

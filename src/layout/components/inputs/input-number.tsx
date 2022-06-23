@@ -1,24 +1,23 @@
 import { useField } from '@unform/core'
-import { InputHTMLAttributes, useEffect, useRef } from 'react'
+import { ChangeEvent, InputHTMLAttributes, useEffect, useRef } from 'react'
+import { onlyNums } from '../../formatters/currenceFormatter'
 
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   label?: string
   placeholderText?: string
   classes?: string
-  onChange?: (value?: any) => void
 }
 
-export function InputNumber({
-  name,
-  label,
-  placeholderText,
-  classes,
-  onChange,
-  ...rest
-}: IInputProps) {
+export function InputNumber({ name, label, placeholderText, classes, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const { fieldName, registerField, defaultValue = 0, error, clearError } = useField(name)
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (inputRef.current) {
+      inputRef.current.value = onlyNums(e.target.value)
+    }
+  }
 
   useEffect(() => {
     registerField({
@@ -50,10 +49,9 @@ export function InputNumber({
           name={name}
           placeholder={placeholderText}
           ref={inputRef}
-          onChange={onChange}
+          onChange={handleInputChange}
           onChangeCapture={clearError}
           defaultValue={defaultValue}
-          type='number'
           {...rest}
         />
       </div>
