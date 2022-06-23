@@ -1,5 +1,4 @@
 import { InvalidParamsError, UnexpectedError } from "../../../domain/errors"
-import { CreateChatRoom } from "../../../domain/models/createChatRoom"
 import { ICreateChatRoom } from "../../../domain/usecases/interfaces/chatRoom/createRoom"
 import { HttpClient, HttpStatusCode } from "../../protocols"
 
@@ -8,7 +7,7 @@ export class RemoteCreateChatRoom implements ICreateChatRoom {
     
   constructor(private readonly url: string, private readonly httpClient: HttpClient<boolean>) {}
 
-    async create (chatRoom: CreateChatRoom){
+    async create (chatRoom: ICreateChatRoom){
         const httpResponse = await this.httpClient.request({
             url: this.url,
             method: 'post',

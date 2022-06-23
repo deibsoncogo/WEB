@@ -1,9 +1,6 @@
-import { CreateChatRoom } from "../../../models/createChatRoom";
-
-
-
+import { IChatRoom } from "../../../models/createChatRoom";
 
 
 export interface ICreateChatRoom {
-    create:(chatRoom: CreateChatRoom) => Promise<boolean>
+    create:(chatRoom: IChatRoom) => Promise<boolean>
 }

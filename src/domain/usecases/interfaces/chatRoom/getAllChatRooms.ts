@@ -1,4 +1,4 @@
-import { IChatRoom } from './../../../../interfaces/api-response/chatRoomResponse';
+import { IChatRoom } from "../../../models/createChatRoom"
 
 
 export interface GetChatRoomParam{

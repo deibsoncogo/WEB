@@ -1,6 +1,6 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import { IChatRoom } from '../../../domain/models/createChatRoom'
 import { GetChatRoomParam, IGetAllChatRooms } from '../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
-import { IChatRoom } from '../../../interfaces/api-response/chatRoomResponse'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteGetAllChatRooms implements IGetAllChatRooms {
