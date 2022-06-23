@@ -1,0 +1,216 @@
+import { FormHandles } from '@unform/core'
+import { useRouter } from 'next/router'
+import { useEffect, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
+import { useRequest } from '../../../application/hooks/useRequest'
+import { appRoutes } from '../../../application/routing/routes'
+import { IPlan, PlanType } from '../../../domain/models/plan'
+import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
+import { IGetAllBooks } from '../../../domain/usecases/interfaces/books/getAllBooks'
+import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
+import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan'
+import { IGetPlan, IGetPlanParams } from '../../../domain/usecases/interfaces/plan/getPlan'
+import { IGetAllRooms } from '../../../domain/usecases/interfaces/rooms/getAllRooms'
+import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
+import { applyYupValidation } from '../../../helpers/applyYupValidation'
+import { FormEditPlan } from '../../components/forms/plans/edit'
+import { planFormSchema } from '../../components/forms/plans/planSchema'
+import { maskedToMoney } from '../../formatters/currenceFormatter'
+import { extractSelectOptionsFromArr } from './utils/extractSelectOptionsFromArr'
+import { formatPlanToSubmit } from './utils/formatPlanToSubmit'
+import { getOptionsFromSearchRequest } from './utils/getOptionsFromSearchRequest'
+
+type Props = {
+  remoteCreatePlan: ICreatePlan
+  remoteGetPlan: IGetPlan
+  remoteGetCourses: IGetAllCourses
+  remoteGetTrainings: IGetAllTrainings
+  remoteGetBooks: IGetAllBooks
+  remoteGetRooms: IGetAllRooms
+}
+
+const EditPlanPageTemplate = ({
+  remoteGetCourses,
+  remoteGetTrainings,
+  remoteGetBooks,
+  remoteGetRooms,
+  remoteCreatePlan,
+  remoteGetPlan,
+}: Props) => {
+  const router = useRouter()
+  const { id: planId } = router.query
+
+  const [hasAtLastOneProduct, setHasAtLastOneProduct] = useState(true)
+  const [planType, setPlanType] = useState<PlanType | ''>('')
+  const [plan, setPlan] = useState<IPlan | null>(null)
+
+  const editPlanFormRef = useRef<FormHandles>(null)
+
+  const {
+    makeRequest: createPlan,
+    data: createPlanSuccessful,
+    loading: createPlanLoading,
+    error: createPlanError,
+    cleanUp: cleanUpCreatePlan,
+  } = useRequest<void, FormData>(remoteCreatePlan.create)
+
+  const {
+    makeRequest: getPlan,
+    data: getPlanSuccessful,
+    error: getPlanError,
+    cleanUp: cleanUpGetPlan,
+  } = useRequest<IPlan, IGetPlanParams>(remoteGetPlan.get)
+
+  async function handleFormSubmit(data: IPlan) {
+    const { courses = [], trainings = [], books = [], rooms = [] } = data
+    const products = courses?.length + books?.length + trainings?.length + rooms?.length
+
+    const { error, success } = await applyYupValidation<IPlan>(planFormSchema, data)
+
+    if (error) {
+      editPlanFormRef?.current?.setErrors(error)
+    }
+
+    if (products < 1) {
+      setHasAtLastOneProduct(false)
+    } else if (!hasAtLastOneProduct) {
+      setHasAtLastOneProduct(true)
+    }
+
+    if (error || products < 1) {
+      return
+    }
+
+    if (success) {
+      const dataFormatted = formatPlanToSubmit(success)
+      createPlan(dataFormatted)
+    }
+  }
+
+  async function handleGetCoursesOptions(searchValue: string): Promise<ISelectOption[]> {
+    return getOptionsFromSearchRequest(remoteGetCourses.getAll, {
+      filters: { name: searchValue || '' },
+    })
+  }
+
+  async function handleGetTrainingsOptions(searchValue: string): Promise<ISelectOption[]> {
+    return getOptionsFromSearchRequest(remoteGetTrainings.getAll, { name: searchValue || '' })
+  }
+
+  async function handleGetBooksOptions(searchValue: string): Promise<ISelectOption[]> {
+    return getOptionsFromSearchRequest(remoteGetBooks.getAll, { name: searchValue || '' })
+  }
+
+  async function handleGetRoomsOptions(searchValue: string): Promise<ISelectOption[]> {
+    return getOptionsFromSearchRequest(remoteGetRooms.getAll, { name: searchValue || '' })
+  }
+
+  const handleClickCancel = () => {
+    router.push(appRoutes.PLANS)
+  }
+
+  const handlePlanTypeChange = (newPlanType: PlanType) => {
+    setPlanType(newPlanType)
+  }
+
+  const setFiledValue = (field: string, value: any) => {
+    editPlanFormRef.current?.setFieldValue(field, value)
+  }
+
+  const handlePlanTypeSet = () => {
+    if (plan) {
+      if (plan.planType === PlanType.SINGLE_PAYMENT) {
+        setFiledValue('installments', plan.installments)
+        setFiledValue('intervalAccessMonths', plan.intervalAccessMonths)
+      }
+
+      if (plan.planType === PlanType.RECURRING_PAYMENT) {
+        setFiledValue('intervalPaymentMonths', plan.intervalPaymentMonths)
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (planId) {
+      getPlan({ id: String(planId) })
+    }
+  }, [])
+
+  useEffect(() => {
+    if (createPlanSuccessful) {
+      toast.success('Plano criado com sucesso')
+      cleanUpCreatePlan()
+      router.push(appRoutes.PLANS)
+    }
+
+    if (getPlanSuccessful) {
+      setPlan(getPlanSuccessful)
+      cleanUpGetPlan()
+    }
+  }, [createPlanSuccessful, getPlanSuccessful])
+
+  useEffect(() => {
+    if (createPlanError) {
+      toast.error(createPlanError)
+      cleanUpCreatePlan()
+    }
+
+    if (getPlanError) {
+      toast.error(getPlanError)
+    }
+  }, [createPlanError])
+
+  useEffect(() => {
+    if (plan) {
+      const {
+        name,
+        price,
+        planType: defaultPlan,
+        description,
+        imageUrl,
+        trainings = [],
+        courses = [],
+        books = [],
+        rooms = [],
+      } = plan
+
+      setFiledValue('planType', defaultPlan)
+      setPlanType(defaultPlan)
+      setFiledValue('name', name)
+      setFiledValue('price', maskedToMoney(price))
+      setFiledValue('description', description)
+      setFiledValue('imagePreview', imageUrl)
+
+      setFiledValue('courses', extractSelectOptionsFromArr(courses))
+      setFiledValue('books', extractSelectOptionsFromArr(books))
+      setFiledValue('rooms', extractSelectOptionsFromArr(rooms))
+      setFiledValue('trainings', extractSelectOptionsFromArr(trainings))
+
+      handlePlanTypeSet()
+    }
+  }, [plan, planType])
+
+  useEffect(() => {
+    if (plan) {
+      handlePlanTypeSet()
+    }
+  }, [planType])
+
+  return (
+    <FormEditPlan
+      ref={editPlanFormRef}
+      onSubmit={handleFormSubmit}
+      onCancel={handleClickCancel}
+      loadCoursesOptions={handleGetCoursesOptions}
+      loadTrainingsOptions={handleGetTrainingsOptions}
+      loadBooksOptions={handleGetBooksOptions}
+      loadRoomsOptions={handleGetRoomsOptions}
+      hasAtLastOneProduct={hasAtLastOneProduct}
+      loadingFormSubmit={createPlanLoading}
+      planType={planType as PlanType}
+      planTypeChange={handlePlanTypeChange}
+    />
+  )
+}
+
+export { EditPlanPageTemplate }

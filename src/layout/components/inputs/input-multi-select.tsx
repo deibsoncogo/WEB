@@ -8,9 +8,16 @@ type SelectMultiProps = {
   label: string
   classes?: string
   loadOptions: (searchValue: string) => Promise<ISelectOption[]>
+  defaultValues?: ISelectOption[]
 }
 
-const SelectMulti = ({ loadOptions, name, label, classes }: SelectMultiProps) => {
+const SelectMulti = ({
+  loadOptions,
+  name,
+  label,
+  classes,
+  defaultValues = [],
+}: SelectMultiProps) => {
   const selectRef = useRef(null)
 
   const { fieldName, registerField, error } = useField(name)
@@ -23,7 +30,7 @@ const SelectMulti = ({ loadOptions, name, label, classes }: SelectMultiProps) =>
         return ref.current?.state?.selectValue.map((value: any) => value.value)
       },
       setValue: (ref, newValue) => {
-        ref.current.value = newValue
+        ref.current.setValue(newValue)
       },
       clearValue: (ref) => {
         ref.current.value = ''
@@ -43,6 +50,7 @@ const SelectMulti = ({ loadOptions, name, label, classes }: SelectMultiProps) =>
         name={name}
         cacheOptions
         defaultOptions
+        defaultValue={defaultValues}
         loadOptions={loadOptions}
         className='basic-multi-select'
         classNamePrefix='select'

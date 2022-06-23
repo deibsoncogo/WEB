@@ -1,22 +1,19 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan'
+import { IPlan } from '../../../domain/models/plan'
+import { IGetPlan, IGetPlanParams } from '../../../domain/usecases/interfaces/plan/getPlan'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteCreatePlan implements ICreatePlan {
-  constructor(private readonly url: string, private readonly httpClient: HttpClient<void>) {}
+export class RemoteGetPlan implements IGetPlan {
+  constructor(private readonly url: string, private readonly httpClient: HttpClient<IPlan>) {}
 
-  create = async (data: FormData) => {
+  get = async (params: IGetPlanParams) => {
     const httpResponse = await this.httpClient.request({
-      url: this.url,
-      method: 'post',
-      body: data,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      url: `${this.url}/${params.id}`,
+      method: 'get',
     })
 
     switch (httpResponse.statusCode) {
-      case HttpStatusCode.created:
+      case HttpStatusCode.ok:
         return httpResponse.body
       case HttpStatusCode.badRequest:
         throw new InvalidParamsError(httpResponse.body?.message)

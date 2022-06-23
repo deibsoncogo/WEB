@@ -12,18 +12,20 @@ import { InputNumber } from '../../inputs/input-number'
 import { InputSingleImage } from '../../inputs/input-single-image'
 import { planTypeOptions } from './planTypeOptions'
 
-type FormCreatePlansProps = {
+type FormEditPlansProps = {
   onSubmit: (data: any) => void
   onCancel: () => void
   loadCoursesOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadTrainingsOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadBooksOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadRoomsOptions: (searchValue: string) => Promise<ISelectOption[]>
+  planTypeChange: (newPlanType: PlanType) => void
   hasAtLastOneProduct: boolean
   loadingFormSubmit: boolean
+  planType: PlanType
 }
 
-const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref) => {
+const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) => {
   const {
     onSubmit,
     onCancel,
@@ -31,8 +33,10 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
     loadTrainingsOptions,
     loadBooksOptions,
     loadRoomsOptions,
+    planTypeChange,
     hasAtLastOneProduct,
     loadingFormSubmit,
+    planType,
   } = props
 
   const handleSubmit = (data: IPlan) => {
@@ -42,10 +46,8 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
     })
   }
 
-  const [planType, setPlanType] = useState<PlanType | ''>('')
-
   const handlePlanTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setPlanType(e.target.value as PlanType)
+    planTypeChange(e.target.value as PlanType)
   }
 
   return (
@@ -160,6 +162,6 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
   )
 })
 
-FormCreatePlan.displayName = 'FormCreatePlan'
+FormEditPlan.displayName = 'FormEditPlan'
 
-export { FormCreatePlan }
+export { FormEditPlan }

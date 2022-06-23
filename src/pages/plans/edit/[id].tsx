@@ -1,10 +1,10 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { MakeCreatePlanPageTemplate } from '../../application/factories/pages/plans/create-plan-factory'
+import { MakeEditPlanPageTemplate } from '../../../application/factories/pages/plans/edit-plan-factory'
 
-import { AsideDefault } from '../../layout/components/aside/AsideDefault'
+import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
 
-import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
+import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
 
 const CreateTrainings: NextPage = () => {
   return (
@@ -21,7 +21,7 @@ const CreateTrainings: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <MakeCreatePlanPageTemplate />
+              <MakeEditPlanPageTemplate />
             </div>
           </div>
         </div>
