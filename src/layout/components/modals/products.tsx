@@ -15,6 +15,12 @@ type NewTransactionModalProps = {
   onAddProduct: Dispatch<SetStateAction<IPartialProductResponse[]>>
 }
 
+type Product = {
+  name: string
+  label: string    
+  expireDate: string
+}
+
 export function ProductsModal({
   isOpen,
   modalTitle,
@@ -24,7 +30,7 @@ export function ProductsModal({
 }: NewTransactionModalProps) {
   const formRef = useRef<FormHandles>(null)
   const [defaultValue, setDefaultValue] = useState({})
-  const [selectedProducts, setSelectedProducts] = useState([{}])
+  const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
 
   const [numberOfCourses, setNumberOfCourses] = useState([0])
   const [numberOfTrainings, setNumberOfTrainings] = useState([0])
@@ -63,7 +69,6 @@ export function ProductsModal({
     }
 
     setSelectedProducts((prevProducts) => [...prevProducts, newProduct])
-    console.log(selectedProducts)
   }
 
   function handleIncreaseCourse() {
@@ -145,7 +150,7 @@ export function ProductsModal({
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseCourse()}
+                    onClick={() => handleIncreaseProduct('course', 'courseExpireDate')}
                   >
                     + Adicionar outro curso
                   </button>
