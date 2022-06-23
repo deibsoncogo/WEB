@@ -1,6 +1,6 @@
 export interface IPartialPurchaseResponse {
   date: string
   transactionId: string
-  totalPrice: string
+  totalPrice: number
   status: string
 }
