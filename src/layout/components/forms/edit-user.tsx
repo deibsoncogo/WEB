@@ -42,7 +42,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     {
       date: '2022-06-22',
       transactionId: '123456',
-      totalPrice: 'R$1.200',
+      totalPrice: 1200,
       status: 'Pago'
     }
   ])

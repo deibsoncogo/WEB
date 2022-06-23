@@ -1,21 +1,23 @@
+import { maskedToMoney } from "../../../formatters/currenceFormatter"
+
 type Props = {
   name: string
-  price: string
-  quantity: string
-  total: string
+  price: number
+  quantity: number
+  total: number
 }
 
 export function ItemRow({ name, price, quantity, total }: Props) {
   return (
     <tr>
-      <td>
-        <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>
+      <td className='ps-4'>
+        <span className='text-dark fw-bold d-block fs-7 text-overflow-custom'>
           {name}
         </span>
       </td>
       <td>
         <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>
-          {price}
+          {maskedToMoney(price)}
         </span>
       </td>
       <td>
@@ -25,7 +27,7 @@ export function ItemRow({ name, price, quantity, total }: Props) {
       </td>
       <td>
         <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>
-          {total}
+          {maskedToMoney(total)}
         </span>
       </td>
     </tr>

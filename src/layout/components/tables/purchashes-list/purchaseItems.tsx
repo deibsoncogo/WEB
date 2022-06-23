@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { maskedToMoney } from "../../../formatters/currenceFormatter";
 import { ItemRow } from "./itemRow";
 
 export function PurchaseItems() {
@@ -10,29 +11,38 @@ export function PurchaseItems() {
     {
       id: '1',
       name: 'Day Trade - Do básico ao avançado',
-      price: '100',
-      quantity: '10',
-      total: '1000'
+      price: 100,
+      quantity: 10,
+      total: 1000
     }
   ])
 
   return (
-    <table className='table align-middle gs-0 gy-4'>
-      <thead>
-        <tr className='fw-bolder text-muted bg-light'>
-          <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer'>Produto</th>
-          <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer'>Preço</th>
-          <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer'>Quantidade</th>
-          <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer'>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        {/* map the items */}
-        {!loading &&
-          items.map((item) => (
-            <ItemRow key={item.id} name={item.name} price={item.price} quantity={item.quantity} total={item.total} />
-          ))}
-      </tbody>
-    </table>
+    <>
+      <table className='table align-middle gs-0 gy-4'>
+        <thead>
+          <tr className='fw-bolder text-muted bg-light'>
+            <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer'>Produto</th>
+            <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer'>Preço</th>
+            <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer'>Quantidade</th>
+            <th className='text-dark ps-4 min-w-100px rounded-start cursor-pointer'>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {!loading &&
+            items.map((item) => (
+              <ItemRow key={item.id} name={item.name} price={item.price} quantity={item.quantity} total={item.total} />
+            ))}
+        </tbody>
+      </table>
+      <div>
+        <span className='d-flex align-items-center gap-2 text-body fs-4'>
+          Total do Pedido: 
+          <span className='text-black-50 fs-4'>
+            {maskedToMoney(items.reduce((acc, currentItem) => acc + currentItem.total, 0))}
+          </span>
+        </span>
+      </div>
+    </>
   )
 }

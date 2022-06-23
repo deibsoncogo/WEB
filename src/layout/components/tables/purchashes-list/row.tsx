@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { formatDate, formatDateToUTC } from '../../../../helpers'
 import { IPartialPurchaseResponse } from '../../../../interfaces/api-response/purchasePartialResponse'
+import { maskedToMoney } from '../../../formatters/currenceFormatter'
 
 export function Row({ date, transactionId, totalPrice, status }: IPartialPurchaseResponse) {
   return (
@@ -15,7 +16,7 @@ export function Row({ date, transactionId, totalPrice, status }: IPartialPurchas
       </td>
       <td>
         <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>
-          {totalPrice}
+          {maskedToMoney(totalPrice)}
         </span>
       </td>
       <td>
