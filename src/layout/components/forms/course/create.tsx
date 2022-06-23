@@ -41,7 +41,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
   const [loading, setLoading] = useState(true)
   const [registerCourse, setRegisterCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
-  const [imageUpload, setImageUpload] = useState<File>()
+  const [imageUpload, setImageUpload] = useState<File | null>(null)
   const [filesUpload, setFilesUpload] = useState<FileUpload[]>([])
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
@@ -92,12 +92,6 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
       return []
     }
   }
-
-
-  const handleSingleImageUpload = (file: File) => {
-    setImageUpload(file)
-  }
-
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
@@ -201,7 +195,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
    
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do Curso</h3>
-        <InputImage name='photo' handleSingleImageUpload = {handleSingleImageUpload} />
+        <InputImage name='photo' handleSingleImageUpload={setImageUpload} />
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />

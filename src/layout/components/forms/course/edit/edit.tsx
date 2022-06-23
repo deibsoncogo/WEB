@@ -50,7 +50,7 @@ export function FormUpdateCourse(props: Props) {
   const [courseClass, setCourseClass] = useState<ICourseClassResponse[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
   const [defaultValue, setDefaultValue] = useState<ICourseResponse>()
-  const [imageUpload, setImageUpload] = useState<File>()
+  const [imageUpload, setImageUpload] = useState<File | null>(null)
 
   const [loading, setLoading] = useState(true)
   const [updateCourse, setUpdateCourse] = useState(false)
@@ -61,10 +61,6 @@ export function FormUpdateCourse(props: Props) {
 
   const [IdDeletedCourseClass] = useState<string[]>([])
   const [courseClassUpdate] = useState<CourseClass[]>([])
-
-  const handleSingleImageUpload = (file: File) => {
-    setImageUpload(file)
-  }
 
   const findCategoryById = (id: string) => {
     return categories.find((category) => category.id == id)
@@ -210,7 +206,7 @@ export function FormUpdateCourse(props: Props) {
       {loading? <Loading />:        
         (<Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
           <h3 className='mb-5'>Informações do Curso</h3>
-          <InputImage name='imageUrl' handleSingleImageUpload={handleSingleImageUpload} />
+          <InputImage name='imageUrl' handleSingleImageUpload={setImageUpload} />
           <div className='d-flex flex-row gap-5 w-100'>
             <div className='w-50'>
               <Input name='name' label='Nome' />
