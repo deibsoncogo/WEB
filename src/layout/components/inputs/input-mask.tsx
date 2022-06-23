@@ -3,8 +3,6 @@ import { useField } from '@unform/core'
 
 import InputMask, { Props } from 'react-input-mask'
 
-import styles from './styles.module.css'
-
 type IInputProps = InputHTMLAttributes<HTMLInputElement> &
   Props & {
     name: string
@@ -24,6 +22,12 @@ export function InputMasked({ name, label, classes, mask, onChange, ...rest }: I
       name: fieldName,
       ref: inputRef.current,
       path: 'value',
+      setValue(ref: any, value: string) {
+        ref.setInputValue(value)
+      },
+      clearValue(ref: any) {
+        ref.setInputValue('')
+      },
     })
   }, [fieldName, registerField])
 
@@ -39,12 +43,13 @@ export function InputMasked({ name, label, classes, mask, onChange, ...rest }: I
         ref={inputRef}
         id={fieldName}
         mask={mask}
-        className='form-control form-control-lg form-control-solid bg-secondary'
+        className={`form-control form-control-lg form-control-solid border-transparent bg-secondary ${
+          error && 'placeholder-red'
+        }`}
         defaultValue={defaultValue}
         onChange={onChange}
         {...rest}
       />
-
       {error && <span className='text-danger'>{error}</span>}
     </div>
   )

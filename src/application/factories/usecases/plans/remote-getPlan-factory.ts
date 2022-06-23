@@ -3,4 +3,4 @@ import { IGetPlan } from '../../../../domain/usecases/interfaces/plan/getPlan'
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteGetPlan = (): IGetPlan =>
-  new RemoteGetPlan(makeApiUrl('/plans'), makeAxiosHttpClient())
+  new RemoteGetPlan(makeApiUrl('/plans/show'), makeAxiosHttpClient())

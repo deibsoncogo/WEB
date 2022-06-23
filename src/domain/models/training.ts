@@ -3,7 +3,7 @@ import { IStreaming } from './streaming'
 export interface ITraining {
   id?: string
   name: string
-  photo?: Blob
+  image: Blob
   zoomUserId: string
   imageUrl: string
   categoryId: string

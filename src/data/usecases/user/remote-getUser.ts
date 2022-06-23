@@ -9,13 +9,10 @@ export class RemoteGetUser implements IGetUser {
     private readonly httpClient: HttpClient<IUserResponse[]>
   ) {}
 
-  async getOne():  Promise<IUserResponse> {
+  async getOne(): Promise<IUserResponse> {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-      }
     })
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:

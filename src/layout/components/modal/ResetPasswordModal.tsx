@@ -7,6 +7,7 @@ import CustomButton from '../buttons/CustomButton'
 import { Input } from '../inputs'
 import { isStrongPassword } from '../../../domain/shared/reggexPatterns/isPasswordStrong'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
+import { toast } from 'react-toastify'
 
 export type IResetPassowrdForm = {
   password: string
@@ -42,7 +43,7 @@ function ResetPasswordModal({
 
   const handleResetPasswordFormSubmit = async (data: IResetPassowrdForm) => {
     const { error, success } = await applyYupValidation<IResetPassowrdForm>(schema, data)
-    console.log(error)
+    toast.error('Erro ao resetar senha.')
 
     if (success) {
       resetPassword(data)

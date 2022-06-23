@@ -41,7 +41,7 @@ const SelectAsync = ({
       ...oldState,
       selectedOption: null,
     }))
-
+    clearError()
     getOptions()
   }
 
@@ -54,6 +54,7 @@ const SelectAsync = ({
       isOpen: false,
       selectedOption: option,
     })
+    clearError()
   }
 
   const getOptions = debounce(async () => {
@@ -135,7 +136,6 @@ const SelectAsync = ({
             placeholder={placeholder}
             onChange={handleOnChange}
             onFocus={getOptions}
-            onChangeCapture={clearError}
             ref={textInputRef}
             autoComplete='off'
             onClick={openOptions}

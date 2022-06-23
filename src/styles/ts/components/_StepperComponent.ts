@@ -276,9 +276,7 @@ class StepperComponent {
     return EventHandlerUtil.off(this.element, name)
   }
 
-  public destroy = () => {
-    // console.log('destroy stepper')
-  }
+  public destroy = () => {}
 
   public trigger = (name: string, event: Event) => {
     return EventHandlerUtil.trigger(this.element, name, event)
@@ -327,4 +325,4 @@ class StepperComponent {
   }
 }
 
-export {StepperComponent, defaultStepperOptions}
+export { StepperComponent, defaultStepperOptions }

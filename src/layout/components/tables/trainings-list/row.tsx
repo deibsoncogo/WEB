@@ -1,5 +1,7 @@
+import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useState } from 'react'
+
 import { toast } from 'react-toastify'
 import { IToggleTrainingStatus } from '../../../../domain/usecases/interfaces/trainings/toggleTrainingStatus'
 import { KTSVG } from '../../../../helpers'
@@ -13,8 +15,10 @@ interface IRow {
   teacherName: string
   active: boolean
   deleteTraining: IDeleteTraining
+  updateStatusOfTraining: IUpdateTraining
   getTrainings(): Promise<void>
   remoteToggleTrainingStatus: IToggleTrainingStatus
+  handleRefresher: () => void
 }
 
 export function Row({
@@ -23,22 +27,25 @@ export function Row({
   description,
   price,
   teacherName,
-  deleteTraining,
   active,
+  deleteTraining,
   remoteToggleTrainingStatus,
+  updateStatusOfTraining,
   getTrainings,
+  handleRefresher,
 }: IRow) {
   const [loading, setLoading] = useState(false)
   const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false)
+  const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false)
 
   async function handleDeleteTraining() {
+    setLoading(true)
     try {
       setLoading(true)
       await deleteTraining.deleteTraining()
       getTrainings()
       toast.success('Treinamento excluído com sucesso')
     } catch (err) {
-      console.log(err)
       toast.error('Erro ao deletar o treinamento Treinamento')
     } finally {
       setLoading(false)
@@ -56,6 +63,25 @@ export function Row({
     } finally {
       setLoading(false)
     }
+    setLoading(false)
+  }
+
+  async function handleUpdateStatusOfTraining() {
+    setLoading(true)
+
+    const form = new FormData()
+    form.append('id', id)
+    form.append('active', !active === true ? 'true' : 'false')
+
+    try {
+      await updateStatusOfTraining.update(form)
+      handleRefresher()
+      toast.success('Status atualizado com sucesso')
+    } catch (err) {
+      toast.error('Erro ao atualizar o treinamento Treinamento')
+    }
+    setIsModalUpdateOpen(false)
+    setLoading(false)
   }
 
   return (
@@ -78,9 +104,19 @@ export function Row({
         <span className='text-dark fw-bold d-block fs-7'>{teacherName}</span>
       </td>
       <td>
-        <button className='btn btn-icon btn-active-color-primary btn-sm me-1'>
-          <KTSVG path='/icons/com003.svg' className='svg-icon-3' />
-        </button>
+        <Tooltip content='Chat' rounded color='primary'>
+          <Link href='/trainings/chat'>
+            {active ? (
+              <button className='btn btn-icon  btn-active-color-primary btn-sm me-1'>
+                <KTSVG path='/icons/com003.svg' className='svg-icon-3 svg-icon-primary' />
+              </button>
+            ) : (
+              <button className='btn btn-icon btn-active-color-primary btn-sm me-1' disabled>
+                <KTSVG path='/icons/com003.svg' className='svg-icon-3' />
+              </button>
+            )}
+          </Link>
+        </Tooltip>
       </td>
       <td>
         <div className='form-check form-switch form-check-custom form-check-solid'>
@@ -108,7 +144,7 @@ export function Row({
           onClick={() => {
             setIsDeleteCategoryModalOpen(true)
           }}
-          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
         >
           <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
         </button>
@@ -123,6 +159,17 @@ export function Row({
         onConfimation={handleDeleteTraining}
         content='Você tem ceterza que deseja excluir este treinamento??'
         title='Deletar'
+      />
+
+      <ConfirmationModal
+        isOpen={isModalUpdateOpen}
+        loading={loading}
+        onRequestClose={() => {
+          setIsModalUpdateOpen(false)
+        }}
+        onConfimation={handleUpdateStatusOfTraining}
+        content='Você tem certeza que deseja alterar o status deste treinamento?'
+        title='Confirmação'
       />
     </tr>
   )

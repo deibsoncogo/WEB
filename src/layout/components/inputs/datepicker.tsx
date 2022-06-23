@@ -20,7 +20,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
   const datepickerRef = useRef(null)
   const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
 
-  const [date, setDate] = useState(defaultValue || undefined)
+  const [enteredDate, setEnteredDate] = useState(defaultValue || undefined)
 
   const handleDateRawChange = (e: FocusEvent<HTMLInputElement, Element>) => {
     const reggex = new RegExp(/[^\d|^\/]/g)
@@ -35,17 +35,17 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
 
   useEffect(() => {
     registerField({
-      name: fieldName,
       ref: datepickerRef,
+      name: fieldName,
       getValue: (ref) => {
         return ref.current.props.selected
       },
       setValue: (ref: any, value: string) => {
-        setDate(value)
+        setEnteredDate(value)
         ref.current.value = value
       },
       clearValue: () => {
-        setDate(undefined)
+        setEnteredDate(undefined)
       },
     })
   }, [fieldName, registerField])
@@ -63,13 +63,14 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
         <ReactDatePicker
           ref={datepickerRef}
           className='form-control bg-secondar'
-          selected={date}
-          onChange={setDate}
+          selected={enteredDate}
+          onChange={setEnteredDate}
           dateFormat='dd/MM/yyyy'
           name={name}
           locale='br'
           onChangeRaw={handleDateRawChange}
           onFocus={clearError}
+          autoComplete='off'
           {...rest}
           renderCustomHeader={({
             date,
@@ -100,8 +101,8 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
                 value={months[date.getMonth()]}
                 onChange={({ target: { value } }) => changeMonth(months.indexOf(value))}
               >
-                {months.map((option) => (
-                  <option key={option} value={option}>
+                {months.map((option, index) => (
+                  <option key={index} value={option}>
                     {option}
                   </option>
                 ))}

@@ -7,6 +7,7 @@ type SelectFace = SelectHTMLAttributes<HTMLSelectElement> & {
   children: ReactNode
   label?: string
   classes?: string
+  fixedValue?: string
 }
 
 export function Select({ name, label, classes, children, ...rest }: SelectFace) {
@@ -44,11 +45,14 @@ export function Select({ name, label, classes, children, ...rest }: SelectFace) 
         name={name}
         className='form-select form-select-solid'
         onChangeCapture={clearError}
+        onChange={() => clearError()}
         {...rest}
       >
+        <option value='' hidden disabled>
+          Selecione
+        </option>
         {children}
       </select>
-
       {error && <span className='text-danger'>{error}</span>}
     </div>
   )
