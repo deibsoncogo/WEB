@@ -1,14 +1,13 @@
-import { apiPaginationResponse } from "../../../../interfaces/api-response/apiPaginationResponse";
 import { IRoomPartialResponse } from "../../../../interfaces/api-response/roomPartialResponse";
-import { IRoomResponse } from "../../../../interfaces/api-response/roomResponse";
+import { IRoom } from "../../../models/room";
 import { InputPagination } from "../../../shared/interface/InputPagination";
+import { OutputPagination } from "../../../shared/interface/OutputPagination";
 
 
 export interface GetRoomParams extends InputPagination {
-  name: string  
+  name?: string  
 }
 
 export interface IGetAllRooms {
-    getAll:(params: GetRoomParams ) => Promise<apiPaginationResponse<IRoomPartialResponse>>
+  getAll:(params: GetRoomParams ) => Promise<OutputPagination<IRoomPartialResponse>>
 }
-

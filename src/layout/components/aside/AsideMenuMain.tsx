@@ -21,28 +21,27 @@ import { UserLogout } from '../../../domain/models/userLogout'
 import jwtDecode from 'jwt-decode'
 import { keys } from '../../../helpers/KeyConstants'
 import { IToken } from '../../../interfaces/application/token'
-import useHistory  from "react-router-dom";
+import useHistory from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 export function AsideMenuMain() {
- const route = useRouter()
+  const route = useRouter()
 
- const logout = () =>{
-  
-  const requestLogout = makeRemoteLogout()
-  const userId = localStorage.getItem(keys.TOKEN)
+  const logout = () => {
+    const requestLogout = makeRemoteLogout()
+    const userId = localStorage.getItem(keys.TOKEN)
 
-  if (!!userId) {   
-    try {
-      requestLogout.logout(new UserLogout(jwtDecode<IToken>(userId).id))
-      localStorage.clear()        
-      route.push('/')
-      toast.success("Logout efetuado com sucesso")
-    } catch (err) {
-      toast.error("Não foi possível sair da conta. Tente mais tarde.")
+    if (!!userId) {
+      try {
+        requestLogout.logout(new UserLogout(jwtDecode<IToken>(userId).id))
+        localStorage.clear()
+        route.push('/')
+        toast.success('Logout efetuado com sucesso')
+      } catch (err) {
+        toast.error('Não foi possível sair da conta. Tente mais tarde.')
+      }
     }
   }
- }
   return (
     <>
       {/* Home */}
@@ -91,7 +90,7 @@ export function AsideMenuMain() {
         </div>
       </div>
       <AsideMenuItem
-        to='/planns'
+        to='/plans'
         title='Planos'
         icon={<MdViewList size={20} className='svg-icon-2 mh-50px' />}
       />
@@ -139,17 +138,13 @@ export function AsideMenuMain() {
         title='Usuários'
         icon={<MdPeopleAlt size={20} className='svg-icon-2 mh-50px' />}
       />
-     
+
       <div className='menu-item'>
-     
-        <a className={clsx('menu-link without-sub', { active: false })} onClick = {logout}>         
-                      
+        <a className={clsx('menu-link without-sub', { active: false })} onClick={logout}>
           <span className='menu-icon'>{<FiLogOut size={20} className='svg-icon-2 mh-50px' />}</span>
           <span className='menu-title'>sair</span>
-        </a>    
-       
-     </div>
-
+        </a>
+      </div>
     </>
   )
 }

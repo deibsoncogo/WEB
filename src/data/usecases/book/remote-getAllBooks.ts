@@ -1,19 +1,19 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import { IBook } from '../../../domain/models/book'
 import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
 import {
-  GetCategoriesParams,
-  IGetCategories,
-} from '../../../domain/usecases/interfaces/category/getCategories'
-import { Category } from '../../../interfaces/model/Category'
+  IGetAllBooks,
+  IGetAllBooksParams,
+} from '../../../domain/usecases/interfaces/books/getAllBooks'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteGetCategories implements IGetCategories {
+export class RemoteGetAllBooks implements IGetAllBooks {
   constructor(
     private readonly url: string,
-    private readonly httpClient: HttpClient<OutputPagination<Category>>
+    private readonly httpClient: HttpClient<OutputPagination<IBook>>
   ) {}
 
-  get = async (params: GetCategoriesParams) => {
+  getAll = async (params: IGetAllBooksParams) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',

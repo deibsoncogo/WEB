@@ -1,4 +1,4 @@
-import { useRef, useEffect, ReactNode, SelectHTMLAttributes } from 'react'
+import { ReactNode, SelectHTMLAttributes, useEffect, useRef } from 'react'
 
 import { useField } from '@unform/core'
 

@@ -1,16 +1,14 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import { IPlan } from '../../../domain/models/plan'
 import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
-import {
-  GetCategoriesParams,
-  IGetCategories,
-} from '../../../domain/usecases/interfaces/category/getCategories'
-import { Category } from '../../../interfaces/model/Category'
+import { GetCategoriesParams } from '../../../domain/usecases/interfaces/category/getCategories'
+import { IGetPlans } from '../../../domain/usecases/interfaces/plan/getPlans'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteGetCategories implements IGetCategories {
+export class RemoteGetPlanss implements IGetPlans {
   constructor(
     private readonly url: string,
-    private readonly httpClient: HttpClient<OutputPagination<Category>>
+    private readonly httpClient: HttpClient<OutputPagination<IPlan>>
   ) {}
 
   get = async (params: GetCategoriesParams) => {

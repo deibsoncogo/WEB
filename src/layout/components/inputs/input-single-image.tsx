@@ -94,6 +94,7 @@ export function InputSingleImage({ name, ...rest }: IInputImage) {
             name={`${name}Preview`}
             onChangeCapture={clearErrorPreview}
             value={preview}
+            readOnly
           />
           <input
             id='upload-photo'
