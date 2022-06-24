@@ -1,7 +1,7 @@
 import Modal from 'react-modal'
 import { Form } from '@unform/web'
 import { FormHandles, SubmitHandler } from '@unform/core'
-import { Dispatch, SetStateAction, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import { KTSVG } from '../../../helpers'
 import { DatePicker, Select } from '../inputs'
@@ -53,7 +53,7 @@ export function ProductsModal({
     },
   ])
 
-  async function handleIncreaseProduct(fieldName: string, fieldExpireDate: string) {
+  function handleIncreaseProduct(fieldName: string, fieldExpireDate: string) {
     const name = formRef.current?.getFieldValue(fieldName)
     const expireDate = formRef.current?.getFieldValue(fieldExpireDate)
 
@@ -78,6 +78,12 @@ export function ProductsModal({
   function handleAddProducts(data: SubmitHandler) {
     console.log(data)
   }
+
+  useEffect(() => {
+    selectedProducts.forEach(product => {
+      formRef.current?.setFieldValue(`${product.name}-expireDate`, product.expireDate)
+    })
+  }, [selectedProducts])
 
   return (
     <Modal
@@ -226,7 +232,10 @@ export function ProductsModal({
               <button type='submit' className='btn btn-primary'>
                 Confirmar
               </button>
-              <button type='button' className='btn btn-light' onClick={onRequestClose}>
+              <button type='button' className='btn btn-light' onClick={() => {
+                setSelectedProducts([])
+                onRequestClose()
+              }}>
                 Cancelar
               </button>
             </div>
