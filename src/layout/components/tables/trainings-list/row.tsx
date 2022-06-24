@@ -46,7 +46,6 @@ export function Row({
       getTrainings()
       toast.success('Treinamento excluído com sucesso')
     } catch (err) {
-      console.log(err)
       toast.error('Erro ao deletar o treinamento Treinamento')
     } finally {
       setLoading(false)
@@ -79,7 +78,6 @@ export function Row({
       handleRefresher()
       toast.success('Status atualizado com sucesso')
     } catch (err) {
-      console.log(err)
       toast.error('Erro ao atualizar o treinamento Treinamento')
     }
     setIsModalUpdateOpen(false)
@@ -146,10 +144,9 @@ export function Row({
           onClick={() => {
             setIsDeleteCategoryModalOpen(true)
           }}
+          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
         >
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
-            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-          </button>
+          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
         </button>
       </td>
 

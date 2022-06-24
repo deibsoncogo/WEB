@@ -11,11 +11,12 @@ import { UserSignUp } from '../../../domain/models/userSignUp'
 import { levelOptions, roleOptions, stateOptions } from '../../../utils/selectOptions'
 import { toast } from 'react-toastify'
 import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
-import { findCEP } from '../../../utils/findCEP'
+import { findCEP, ZipCodeProps } from '../../../utils/findCEP'
 import { restrictNumberInput } from '../../../utils/restrictNumberInput'
 import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
+import { validateStringWithNumber } from '../../../helpers'
 
 type Props = {
   userRegister: IUserSignUp
@@ -26,16 +27,16 @@ export function FormCreateUser({ userRegister }: Props) {
   const formRef = useRef<FormHandles>(null)
 
   const [cepObj, setCEPObj] = useState({})
-  const [defaultValue, setDefaultValue] = useState({})
+  const [defaultValue, setDefaultValue] = useState<ZipCodeProps>()
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
 
   const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
 
   async function handleOpenModal() {
-    try {      
+    try {
       setIsProductsModalOpen(false)
-      toast.success('Produtos adicionados com sucesso!')      
+      toast.success('Produtos adicionados com sucesso!')
     } catch (err: any) {
       toast.error(err.messages[0])
     }
@@ -47,7 +48,9 @@ export function FormCreateUser({ userRegister }: Props) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é necessário'),
+        name: Yup.string()
+          .test('no number', 'O campo não deve conter números', validateStringWithNumber)
+          .required('Nome é necessário'),
         email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
         birthDate: Yup.string().required('Data de nascimento é necessária'),
         cpf: Yup.string().required('CPF é necessário'),
@@ -114,9 +117,14 @@ export function FormCreateUser({ userRegister }: Props) {
       .signUp(user)
       .then(() => router.push('/users'))
       .catch((error: any) => {
-        console.log(error.messages)
         toast.error(error.messages[0])
       })
+  }
+
+  async function handleInputZipCode() {
+    const zipCode = formRef.current?.getData().zipCode
+    const result = await findCEP(zipCode)
+    setDefaultValue(result)
   }
 
   return (
@@ -127,9 +135,20 @@ export function FormCreateUser({ userRegister }: Props) {
 
           <Input classes='h-75px' name='name' label='Nome' type='text' />
           <Input classes='h-75px' name='email' label='Email' type='email' />
-          <DatePicker classes='h-75px' name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
+          <DatePicker
+            classes='h-75px'
+            name='birthDate'
+            label='Data de Nascimento'
+            maxDate={new Date()}
+          />
           <InputMasked classes='h-75px' name='cpf' label='CPF' type='text' mask='999.999.999-99' />
-          <InputMasked classes='h-75px' name='phoneNumber' label='Telefone' type='text' mask='(99) 9 9999-9999' />
+          <InputMasked
+            classes='h-75px'
+            name='phoneNumber'
+            label='Telefone'
+            type='text'
+            mask='(99) 9 9999-9999'
+          />
 
           <Select classes='h-75px' name='level' label='Nível de Conhecimento'>
             <option value='' disabled selected>
@@ -141,7 +160,7 @@ export function FormCreateUser({ userRegister }: Props) {
               </option>
             ))}
           </Select>
-          <Input classes='h-75px'name='password' label='Senha' type='password' />
+          <Input classes='h-75px' name='password' label='Senha' type='password' />
 
           <Select classes='h-75px' name='role' label='Permissão'>
             <option value='' disabled selected>
@@ -162,25 +181,35 @@ export function FormCreateUser({ userRegister }: Props) {
             name='zipCode'
             label='CEP'
             mask='99999-999'
-            onChange={async () => {
-              findCEP(formRef.current?.getData().zipCode, setDefaultValue)
-            }}
+            onChange={handleInputZipCode}
           />
           <Input classes='h-75px' name='street' label='Logradouro' />
-          <Input classes='h-75px' name='number' label='Número' type='number' onKeyDown={restrictNumberInput} min="0" />
+          <Input
+            classes='h-75px'
+            name='number'
+            label='Número'
+            type='number'
+            onKeyDown={restrictNumberInput}
+            min='0'
+          />
           <Input classes='h-75px' name='complement' label='Complemento' />
           <Input classes='h-75px' name='neighborhood' label='Bairro' />
           <Input classes='h-75px' name='city' label='Cidade' />
+
           <Select classes='h-75px' name='state' label='Estado'>
-            <option value='' disabled selected>
+            <option value='' selected={!!defaultValue?.state}>
               Selecione
             </option>
             {stateOptions.map((option) => (
-              <option key={option.value} value={option.value}>
+              <option
+                key={option.value}
+                value={option.value}
+                selected={defaultValue?.state === option.value}
+              >
                 {option.label}
               </option>
             ))}
-          </Select>    
+          </Select>
         </div>
       </div>
 
@@ -192,7 +221,13 @@ export function FormCreateUser({ userRegister }: Props) {
       )}
 
       <div className='w-100'>
-        <button type='button' className='btn btn-outline-primary border border-primary w-180px mb-5' onClick={() => {setIsProductsModalOpen(true)}}>
+        <button
+          type='button'
+          className='btn btn-outline-primary border border-primary w-180px mb-5'
+          onClick={() => {
+            setIsProductsModalOpen(true)
+          }}
+        >
           Adicionar produto grátis
         </button>
       </div>
@@ -215,7 +250,7 @@ export function FormCreateUser({ userRegister }: Props) {
 
       <ProductsModal
         isOpen={isProductsModalOpen}
-        modalTitle = "Adicionar produto grátis"
+        modalTitle='Adicionar produto grátis'
         action={handleOpenModal}
         onRequestClose={() => {
           setIsProductsModalOpen(false)

@@ -1,14 +1,14 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import React, { forwardRef } from 'react'
+import { forwardRef } from 'react'
 import { IStreaming } from '../../../../domain/models/streaming'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { KTSVG } from '../../../../helpers'
 import CustomButton from '../../buttons/CustomButton'
 import { DatePicker, Input, Select, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
-import { InputImage } from '../../inputs/input-image'
 import { InputNumber } from '../../inputs/input-number'
+import { InputSingleImage } from '../../inputs/input-single-image'
 import { SelectAsync } from '../../inputs/selectAsync'
 import { StreamingTable } from '../../tables/streaming-list'
 
@@ -44,7 +44,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
   return (
     <Form className='form' ref={ref} onSubmit={onSubmit}>
       <h3 className='mb-5'>Informações do Treinamento</h3>
-      <InputImage name='photo' />
+      <InputSingleImage name='image' />
 
       <div className='container p-0'>
         <div className='row'>

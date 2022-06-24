@@ -9,7 +9,7 @@ export default function Unauthorized() {
           <h1 className='display-1 fw-bold'>401</h1>
           <p className='fs-3'>
             {' '}
-            <span className='text-danger'>Opps! 😞</span> Página restrita.
+            <span className='text-danger'>Ops! 😞</span> Página restrita.
           </p>
           <p className='lead'>Entre em contato com o administrador para mais informações.</p>
 

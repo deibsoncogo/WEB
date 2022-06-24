@@ -53,10 +53,10 @@ export function Row({
       <td>
         <span className='text-dark fw-bold d-block fs-7'>{address}</span>
       </td>
-      <td className='text-end d-flex justify-content-end px-4'>
+      <td className='d-flex'>
         <Tooltip content={'Editar'} rounded color='primary'>
           <Link href={`/users/edit/${id}`}>
-            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-2'>
               <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
             </button>
           </Link>
@@ -67,7 +67,7 @@ export function Row({
             onClick={() => {
               setIsModalOpen(true)
             }}
-            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-2'
           >
             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
           </button>
@@ -78,7 +78,7 @@ export function Row({
           color='primary'
           onClick={handleClickResetPassword}
         >
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
             <KTSVG path='/icons/key.svg' className='svg-icon-3' />
           </button>
         </Tooltip>
