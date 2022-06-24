@@ -290,6 +290,7 @@ export function FormEditUser({ id, userRegister, getUser, getCourses, getPlans, 
         onRequestClose={() => {
           setIsProductsModalOpen(false)
         }}
+        grantedProducts={grantedProducts}
         onAddProduct={setGrantedProducts}
         getCourses={getCourses}
         getPlans={getPlans}

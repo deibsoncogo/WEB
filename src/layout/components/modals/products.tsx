@@ -16,17 +16,11 @@ type NewTransactionModalProps = {
   modalTitle: string
   action: () => Promise<void>
   onRequestClose: () => void
+  grantedProducts: IPartialProductResponse[]
   onAddProduct: Dispatch<SetStateAction<IPartialProductResponse[]>>
   getCourses: IGetAllCourses
   getPlans: IGetAllPlans
   getTrainings: IGetAllTrainings
-}
-
-type Product = {
-  id: string
-  name: string
-  label: string    
-  expireDate: string
 }
 
 export function ProductsModal({
@@ -34,6 +28,7 @@ export function ProductsModal({
   modalTitle,
   action,
   onRequestClose,
+  grantedProducts,
   onAddProduct,
   getCourses,
   getPlans,
@@ -41,7 +36,7 @@ export function ProductsModal({
 }: NewTransactionModalProps) {
   const formRef = useRef<FormHandles>(null)
   const [defaultValue, setDefaultValue] = useState({})
-  const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
+  const [selectedProducts, setSelectedProducts] = useState<IPartialProductResponse[]>([])
   
   const [courses, setCourses] = useState<IPartialProductResponse[]>()
   const [plans, setPlans] = useState<IPartialProductResponse[]>()
@@ -89,11 +84,26 @@ export function ProductsModal({
     const filteredSelectedProducts = selectedProducts.filter(product => product.id !== id)
 
     setSelectedProducts(filteredSelectedProducts)
-  } 
+  }
 
-  function handleAddProducts() {
+  function checkIfAProductIsGranted() {
+    let productName;
+    const isAProductGranted = grantedProducts.some(granted => selectedProducts.some(selected => {
+      productName = selected.name
+      return selected.id === granted.id
+    }))
+    
+    if(isAProductGranted) {
+      toast.error(`O produto ${productName} já foi concedido!`)
+      return true      
+    }
+  }
+
+  function handleAddProducts() {        
+    if(checkIfAProductIsGranted()) return
+
+    onAddProduct((prevState) => [...prevState, ...selectedProducts])
     setSelectedProducts([])
-    onAddProduct(selectedProducts)
     onRequestClose()
     toast.success('Produtos concedidos com sucesso!')
   }
