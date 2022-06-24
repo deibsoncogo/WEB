@@ -61,6 +61,8 @@ export function ProductsModal({
     const name = formRef.current?.getFieldValue(fieldName)
     const expireDate = formRef.current?.getFieldValue(fieldExpireDate)
 
+    if(selectedProducts.some(product => product.name === name)) return
+
     const newProduct = {
       name,
       label:
@@ -71,16 +73,10 @@ export function ProductsModal({
     setSelectedProducts((prevProducts) => [...prevProducts, newProduct])
   }
 
-  function handleIncreaseCourse() {
-    const length = numberOfCourses.length
-    const newNumber = numberOfCourses[length - 1]
-    setNumberOfCourses([...numberOfCourses, newNumber + 1])
-  }
-
-  function handleDecreaseCourse(index: number) {
-    const temp = numberOfCourses.slice()
+  function handleDecreaseProduct(index: number) {
+    const temp = selectedProducts.slice()
     temp.splice(index, 1)
-    setNumberOfCourses(temp)
+    setSelectedProducts(temp)
   }
 
   function handleAddProducts(data: SubmitHandler) {
@@ -115,6 +111,36 @@ export function ProductsModal({
             onSubmit={handleAddProducts}
           >
             <div className='modal-body'>
+              {selectedProducts.length > 0 && (
+                <div className='container gap-20 row mh-175px overflow-auto'>
+                  <div className='col w-50'>
+                    {selectedProducts.map((product, index) => (
+                      <div key={index} className='d-flex align-items-center gap-5'>
+                        <div>
+                          <Select name={product.name} label={product.label} value={product.name}>                            
+                            <option value={product.name}>
+                              {product.name}
+                            </option>
+                          </Select>
+                        </div>
+
+                      <DatePicker name={`${product.name}-expireDate`} label='Data de expiração' />
+                      <button
+                        type='button'
+                        title='Remover'
+                        onClick={() => {
+                          handleDecreaseProduct(index)
+                        }}
+                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
+                      >
+                        x
+                      </button>
+                    </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className='container gap-20 row mh-175px overflow-auto'>
                 <div className='col w-50'>
                   {numberOfCourses.map((number, index) => (
@@ -130,18 +156,6 @@ export function ProductsModal({
                       </div>
 
                       <DatePicker name='courseExpireDate' label='Data de expiração' />
-                      {number >= 1 && (
-                        <button
-                          type='button'
-                          title='Remover'
-                          onClick={() => {
-                            handleDecreaseCourse(index)
-                          }}
-                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
-                        >
-                          x
-                        </button>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -172,18 +186,6 @@ export function ProductsModal({
                       </div>
 
                       <DatePicker name='trainingExpireDate' label='Data de expiração' />
-                      {number > 1 && (
-                        <button
-                          type='button'
-                          title='Remover'
-                          onClick={() => {
-                            handleDecreaseCourse(number)
-                          }}
-                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
-                        >
-                          x
-                        </button>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -192,7 +194,7 @@ export function ProductsModal({
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseCourse()}
+                    onClick={() => handleIncreaseProduct('training', 'trainingExpireDate')}
                   >
                     + Adicionar outro curso
                   </button>
@@ -214,18 +216,6 @@ export function ProductsModal({
                       </div>
 
                       <DatePicker name='planExpireDate' label='Data de expiração' />
-                      {number > 1 && (
-                        <button
-                          type='button'
-                          title='Remover'
-                          onClick={() => {
-                            handleDecreaseCourse(number)
-                          }}
-                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
-                        >
-                          x
-                        </button>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -234,7 +224,7 @@ export function ProductsModal({
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseCourse()}
+                    onClick={() => handleIncreaseProduct('plan', 'planExpireDate')}
                   >
                     + Adicionar outro curso
                   </button>
