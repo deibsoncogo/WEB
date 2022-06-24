@@ -48,11 +48,24 @@ export function ProductsModal({
   const [trainings, setTrainings] = useState<IPartialProductResponse[]>()
 
   function handleIncreaseProduct(fieldName: string, fieldExpireDate: string) {
-    const name = formRef.current?.getFieldValue(fieldName)
-    
-    if(selectedProducts.some(product => product.name === name)) return
-    
-    const expireDate = formRef.current?.getFieldValue(fieldExpireDate) 
+    const name = formRef.current?.getFieldValue(fieldName)    
+    const expireDate = formRef.current?.getFieldValue(fieldExpireDate)    
+
+    if (!name) {
+      toast.error('Selecione um produto!')
+      return
+    }
+
+    if (!expireDate) {
+      toast.error('Selecione uma data de expiração!')
+      return
+    }
+
+    if(selectedProducts.some(product => product.name === name)) {
+      toast.error('Esse produto já foi selecionado!')
+      return
+    }
+
     const id = getProductId(fieldName, name)
 
     const newProduct = {
@@ -133,7 +146,7 @@ export function ProductsModal({
               {selectedProducts.length > 0 && (
                 <div className='container gap-20 row mh-175px overflow-auto'>
                   <div className='col w-50'>
-                    {selectedProducts.map((product, index) => (
+                    {selectedProducts.map((product) => (
                       <div key={product.id} className='d-flex align-items-center gap-5'>
                         <div>
                           <Select name={product.name} label={product.label} value={product.name}>                            
