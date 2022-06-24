@@ -6,8 +6,9 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { KTSVG } from '../../../helpers'
 import { DatePicker, Select } from '../inputs'
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
-import { makeRemoteGetAllProducts } from '../../../application/factories/usecases/remote-getAllProducts-factory'
-import { GetProductsParams } from '../../../domain/usecases/interfaces/product/getAllProducts'
+import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
+import { IGetAllPlans } from '../../../domain/usecases/interfaces/plans/getAllPlans'
+import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 
 type NewTransactionModalProps = {
   isOpen: boolean
@@ -15,9 +16,13 @@ type NewTransactionModalProps = {
   action: () => Promise<void>
   onRequestClose: () => void
   onAddProduct: Dispatch<SetStateAction<IPartialProductResponse[]>>
+  getCourses: IGetAllCourses
+  getPlans: IGetAllPlans
+  getTrainings: IGetAllTrainings
 }
 
 type Product = {
+  id: string
   name: string
   label: string    
   expireDate: string
@@ -29,52 +34,62 @@ export function ProductsModal({
   action,
   onRequestClose,
   onAddProduct,
+  getCourses,
+  getPlans,
+  getTrainings
 }: NewTransactionModalProps) {
   const formRef = useRef<FormHandles>(null)
   const [defaultValue, setDefaultValue] = useState({})
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
-
-  const [availableProducts, setAvailableProducts] = useState<IPartialProductResponse[]>([])
+  
+  const [courses, setCourses] = useState<IPartialProductResponse[]>()
+  const [plans, setPlans] = useState<IPartialProductResponse[]>()
+  const [trainings, setTrainings] = useState<IPartialProductResponse[]>()
 
   function handleIncreaseProduct(fieldName: string, fieldExpireDate: string) {
     const name = formRef.current?.getFieldValue(fieldName)
-    const expireDate = formRef.current?.getFieldValue(fieldExpireDate)
-
+    
     if(selectedProducts.some(product => product.name === name)) return
+    
+    const expireDate = formRef.current?.getFieldValue(fieldExpireDate) 
+    const id = getProductId(fieldName, name)
 
     const newProduct = {
+      id,
       name,
       label:
-        fieldName === 'course' ? 'Cursos' : fieldName === 'training' ? 'Treinamentos' : 'Planos',
+        fieldName === 'courses' ? 'Cursos' : fieldName === 'trainings' ? 'Treinamentos' : 'Planos',
       expireDate: expireDate,
     }
 
     setSelectedProducts((prevProducts) => [...prevProducts, newProduct])
   }
 
-  function handleDecreaseProduct(index: number) {
-    const temp = selectedProducts.slice()
-    temp.splice(index, 1)
-    setSelectedProducts(temp)
+  function getProductId(type: string, name: string) {
+    return type === 'courses' ? courses?.find(course => course.name === name)?.id! :
+      type === 'trainings' ? trainings?.find(training => training.name === name)?.id! :
+      plans?.find(plan => plan.name === name)?.id!
+  }
+
+  function handleDecreaseProduct(id: string) {
+    const filteredSelectedProducts = selectedProducts.filter(product => product.id !== id)
+
+    setSelectedProducts(filteredSelectedProducts)
   }
 
   function handleAddProducts(data: SubmitHandler) {
     console.log(data)
   }
 
-  useEffect(() => {
-    const paginationParams: GetProductsParams = {
-      take: 10,
-      page: 1,
-      order: 'asc',
-      name: '',
-    }
-    const getProducts = makeRemoteGetAllProducts()
-    getProducts
-      .getAll()
-      .then((res) => {
-        setAvailableProducts(res.data)
-      })
+  useEffect(() => {    
+    getCourses
+      .getAll().then((res) => setCourses(res.data))
+
+    getTrainings
+      .getAll().then((res) => setTrainings(res.data))
+
+    getPlans
+      .getAll().then((res) => setPlans(res.data))
   }, [])
 
   useEffect(() => {
@@ -115,7 +130,7 @@ export function ProductsModal({
                 <div className='container gap-20 row mh-175px overflow-auto'>
                   <div className='col w-50'>
                     {selectedProducts.map((product, index) => (
-                      <div key={index} className='d-flex align-items-center gap-5'>
+                      <div key={product.id} className='d-flex align-items-center gap-5'>
                         <div>
                           <Select name={product.name} label={product.label} value={product.name}>                            
                             <option value={product.name}>
@@ -129,7 +144,7 @@ export function ProductsModal({
                         type='button'
                         title='Remover'
                         onClick={() => {
-                          handleDecreaseProduct(index)
+                          handleDecreaseProduct(product.id)
                         }}
                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
                       >
@@ -145,8 +160,8 @@ export function ProductsModal({
                 <div className='col w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75'>
-                      <Select name='course' label='Cursos'>
-                        {availableProducts.map((product) => (
+                      <Select name='courses' label='Cursos'>
+                        {courses?.map((product) => (
                           <option key={product.id} value={product.name}>
                             {product.name}
                           </option>
@@ -162,7 +177,7 @@ export function ProductsModal({
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseProduct('course', 'courseExpireDate')}
+                    onClick={() => handleIncreaseProduct('courses', 'courseExpireDate')}
                   >
                     + Adicionar outro curso
                   </button>
@@ -173,8 +188,8 @@ export function ProductsModal({
                 <div className='col w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75'>
-                      <Select name='training' label='Treinamentos'>
-                        {availableProducts.map((product) => (
+                      <Select name='trainings' label='Treinamentos'>
+                        {trainings?.map((product) => (
                           <option key={product.id} value={product.name}>
                             {product.name}
                           </option>
@@ -190,7 +205,7 @@ export function ProductsModal({
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseProduct('training', 'trainingExpireDate')}
+                    onClick={() => handleIncreaseProduct('trainings', 'trainingExpireDate')}
                   >
                     + Adicionar outro curso
                   </button>
@@ -201,8 +216,8 @@ export function ProductsModal({
                 <div className='col w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75'>
-                      <Select name='plan' label='Planos'>
-                        {availableProducts.map((product) => (
+                      <Select name='plans' label='Planos'>
+                        {plans?.map((product) => (
                           <option key={product.id} value={product.name}>
                             {product.name}
                           </option>
@@ -218,7 +233,7 @@ export function ProductsModal({
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseProduct('plan', 'planExpireDate')}
+                    onClick={() => handleIncreaseProduct('plans', 'planExpireDate')}
                   >
                     + Adicionar outro curso
                   </button>

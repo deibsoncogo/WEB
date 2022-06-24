@@ -19,14 +19,20 @@ import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
 import { IPartialPurchaseResponse } from '../../../interfaces/api-response/purchasePartialResponse'
 import { PurchasesTable } from '../tables/purchashes-list'
+import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
+import { IGetAllPlans } from '../../../domain/usecases/interfaces/plans/getAllPlans'
+import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 
 type IFormEditUser = {
   id: string
   userRegister: IUpdateUser
   getUser: IGetUser
+  getCourses: IGetAllCourses
+  getPlans: IGetAllPlans
+  getTrainings: IGetAllTrainings
 }
 
-export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
+export function FormEditUser({ id, userRegister, getUser, getCourses, getPlans, getTrainings }: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -285,6 +291,9 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           setIsProductsModalOpen(false)
         }}
         onAddProduct={setGrantedProducts}
+        getCourses={getCourses}
+        getPlans={getPlans}
+        getTrainings={getTrainings}
       />
     </>
   )
