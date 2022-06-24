@@ -130,17 +130,19 @@ export function Row({
         </div>
       </td>
 
-      <td>
-        <Link href={`/trainings/edit/${id}`}>
-          <button
-            title='Editar'
-            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-          >
-            <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-          </button>
-        </Link>
-        <button
-          title='Deletar'
+      <td className='text-end d-flex justify-content-end px-4'>
+        <Tooltip content='Editar' rounded color='primary'>
+          <Link href={`/trainings/edit/${id}`}>
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+              <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+            </button>
+          </Link>
+        </Tooltip>
+
+        <Tooltip
+          content='Deletar'
+          rounded
+          color='primary'
           onClick={() => {
             setIsDeleteCategoryModalOpen(true)
           }}
@@ -148,7 +150,7 @@ export function Row({
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
           </button>
-        </button>
+        </Tooltip>
       </td>
 
       <ConfirmationModal

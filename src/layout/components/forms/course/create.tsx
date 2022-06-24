@@ -19,7 +19,7 @@ import { CourseClass } from '../../../../domain/models/courseClass'
 import CoursesInternalTable from './courseInternalTable'
 import FilesInternalTable from './filesUpload/filesInternalTable'
 import { FileUpload } from '../../../../domain/models/fileUpload'
-import CustomButton from '../../buttons/CustomButton'
+import { Button } from '../../buttons/CustomButton'
 import { appRoutes } from '../../../../application/routing/routes'
 import { IGetCategories } from '../../../../domain/usecases/interfaces/category/getCategories'
 import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAllUsers'
@@ -33,7 +33,7 @@ type Props = {
   getUsers: IGetAllUsers
 }
 
-export function FormCreateCourse({createCourse, getCategories, getUsers}: Props) {
+export function FormCreateCourse({ createCourse, getCategories, getUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [categories, setCategories] = useState<ICategory[]>([])
@@ -45,11 +45,11 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
   const [filesUpload, setFilesUpload] = useState<FileUpload[]>([])
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
- 
+
   function handleChange(event: any) {
     setStateEditor({ content: event })
   }
- 
+
   const searchTeachers = async (teacherName: string) => {
     try {
       const { data } = await getUsers.getAll({
@@ -93,11 +93,9 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
     }
   }
 
-
   const handleSingleImageUpload = (file: File) => {
     setImageUpload(file)
   }
-
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
@@ -116,35 +114,33 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
 
   async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
-   
+
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        photo: Yup.mixed().required('Imagem é necessária'),              
+        photo: Yup.mixed().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
-        accessTime: Yup.number().typeError('Tempo de acesso deve ser um número')
-        .required('Tempo de acesso é necessário')
-        .positive("Tempo de acesso deve ser positivo")
-        .integer("Tempo de acesso deve ser um número inteiro."),
+        accessTime: Yup.number()
+          .typeError('Tempo de acesso deve ser um número')
+          .required('Tempo de acesso é necessário')
+          .positive('Tempo de acesso deve ser positivo')
+          .integer('Tempo de acesso deve ser um número inteiro.'),
         price: Yup.string().required('Preço é necessário'),
-        installments: Yup.number().typeError('Quantidade de parcelas deve ser um número')
-        .required('Quantidade de parcelas é necessário')
-        .positive("Quantidade de parcelas deve ser positiva")
-        .integer("Quantidade de parcelas deve ser um número inteiro"),
+        installments: Yup.number()
+          .typeError('Quantidade de parcelas deve ser um número')
+          .required('Quantidade de parcelas é necessário')
+          .positive('Quantidade de parcelas deve ser positiva')
+          .integer('Quantidade de parcelas deve ser um número inteiro'),
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         content: Yup.string().required('Conteúdo programático é necessário'),
-       
       })
 
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
-      courseClass.length == 0? setHasErrorClass(true): handleCreateCourse(data)      
-      
-     
-     
+      courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -173,35 +169,32 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
       courseClass
     )
 
-    const formData = new FormData();
-    if(imageUpload && filesUpload){
-      formData.append('image', imageUpload); 
-      filesUpload.map(file => {
-        if(file?.file)
-           formData.append('attachments', file.file)
-        formData.append('filesName',  file.name)
+    const formData = new FormData()
+    if (imageUpload && filesUpload) {
+      formData.append('image', imageUpload)
+      filesUpload.map((file) => {
+        if (file?.file) formData.append('attachments', file.file)
+        formData.append('filesName', file.name)
       })
-    }       
-    formData.append('course', JSON.stringify(course))    
+    }
+    formData.append('course', JSON.stringify(course))
 
     setRegisterCourse(true)
-       createCourse
+    createCourse
       .create(formData)
       .then(() => {
-        toast.success('Curso criado com sucesso!')       
+        toast.success('Curso criado com sucesso!')
         router.push('/courses')
       })
       .catch(() => toast.error('Não foi possível criar o curso!'))
-      .finally(() => setRegisterCourse(false))         
-      
+      .finally(() => setRegisterCourse(false))
   }
 
   return (
     <>
-   
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do Curso</h3>
-        <InputImage name='photo' handleSingleImageUpload = {handleSingleImageUpload} />
+        <InputImage name='photo' handleSingleImageUpload={handleSingleImageUpload} />
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />
@@ -212,7 +205,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               classes='h-75px'
               placeholder='Digite o nome do professor'
             />
-            
+
             <Input name='accessTime' type='number' label='Tempo de acesso ao curso (em meses)' />
             <Input
               name='price'
@@ -265,30 +258,28 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
 
         <Input name='content' hidden={true} />
 
-               
-        <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>        
+        <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>
         <FilesInternalTable filesUpload={filesUpload} />
 
         {hasErrorClass && (
-        <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
-          <strong>Não é possível criar curso!</strong>
-          Você precisa adicionar, no mínimo, uma aula.
-          <button
-            type='button'
-            onClick={() => setHasErrorClass(false)}
-            className='btn-close'
-            data-bs-dismiss='alert'
-            aria-label='Close'
-          ></button>
-        </div>
-      )}
+          <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
+            <strong>Não é possível criar curso!</strong>
+            Você precisa adicionar, no mínimo, uma aula.
+            <button
+              type='button'
+              onClick={() => setHasErrorClass(false)}
+              className='btn-close'
+              data-bs-dismiss='alert'
+              aria-label='Close'
+            ></button>
+          </div>
+        )}
         <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
         <CoursesInternalTable courseClassArray={courseClass} />
 
         <div className='d-flex mt-10'>
-         
-          <CustomButton
-            customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          <Button
+            customClasses={['btn-secondary', 'w-125px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
             loading={registerCourse}
@@ -296,14 +287,13 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               router.push(appRoutes.COURSES)
             }}
           />
-          <CustomButton
+          <Button
             type='submit'
-            customClasses={['w-180px', 'btn-primary']}
+            customClasses={['w-125px', 'btn-primary']}
             title='Salvar'
             disabled={registerCourse}
           />
-          
-          </div>
+        </div>
       </Form>
     </>
   )
