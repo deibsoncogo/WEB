@@ -1,40 +1,61 @@
 import clsx from 'clsx'
-import { UserInfoModel } from '../../../../../../helpers'
+import { IChatRoom } from '../../../../../../domain/models/createChatRoom'
+import { DateLocalFullInformationMask } from '../../../../../formatters/dateLocalFormatter'
+import { HourMask } from '../../../../../formatters/hourFormatter'
 
 type props = {
-  message: any 
+  message: IChatRoom
+  isPreviousDateDifferentFromCurrent: boolean
+  isToShowAvatarImage: boolean
 }
 
-export function Message({ message}: props) {
+export function Message({
+  message,
+  isPreviousDateDifferentFromCurrent,
+  isToShowAvatarImage,
+}: props) {
+  const IsMessageWriteToday = (date: string) => {
+    var today = new Date()
+    var day = String(today.getDate()).padStart(2, '0')
 
-  const templateAttr = {}
-
-  if (message.template) {
-    Object.defineProperty(templateAttr, 'data-kt-element', {
-      value: `template-${message.type}`,
-    })
+    return day === date.split('-')[2]
   }
 
-  const contentClass = 'd-flex justify-content-start mb-10'
   return (
-    <div
-      className={clsx('d-flex', contentClass, 'mb-10', { 'd-none': message.template })}
-      {...templateAttr}
-    >
-      <div className='d-flex align-items align-items-start'>
-        <div className='d-flex align-items-center'>
-          <div className='symbol align-items-start symbol-40px symbol-circle '>
+    <div className='d-flex justify-content-center flex-column'>
+      <div
+        className={clsx({
+          'd-flex align-items-center justify-content-center': true,
+          'mb-5 mt-5': isPreviousDateDifferentFromCurrent,
+        })}
+      >
+        {!isPreviousDateDifferentFromCurrent ? (
+          ''
+        ) : IsMessageWriteToday(message.date) ? (
+          'Hoje'
+        ) : (
+          <span className='text-dark fs-7 mb-1 text-break'>
+            {DateLocalFullInformationMask(message.date)}
+          </span>
+        )}
+      </div>
+      <div className='d-flex align-items align-items-end mb-5'>
+        <div
+          className='d-flex align-items-center'
+          style={{ visibility: isToShowAvatarImage ? 'visible' : 'hidden' }}
+        >
+          <div className='symbol px-2 align-items-start symbol-40px symbol-circle'>
             <img alt='Pic' src='/avatars/blank.png' />
           </div>
         </div>
 
         <div className='p-5 rounded bg-light-primary text-dark fw-bold w-75 text-start'>
           <div className='ms-3'>
-            <span className='text-dark fs-7 mb-1 text-break'>{message.text}</span>
+            <span className='text-dark fs-7 mb-1 text-break'>{message.message}</span>
           </div>
 
           <div className='ms-3 text-end'>
-            <span className='text-muted fs-7 mb-1'>{message.time}</span>
+            <span className='text-muted fs-7 mb-1'>{HourMask(message.hour)}</span>
           </div>
         </div>
       </div>
