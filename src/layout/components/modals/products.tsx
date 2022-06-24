@@ -6,6 +6,8 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { KTSVG } from '../../../helpers'
 import { DatePicker, Select } from '../inputs'
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
+import { makeRemoteGetAllProducts } from '../../../application/factories/usecases/remote-getAllProducts-factory'
+import { GetProductsParams } from '../../../domain/usecases/interfaces/product/getAllProducts'
 
 type NewTransactionModalProps = {
   isOpen: boolean
@@ -32,26 +34,7 @@ export function ProductsModal({
   const [defaultValue, setDefaultValue] = useState({})
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
 
-  const [availableProducts, setAvailableProducts] = useState([
-    {
-      id: '1',
-      name: 'Day Trade - Do básico ao avançado',
-      expireDate: '26/10/2022',
-      type: 'Cursos',
-    },
-    {
-      id: '2',
-      name: 'Análises de Criptomoedas',
-      expireDate: '26/10/2022',
-      type: 'Cursos',
-    },
-    {
-      id: '3',
-      name: 'Segue o gráfico - Mensal',
-      expireDate: '26/10/2022',
-      type: 'Cursos',
-    },
-  ])
+  const [availableProducts, setAvailableProducts] = useState<IPartialProductResponse[]>([])
 
   function handleIncreaseProduct(fieldName: string, fieldExpireDate: string) {
     const name = formRef.current?.getFieldValue(fieldName)
@@ -78,6 +61,21 @@ export function ProductsModal({
   function handleAddProducts(data: SubmitHandler) {
     console.log(data)
   }
+
+  useEffect(() => {
+    const paginationParams: GetProductsParams = {
+      take: 10,
+      page: 1,
+      order: 'asc',
+      name: '',
+    }
+    const getProducts = makeRemoteGetAllProducts()
+    getProducts
+      .getAll()
+      .then((res) => {
+        setAvailableProducts(res.data)
+      })
+  }, [])
 
   useEffect(() => {
     selectedProducts.forEach(product => {
