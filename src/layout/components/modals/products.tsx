@@ -32,10 +32,6 @@ export function ProductsModal({
   const [defaultValue, setDefaultValue] = useState({})
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
 
-  const [numberOfCourses, setNumberOfCourses] = useState([0])
-  const [numberOfTrainings, setNumberOfTrainings] = useState([0])
-  const [numberOfPlans, setNumberOfPlans] = useState([0])
-
   const [availableProducts, setAvailableProducts] = useState([
     {
       id: '1',
@@ -143,21 +139,19 @@ export function ProductsModal({
 
               <div className='container gap-20 row mh-175px overflow-auto'>
                 <div className='col w-50'>
-                  {numberOfCourses.map((number, index) => (
-                    <div key={number} className='d-flex align-items-center gap-5'>
-                      <div className='w-75'>
-                        <Select name='course' label='Cursos'>
-                          {availableProducts.map((product) => (
-                            <option key={product.id} value={product.name}>
-                              {product.name}
-                            </option>
-                          ))}
-                        </Select>
-                      </div>
-
-                      <DatePicker name='courseExpireDate' label='Data de expiração' />
+                  <div className='d-flex align-items-center gap-5'>
+                    <div className='w-75'>
+                      <Select name='course' label='Cursos'>
+                        {availableProducts.map((product) => (
+                          <option key={product.id} value={product.name}>
+                            {product.name}
+                          </option>
+                        ))}
+                      </Select>
                     </div>
-                  ))}
+
+                    <DatePicker name='courseExpireDate' label='Data de expiração' />
+                  </div>
                 </div>
 
                 <div className='col align-self-end w-50 h-100 mb-8'>
@@ -173,21 +167,19 @@ export function ProductsModal({
 
               <div className='container gap-20 row mh-175px overflow-auto'>
                 <div className='col w-50'>
-                  {numberOfTrainings.map((number) => (
-                    <div key={number} className='d-flex align-items-center gap-5'>
-                      <div className='w-75'>
-                        <Select name='training' label='Treinamentos'>
-                          {availableProducts.map((product) => (
-                            <option key={product.id} value={product.name}>
-                              {product.name}
-                            </option>
-                          ))}
-                        </Select>
-                      </div>
-
-                      <DatePicker name='trainingExpireDate' label='Data de expiração' />
+                  <div className='d-flex align-items-center gap-5'>
+                    <div className='w-75'>
+                      <Select name='training' label='Treinamentos'>
+                        {availableProducts.map((product) => (
+                          <option key={product.id} value={product.name}>
+                            {product.name}
+                          </option>
+                        ))}
+                      </Select>
                     </div>
-                  ))}
+
+                    <DatePicker name='trainingExpireDate' label='Data de expiração' />
+                  </div>
                 </div>
 
                 <div className='col align-self-end w-50 h-100 mb-8'>
@@ -203,21 +195,19 @@ export function ProductsModal({
 
               <div className='container gap-20 row mh-175px overflow-auto'>
                 <div className='col w-50'>
-                  {numberOfPlans.map((number) => (
-                    <div key={number} className='d-flex align-items-center gap-5'>
-                      <div className='w-75'>
-                        <Select name='plan' label='Planos'>
-                          {availableProducts.map((product) => (
-                            <option key={product.id} value={product.name}>
-                              {product.name}
-                            </option>
-                          ))}
-                        </Select>
-                      </div>
-
-                      <DatePicker name='planExpireDate' label='Data de expiração' />
+                  <div className='d-flex align-items-center gap-5'>
+                    <div className='w-75'>
+                      <Select name='plan' label='Planos'>
+                        {availableProducts.map((product) => (
+                          <option key={product.id} value={product.name}>
+                            {product.name}
+                          </option>
+                        ))}
+                      </Select>
                     </div>
-                  ))}
+
+                    <DatePicker name='planExpireDate' label='Data de expiração' />
+                  </div>
                 </div>
 
                 <div className='col align-self-end w-50 h-100 mb-8'>
