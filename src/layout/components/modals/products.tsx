@@ -9,6 +9,7 @@ import { IPartialProductResponse } from '../../../interfaces/api-response/produc
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
 import { IGetAllPlans } from '../../../domain/usecases/interfaces/plans/getAllPlans'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
+import { toast } from 'react-toastify'
 
 type NewTransactionModalProps = {
   isOpen: boolean
@@ -75,10 +76,13 @@ export function ProductsModal({
     const filteredSelectedProducts = selectedProducts.filter(product => product.id !== id)
 
     setSelectedProducts(filteredSelectedProducts)
-  }
+  } 
 
-  function handleAddProducts(data: SubmitHandler) {
-    console.log(data)
+  function handleAddProducts() {
+    setSelectedProducts([])
+    onAddProduct(selectedProducts)
+    onRequestClose()
+    toast.success('Produtos concedidos com sucesso!')
   }
 
   useEffect(() => {    

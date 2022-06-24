@@ -1,7 +1,7 @@
 import { Tooltip } from '@nextui-org/react'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { toast } from 'react-toastify'
-import { KTSVG } from '../../../../helpers'
+import { formatDate, formatDateToUTC, KTSVG } from '../../../../helpers'
 import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
 import { ActionModal } from '../../modals/action'
 
@@ -27,7 +27,7 @@ export function Row({ id, name, expireDate, setProducts }: Props) {
       </td>
       <td>
         <span className='text-black-50 d-block fs-7 mw-200px text-overflow-custom'>
-          {expireDate}
+          {formatDate(formatDateToUTC(expireDate), 'DD/MM/YYYY')}
         </span>
       </td>
       <td>

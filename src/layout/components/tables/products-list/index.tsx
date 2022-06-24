@@ -37,7 +37,7 @@ export function ProductsTable({ products, setProducts }: Props) {
                 key={item.id}
                 id={item.id}
                 name={item.name}
-                expireDate={item.expireDate}
+                expireDate={item.expireDate!}
                 setProducts={setProducts}
               />
             ))}
