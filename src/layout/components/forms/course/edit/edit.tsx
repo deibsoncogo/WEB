@@ -95,10 +95,9 @@ export function FormUpdateCourse(props: Props) {
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number()
+          .min(1, 'Tempo de acesso deve ser maior ou igual a 1')
           .typeError('Tempo de acesso deve ser um número')
-          .required('Tempo de acesso é necessário')
-          .positive('Tempo de acesso deve ser positivo')
-          .integer('Tempo de acesso deve ser um número inteiro.'),
+          .required('Tempo de acesso é necessário'),
         price: Yup.string().required('Preço é necessário'),
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1')
