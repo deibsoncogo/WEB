@@ -6,9 +6,7 @@ interface ISwitch {
   setModalUpdate: Dispatch<SetStateAction<boolean>>
 }
 
-export function Switch({active, setModalUpdate}: ISwitch) {
-
-    
+export function Switch({ active, setModalUpdate }: ISwitch) {
   return (
     <>
       <div className='d-block'>

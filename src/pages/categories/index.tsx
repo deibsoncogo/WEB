@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import React from 'react'
-import { MakeCategoriesPage } from '../../application/factories/pages/categories/categories-factory'
+import { MakeCategoryPage } from '../../application/factories/pages/categories/categories-factory'
+
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 
@@ -18,7 +19,7 @@ function Categories() {
           <HeaderWrapper title='Categorias' />
 
           <div id='kt_content_container' className='container'>
-            <MakeCategoriesPage />
+            <MakeCategoryPage />
           </div>
         </div>
       </div>

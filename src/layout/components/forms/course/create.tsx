@@ -41,11 +41,11 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
   const [loading, setLoading] = useState(true)
   const [registerCourse, setRegisterCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
-  const [imageUpload, setImageUpload] = useState<File>()
+  const [imageUpload, setImageUpload] = useState<File | null>(null)
   const [filesUpload, setFilesUpload] = useState<FileUpload[]>([])
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
- 
+
   function handleChange(event: any) {
     setStateEditor({ content: event })
   }
@@ -93,12 +93,6 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
     }
   }
 
-
-  const handleSingleImageUpload = (file?: File) => {
-    setImageUpload(file)
-  }
-
-
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
 
@@ -116,35 +110,33 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
 
   async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
-   
+
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        photo: Yup.mixed().required('Imagem é necessária'),              
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
-        accessTime: Yup.number().typeError('Tempo de acesso deve ser um número')
-        .required('Tempo de acesso é necessário')
-        .positive("Tempo de acesso deve ser positivo")
-        .integer("Tempo de acesso deve ser um número inteiro."),
+        accessTime: Yup.number()
+          .typeError('Tempo de acesso deve ser um número')
+          .required('Tempo de acesso é necessário')
+          .positive('Tempo de acesso deve ser positivo')
+          .integer('Tempo de acesso deve ser um número inteiro.'),
         price: Yup.string().required('Preço é necessário'),
-        installments: Yup.number().typeError('Quantidade de parcelas deve ser um número')
-        .required('Quantidade de parcelas é necessário')
-        .positive("Quantidade de parcelas deve ser positiva")
-        .integer("Quantidade de parcelas deve ser um número inteiro"),
+        installments: Yup.number()
+          .typeError('Quantidade de parcelas deve ser um número')
+          .required('Quantidade de parcelas é necessário')
+          .positive('Quantidade de parcelas deve ser positiva')
+          .integer('Quantidade de parcelas deve ser um número inteiro'),
         discount: Yup.string().required('Desconto é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         content: Yup.string().required('Conteúdo programático é necessário'),
-       
       })
 
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
-      courseClass.length == 0? setHasErrorClass(true): handleCreateCourse(data)      
-      
-     
-     
+      if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
+      courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -153,6 +145,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
           validationErrors[error.path] = error.message
         })
         formRef.current.setErrors(validationErrors)
+        if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
       }
     }
   }
@@ -176,19 +169,19 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
     const formData = new FormData();
     if(imageUpload && filesUpload){
       formData.append('image', imageUpload); 
-      filesUpload.map(file => {
+      filesUpload.forEach(file => {
         if(file?.file)
            formData.append('attachments', file.file)
         formData.append('filesName',  file.name)
       })
-    }       
-    formData.append('course', JSON.stringify(course))    
+    }
+    formData.append('course', JSON.stringify(course))
 
     setRegisterCourse(true)
        createCourse
       .create(formData)
       .then(() => {
-        toast.success('Curso criado com sucesso!')       
+        toast.success('Curso criado com sucesso!')
         router.push('/courses')
       })
       .catch(() => toast.error('Não foi possível criar o curso!'))
@@ -198,10 +191,9 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
 
   return (
     <>
-   
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do Curso</h3>
-        <InputImage name='photo' handleSingleImageUpload = {handleSingleImageUpload} />
+        <InputImage name='photo'/>
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />
@@ -265,23 +257,22 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
 
         <Input name='content' hidden={true} />
 
-               
-        <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>        
+        <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>
         <FilesInternalTable filesUpload={filesUpload} />
 
         {hasErrorClass && (
-        <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
-          <strong>Não é possível criar curso!</strong>
-          Você precisa adicionar, no mínimo, uma aula.
-          <button
-            type='button'
-            onClick={() => setHasErrorClass(false)}
-            className='btn-close'
-            data-bs-dismiss='alert'
-            aria-label='Close'
-          ></button>
-        </div>
-      )}
+          <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
+            <strong>Não é possível criar curso!</strong>
+            Você precisa adicionar, no mínimo, uma aula.
+            <button
+              type='button'
+              onClick={() => setHasErrorClass(false)}
+              className='btn-close'
+              data-bs-dismiss='alert'
+              aria-label='Close'
+            ></button>
+          </div>
+        )}
         <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
         <CoursesInternalTable courseClassArray={courseClass} />
 

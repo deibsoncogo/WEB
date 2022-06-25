@@ -4,7 +4,7 @@ import { useField } from '@unform/core'
 
 interface IInputImage extends InputHTMLAttributes<HTMLInputElement> {
   name: string
-  handleSingleImageUpload?: (file?: File) => void
+  handleSingleImageUpload?: (file: File | null) => void
 }
 
 export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputImage) {
@@ -25,6 +25,12 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
 
     if (handleSingleImageUpload) handleSingleImageUpload(file)
   }, [])
+
+  const removeImage = () => {
+    setPreview(null)
+    if (!!handleSingleImageUpload)
+      handleSingleImageUpload(null)
+  }
 
   useEffect(() => {
     registerField({
@@ -77,10 +83,7 @@ export function InputImage({ name, handleSingleImageUpload, ...rest }: IInputIma
       
       {preview && (
         <button
-          onClick={() => {
-            setPreview(null)
-            if (handleSingleImageUpload) handleSingleImageUpload()            
-          }}
+          onClick={removeImage}
           className='btn btn-primary ms-5 mt-5'
         >
           Remover imagem

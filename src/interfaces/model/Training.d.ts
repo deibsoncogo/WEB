@@ -5,9 +5,8 @@ interface ITrainings {
   discount: number
   description: string
   categoryId: string
-  isChatActive: boolean
-  streamingDate: string
-  streamingHour: string
+  active: boolean
+  streamings: Streaming[]
   imageUrl: string
   teacher: TrainingTeacher
 }
@@ -15,4 +14,10 @@ interface ITrainings {
 interface TrainingTeacher {
   id: string
   name: string
+}
+
+interface Streaming {
+  id: string
+  hour: string
+  date: string
 }

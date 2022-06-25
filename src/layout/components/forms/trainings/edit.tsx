@@ -1,13 +1,14 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import React, { forwardRef } from 'react'
+import { forwardRef } from 'react'
 import { IStreaming } from '../../../../domain/models/streaming'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { KTSVG } from '../../../../helpers'
 import CustomButton from '../../buttons/CustomButton'
 import { DatePicker, Input, Select, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
-import { InputImage } from '../../inputs/input-image'
+import { InputNumber } from '../../inputs/input-number'
+import { InputSingleImage } from '../../inputs/input-single-image'
 import { SelectAsync } from '../../inputs/selectAsync'
 import { StreamingTable } from '../../tables/streaming-list'
 
@@ -39,7 +40,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
   return (
     <Form className='form' ref={ref} onSubmit={onSubmit}>
       <h3 className='mb-5'>Informações do Treinamento</h3>
-      <InputImage name='photo' />
+      <InputSingleImage name='image' />
 
       <div className='container p-0'>
         <div className='row'>
@@ -55,12 +56,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
 
             <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
             <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
-            <Input
-              name='installments'
-              label='Quantidade de Parcelas'
-              classes='h-75px'
-              type='number'
-            />
+            <InputNumber name='installments' label='Quantidade de Parcelas' classes='h-75px' />
           </div>
 
           <div className='col d-flex flex-column align-items-stretch justify-content-between'>
@@ -104,8 +100,8 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
 
         <div className='row d-flex'>
           <div className='col-3'>
-            <Select name='zoomUserId' label='Usuário do Zoom'>
-              <option value='' disabled>
+            <Select name='zoomUserId' label='Usuário do Zoom' defaultValue=''>
+              <option disabled value=''>
                 Selecione
               </option>
               {zoomUsersOptions.map(({ label, value }) => (

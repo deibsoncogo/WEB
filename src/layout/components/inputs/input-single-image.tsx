@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { ChangeEvent, useRef, useEffect, useCallback, useState, InputHTMLAttributes } from 'react'
 import { useField } from '@unform/core'
 
@@ -93,6 +94,7 @@ export function InputSingleImage({ name, ...rest }: IInputImage) {
             name={`${name}Preview`}
             onChangeCapture={clearErrorPreview}
             value={preview}
+            readOnly
           />
           <input
             id='upload-photo'
