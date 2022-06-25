@@ -10,7 +10,6 @@ interface IRow {
 }
 
 export function Row({ index, liveDate, time, start, startUrl, removeStreamItem }: IRow) {
-  console.log(startUrl)
   return (
     <tr>
       <td className='ps-4'>

@@ -1,9 +1,7 @@
-import { Loading } from '../../loading/loading'
-import { Pagination } from '../../pagination/Pagination'
-import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { MakeTrainingsRow } from '../../../../application/factories/components/rows/trainingsRow'
+import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { ITraining } from '../../../../domain/models/training'
-import { useState } from 'react'
+import { Pagination } from '../../pagination/Pagination'
 
 type ITrainingsTable = {
   trainings: ITraining[]
