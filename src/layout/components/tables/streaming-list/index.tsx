@@ -17,7 +17,7 @@ export function StreamingTable({ streamList, removeStreamItem }: IStreamingTable
                 <th className='text-dark ps-4 min-w-100px rounded-start'>Data de Transmissão</th>
                 <th className='text-dark min-w-100px'>Horário de Início</th>
                 <th className='text-dark min-w-100px'>Iniciar</th>
-                <th className='text-dark min-w-50px text-end rounded-end' />
+                <th className='text-dark min-w-50px text-start rounded-end'>Ação</th>
               </tr>
             </thead>
 
