@@ -19,7 +19,6 @@ export async function getOptionsFromSearchRequest(
 
     return options
   } catch (e: any) {
-    console.log('aqui', e)
     toast.error(e?.message)
     return []
   }

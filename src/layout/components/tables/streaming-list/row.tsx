@@ -5,11 +5,12 @@ interface IRow {
   liveDate: string
   time: string
   start?: boolean
-  startUrl?: string
+  startUrl: string
   removeStreamItem: (index: number) => void
 }
 
 export function Row({ index, liveDate, time, start, startUrl, removeStreamItem }: IRow) {
+  console.log(startUrl)
   return (
     <tr>
       <td className='ps-4'>
@@ -19,7 +20,7 @@ export function Row({ index, liveDate, time, start, startUrl, removeStreamItem }
         <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>{time}</span>
       </td>
       <td>
-        {start && (
+        {start && startUrl && (
           <a href={startUrl} target='_blank' rel='noreferrer'>
             <button
               type='button'
