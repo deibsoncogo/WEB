@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-import { Input, Select, TextArea } from '../../../inputs'
+import { Input, InputNumber, Select, TextArea } from '../../../inputs'
 import { ICategory } from '../../../../../interfaces/api-response/categoryResponse'
 import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { toast } from 'react-toastify'
@@ -16,7 +16,6 @@ import { IGetCourse } from '../../../../../domain/usecases/interfaces/course/get
 import { ICourseResponse } from '../../../../../interfaces/api-response/courseResponse'
 import { currenceMaskOnlyValue } from '../../../../formatters/currenceFormatter'
 import { UpdateCourse } from '../../../../../domain/models/updateCourse'
-import { InputImage } from '../../../inputs/input-image'
 import { Editor } from '@tinymce/tinymce-react'
 import { Loading } from '../../../loading/loading'
 import { IGetAllAttachmentByCourseId } from '../../../../../domain/usecases/interfaces/courseAttachment/getAllAttachmentByCourseId'
@@ -30,6 +29,8 @@ import FilesInternalTable from './filesUpload/filesInternalTable'
 import { DeleteFileUpload } from '../../../../../domain/models/deleteFile'
 import { appRoutes } from '../../../../../application/routing/routes'
 import CustomButton from '../../../buttons/CustomButton'
+import { InputSingleImage } from '../../../inputs/input-single-image'
+import { FullLoading } from '../../../FullLoading/FullLoading'
 
 type Props = {
   updateCourse: IUpdateCourse
@@ -90,6 +91,7 @@ export function FormUpdateCourse(props: Props) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
+        imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number()
@@ -99,14 +101,11 @@ export function FormUpdateCourse(props: Props) {
           .integer('Tempo de acesso deve ser um número inteiro.'),
         price: Yup.string().required('Preço é necessário'),
         installments: Yup.number()
+          .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1')
           .typeError('Quantidade de parcelas deve ser um número')
-          .required('Quantidade de parcelas é necessário')
-          .positive('Quantidade de parcelas deve ser positiva')
-          .integer('Quantidade de parcelas deve ser um número inteiro'),
-        discount: Yup.string().required('Desconto é necessário'),
+          .required('Quantidade de parcelas é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
-        content: Yup.string().required('Conteúdo progrmático é necessário'),
       })
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
@@ -181,6 +180,10 @@ export function FormUpdateCourse(props: Props) {
 
       if (typeof props.id == 'string') {
        const data =  await props.getCourse.get(props.id)
+       console.log(data)
+       formRef.current?.setFieldValue('imagePreview', data.imageUrl) 
+       formRef.current?.setFieldValue('installments', data.installments)
+       formRef.current?.setFieldValue('accessTime', data?.accessTime)
        setDefaultValue(data)
        setStateEditor({ content: data.content })
        setAttachment(await props.getAttachments.getAllByCourseId(props.id))
@@ -205,10 +208,10 @@ export function FormUpdateCourse(props: Props) {
   
   return (
     <>
-      {loading? <Loading />:        
-        (<Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+      {loading && <FullLoading />}      
+        <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
           <h3 className='mb-5'>Informações do Curso</h3>
-          <InputImage name='photo'/>
+          <InputSingleImage name='image' />
           <div className='d-flex flex-row gap-5 w-100'>
             <div className='w-50'>
               <Input name='name' label='Nome' />
@@ -232,8 +235,8 @@ export function FormUpdateCourse(props: Props) {
                   }
                 })}
               </Select>
-              <Input name='accessTime' type='number' label='Tempo de acesso ao curso (em meses)' />
-              <Input
+              <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
+             <Input
                 name='price'
                 defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
                 label='Preço'
@@ -274,7 +277,7 @@ export function FormUpdateCourse(props: Props) {
                   }
                 })}
               </Select>
-              <Input name='installments' label='Quantidade de Parcelas' type='number' />
+              <InputNumber name='installments' label='Quantidade de Parcelas'/>  
             </div>
           </div>
 
@@ -345,8 +348,7 @@ export function FormUpdateCourse(props: Props) {
               disabled={updateCourse}
             />          
           </div>
-        </Form>
-      )}
+        </Form>      
     </>
   )
 }

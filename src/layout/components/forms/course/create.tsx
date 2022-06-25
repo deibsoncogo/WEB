@@ -4,9 +4,9 @@ import { useRouter } from 'next/router'
 
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
-import { FormHandles, useField } from '@unform/core'
+import { FormHandles} from '@unform/core'
 
-import { Input, Select, TextArea } from '../../inputs'
+import { Input, InputNumber, Select, TextArea } from '../../inputs'
 import { ICreateCourse } from '../../../../domain/usecases/interfaces/course/createCourse'
 
 import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
@@ -14,7 +14,6 @@ import { toast } from 'react-toastify'
 import { IUserPartialResponse } from '../../../../interfaces/api-response/userPartialResponse'
 import { CreateCourse } from '../../../../domain/models/createCourse'
 import { Editor } from '@tinymce/tinymce-react'
-import { InputImage } from '../../inputs/input-image'
 import { CourseClass } from '../../../../domain/models/courseClass'
 import CoursesInternalTable from './courseInternalTable'
 import FilesInternalTable from './filesUpload/filesInternalTable'
@@ -26,6 +25,7 @@ import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAll
 import { Role } from '../../../../domain/usecases/interfaces/user/role'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { SelectAsync } from '../../inputs/selectAsync'
+import { InputSingleImage } from '../../inputs/input-single-image'
 
 type Props = {
   createCourse: ICreateCourse
@@ -114,6 +114,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
+        imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number()
@@ -123,14 +124,11 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
           .integer('Tempo de acesso deve ser um número inteiro.'),
         price: Yup.string().required('Preço é necessário'),
         installments: Yup.number()
+          .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1')
           .typeError('Quantidade de parcelas deve ser um número')
-          .required('Quantidade de parcelas é necessário')
-          .positive('Quantidade de parcelas deve ser positiva')
-          .integer('Quantidade de parcelas deve ser um número inteiro'),
-        discount: Yup.string().required('Desconto é necessário'),
+          .required('Quantidade de parcelas é necessário'),       
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
-        content: Yup.string().required('Conteúdo programático é necessário'),
       })
 
       data.content = stateEditor.content
@@ -167,9 +165,9 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
     )
 
     const formData = new FormData();
-    if(imageUpload && filesUpload){
-      formData.append('image', imageUpload); 
-      filesUpload.forEach(file => {
+    if(data?.image){
+      formData.append('image', data.image); 
+      filesUpload?.forEach(file => {
         if(file?.file)
            formData.append('attachments', file.file)
         formData.append('filesName',  file.name)
@@ -193,7 +191,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do Curso</h3>
-        <InputImage name='photo'/>
+        <InputSingleImage name='image' />
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />
@@ -205,7 +203,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               placeholder='Digite o nome do professor'
             />
             
-            <Input name='accessTime' type='number' label='Tempo de acesso ao curso (em meses)' />
+            <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />          
             <Input
               name='price'
               label='Preço'
@@ -230,7 +228,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               classes='h-75px'
               placeholder='Digite o nome da categoria'
             />
-            <Input name='installments' label='Quantidade de Parcelas' type='number' />
+            <InputNumber name='installments' label='Quantidade de Parcelas' />           
           </div>
         </div>
 
