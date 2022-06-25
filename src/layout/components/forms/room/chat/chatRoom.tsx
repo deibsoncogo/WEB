@@ -24,7 +24,7 @@ export function ChatInner({ getAllChatRooms, createChatRoom }: props) {
   const { id } = router.query
 
   const IsPreviousDateDifferentFromCurrent = (index: number) => {
-    console.log(messages?.length)
+    
     if (messages?.length > 1 && index >= 1) {
       return messages[index - 1].date !== messages[index]?.date
     }
