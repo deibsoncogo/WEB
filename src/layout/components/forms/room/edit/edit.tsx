@@ -183,7 +183,8 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
         formRef.current?.setFieldValue('userId-label', data.teacherName)
         formRef.current?.setFieldValue('categoryId', data.categoryId)
         formRef.current?.setFieldValue('categoryId-label', data.categoryName)
-        formRef.current?.setFieldValue('imagePreview', data.imageUrl)       
+        formRef.current?.setFieldValue('imagePreview', data.imageUrl)    
+        formRef.current?.setFieldValue('installments', data.installments)   
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
         inputRefChat.current.checked = data.isChatActive
         inputRefChat.current.value = data.isChatActive
