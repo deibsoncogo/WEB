@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { IToken } from '../../interfaces/application/token'
 import jwtDecode from 'jwt-decode'
 
+
 export const roles = { ADMIN: 'admin', TEACHER: 'teacher' }
 
 export function AuthWrapper({ children }: any) {
@@ -23,23 +24,23 @@ export function AuthWrapper({ children }: any) {
         return
       } else {
         setIsAuthenticate(true)
-        switch (values.role) {
-          case roles.ADMIN:
-            setHasPermission(true)
-            return
-          case roles.TEACHER:
-            professorRoutes.includes(currentRoute) ? setHasPermission(true) : route.push('/')
-            return
-          default:
-            setHasPermission(false)
+
+        if((values.role === roles.ADMIN) || (values.role == roles.TEACHER && professorRoutes.includes(currentRoute))){
+          setHasPermission(true)
         }
+        else{
+          setHasPermission(false)   
+          route.push('/')       
+       }        
       }
-    } else {
-      route.push('/')
     }
+    else{
+      route.push('/')
+    } 
+
   }, [rotas])
 
   if (rotas !== currentRoute || !rotas) setRotas(currentRoute)
 
-  return isAuthenticated && hasPermission ? children : null
+  return isAuthenticated && hasPermission && children
 }
