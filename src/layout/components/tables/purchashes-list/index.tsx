@@ -28,7 +28,7 @@ export function PurchasesTable({ userId, purchases }: Props) {
         <tbody>
           {purchases.length === 0 && (
             <tr>
-              <td colSpan={5} className='text-center fs-7'>
+              <td colSpan={5} className='text-center fs-7 pt-5 pb-8'>
                 Nenhuma compra feita!
               </td>
             </tr>

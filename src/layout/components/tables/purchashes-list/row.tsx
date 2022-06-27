@@ -30,7 +30,9 @@ export function Row({ date, transactionId, totalPrice, status, userId }: IPartia
       </td>
       <td>
         <Link href={`/users/edit/${userId}/purchase/${transactionId}`}>
-          Visualizar
+          <a className='btn btn-link btn-sm'>
+            Visualizar
+          </a>
         </Link>
       </td>
     </tr>

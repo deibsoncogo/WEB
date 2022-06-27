@@ -19,14 +19,14 @@ export function ProductsTable({ products, setProducts }: Props) {
           <tr className='fw-bolder text-muted bg-light'>
             <th className={`text-dark ps-4 min-w-300px rounded-start cursor-pointer`}>Produto</th>
             <th className={`text-dark min-w-100px cursor-pointer`}>Data de Expiração</th>
-            <th className={`text-dark cursor-pointer`} />
+            <th className={`text-dark cursor-pointer`}>Ação</th>
           </tr>
         </thead>
 
         <tbody>
           {products.length === 0 && (
             <tr>
-              <td colSpan={3} className='text-center fs-7'>
+              <td colSpan={3} className='text-center fs-7 pt-5 pb-8'>
                 Nenhum produto foi concedido!
               </td>
             </tr>
