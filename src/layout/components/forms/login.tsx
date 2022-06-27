@@ -7,14 +7,13 @@ import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
 import { Input } from '../inputs'
-import { api } from '../../../application/services/api'
 
-import { IAuthResponse } from '../../../interfaces/api-response/authResponse'
 import jwtDecode from 'jwt-decode'
 import { IToken } from '../../../interfaces/application/token'
 import { toast } from 'react-toastify'
 import { IUserSignIn } from '../../../domain/usecases/interfaces/user/userSignIn'
 import { UserSignIn } from '../../../domain/models/userSignIn'
+import { Button } from '../buttons/CustomButton'
 
 type Props = {
   userLogin: IUserSignIn
@@ -23,6 +22,7 @@ export function FormLogin(props: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
+  const [loading, setLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -58,6 +58,7 @@ export function FormLogin(props: Props) {
 
   async function handleSignIn(data: IFormLogin) {
     setHasError(false)
+    setLoading(true)
     try {
       const response = await props.userLogin.signIn(new UserSignIn(data.email, data.password))
       localStorage.setItem('name', response.name)
@@ -69,6 +70,8 @@ export function FormLogin(props: Props) {
     } catch (err: any) {
       setHasError(true)
       setMessage(err.message)
+    } finally {
+      setLoading(false)
     }
   }
   return (
@@ -93,9 +96,12 @@ export function FormLogin(props: Props) {
         <Link href='/password'>Esqueceu a senha?</Link>
       </div>
 
-      <button type='submit' className='btn btn-lg btn-primary w-100 mb-5'>
-        Entrar
-      </button>
+      <Button
+        title='Entrar'
+        type='submit'
+        loading={loading}
+        customClasses={['btn-primary', 'mb-5', 'w-100']}
+      />
     </Form>
   )
 }

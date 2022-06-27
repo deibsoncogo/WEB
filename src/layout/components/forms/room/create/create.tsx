@@ -18,7 +18,7 @@ import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
 import { CreateRoom } from '../../../../../domain/models/createRoom'
 import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
-import CustomButton from '../../../buttons/CustomButton'
+import { Button } from '../../../buttons/CustomButton'
 
 type Props = {
   createRoom: ICreateRoom
@@ -216,7 +216,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
         </div>
 
         <div className='d-flex mt-10'>
-          <CustomButton
+          <Button
             customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
@@ -225,7 +225,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
               router.push(appRoutes.ROOMS)
             }}
           />
-          <CustomButton
+          <Button
             type='submit'
             customClasses={['w-180px', 'btn-primary']}
             title='Salvar'

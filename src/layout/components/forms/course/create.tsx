@@ -19,7 +19,7 @@ import { CourseClass } from '../../../../domain/models/courseClass'
 import CoursesInternalTable from './courseInternalTable'
 import FilesInternalTable from './filesUpload/filesInternalTable'
 import { FileUpload } from '../../../../domain/models/fileUpload'
-import CustomButton from '../../buttons/CustomButton'
+import { Button } from '../../buttons/CustomButton'
 import { appRoutes } from '../../../../application/routing/routes'
 import { IGetCategories } from '../../../../domain/usecases/interfaces/category/getCategories'
 import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAllUsers'
@@ -33,7 +33,7 @@ type Props = {
   getUsers: IGetAllUsers
 }
 
-export function FormCreateCourse({createCourse, getCategories, getUsers}: Props) {
+export function FormCreateCourse({ createCourse, getCategories, getUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [categories, setCategories] = useState<ICategory[]>([])
@@ -49,7 +49,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
   function handleChange(event: any) {
     setStateEditor({ content: event })
   }
- 
+
   const searchTeachers = async (teacherName: string) => {
     try {
       const { data } = await getUsers.getAll({
@@ -135,7 +135,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
 
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
-      if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
+      if (!imageUpload) return formRef.current.setFieldError('photo', 'Imagem é necessária')
       courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
     } catch (err) {
       const validationErrors = {}
@@ -178,15 +178,14 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
     formData.append('course', JSON.stringify(course))
 
     setRegisterCourse(true)
-       createCourse
+    createCourse
       .create(formData)
       .then(() => {
         toast.success('Curso criado com sucesso!')
         router.push('/courses')
       })
       .catch(() => toast.error('Não foi possível criar o curso!'))
-      .finally(() => setRegisterCourse(false))         
-      
+      .finally(() => setRegisterCourse(false))
   }
 
   return (
@@ -204,7 +203,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               classes='h-75px'
               placeholder='Digite o nome do professor'
             />
-            
+
             <Input name='accessTime' type='number' label='Tempo de acesso ao curso (em meses)' />
             <Input
               name='price'
@@ -277,9 +276,8 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
         <CoursesInternalTable courseClassArray={courseClass} />
 
         <div className='d-flex mt-10'>
-         
-          <CustomButton
-            customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          <Button
+            customClasses={['btn-secondary', 'w-125px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
             loading={registerCourse}
@@ -287,14 +285,13 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               router.push(appRoutes.COURSES)
             }}
           />
-          <CustomButton
+          <Button
             type='submit'
-            customClasses={['w-180px', 'btn-primary']}
+            customClasses={['w-125px', 'btn-primary']}
             title='Salvar'
             disabled={registerCourse}
           />
-          
-          </div>
+        </div>
       </Form>
     </>
   )

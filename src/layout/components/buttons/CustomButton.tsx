@@ -3,16 +3,25 @@ import { Spinner } from 'react-bootstrap'
 
 interface CustomButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   title: string
+  size?: 'sm' | 'lg' | 'icon'
   loading?: boolean
   customClasses: string[]
 }
-function CustomButton({ title, loading = false, customClasses = [], ...props }: CustomButtonProps) {
+
+function Button({
+  title,
+  size = 'lg',
+  loading = false,
+  customClasses = [],
+  ...props
+}: CustomButtonProps) {
   const buttonClasses = [
-    'btn btn-lg',
-    'mb-5',
+    'btn',
+    `btn-${size === 'icon' ? 'icon' : 'lg'}`,
+    `button-size-${size}`,
+    'd-flex',
     'align-items-center',
     'justify-content-center',
-    'd-flex ',
   ]
 
   buttonClasses.push(...customClasses)
@@ -24,4 +33,4 @@ function CustomButton({ title, loading = false, customClasses = [], ...props }: 
   )
 }
 
-export default CustomButton
+export { Button }

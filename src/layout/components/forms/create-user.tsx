@@ -17,6 +17,7 @@ import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 import { validateStringWithNumber } from '../../../helpers'
+import { Button } from '../buttons/CustomButton'
 
 type Props = {
   userRegister: IUserSignUp
@@ -232,20 +233,17 @@ export function FormCreateUser({ userRegister }: Props) {
         </button>
       </div>
 
-      <div className='mb-10 d-flex justify-content-between '>
-        <button
+      <div className='d-flex mt-10'>
+        <Button
+          title='Cancelar'
           type='button'
+          customClasses={['btn-secondary', 'ms-auto', 'me-10']}
           onClick={() => {
             router.push('/users')
           }}
-          className='btn btn-lg btn-secondary w-150px mb-5'
-        >
-          Cancelar
-        </button>
+        />
 
-        <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
-          Salvar
-        </button>
+        <Button type='submit' title='Salvar' customClasses={['btn-primary']} />
       </div>
 
       <ProductsModal

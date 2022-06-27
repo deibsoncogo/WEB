@@ -29,7 +29,7 @@ import { CourseClass } from '../../../../../domain/models/courseClass'
 import FilesInternalTable from './filesUpload/filesInternalTable'
 import { DeleteFileUpload } from '../../../../../domain/models/deleteFile'
 import { appRoutes } from '../../../../../application/routing/routes'
-import CustomButton from '../../../buttons/CustomButton'
+import { Button } from '../../../buttons/CustomButton'
 
 type Props = {
   updateCourse: IUpdateCourse
@@ -177,36 +177,33 @@ export function FormUpdateCourse(props: Props) {
   }
 
   async function fetchData() {
-    try{      
-
+    try {
       if (typeof props.id == 'string') {
-       const data =  await props.getCourse.get(props.id)
-       setDefaultValue(data)
-       setStateEditor({ content: data.content })
-       setAttachment(await props.getAttachments.getAllByCourseId(props.id))
-       setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
-      }       
+        const data = await props.getCourse.get(props.id)
+        setDefaultValue(data)
+        setStateEditor({ content: data.content })
+        setAttachment(await props.getAttachments.getAllByCourseId(props.id))
+        setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
+      }
       setCategories(await props.getCategories.get())
-      setUsers(await props.getUsers.getAllByRole(new UserQueryRole(roles.TEACHER)))     
-    }
-    catch(error){
-      toast.error("Não foi possível carregar os dados")
-    }
-    finally{
+      setUsers(await props.getUsers.getAllByRole(new UserQueryRole(roles.TEACHER)))
+    } catch (error) {
+      toast.error('Não foi possível carregar os dados')
+    } finally {
       setLoading(false)
     }
-
   }
- 
+
   useEffect(() => {
-    fetchData()      
+    fetchData()
   }, [])
 
-  
   return (
     <>
-      {loading? <Loading />:        
-        (<Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+      {loading ? (
+        <Loading />
+      ) : (
+        <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
           <h3 className='mb-5'>Informações do Curso</h3>
           <InputImage name='photo' handleSingleImageUpload={setImageUpload} />
           <div className='d-flex flex-row gap-5 w-100'>
@@ -329,7 +326,7 @@ export function FormUpdateCourse(props: Props) {
           />
 
           <div className='d-flex mt-10'>
-            <CustomButton
+            <Button
               customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
               title='Cancelar'
               type='button'
@@ -338,12 +335,13 @@ export function FormUpdateCourse(props: Props) {
                 router.push(appRoutes.COURSES)
               }}
             />
-            <CustomButton
+
+            <Button
               type='submit'
-              customClasses={['w-180px', 'btn-primary']}
+              customClasses={['w-150px', 'btn-primary']}
               title='Salvar'
               disabled={updateCourse}
-            />          
+            />
           </div>
         </Form>
       )}

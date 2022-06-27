@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
-import CustomButton from '../buttons/CustomButton'
+import { Button } from '../buttons/CustomButton'
 
 type ConfirmationModalProps = {
   loading: boolean
@@ -23,22 +23,26 @@ function ConfirmationModal({
       <Modal.Header closeButton>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
+
       <Modal.Body>{content}</Modal.Body>
+
       <Modal.Footer>
-        <CustomButton
+        <Button
           type='button'
-          customClasses={['btn-primary', 'w-25']}
           title='Confirmar'
           onClick={onConfimation}
           disabled={loading}
+          size='sm'
+          customClasses={['btn-primary', 'mb-5']}
         />
 
-        <CustomButton
+        <Button
           type='button'
-          customClasses={['btn-secondary', 'mb-5', 'px-20']}
           title='Cancelar'
           loading={loading}
           onClick={onRequestClose}
+          size='sm'
+          customClasses={['btn-secondary', 'mb-5', 'px-20']}
         />
       </Modal.Footer>
     </Modal>
