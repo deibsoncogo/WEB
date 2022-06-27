@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { IToggleTrainingStatus } from '../../../../domain/usecases/interfaces/trainings/toggleTrainingStatus'
 import { KTSVG } from '../../../../helpers'
+import { maskedToMoney } from '../../../formatters/currenceFormatter'
 import ConfirmationModal from '../../modal/ConfirmationModal'
 
 interface IRow {
@@ -98,7 +99,7 @@ export function Row({
         </span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{price}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{maskedToMoney(price)}</span>
       </td>
       <td>
         <span className='text-dark fw-bold d-block fs-7'>{teacherName}</span>

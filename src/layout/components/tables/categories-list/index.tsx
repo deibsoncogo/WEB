@@ -65,24 +65,25 @@ export default function CategoriesTable({
         content='Você tem certeza que deseja excluir esta categoria?'
         title='Deletar'
       />
-      {categories.length > 0 && (<>
-        <div className='card-body py-3'>
-          <div className='table-responsive'>
-            <table className='table align-middle gs-0 gy-4 datatable'>
-              <thead>
-                <tr className='fw-bolder text-muted bg-light d-flex justify-content-between'>
-                  <th
-                    role='columnheader'
-                    className={getColumnHeaderClasses('name')}
-                    onClick={() => handleOrdenation('name')}
-                  >
-                    Nome
-                  </th>
-                  <th className='text-dark rounded-end' style={{ minWidth: '150px' }}>
-                    Ações
-                  </th>
-                </tr>
-              </thead>
+      {categories.length > 0 && (
+        <>
+          <div className='card-body py-3'>
+            <div className='table-responsive'>
+              <table className='table align-middle gs-0 gy-4 datatable'>
+                <thead>
+                  <tr className='fw-bolder text-muted bg-light d-flex justify-content-between'>
+                    <th
+                      role='columnheader'
+                      className={getColumnHeaderClasses('name')}
+                      onClick={() => handleOrdenation('name')}
+                    >
+                      Nome
+                    </th>
+                    <th className='text-dark rounded-end' style={{ minWidth: '150px' }}>
+                      Ação
+                    </th>
+                  </tr>
+                </thead>
 
                 <tbody className='w-100'>
                   {categories?.map((category) => (
