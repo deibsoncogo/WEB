@@ -51,8 +51,7 @@ export function FormUpdateCourse(props: Props) {
   const [courseClass, setCourseClass] = useState<ICourseClassResponse[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
   const [defaultValue, setDefaultValue] = useState<ICourseResponse>()
-  const [imageUpload, setImageUpload] = useState<File | null>(null)
-
+ 
   const [loading, setLoading] = useState(true)
   const [updateCourse, setUpdateCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
@@ -107,8 +106,7 @@ export function FormUpdateCourse(props: Props) {
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
       data.content = stateEditor.content
-      await schema.validate(data, { abortEarly: false })
-      if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
+      await schema.validate(data, { abortEarly: false })     
       courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
     } catch (err) {
       const validationErrors = {}
@@ -117,8 +115,7 @@ export function FormUpdateCourse(props: Props) {
           // @ts-ignore
           validationErrors[error.path] = error.message
         })
-        formRef.current.setErrors(validationErrors)
-        if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
+        formRef.current.setErrors(validationErrors)      
       }
     }
   }
@@ -145,8 +142,8 @@ export function FormUpdateCourse(props: Props) {
     )
 
     const formData = new FormData()
-    if (imageUpload) {
-      formData.append('image', imageUpload)
+    if (data?.image) {
+      formData.append('image', data?.image)
     }
 
     if (filesUploadUpdate) {
@@ -157,7 +154,7 @@ export function FormUpdateCourse(props: Props) {
     }
 
     if (IdDeletedCourseClass.length > 0) {
-      IdDeletedCourseClass.map((id) => {
+      IdDeletedCourseClass.forEach((id) => {
         formData.append('deleteCourses', id)
       })
     }
@@ -308,6 +305,7 @@ export function FormUpdateCourse(props: Props) {
             filesUpload={attachments}
             IdDeletedFiles={IdDeletedFiles}
             filesUploadUpdate={filesUploadUpdate}
+            formRef={formRef}
           />
 
           {hasErrorClass && (
@@ -328,6 +326,7 @@ export function FormUpdateCourse(props: Props) {
             courseClassArray={courseClass}
             IdDeletedCourseClass={IdDeletedCourseClass}
             courseClassUpdate={courseClassUpdate}
+            formRef={formRef}
           />
 
           <div className='d-flex mt-10'>

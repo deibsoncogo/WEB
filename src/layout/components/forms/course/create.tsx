@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import {useRef, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
@@ -36,14 +36,10 @@ type Props = {
 export function FormCreateCourse({createCourse, getCategories, getUsers}: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
-  const [categories, setCategories] = useState<ICategory[]>([])
-  const [users, setUsers] = useState<IUserPartialResponse[]>([])
-  const [loading, setLoading] = useState(true)
   const [registerCourse, setRegisterCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
-  const [imageUpload, setImageUpload] = useState<File | null>(null)
-  const [filesUpload, setFilesUpload] = useState<FileUpload[]>([])
-  const [courseClass, setCourseClass] = useState<CourseClass[]>([])
+  const [filesUpload] = useState<FileUpload[]>([])
+  const [courseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
 
   function handleChange(event: any) {
@@ -132,7 +128,6 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
 
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
-      if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
       courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
     } catch (err) {
       const validationErrors = {}
@@ -141,8 +136,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
           // @ts-ignore
           validationErrors[error.path] = error.message
         })
-        formRef.current.setErrors(validationErrors)
-        if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
+        formRef.current.setErrors(validationErrors)        
       }
     }
   }
@@ -256,7 +250,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
         <Input name='content' hidden={true} />
 
         <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>
-        <FilesInternalTable filesUpload={filesUpload} />
+        <FilesInternalTable filesUpload={filesUpload} formRef={formRef} />
 
         {hasErrorClass && (
           <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
@@ -272,7 +266,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
           </div>
         )}
         <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
-        <CoursesInternalTable courseClassArray={courseClass} />
+        <CoursesInternalTable courseClassArray={courseClass} formRef={formRef} />
 
         <div className='d-flex mt-10'>
          
