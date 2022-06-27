@@ -16,12 +16,18 @@ import { restrictNumberInput } from '../../../utils/restrictNumberInput'
 import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
+import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
+import { IGetAllPlans } from '../../../domain/usecases/interfaces/plans/getAllPlans'
+import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 
 type Props = {
   userRegister: IUserSignUp
+  getCourses: IGetAllCourses
+  getPlans: IGetAllPlans
+  getTrainings: IGetAllTrainings
 }
 
-export function FormCreateUser({ userRegister }: Props) {
+export function FormCreateUser({ userRegister, getCourses, getPlans, getTrainings }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -243,7 +249,11 @@ export function FormCreateUser({ userRegister }: Props) {
         onRequestClose={() => {
           setIsProductsModalOpen(false)
         }}
+        grantedProducts={grantedProducts}
         onAddProduct={setGrantedProducts}
+        getCourses={getCourses}
+        getPlans={getPlans}
+        getTrainings={getTrainings}
       />
     </Form>
   )
