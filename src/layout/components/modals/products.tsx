@@ -1,6 +1,6 @@
 import Modal from 'react-modal'
 import { Form } from '@unform/web'
-import { FormHandles, SubmitHandler } from '@unform/core'
+import { FormHandles } from '@unform/core'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import { KTSVG } from '../../../helpers'
@@ -33,7 +33,6 @@ type SelectedProduct = {
 export function ProductsModal({
   isOpen,
   modalTitle,
-  action,
   onRequestClose,
   grantedProducts,
   onAddProduct,
@@ -106,7 +105,7 @@ export function ProductsModal({
     }
   }
 
-  function handleAddProducts() {        
+  function handleAddProducts() {  
     if(checkIfAProductIsGranted()) return
 
     onAddProduct((prevState) => [...prevState, ...selectedProducts])
@@ -157,7 +156,7 @@ export function ProductsModal({
             className='form w-100'
             ref={formRef}
             initialData={defaultValue}
-            onSubmit={handleAddProducts}
+            onSubmit={() => {}}
           >
             <div className='modal-body'>
               {selectedProducts.length > 0 && (
@@ -279,7 +278,7 @@ export function ProductsModal({
             </div>
 
             <div className='modal-footer'>
-              <button type='submit' className='btn btn-primary'>
+              <button type='button' className='btn btn-primary' onClick={handleAddProducts}>
                 Confirmar
               </button>
               <button type='button' className='btn btn-light' onClick={() => {
