@@ -6,6 +6,8 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
+
+
 import { Input, TextArea } from '../../../inputs'
 import { SelectAsync } from '../../../inputs/selectAsync'
 import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
@@ -13,37 +15,45 @@ import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/get
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
 import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
-import { CreateRoom } from '../../../../../domain/models/createRoom'
-import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
-import { InputNumber } from '../../../inputs/input-number'
-import RoomInternalTable from './roomInternalTable'
+
+import { Button as CustomButton } from '../../../buttons/CustomButton'
+import { IGetRoom } from '../../../../../domain/usecases/interfaces/room/getCourse'
+import { IUpdateRoom } from '../../../../../domain/usecases/interfaces/room/updateRoom'
+import { IRoomResponse } from '../../../../../interfaces/api-response/roomResponse'
+import { IGetZoomUsers } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
+import { currencyInputFormmater } from '../../../../formatters/currencyInputFormatter'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
-import {
-  IGetZoomUsers,
-  IZoomUser,
-} from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
-import { InputCheckbox } from '../../../inputs/input-checkbox'
-import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
 import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
-import { currencyInputFormmater } from '../../../../formatters/currencyInputFormatter'
+import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
+import { InputCheckbox } from '../../../inputs/input-checkbox'
+import { UpdateRoom } from '../../../../../domain/models/updateRoom'
+import { currenceMaskOnlyValue } from '../../../../formatters/currenceFormatter'
+import { InputNumber } from '../../../inputs/input-number'
+import {startStreamingRoomHelper} from '../../../../../helpers/startStreamingRoomHelper'
+
+import { FullLoading } from '../../../FullLoading/FullLoading'
+import RoomInternalTable from './roomInternalTable'
 import { InputSingleImage } from '../../../inputs/input-single-image'
-import { Button } from '../../../buttons/CustomButton'
 
 type Props = {
-  createRoom: ICreateRoom
+  id: string| string[] | undefined
+  getRoom: IGetRoom
+  updateRoom: IUpdateRoom  
   getCategories: IGetCategories
   getUsers: IGetAllUsers
   getZoomUsers: IGetZoomUsers
 }
 
-export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUsers }: Props) {
+export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUsers, getZoomUsers}: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
+  const [loading, setLoading] = useState(true)
+  const [update, setUpdate] = useState(false)
+  const [defaultValue, setDefaultValue] = useState<IRoomResponse>()
 
-  const [registerRoom, setRegisterRoom] = useState(false)
   const [isToShowStreaming, setIsToShowStreaming] = useState(false)
-  const [streamingRoom] = useState<IStreamingRoom[]>([])
+  const [streamingRoom, setStreamingRoom] = useState<IStreamingRoom[]>([])
   const [hasErrorRoom, setHasErrorRoom] = useState(false)
 
   const [errorMessage, setMessageError] = useState('')
@@ -52,87 +62,10 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
-  async function verifyErrorStreamingRoom(data: IFormRoom) {
-    if (!data.itemChat && !data.itemRoom)
-      setMessageError('Você precisa adicionar, no mínimo, um dos itens')
-    else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
-      setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
-    else {
-      return false
-    }
-    return true
-  }
+  const [idDeletedStreamingRoom] = useState<string[]>([])
+  const [streamRoomUpdate] = useState<IStreamingRoom[]>([])
+  
 
-  const currencyFormatter = (name: string) => {
-    var value = formRef.current?.getFieldValue(name)
-    value = currencyInputFormmater(value)
-    formRef.current?.setFieldValue(name, value)
-    if (value == 'NaN') formRef.current?.setFieldValue(name, '')
-  }
-
-  async function handleFormSubmit(data: IFormRoom) {
-    if (!formRef.current) throw new Error()
-
-    try {
-      formRef.current.setErrors({})
-      const schema = Yup.object().shape({
-        imagePreview: Yup.string().required('Imagem é necessária'),
-        name: Yup.string().required('Nome é necessário'),
-        userId: Yup.string().required('Selecione um professor'),
-        price: Yup.string().required('Preço é necessário'),
-        installments: Yup.number()
-          .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1')
-          .typeError('Quantidade de parcelas deve ser um número')
-          .required('Quantidade de parcelas é necessário'),
-        description: Yup.string().required('Descriçao é necessária'),
-        categoryId: Yup.string().required('Selecione uma categoria'),
-      })
-
-      const hasError = await verifyErrorStreamingRoom(data)
-      await schema.validate(data, { abortEarly: false })
-      hasError ? setHasErrorRoom(hasError) : handleCreateRoom(data)
-    } catch (err) {
-      const validationErrors = {}
-      if (err instanceof Yup.ValidationError) {
-        err.inner.forEach((error) => {
-          // @ts-ignore
-          validationErrors[error.path] = error.message
-        })
-        formRef.current.setErrors(validationErrors)
-      }
-    }
-  }
-  async function handleCreateRoom(data: IFormRoom) {
-    const price = data.price.replace('.', '').replace(',', '.')
-    const discount = data.discount.replace('.', '').replace(',', '.')
-    const room = new CreateRoom(
-      data.name,
-      data.description,
-      discount,
-      data.installments,
-      false,
-      data.itemChat,
-      data.itemRoom,
-      price,
-      data.userId,
-      data.categoryId,
-      data.itemRoom ? streamingRoom : undefined
-    )
-
-    const formData = new FormData()
-
-    if (data?.image) formData.append('image', data.image)
-    formData.append('room', JSON.stringify(room))
-    setRegisterRoom(true)
-    createRoom
-      .create(formData)
-      .then(() => {
-        toast.success('Sala criada com sucesso!')
-        router.push(appRoutes.ROOMS)
-      })
-      .catch(() => toast.error('Não foi possível criar sala!'))
-      .finally(() => setRegisterRoom(false))
-  }
 
   const searchTeachers = async (teacherName: string) => {
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
@@ -145,31 +78,151 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
     })
   }
 
-  async function fetchData() {
-    try {
-      setDefaultTeacherOptions(await searchTeachers(''))
-      setDefaultCategoryOptions(await searchCategories(''))
-
-      const zoomUsers: IZoomUser[] = await getZoomUsers.get()
-      if (zoomUsers) {
-        const options: ISelectOption[] = zoomUsers.map((user) => ({
-          label: `${user.first_name} ${user.last_name}`,
-          value: user.id,
-        }))
-        setZoomUsersOptions(options)
-      }
-    } catch (error) {
-      toast.error('Não foi possível carregar os dados')
+  
+  async function verifyErrorStreamingRoom(data: IFormRoom) {    
+  
+    if (!data.itemChat && !data.itemRoom)
+      setMessageError('Você precisa adicionar, no mínimo, um dos itens')
+    else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
+      setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
+    else {     
+      return false
     }
+    return true;    
+  
   }
 
+  const currencyFormatter = (name: string) => {
+    var value = formRef.current?.getFieldValue(name)
+    value = currencyInputFormmater(value) 
+    formRef.current?.setFieldValue(name, value)
+    if (value == 'NaN') formRef.current?.setFieldValue(name, '')
+  }
+
+  async function handleFormSubmit(data: IFormRoom) {
+    if (!formRef.current) throw new Error()
+    
+    try {
+      formRef.current.setErrors({})
+      const schema = Yup.object().shape({     
+        imagePreview: Yup.string().required('Imagem é necessária'),  
+        name: Yup.string().required('Nome é necessário'),
+        userId: Yup.string().required('Selecione um professor'),
+        price: Yup.string().required('Preço é necessário'),
+        installments: Yup.number()
+          .typeError('Quantidade de parcelas deve ser um número')
+          .required('Quantidade de parcelas é necessário')
+          .positive('Quantidade de parcelas deve ser positiva'),         
+        description: Yup.string().required('Descriçao é necessária'),
+        categoryId: Yup.string().required('Selecione uma categoria'),
+      })
+      
+      const hasError = await verifyErrorStreamingRoom(data) 
+      await schema.validate(data, { abortEarly: false })
+      hasError? setHasErrorRoom(hasError): handleUpdateRoom(data)
+    
+    } catch (err) {    
+      const validationErrors = {}     
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          // @ts-ignore
+          validationErrors[error.path] = error.message
+        })
+        formRef.current.setErrors(validationErrors)
+      }
+    }
+  }
+  async function handleUpdateRoom(data: IFormRoom) {
+   
+    const price = data.price.replace('.', '').replace(',', '.')
+    const discount = data.discount.replace('.', '').replace(',', '.')
+    const room = new UpdateRoom(
+      defaultValue?.id,
+      data.name,
+      data.description,
+      discount,
+      data.installments,
+      false,
+      data.itemChat,
+      data.itemRoom,
+      price,
+      data.userId,
+      data.categoryId,
+      streamRoomUpdate
+      
+    )
+
+    const formData = new FormData()
+    if (data?.image) {
+      formData.append('image', data.image)
+    }
+    if (idDeletedStreamingRoom.length > 0) {
+      idDeletedStreamingRoom.forEach((idRoom) => {
+        formData.append('deleteStreamingRooms', idRoom)
+      })
+    }  
+    formData.append('room', JSON.stringify(room))
+
+    setUpdate(true)
+    updateRoom
+      .update(formData)
+      .then(() => {
+        toast.success('Sala atualizada com sucesso!')
+        router.push(appRoutes.ROOMS)
+      })
+      .catch(() => toast.error('Não foi possível atualizar sala!'))
+      .finally(() => setUpdate(false))
+  }
+
+ 
   useEffect(() => {
-    fetchData()
+    const fetchData = async () => {     
+      if (typeof id == 'string') {
+        const data = await getRoom.get(id)
+        formRef.current?.setFieldValue('userId', data.userId)
+        formRef.current?.setFieldValue('userId-label', data.teacherName)
+        formRef.current?.setFieldValue('categoryId', data.categoryId)
+        formRef.current?.setFieldValue('categoryId-label', data.categoryName)
+        formRef.current?.setFieldValue('imagePreview', data.imageUrl)       
+        let inputRefChat = formRef.current?.getFieldRef('itemChat')
+        inputRefChat.current.checked = data.isChatActive
+        inputRefChat.current.value = data.isChatActive
+        let inputRefRoom = formRef.current?.getFieldRef('itemRoom')
+        inputRefRoom.current.checked = data.isStreamingRoomActive
+        inputRefRoom.current.value = data.isStreamingRoomActive
+        setIsToShowStreaming(data.isStreamingRoomActive)
+        setStreamingRoom(startStreamingRoomHelper(data?.streamingsRoom))
+        setDefaultValue(data)
+      }
+
+      const dataTeachers = await searchTeachers('')
+      setDefaultTeacherOptions(dataTeachers )
+
+      const dataCategories = await searchCategories('')
+      setDefaultCategoryOptions(dataCategories)
+
+      const zoomLisUsers = await getZoomUsers.get()
+        if (zoomLisUsers) {
+          const options: ISelectOption[] = zoomLisUsers.map((user) => ({
+            label: `${user.first_name} ${user.last_name}`,
+            value: user.id,
+          }))
+          setZoomUsersOptions(options)
+        }
+    }
+        
+    fetchData().
+    catch(() => toast.error("Não foi possível carregar os dados"))
+    .finally(() => setTimeout(() => {
+      setLoading(false)
+     }, 500) ) 
+         
   }, [])
 
   return (
     <>
-      <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
+     {loading && <FullLoading />}
+     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações da Sala</h3>
         <InputSingleImage name='image' />
         <div className='d-flex flex-row gap-5 w-100'>
@@ -182,8 +235,10 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
               classes='h-75px'
               placeholder='Digite o nome do professor'
               defaultOptions={defaultTeacherOptions}
+           
             />
             <Input
+              defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
               name='price'
               label='Preço'
               type='text'
@@ -191,27 +246,30 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
               onChange={() => currencyFormatter('price')}
             />
             <Input
+              defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}
               name='discount'
               label='Desconto'
               type='text'
               placeholderText='R$ 0,00'
               onChange={() => currencyFormatter('discount')}
             />
-            <InputNumber name='installments' label='Quantidade de Parcelas' />
+            
+            <InputNumber name='installments' defaultValue={defaultValue?.installments} label='Quantidade de Parcelas' />
           </div>
           <div className='w-50'>
             <TextArea
               name='description'
               label='Descrição'
-              style={{ minHeight: '238px', margin: 0 }}
+              style={{ minHeight: '246px', margin: 0 }}
             />
-            <SelectAsync
+             <SelectAsync
               searchOptions={searchCategories}
               name='categoryId'
               label='Categoria'
               classes='h-75px'
               placeholder='Digite o nome da categoria'
               defaultOptions={defaultCategoryOptions}
+              
             />
           </div>
         </div>
@@ -219,8 +277,8 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
         <h3 className='fs-6 fw-bolder text-dark'>Itens</h3>
         {hasErrorRoom && (
           <ErrorMandatoryItem
-            mainMessage='Não é possível criar Sala!'
-            secondaryMessage={errorMessage}
+            mainMessage='Não é possível atualizar Sala!'
+            secondaryMessage= {errorMessage}
             setHasError={setHasErrorRoom}
           />
         )}
@@ -232,32 +290,34 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
           setIsToShowStreaming={setIsToShowStreaming}
         />
 
-        {isToShowStreaming && (
+      {isToShowStreaming && (
           <div>
             <h3 className='mb-5 mt-5 text-muted'>Datas da Transmissão</h3>
             <RoomInternalTable
               formRef={formRef}
               streamingRoomArray={streamingRoom}
               zoomUsersOptions={zoomUsersOptions}
+              idDeletedStreamingRoom={idDeletedStreamingRoom}
+              streamRoomUpdate={streamRoomUpdate}
             />
           </div>
         )}
 
         <div className='d-flex mt-10'>
-          <Button
+          <CustomButton
             customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
-            loading={registerRoom}
+            loading={update}
             onClick={() => {
               router.push(appRoutes.ROOMS)
             }}
           />
-          <Button
+          <CustomButton
             type='submit'
             customClasses={['w-180px', 'btn-primary']}
             title='Salvar'
-            disabled={registerRoom}
+            disabled={update}
           />
         </div>
       </Form>

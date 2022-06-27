@@ -6,5 +6,5 @@ import { makeRemoteUpdateRoom } from "../../usecases/room/remote-updateRoom-fact
 
 export const MakeRoomTable = () => {
     return <RoomsTable getAllRooms = {makeRemoteGetAllRooms()} updateRoom = {makeRemoteUpdateRoom()}  deleteRoom = {makeRemoteDeleteRoom()}/>
-  }
+}
   

@@ -9,14 +9,16 @@ import { months } from '../../../utils/months'
 import 'react-datepicker/dist/react-datepicker.css'
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai'
 
+
 interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
   name: string
   label: string
   classes?: string
-}
+  mask?: (string | (string | RegExp)[]) & string
+ }
 
 registerLocale('br', br)
-export function DatePicker({ name, label, classes, ...rest }: Props) {
+export function DatePicker({ name, label, classes, mask, ...rest }: Props) {
   const datepickerRef = useRef(null)
   const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
 
@@ -35,7 +37,6 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
 
   useEffect(() => {
     registerField({
-      ref: datepickerRef,
       name: fieldName,
       getValue: (ref) => {
         return ref.current.props.selected
@@ -116,6 +117,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
           {...rest}
         />
       </div>
+     
       {error && <span className='text-danger'>{error}</span>}
     </div>
   )

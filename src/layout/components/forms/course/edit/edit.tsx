@@ -205,7 +205,7 @@ export function FormUpdateCourse(props: Props) {
       ) : (
         <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
           <h3 className='mb-5'>Informações do Curso</h3>
-          <InputImage name='photo' handleSingleImageUpload={setImageUpload} />
+          <InputImage name='photo'/>
           <div className='d-flex flex-row gap-5 w-100'>
             <div className='w-50'>
               <Input name='name' label='Nome' />

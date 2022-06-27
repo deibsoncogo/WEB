@@ -192,7 +192,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do Curso</h3>
-        <InputImage name='photo' handleSingleImageUpload={setImageUpload} />
+        <InputImage name='photo'/>
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />
