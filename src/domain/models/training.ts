@@ -1,7 +1,7 @@
 import { IStreaming } from './streaming'
 
 export interface ITraining {
-  id?: string
+  id: string
   name: string
   photo?: Blob
   zoomUserId: string
