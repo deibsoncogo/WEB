@@ -133,7 +133,7 @@ export default function CoursesTable(props: Props) {
                       >
                         Ativo
                       </th>
-                      <th className='text-dark min-w-50px text-center rounded-end'>Ação</th>
+                      <th className='text-dark min-w-50px text-start rounded-end'>Ação</th>
                     </tr>
                   </thead>
 
