@@ -33,6 +33,7 @@ export function Row({ id, name, expireDate, setProducts }: Props) {
       <td>
         <Tooltip content={'Remover'} rounded color='primary'>
           <button
+            type='button'
             onClick={() => setIsModalOpen(true)}
             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
           >
