@@ -23,6 +23,13 @@ type NewTransactionModalProps = {
   getTrainings: IGetAllTrainings
 }
 
+type SelectedProduct = {
+  id: string
+  name: string
+  label: string
+  expireDate: string
+}
+
 export function ProductsModal({
   isOpen,
   modalTitle,
@@ -36,7 +43,7 @@ export function ProductsModal({
 }: NewTransactionModalProps) {
   const formRef = useRef<FormHandles>(null)
   const [defaultValue, setDefaultValue] = useState({})
-  const [selectedProducts, setSelectedProducts] = useState<IPartialProductResponse[]>([])
+  const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([])
   
   const [courses, setCourses] = useState<IPartialProductResponse[]>()
   const [plans, setPlans] = useState<IPartialProductResponse[]>()
@@ -154,33 +161,36 @@ export function ProductsModal({
           >
             <div className='modal-body'>
               {selectedProducts.length > 0 && (
-                <div className='container gap-20 row mh-175px overflow-auto'>
-                  <div className='col w-50'>
-                    {selectedProducts.map((product) => (
-                      <div key={product.id} className='d-flex align-items-center gap-5'>
-                        <div>
-                          <Select name={product.name} label={product.label} value={product.name}>                            
-                            <option value={product.name}>
-                              {product.name}
-                            </option>
-                          </Select>
+                <>
+                  {selectedProducts.map((product) => (
+                    <div key={product.id} className='container gap-20 row mh-175px overflow-auto'>
+                      <div className='col w-50'>
+                        <div className='d-flex align-items-center gap-5'>
+                          <div className='w-75'>
+                            <Select name={product.name} label={product.label} value={product.name}>                            
+                              <option value={product.name}>
+                                {product.name}
+                              </option>
+                            </Select>
+                          </div>
+                          <DatePicker name={`${product.name}-expireDate`} label='Data de expiração' />
                         </div>
-
-                      <DatePicker name={`${product.name}-expireDate`} label='Data de expiração' />
-                      <button
-                        type='button'
-                        title='Remover'
-                        onClick={() => {
-                          handleDecreaseProduct(product.id)
-                        }}
-                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
-                      >
-                        x
-                      </button>
+                      </div>
+                      <div className='col align-self-end w-50 h-100 mb-8'>
+                        <button
+                          type='button'
+                          title='Remover'
+                          onClick={() => {
+                            handleDecreaseProduct(product.id)
+                          }}
+                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
+                        >
+                          x
+                        </button>
+                      </div>
                     </div>
-                    ))}
-                  </div>
-                </div>
+                  ))}
+                </>
               )}
 
               <div className='container gap-20 row mh-175px overflow-auto'>
