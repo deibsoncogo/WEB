@@ -219,7 +219,8 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
             />
           </div>
           <div className='w-50'>
-            <TextArea name='description' label='Descrição' rows={10} />
+            <TextArea name='description' label='Descrição' style={{ minHeight: '236px', margin: 0 }}
+            />
             <SelectAsync
               searchOptions={searchCategories}
               name='categoryId'

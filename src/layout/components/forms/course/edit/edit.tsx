@@ -253,7 +253,7 @@ export function FormUpdateCourse(props: Props) {
               />
             </div>
             <div className='w-50'>
-              <TextArea name='description' label='Descrição' rows={10} />
+              <TextArea name='description' label='Descrição' style={{ minHeight: '236px', margin: 0 }} />
               <Select name='categoryId' label='Categoria'>
                 {defaultValue?.categoryId ? (
                   <option value={defaultValue.categoryId}>
