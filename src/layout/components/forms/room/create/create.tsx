@@ -1,21 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
-import { FormHandles, useField } from '@unform/core'
+import { FormHandles } from '@unform/core'
 
-import { Loading } from '@nextui-org/react'
 import { InputImage } from '../../../inputs/input-image'
 import { Input, TextArea } from '../../../inputs'
 import { SelectAsync } from '../../../inputs/selectAsync'
-import { ICreateCourse } from '../../../../../domain/usecases/interfaces/course/createCourse'
-import { ICategory } from '../../../../../interfaces/api-response/categoryResponse'
-import { IGetAllUsersByRole } from '../../../../../domain/usecases/interfaces/user/getAllUsersByRole'
-import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
-import { IUserPartialResponse } from '../../../../../interfaces/api-response/userPartialResponse'
-import { FileUpload } from '../../../../../domain/models/fileUpload'
 import { CourseClass } from '../../../../../domain/models/courseClass'
 import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
@@ -38,13 +31,9 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
   const formRef = useRef<FormHandles>(null)
   const [loading, setLoading] = useState(true)
   const [registerRoom, setRegisterRoom] = useState(false)
-  const [imageUpload, setImageUpload] = useState<File>()
+  const [imageUpload, setImageUpload] = useState<File | null>(null)
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
-
-  const handleSingleImageUpload = (file: File) => {
-    setImageUpload(file)
-  }
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
@@ -67,7 +56,6 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        photo: Yup.mixed().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         price: Yup.string().required('Preço é necessário'),
@@ -82,6 +70,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
       })
 
       await schema.validate(data, { abortEarly: false })
+      if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
       handleCreateRoom(data)
     } catch (err) {
       const validationErrors = {}
@@ -91,6 +80,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
           validationErrors[error.path] = error.message
         })
         formRef.current.setErrors(validationErrors)
+        if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
       }
     }
   }
@@ -172,7 +162,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações da Sala</h3>
-        <InputImage name='photo' handleSingleImageUpload={handleSingleImageUpload} />
+        <InputImage name='photo' handleSingleImageUpload={setImageUpload} />
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />

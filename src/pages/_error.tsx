@@ -7,7 +7,7 @@ export default function Error404() {
         <h1 className='display-1 fw-bold'>404</h1>
         <p className='fs-3'>
           {' '}
-          <span className='text-danger'>Opps! 😅</span> Página não encontrada.
+          <span className='text-danger'>Ops! 😅</span> Página não encontrada.
         </p>
 
         <Link href='/dashboard'>

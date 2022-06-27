@@ -41,7 +41,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
   const [loading, setLoading] = useState(true)
   const [registerCourse, setRegisterCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
-  const [imageUpload, setImageUpload] = useState<File>()
+  const [imageUpload, setImageUpload] = useState<File | null>(null)
   const [filesUpload, setFilesUpload] = useState<FileUpload[]>([])
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
@@ -93,10 +93,6 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
     }
   }
 
-  const handleSingleImageUpload = (file: File) => {
-    setImageUpload(file)
-  }
-
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
 
@@ -118,7 +114,6 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        photo: Yup.mixed().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number()
@@ -140,6 +135,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
 
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
+      if (!imageUpload) return formRef.current.setFieldError('photo', 'Imagem é necessária')
       courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
     } catch (err) {
       const validationErrors = {}
@@ -149,6 +145,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
           validationErrors[error.path] = error.message
         })
         formRef.current.setErrors(validationErrors)
+        if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
       }
     }
   }
@@ -169,12 +166,13 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
       courseClass
     )
 
-    const formData = new FormData()
-    if (imageUpload && filesUpload) {
-      formData.append('image', imageUpload)
-      filesUpload.map((file) => {
-        if (file?.file) formData.append('attachments', file.file)
-        formData.append('filesName', file.name)
+    const formData = new FormData();
+    if(imageUpload && filesUpload){
+      formData.append('image', imageUpload); 
+      filesUpload.forEach(file => {
+        if(file?.file)
+           formData.append('attachments', file.file)
+        formData.append('filesName',  file.name)
       })
     }
     formData.append('course', JSON.stringify(course))
@@ -194,7 +192,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do Curso</h3>
-        <InputImage name='photo' handleSingleImageUpload={handleSingleImageUpload} />
+        <InputImage name='photo' handleSingleImageUpload={setImageUpload} />
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />

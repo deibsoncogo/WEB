@@ -23,7 +23,7 @@ const EditCourse: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <MakeFormUpdateCourse id={id} />
+              <MakeFormUpdateCourse id={id as string} />
             </div>
           </div>
         </div>

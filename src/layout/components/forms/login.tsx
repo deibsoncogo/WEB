@@ -70,8 +70,9 @@ export function FormLogin(props: Props) {
     } catch (err: any) {
       setHasError(true)
       setMessage(err.message)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
   return (
     <Form className='form w-100' ref={formRef} onSubmit={handleFormSubmit}>

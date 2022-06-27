@@ -18,7 +18,7 @@ export function useRequest<ReturnData, Params = {}>(request: any) {
       const dataFromAPI = await request(params)
       setData(dataFromAPI)
     } catch (e: any) {
-      if (e?.messages) {
+      if (typeof e?.messages?.[0] === 'string') {
         setError(e?.messages[0])
         return
       }
@@ -26,6 +26,8 @@ export function useRequest<ReturnData, Params = {}>(request: any) {
       if (e?.message) {
         setError(e?.message)
       }
+
+      setError('Um erro inesperado ocorreu')
     } finally {
       setLoading(false)
     }

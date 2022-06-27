@@ -3,8 +3,6 @@ import { useField } from '@unform/core'
 
 import InputMask, { Props } from 'react-input-mask'
 
-import styles from './styles.module.css'
-
 type IInputProps = InputHTMLAttributes<HTMLInputElement> &
   Props & {
     name: string
