@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { FormHandles } from '@unform/core'
+import { RefObject,  useState } from 'react'
 import { CourseClass } from '../../../../domain/models/courseClass'
 import { KTSVG } from '../../../../helpers'
 import { Input } from '../../inputs'
@@ -6,6 +7,7 @@ import { Row } from './row'
 
 type prop = {
   courseClassArray: CourseClass[]
+  formRef: RefObject<FormHandles>
 }
 
 let currentId = 0;
@@ -22,8 +24,7 @@ export default function CoursesInternalTable(props: prop) {
   const [refresher, setRefresher] = useState<boolean>(false)
   const [messageError, setMessageError] = useState<string>('')
 
-  useEffect(() => {}, [refresher])
-
+ 
   const handleRefresher = () => {
     setRefresher(!refresher)
   }
@@ -42,6 +43,10 @@ export default function CoursesInternalTable(props: prop) {
       }
 
       props.courseClassArray.push(new CourseClass(nameClass, link, displayOrder))
+      props.formRef.current?.clearField('nameClass')
+      props.formRef.current?.clearField('link')
+      props.formRef.current?.clearField('displayOrder')
+      
       handleRefresher()
     } else {
       setHasError(true)

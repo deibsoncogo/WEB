@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { FormHandles } from '@unform/core';
+import { RefObject, useEffect, useState } from 'react'
 import { CourseClass } from '../../../../../../domain/models/courseClass';
 import { KTSVG } from '../../../../../../helpers';
 import { ICourseClassResponse } from '../../../../../../interfaces/api-response/courseClassResponse';
@@ -9,6 +10,7 @@ type prop = {
   courseClassArray: ICourseClassResponse[]
   IdDeletedCourseClass: string[]
   courseClassUpdate: CourseClass[]
+  formRef: RefObject<FormHandles>
 }
 
 let currentId = 0;
@@ -25,7 +27,6 @@ export default function CoursesInternalTable(props: prop) {
   const [refresher, setRefresher] = useState<boolean>(false)
   const [messageError, setMessageError] = useState<string>('')
 
-  useEffect(() => {}, [refresher])
 
   const handleRefresher = () => {
     setRefresher(!refresher)
@@ -43,9 +44,12 @@ export default function CoursesInternalTable(props: prop) {
         setMessageError('Link inválido e/ou ordem de exibição igual a 0 (zero)')
         return
       }
-      const courseClass = {name, link, displayOrder}
+      const courseClass = {name, link, displayOrder}     
       props.courseClassArray.push(courseClass)
       props.courseClassUpdate.push(courseClass)
+      props.formRef.current?.clearField('nameClass')
+      props.formRef.current?.clearField('link')
+      props.formRef.current?.clearField('displayOrder')
       handleRefresher()
     } else {
       setHasError(true)

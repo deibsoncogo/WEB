@@ -19,7 +19,7 @@ export const appRoutes = {
   UNAUTHORIZED: '/unauthorized',
 }
 
-export const unprotectedRoutes = [
+export const publicRoutes = [
   appRoutes.LOGIN_PAGE,
   appRoutes.FORGOT_PASSWORD,
   appRoutes.RESET_PASSWORD,

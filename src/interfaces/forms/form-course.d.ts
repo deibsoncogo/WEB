@@ -1,5 +1,7 @@
 interface IFormCourse {
   name: string
+  image?: Blob
+  imagePreview:string;
   accessTime: string
   price: string
   discount: string

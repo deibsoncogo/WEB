@@ -38,8 +38,9 @@ export function DatePicker({ name, label, classes, mask, ...rest }: Props) {
   useEffect(() => {
     registerField({
       name: fieldName,
+      ref: datepickerRef,
       getValue: (ref) => {
-        return ref.current.props.selected
+        return ref?.current.props.selected
       },
       setValue: (ref: any, value: string) => {
         setEnteredDate(value)
