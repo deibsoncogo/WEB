@@ -10,6 +10,7 @@ interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export function InputNumber({ name, label, placeholderText, classes, ...rest }: IInputProps) {
+
   const { fieldName, registerField, defaultValue = '', error, clearError } = useField(name)
 
   const [inputValue, setInputValue] = useState(defaultValue)

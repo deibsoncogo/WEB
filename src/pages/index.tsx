@@ -16,7 +16,7 @@ const Home: NextPage = () => {
             width={196.15}
             height={77.6}
             style={{
-              objectFit: 'contain'
+              objectFit: 'contain',
             }}
           />
         </div>
@@ -25,7 +25,7 @@ const Home: NextPage = () => {
           <div className='text-center mb-15'>
             <h1>LOGIN</h1>
           </div>
-          {MakeFormSignInUser()}
+          <MakeFormSignInUser />
         </div>
       </div>
     </>

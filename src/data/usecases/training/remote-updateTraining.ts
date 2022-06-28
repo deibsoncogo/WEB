@@ -5,7 +5,7 @@ import { HttpClient, HttpStatusCode } from '../../protocols'
 export class RemoteUpdateTraining implements IUpdateTraining {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<boolean>) {}
 
-  async update(updateTraining: FormData) {
+  update = async (updateTraining: FormData) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'put',

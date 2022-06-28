@@ -19,7 +19,7 @@ const Courses: NextPage = () => {
           <HeaderWrapper title='Cursos' />
 
           <div id='kt_content_container' className='container'>
-            {MakeCourseTable()}
+            <MakeCourseTable />
           </div>
         </div>
       </div>
