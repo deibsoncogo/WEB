@@ -2,7 +2,6 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
-
 import { MakeBookPage } from '../../application/factories/pages/books/book-factory'
 
 const Books: NextPage = () => {

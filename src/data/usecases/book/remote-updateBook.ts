@@ -1,18 +1,16 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { IUpdateBook, UpdateBookParams } from '../../../domain/usecases/interfaces/book/getBooks'
+import { getAuthHeadersMultipart } from '../../../helpers/axios/axiosHeaderMultipart'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteUpdateBook implements IUpdateBook {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<string>) {}
 
-  update = async (params: UpdateBookParams) => {
+  update = async (updateBook: FormData) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'put',
-      body: params.data,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+      body: updateBook,
+      headers: getAuthHeadersMultipart(),
     })
 
     switch (httpResponse.statusCode) {

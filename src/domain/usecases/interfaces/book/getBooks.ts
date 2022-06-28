@@ -28,7 +28,3 @@ export interface IGetBooks {
 export interface IGetBookById {
   get: (params: GetBookParamsById) => Promise<OutputPagination>
 }
-
-export interface IUpdateBook {
-  update: (params: UpdateBookParams) => Promise<OutputPagination>
-}
