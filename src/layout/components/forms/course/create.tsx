@@ -1,4 +1,4 @@
-import {useRef, useState } from 'react'
+import {useEffect, useRef, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
@@ -26,6 +26,8 @@ import { Role } from '../../../../domain/usecases/interfaces/user/role'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { SelectAsync } from '../../inputs/selectAsync'
 import { InputSingleImage } from '../../inputs/input-single-image'
+import { getAsyncTeachersToSelectInput } from '../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
+import { getAsyncCategoiesToSelectInput } from '../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 
 type Props = {
   createCourse: ICreateCourse
@@ -42,52 +44,24 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
   const [courseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
 
+  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
+  const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
+
   function handleChange(event: any) {
     setStateEditor({ content: event })
   }
  
   const searchTeachers = async (teacherName: string) => {
-    try {
-      const { data } = await getUsers.getAll({
-        name: teacherName,
-        order: 'asc',
-        page: 1,
-        take: 5,
-        role: Role.Teacher,
-      })
-
-      const teacherOptions: ISelectOption[] = data.map((teacher) => ({
-        label: teacher.name,
-        value: teacher.id,
-      }))
-
-      return teacherOptions
-    } catch {
-      toast.error('Falha em buscar os professores')
-      return []
-    }
+    return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
   }
 
   const searchCategories = async (categoryName: string) => {
-    try {
-      const { data } = await getCategories.get({
-        name: categoryName,
-        order: 'asc',
-        page: 1,
-        take: 5,
-      })
-
-      const categoryOptions: ISelectOption[] = data.map((category) => ({
-        label: category.name,
-        value: category.id,
-      }))
-
-      return categoryOptions
-    } catch {
-      toast.error('Falha em buscar as categorias')
-      return []
-    }
+    return getAsyncCategoiesToSelectInput({
+      categoryName,
+      remoteGetCategories: getCategories,
+    })
   }
+
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
@@ -180,6 +154,19 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
       
   }
 
+  async function fetchData() {
+    try {
+      setDefaultTeacherOptions(await searchTeachers(''))
+      setDefaultCategoryOptions(await searchCategories(''))
+    } catch (error) {
+      toast.error('Não foi possível carregar os dados')
+    }
+  }
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+
   return (
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
@@ -194,6 +181,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               label='Professor'
               classes='h-75px'
               placeholder='Digite o nome do professor'
+              defaultOptions={defaultTeacherOptions}
             />
             
             <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />          
@@ -221,6 +209,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               label='Categoria'
               classes='h-75px'
               placeholder='Digite o nome da categoria'
+              defaultOptions={defaultCategoryOptions}
             />
             <InputNumber name='installments' label='Quantidade de Parcelas' />           
           </div>

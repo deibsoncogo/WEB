@@ -1,10 +1,11 @@
 import { FormUpdateCourse } from "../../../../layout/components/forms/course/edit/edit";
-import { makeRemoteGetCategoriesNoPagination } from "../../usecases/categories/remote-getCategoriesNoPagination-factory";
+import { makeRemoteGetCategories } from "../../usecases/categories/remote-getCategories-factory";
 import { makeRemoteGetCourse } from "../../usecases/course/remote-getCourse-factory";
 import { makeRemoteUpdateCourse } from "../../usecases/course/remote-updateCourse-factory";
 import { makeRemoteGetAllAttachmentByCourseId } from "../../usecases/courseAttachment/remote-getAllAttachmentByCourseId-factory";
 import { makeRemoteGetAllCourseClassByCourseId } from "../../usecases/courseClass/remote-getAllCourseClassByCourseId-factory";
-import { makeRemoteGetAllUsersByRole } from "../../usecases/remote-getAllUsersByRole-factory";
+import { makeRemoteGetAllUsers } from "../../usecases/remote-getAllUsers-factory";
+
 
 interface param {
   id: string | string[] | undefined
@@ -12,8 +13,8 @@ interface param {
 
 export const MakeFormUpdateCourse= (query: param) => {
     return (<FormUpdateCourse updateCourse={makeRemoteUpdateCourse()} 
-     getCategories = {makeRemoteGetCategoriesNoPagination()}
-     getUsers = {makeRemoteGetAllUsersByRole()}
+     getCategories = {makeRemoteGetCategories()}
+     getUsers = {makeRemoteGetAllUsers()}
      getAttachments = {makeRemoteGetAllAttachmentByCourseId()}
      getCourseClass = {makeRemoteGetAllCourseClassByCourseId()}
      id = {query.id}

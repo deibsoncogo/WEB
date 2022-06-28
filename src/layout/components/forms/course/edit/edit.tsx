@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-import { Input, InputNumber, Select, TextArea } from '../../../inputs'
+import { Input, InputNumber, Select, SelectAsync, TextArea } from '../../../inputs'
 import { ICategory } from '../../../../../interfaces/api-response/categoryResponse'
 import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { toast } from 'react-toastify'
@@ -31,11 +31,16 @@ import { appRoutes } from '../../../../../application/routing/routes'
 import CustomButton from '../../../buttons/CustomButton'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 import { FullLoading } from '../../../FullLoading/FullLoading'
+import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
+import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
+import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
+import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
+import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
 
 type Props = {
   updateCourse: IUpdateCourse
-  getCategories: IGetCategoriesNoPagination
-  getUsers: IGetAllUsersByRole
+  getCategories: IGetCategories
+  getUsers: IGetAllUsers
   getAttachments: IGetAllAttachmentByCourseId
   getCourseClass: IGetAllCourseClassByCourseId
   getCourse: IGetCourse
@@ -61,6 +66,9 @@ export function FormUpdateCourse(props: Props) {
 
   const [IdDeletedCourseClass] = useState<string[]>([])
   const [courseClassUpdate] = useState<CourseClass[]>([])
+
+  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
+  const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
   const findCategoryById = (id: string) => {
     return categories.find((category) => category.id == id)
@@ -120,6 +128,17 @@ export function FormUpdateCourse(props: Props) {
     }
   }
 
+  const searchTeachers = async (teacherName: string) => {
+    return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: props.getUsers })
+  }
+
+  const searchCategories = async (categoryName: string) => {
+    return getAsyncCategoiesToSelectInput({
+      categoryName,
+      remoteGetCategories: props.getCategories,
+    })
+  }
+
   async function handleUpdateCourse(data: IFormCourse) {
     const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
@@ -175,8 +194,11 @@ export function FormUpdateCourse(props: Props) {
     try{      
 
       if (typeof props.id == 'string') {
-       const data =  await props.getCourse.get(props.id)
-       console.log(data)
+       const data =  await props.getCourse.get(props.id)     
+       formRef.current?.setFieldValue('userId', data.userId)
+       formRef.current?.setFieldValue('userId-label', data.teacherName)
+       formRef.current?.setFieldValue('categoryId', data.categoryId)
+       formRef.current?.setFieldValue('categoryId-label', data.categoryName) 
        formRef.current?.setFieldValue('imagePreview', data.imageUrl) 
        formRef.current?.setFieldValue('installments', data.installments)
        formRef.current?.setFieldValue('accessTime', data?.accessTime)
@@ -185,10 +207,10 @@ export function FormUpdateCourse(props: Props) {
        setAttachment(await props.getAttachments.getAllByCourseId(props.id))
        setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
       }       
-      setCategories(await props.getCategories.get())
-      setUsers(await props.getUsers.getAllByRole(new UserQueryRole(roles.TEACHER)))     
+      setDefaultTeacherOptions(await searchTeachers(''))
+      setDefaultCategoryOptions(await searchCategories(''))    
     }
-    catch(error){
+    catch(error){      
       toast.error("Não foi possível carregar os dados")
     }
     finally{
@@ -211,26 +233,14 @@ export function FormUpdateCourse(props: Props) {
           <div className='d-flex flex-row gap-5 w-100'>
             <div className='w-50'>
               <Input name='name' label='Nome' />
-              <Select name='userId' label='Professor'>
-                {defaultValue?.userId ? (
-                  <option value={defaultValue.userId}>{defaultValue.teacherName}</option>
-                ) : (
-                  <option value='' disabled selected>
-                    Selecione
-                  </option>
-                )}
-                {users.map((option) => {
-                  if (defaultValue?.userId) {
-                    if (option.id != defaultValue.userId) {
-                      return (
-                        <option key={option.id} value={option.id}>
-                          {option.name}
-                        </option>
-                      )
-                    }
-                  }
-                })}
-              </Select>
+              <SelectAsync
+              searchOptions={searchTeachers}
+              name='userId'
+              label='Professor'
+              classes='h-75px'
+              placeholder='Digite o nome do professor'
+              defaultOptions={defaultTeacherOptions}
+            />
               <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
              <Input
                 name='price'
@@ -251,28 +261,14 @@ export function FormUpdateCourse(props: Props) {
             </div>
             <div className='w-50'>
               <TextArea name='description' label='Descrição' style={{ minHeight: '236px', margin: 0 }} />
-              <Select name='categoryId' label='Categoria'>
-                {defaultValue?.categoryId ? (
-                  <option value={defaultValue.categoryId}>
-                    {findCategoryById(defaultValue.categoryId)?.name}
-                  </option>
-                ) : (
-                  <option value='' disabled selected>
-                    Selecione
-                  </option>
-                )}
-                {categories.map((option) => {
-                  if (defaultValue?.categoryId) {
-                    if (option.id != defaultValue.categoryId) {
-                      return (
-                        <option key={option.id} value={option.id}>
-                          {option.name}
-                        </option>
-                      )
-                    }
-                  }
-                })}
-              </Select>
+              <SelectAsync
+              searchOptions={searchCategories}
+              name='categoryId'
+              label='Categoria'
+              classes='h-75px'
+              placeholder='Digite o nome da categoria'
+              defaultOptions={defaultCategoryOptions}
+            />
               <InputNumber name='installments' label='Quantidade de Parcelas'/>  
             </div>
           </div>
