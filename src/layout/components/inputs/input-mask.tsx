@@ -9,7 +9,7 @@ type IInputProps = InputHTMLAttributes<HTMLInputElement> &
     mask: (string | (string | RegExp)[]) & string
     label?: string
     classes?: string
-    onChange?: () => Promise<void>
+    onChange?: () => Promise<void> | void
   }
 
 export function InputMasked({ name, label, classes, mask, onChange, ...rest }: IInputProps) {

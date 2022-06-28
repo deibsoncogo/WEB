@@ -6,8 +6,8 @@ import { Form } from '@unform/web'
 import { toast } from 'react-toastify'
 import { FormHandles } from '@unform/core'
 
-import { findCEP } from '../../../utils/findCEP'
-import { formatDateToUTC, validateStringWithNumber } from '../../../helpers'
+import { findCEP, ZipCodeProps } from '../../../utils/findCEP'
+import { formatDateToUTC, validateIfCPFIsValid, validateStringWithNumber } from '../../../helpers'
 import { levelOptions, roleOptions } from '../../../utils/selectOptions'
 
 import { DatePicker, Input, InputMasked, Select } from '../inputs'
@@ -57,7 +57,9 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           .required('Nome é necessário'),
         email: Yup.string().email('Insira um email válido.').required('Email é nescessário'),
         birthDate: Yup.string().required('Data de nascimento é nescessária'),
-        cpf: Yup.string().required('CPF é nescessário'),
+        cpf: Yup.string()
+          .test('is valid', 'CPF inválido', validateIfCPFIsValid)
+          .required('CPF é necessário'),
         phoneNumber: Yup.string().required('Telefone é nescessário'),
         level: Yup.string().required('Nível de conhecimento é nescessário'),
         role: Yup.string().required('Premissão é nescessária'),
@@ -167,6 +169,18 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     setKeys(defaultValue)
   }, [defaultValue])
 
+  function handleInputCPF() {
+    if (!formRef.current) return
+    const cpf = formRef.current?.getData().cpf
+    const matches = cpf?.match(/\d*/g)
+    const number = matches?.join('')
+
+    if (number?.length !== 11) return
+
+    const result = validateIfCPFIsValid(formRef.current?.getData().cpf)
+    if (!result) formRef.current.setFieldError('cpf', 'CPF invalido')
+  }
+
   return (
     <>
       <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
@@ -177,7 +191,14 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
             <Input name='name' label='Nome' />
             <Input name='email' label='Email' type='email' />
             <DatePicker name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
-            <InputMasked name='cpf' label='CPF' mask='999.999.999-99' />
+            <InputMasked
+              classes='h-75px'
+              name='cpf'
+              label='CPF'
+              type='text'
+              mask='999.999.999-99'
+              onChange={handleInputCPF}
+            />
             <InputMasked name='phoneNumber' label='Telefone' mask='(99) 9 9999-9999' />
 
             <Select name='level' label='Nível de Conhecimento'>
@@ -206,6 +227,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
             <h3 className='mb-5'>Endereço</h3>
 
             <InputMasked
+              classes='h-75px'
               name='zipCode'
               label='CEP'
               mask='99999-999'
