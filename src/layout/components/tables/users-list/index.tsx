@@ -247,20 +247,19 @@ export function UsersTable({
                   </thead>
 
                   <tbody>
-                    {!loading &&
-                      users.map((item) => (
-                        <MakeUserRow
-                          key={item.id}
-                          id={item.id}
-                          name={item.name}
-                          email={item.email}
-                          birthDate={dateMask(item.birthDate)}
-                          cpf={cpfMask(item.cpf)}
-                          address={addressMask(item.address[0])}
-                          deleteUser={deleteUser}
-                          openResetUserPasswordModal={handleOpenResetPasswordModal}
-                        />
-                      ))}
+                    {users.map((item) => (
+                      <MakeUserRow
+                        key={item.id}
+                        id={item.id}
+                        name={item.name}
+                        email={item.email}
+                        birthDate={dateMask(item.birthDate)}
+                        cpf={cpfMask(item.cpf)}
+                        address={addressMask(item.address[0])}
+                        deleteUser={deleteUser}
+                        openResetUserPasswordModal={handleOpenResetPasswordModal}
+                      />
+                    ))}
                   </tbody>
                 </table>
               </div>

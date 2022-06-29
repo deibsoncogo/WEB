@@ -9,13 +9,13 @@ type IInputProps = InputHTMLAttributes<HTMLInputElement> &
     mask: (string | (string | RegExp)[]) & string
     label?: string
     classes?: string
-    onChange?: () => Promise<void>
+    onChange?: () => Promise<void> | void
   }
 
 export function InputMasked({ name, label, classes, mask, onChange, ...rest }: IInputProps) {
   const inputRef = useRef(null)
 
-  const { fieldName, defaultValue = '', registerField, error } = useField(name)
+  const { fieldName, defaultValue = '', registerField, error, clearError } = useField(name)
 
   useEffect(() => {
     registerField({
@@ -47,6 +47,7 @@ export function InputMasked({ name, label, classes, mask, onChange, ...rest }: I
           error && 'placeholder-red'
         }`}
         defaultValue={defaultValue}
+        onChangeCapture={clearError}
         onChange={onChange}
         {...rest}
       />

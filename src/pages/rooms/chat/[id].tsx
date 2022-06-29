@@ -1,8 +1,8 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { MakeChatRoomInner } from '../../../application/factories/components/room/chatRoom/chatInner-factory'
 
 import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
-import { ChatInner } from '../../../layout/components/chat/rooms'
 import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
 
 const ChatRooms: NextPage = () => {
@@ -23,8 +23,7 @@ const ChatRooms: NextPage = () => {
               <div className='border-bottom border-gray-600 p-3 ps-5'>
                 <h1>Sala</h1>
               </div>
-
-              <ChatInner />
+              {MakeChatRoomInner()}
             </div>
           </div>
         </div>

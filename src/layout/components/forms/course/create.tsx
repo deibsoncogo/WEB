@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import {useRef, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
-import { FormHandles, useField } from '@unform/core'
+import { FormHandles} from '@unform/core'
 
-import { Input, Select, TextArea } from '../../inputs'
+import { Input, InputNumber, Select, TextArea } from '../../inputs'
 import { ICreateCourse } from '../../../../domain/usecases/interfaces/course/createCourse'
 
 import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
@@ -14,18 +14,18 @@ import { toast } from 'react-toastify'
 import { IUserPartialResponse } from '../../../../interfaces/api-response/userPartialResponse'
 import { CreateCourse } from '../../../../domain/models/createCourse'
 import { Editor } from '@tinymce/tinymce-react'
-import { InputImage } from '../../inputs/input-image'
 import { CourseClass } from '../../../../domain/models/courseClass'
 import CoursesInternalTable from './courseInternalTable'
 import FilesInternalTable from './filesUpload/filesInternalTable'
 import { FileUpload } from '../../../../domain/models/fileUpload'
-import CustomButton from '../../buttons/CustomButton'
+import { Button } from '../../buttons/CustomButton'
 import { appRoutes } from '../../../../application/routing/routes'
 import { IGetCategories } from '../../../../domain/usecases/interfaces/category/getCategories'
 import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAllUsers'
 import { Role } from '../../../../domain/usecases/interfaces/user/role'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { SelectAsync } from '../../inputs/selectAsync'
+import { InputSingleImage } from '../../inputs/input-single-image'
 
 type Props = {
   createCourse: ICreateCourse
@@ -33,23 +33,19 @@ type Props = {
   getUsers: IGetAllUsers
 }
 
-export function FormCreateCourse({createCourse, getCategories, getUsers}: Props) {
+export function FormCreateCourse({ createCourse, getCategories, getUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
-  const [categories, setCategories] = useState<ICategory[]>([])
-  const [users, setUsers] = useState<IUserPartialResponse[]>([])
-  const [loading, setLoading] = useState(true)
   const [registerCourse, setRegisterCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
-  const [imageUpload, setImageUpload] = useState<File | null>(null)
-  const [filesUpload, setFilesUpload] = useState<FileUpload[]>([])
-  const [courseClass, setCourseClass] = useState<CourseClass[]>([])
+  const [filesUpload] = useState<FileUpload[]>([])
+  const [courseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
 
   function handleChange(event: any) {
     setStateEditor({ content: event })
   }
- 
+
   const searchTeachers = async (teacherName: string) => {
     try {
       const { data } = await getUsers.getAll({
@@ -114,28 +110,24 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
+        imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number()
+          .min(1, 'Tempo de acesso deve ser maior ou igual a 1')
           .typeError('Tempo de acesso deve ser um número')
-          .required('Tempo de acesso é necessário')
-          .positive('Tempo de acesso deve ser positivo')
-          .integer('Tempo de acesso deve ser um número inteiro.'),
+          .required('Tempo de acesso é necessário'),
         price: Yup.string().required('Preço é necessário'),
         installments: Yup.number()
+          .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1')
           .typeError('Quantidade de parcelas deve ser um número')
-          .required('Quantidade de parcelas é necessário')
-          .positive('Quantidade de parcelas deve ser positiva')
-          .integer('Quantidade de parcelas deve ser um número inteiro'),
-        discount: Yup.string().required('Desconto é necessário'),
+          .required('Quantidade de parcelas é necessário'),       
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
-        content: Yup.string().required('Conteúdo programático é necessário'),
       })
 
       data.content = stateEditor.content
       await schema.validate(data, { abortEarly: false })
-      if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
       courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
     } catch (err) {
       const validationErrors = {}
@@ -144,8 +136,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
           // @ts-ignore
           validationErrors[error.path] = error.message
         })
-        formRef.current.setErrors(validationErrors)
-        if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
+        formRef.current.setErrors(validationErrors)        
       }
     }
   }
@@ -167,9 +158,9 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
     )
 
     const formData = new FormData();
-    if(imageUpload && filesUpload){
-      formData.append('image', imageUpload); 
-      filesUpload.forEach(file => {
+    if(data?.image){
+      formData.append('image', data.image); 
+      filesUpload?.forEach(file => {
         if(file?.file)
            formData.append('attachments', file.file)
         formData.append('filesName',  file.name)
@@ -178,22 +169,21 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
     formData.append('course', JSON.stringify(course))
 
     setRegisterCourse(true)
-       createCourse
+    createCourse
       .create(formData)
       .then(() => {
         toast.success('Curso criado com sucesso!')
         router.push('/courses')
       })
       .catch(() => toast.error('Não foi possível criar o curso!'))
-      .finally(() => setRegisterCourse(false))         
-      
+      .finally(() => setRegisterCourse(false))
   }
 
   return (
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do Curso</h3>
-        <InputImage name='photo' handleSingleImageUpload={setImageUpload} />
+        <InputSingleImage name='image' />
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />
@@ -204,8 +194,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               classes='h-75px'
               placeholder='Digite o nome do professor'
             />
-            
-            <Input name='accessTime' type='number' label='Tempo de acesso ao curso (em meses)' />
+            <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />          
             <Input
               name='price'
               label='Preço'
@@ -222,7 +211,8 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
             />
           </div>
           <div className='w-50'>
-            <TextArea name='description' label='Descrição' rows={10} />
+            <TextArea name='description' label='Descrição' style={{ minHeight: '236px', margin: 0 }}
+            />
             <SelectAsync
               searchOptions={searchCategories}
               name='categoryId'
@@ -230,7 +220,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               classes='h-75px'
               placeholder='Digite o nome da categoria'
             />
-            <Input name='installments' label='Quantidade de Parcelas' type='number' />
+            <InputNumber name='installments' label='Quantidade de Parcelas' />           
           </div>
         </div>
 
@@ -258,7 +248,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
         <Input name='content' hidden={true} />
 
         <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>
-        <FilesInternalTable filesUpload={filesUpload} />
+        <FilesInternalTable filesUpload={filesUpload} formRef={formRef} />
 
         {hasErrorClass && (
           <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
@@ -274,12 +264,11 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
           </div>
         )}
         <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
-        <CoursesInternalTable courseClassArray={courseClass} />
+        <CoursesInternalTable courseClassArray={courseClass} formRef={formRef} />
 
         <div className='d-flex mt-10'>
-         
-          <CustomButton
-            customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          <Button
+            customClasses={['btn-secondary', 'w-125px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
             loading={registerCourse}
@@ -287,14 +276,13 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               router.push(appRoutes.COURSES)
             }}
           />
-          <CustomButton
+          <Button
             type='submit'
-            customClasses={['w-180px', 'btn-primary']}
+            customClasses={['w-125px', 'btn-primary']}
             title='Salvar'
             disabled={registerCourse}
           />
-          
-          </div>
+        </div>
       </Form>
     </>
   )

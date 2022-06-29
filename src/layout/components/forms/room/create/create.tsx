@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
@@ -6,46 +6,66 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { InputImage } from '../../../inputs/input-image'
 import { Input, TextArea } from '../../../inputs'
 import { SelectAsync } from '../../../inputs/selectAsync'
-import { CourseClass } from '../../../../../domain/models/courseClass'
 import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
-import { Role } from '../../../../../domain/usecases/interfaces/user/role'
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
 import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
 import { CreateRoom } from '../../../../../domain/models/createRoom'
 import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
-import CustomButton from '../../../buttons/CustomButton'
+import { InputNumber } from '../../../inputs/input-number'
+import RoomInternalTable from './roomInternalTable'
+import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
+import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
+import {
+  IGetZoomUsers,
+  IZoomUser,
+} from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
+import { InputCheckbox } from '../../../inputs/input-checkbox'
+import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
+import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
+import { currencyInputFormmater } from '../../../../formatters/currencyInputFormatter'
+import { InputSingleImage } from '../../../inputs/input-single-image'
+import { Button } from '../../../buttons/CustomButton'
 
 type Props = {
   createRoom: ICreateRoom
   getCategories: IGetCategories
   getUsers: IGetAllUsers
+  getZoomUsers: IGetZoomUsers
 }
 
-export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
+export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
-  const [loading, setLoading] = useState(true)
+
   const [registerRoom, setRegisterRoom] = useState(false)
-  const [imageUpload, setImageUpload] = useState<File | null>(null)
-  const [courseClass, setCourseClass] = useState<CourseClass[]>([])
-  const [hasErrorClass, setHasErrorClass] = useState(false)
+  const [isToShowStreaming, setIsToShowStreaming] = useState(false)
+  const [streamingRoom] = useState<IStreamingRoom[]>([])
+  const [hasErrorRoom, setHasErrorRoom] = useState(false)
+
+  const [errorMessage, setMessageError] = useState('')
+
+  const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
+  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
+  const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
+
+  async function verifyErrorStreamingRoom(data: IFormRoom) {
+    if (!data.itemChat && !data.itemRoom)
+      setMessageError('Você precisa adicionar, no mínimo, um dos itens')
+    else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
+      setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
+    else {
+      return false
+    }
+    return true
+  }
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
-
-    value = value + ''
-    value = parseInt(value.replace(/[\D]+/g, ''))
-    value = value + ''
-    value = value.replace(/([0-9]{2})$/g, ',$1')
-
-    if (value.length > 6) {
-      value = value.replace(/([0-9]{3}),([0-9]{2}$)/g, '.$1,$2')
-    }
+    value = currencyInputFormmater(value)
     formRef.current?.setFieldValue(name, value)
     if (value == 'NaN') formRef.current?.setFieldValue(name, '')
   }
@@ -56,22 +76,21 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
+        imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         price: Yup.string().required('Preço é necessário'),
         installments: Yup.number()
+          .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1')
           .typeError('Quantidade de parcelas deve ser um número')
-          .required('Quantidade de parcelas é necessário')
-          .positive('Quantidade de parcelas deve ser positiva')
-          .integer('Quantidade de parcelas deve ser um número inteiro'),
-        discount: Yup.string().required('Desconto é necessário'),
+          .required('Quantidade de parcelas é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
 
+      const hasError = await verifyErrorStreamingRoom(data)
       await schema.validate(data, { abortEarly: false })
-      if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
-      handleCreateRoom(data)
+      hasError ? setHasErrorRoom(hasError) : handleCreateRoom(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -80,7 +99,6 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
           validationErrors[error.path] = error.message
         })
         formRef.current.setErrors(validationErrors)
-        if (!imageUpload) formRef.current.setFieldError('photo', 'Imagem é necessária')
       }
     }
   }
@@ -93,17 +111,18 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
       discount,
       data.installments,
       false,
+      data.itemChat,
+      data.itemRoom,
       price,
       data.userId,
-      data.categoryId
+      data.categoryId,
+      data.itemRoom ? streamingRoom : undefined
     )
 
     const formData = new FormData()
-    if (imageUpload) {
-      formData.append('image', imageUpload)
-    }
-    formData.append('room', JSON.stringify(room))
 
+    if (data?.image) formData.append('image', data.image)
+    formData.append('room', JSON.stringify(room))
     setRegisterRoom(true)
     createRoom
       .create(formData)
@@ -116,53 +135,43 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
   }
 
   const searchTeachers = async (teacherName: string) => {
-    try {
-      const { data } = await getUsers.getAll({
-        name: teacherName,
-        order: 'asc',
-        page: 1,
-        take: 5,
-        role: Role.Teacher,
-      })
-
-      const teacherOptions: ISelectOption[] = data.map((teacher) => ({
-        label: teacher.name,
-        value: teacher.id,
-      }))
-
-      return teacherOptions
-    } catch {
-      toast.error('Falha em buscar os professores')
-      return []
-    }
+    return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
   }
 
   const searchCategories = async (categoryName: string) => {
+    return getAsyncCategoiesToSelectInput({
+      categoryName,
+      remoteGetCategories: getCategories,
+    })
+  }
+
+  async function fetchData() {
     try {
-      const { data } = await getCategories.get({
-        name: categoryName,
-        order: 'asc',
-        page: 1,
-        take: 5,
-      })
+      setDefaultTeacherOptions(await searchTeachers(''))
+      setDefaultCategoryOptions(await searchCategories(''))
 
-      const categoryOptions: ISelectOption[] = data.map((category) => ({
-        label: category.name,
-        value: category.id,
-      }))
-
-      return categoryOptions
-    } catch {
-      toast.error('Falha em buscar as categorias')
-      return []
+      const zoomUsers: IZoomUser[] = await getZoomUsers.get()
+      if (zoomUsers) {
+        const options: ISelectOption[] = zoomUsers.map((user) => ({
+          label: `${user.first_name} ${user.last_name}`,
+          value: user.id,
+        }))
+        setZoomUsersOptions(options)
+      }
+    } catch (error) {
+      toast.error('Não foi possível carregar os dados')
     }
   }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações da Sala</h3>
-        <InputImage name='photo' handleSingleImageUpload={setImageUpload} />
+        <InputSingleImage name='image' />
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-50'>
             <Input name='name' label='Nome' />
@@ -172,6 +181,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
               label='Professor'
               classes='h-75px'
               placeholder='Digite o nome do professor'
+              defaultOptions={defaultTeacherOptions}
             />
             <Input
               name='price'
@@ -187,13 +197,13 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
               placeholderText='R$ 0,00'
               onChange={() => currencyFormatter('discount')}
             />
-            <Input min='1' name='installments' label='Quantidade de Parcelas' type='number' />
+            <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
           <div className='w-50'>
             <TextArea
               name='description'
               label='Descrição'
-              style={{ minHeight: '246px', margin: 0 }}
+              style={{ minHeight: '238px', margin: 0 }}
             />
             <SelectAsync
               searchOptions={searchCategories}
@@ -201,22 +211,40 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
               label='Categoria'
               classes='h-75px'
               placeholder='Digite o nome da categoria'
+              defaultOptions={defaultCategoryOptions}
             />
           </div>
         </div>
 
         <h3 className='fs-6 fw-bolder text-dark'>Itens</h3>
-        <div className='form-check form-check-inline'>
-          <input className='form-check-input' type='radio' name='itemRoom' value='option1' />
-          <label className='form-check-label text-dark  fs-6'>Chat</label>
-        </div>
-        <div className='form-check form-check-inline'>
-          <input className='form-check-input' type='radio' name='itemRoom' value='option2' />
-          <label className='form-check-label text-dark fs-6'>Transmissão ao vivo</label>
-        </div>
+        {hasErrorRoom && (
+          <ErrorMandatoryItem
+            mainMessage='Não é possível criar Sala!'
+            secondaryMessage={errorMessage}
+            setHasError={setHasErrorRoom}
+          />
+        )}
+
+        <InputCheckbox name='itemChat' label='Chat' />
+        <InputCheckbox
+          name='itemRoom'
+          label='Transmissão ao vivo'
+          setIsToShowStreaming={setIsToShowStreaming}
+        />
+
+        {isToShowStreaming && (
+          <div>
+            <h3 className='mb-5 mt-5 text-muted'>Datas da Transmissão</h3>
+            <RoomInternalTable
+              formRef={formRef}
+              streamingRoomArray={streamingRoom}
+              zoomUsersOptions={zoomUsersOptions}
+            />
+          </div>
+        )}
 
         <div className='d-flex mt-10'>
-          <CustomButton
+          <Button
             customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
@@ -225,7 +253,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers }: Props) {
               router.push(appRoutes.ROOMS)
             }}
           />
-          <CustomButton
+          <Button
             type='submit'
             customClasses={['w-180px', 'btn-primary']}
             title='Salvar'

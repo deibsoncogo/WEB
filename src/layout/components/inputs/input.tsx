@@ -55,9 +55,7 @@ export function Input({ name, label, placeholderText, classes, onChange, ...rest
       {name != 'content' ? (
         <div className='form-control d-flex align-items-center form-control-lg bg-secondary p-0 m-0 border-0'>
           <input
-            className={`form-control form-control-lg form-control-solid border-transparent bg-secondary ${
-              error && 'placeholder-red'
-            }`}
+            className='form-control form-control-lg form-control-solid border-transparent bg-secondary no-spinner'
             type='text'
             name={name}
             placeholder={placeholderText}
@@ -67,6 +65,7 @@ export function Input({ name, label, placeholderText, classes, onChange, ...rest
             onChangeCapture={clearError}
             {...rest}
           />
+         
 
           {rest.type === 'password' && isEyeVisible && (
             <AiFillEye size={24} className='me-2' onClick={switchType} />
@@ -88,5 +87,6 @@ export function Input({ name, label, placeholderText, classes, onChange, ...rest
       )}
       {error && <span className='text-danger'>{error}</span>}
     </div>
+     
   )
 }

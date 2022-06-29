@@ -5,7 +5,7 @@ interface IRow {
   liveDate: string
   time: string
   start?: boolean
-  startUrl?: string
+  startUrl: string
   removeStreamItem: (index: number) => void
 }
 
@@ -19,7 +19,7 @@ export function Row({ index, liveDate, time, start, startUrl, removeStreamItem }
         <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>{time}</span>
       </td>
       <td>
-        {start && (
+        {start && startUrl && (
           <a href={startUrl} target='_blank' rel='noreferrer'>
             <button
               type='button'
@@ -31,13 +31,13 @@ export function Row({ index, liveDate, time, start, startUrl, removeStreamItem }
         )}
       </td>
 
-      <td className='text-end'>
+      <td className='text-start'>
         <button
           type='button'
           onClick={() => {
             removeStreamItem(index)
           }}
-          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-5'
+          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-5 text-start'
         >
           <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
         </button>

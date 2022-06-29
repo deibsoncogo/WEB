@@ -18,6 +18,7 @@ $mode: default;
 
 // Custom
 @import 'custom/custom.scss';
+@import 'custom/_input.scss';
 
 body {
   & > div {

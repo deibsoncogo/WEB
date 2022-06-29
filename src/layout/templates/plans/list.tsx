@@ -38,6 +38,7 @@ export function ListPlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }: Pr
     take,
     name: planName,
     order,
+    orderBy: pagination.orderBy,
   }
 
   const searchPlanFormRef = useRef<FormHandles>(null)
@@ -83,6 +84,7 @@ export function ListPlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }: Pr
     pagination.take,
     pagination.currentPage,
     pagination.order,
+    pagination.orderBy,
     planName,
     planStatusToggledSuccessful,
   ])

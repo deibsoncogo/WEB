@@ -13,10 +13,11 @@ interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
   name: string
   label: string
   classes?: string
+  mask?: (string | (string | RegExp)[]) & string
 }
 
 registerLocale('br', br)
-export function DatePicker({ name, label, classes, ...rest }: Props) {
+export function DatePicker({ name, label, classes, mask, ...rest }: Props) {
   const datepickerRef = useRef(null)
   const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
 
@@ -37,8 +38,9 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
     registerField({
       ref: datepickerRef,
       name: fieldName,
+      ref: datepickerRef,
       getValue: (ref) => {
-        return ref.current.props.selected
+        return ref?.current.props.selected
       },
       setValue: (ref: any, value: string) => {
         setEnteredDate(value)
@@ -116,6 +118,7 @@ export function DatePicker({ name, label, classes, ...rest }: Props) {
           {...rest}
         />
       </div>
+
       {error && <span className='text-danger'>{error}</span>}
     </div>
   )

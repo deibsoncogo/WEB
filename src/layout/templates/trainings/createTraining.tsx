@@ -139,22 +139,20 @@ function CreateTrainingPageTemplate({
   }, [createTrainingError, getZoomUsersError])
 
   return (
-    <>
-      <FormCreateTraining
-        ref={formRef}
-        removeStreamItem={removeStreamItem}
-        addStreamingDate={addStreamingDate}
-        onSubmit={handleFormSubmit}
-        onCancel={handleCancel}
-        searchTeachers={handleGetAsyncTeachersToSelectInput}
-        searchCategories={handleGetAsyncCategoriesToSelectInput}
-        streamList={streamList}
-        loadingSubmit={loadingTrainingCreation}
-        zoomUsersOptions={zoomUsersOptions}
-        defaultCategoryOptions={defaultCategoryOptions}
-        defaultTeacherOptions={defaultTeacherOptions}
-      />
-    </>
+    <FormCreateTraining
+      ref={formRef}
+      removeStreamItem={removeStreamItem}
+      addStreamingDate={addStreamingDate}
+      onSubmit={handleFormSubmit}
+      onCancel={handleCancel}
+      searchTeachers={handleGetAsyncTeachersToSelectInput}
+      searchCategories={handleGetAsyncCategoriesToSelectInput}
+      streamList={streamList}
+      loadingSubmit={loadingTrainingCreation}
+      zoomUsersOptions={zoomUsersOptions}
+      defaultCategoryOptions={defaultCategoryOptions}
+      defaultTeacherOptions={defaultTeacherOptions}
+    />
   )
 }
 

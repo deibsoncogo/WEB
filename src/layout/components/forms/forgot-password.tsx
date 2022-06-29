@@ -7,11 +7,13 @@ import { FormHandles } from '@unform/core'
 
 import { Input } from '../inputs'
 import { api } from '../../../application/services/api'
+import { Button } from '../buttons/CustomButton'
 
 export function FormForgotPassword() {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
+  const [loading, setLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -40,6 +42,7 @@ export function FormForgotPassword() {
 
   async function handleSendRequest(data: any) {
     setHasError(false)
+    setLoading(true)
     try {
       const response = await api.post('/auth/forgotPassword', data)
       router.push('/')
@@ -51,6 +54,7 @@ export function FormForgotPassword() {
       }
       setMessage(err.response.data.message[0])
     }
+    setLoading(false)
   }
 
   return (
@@ -63,20 +67,24 @@ export function FormForgotPassword() {
 
       <Input name='email' label='E-mail' placeholder='E-mail' type='email' />
 
-      <div className='mb-10 d-flex justify-content-between '>
-        <button
+      <div className='mb-10 d-flex justify-content-between'>
+        <Button
+          title='Cancelar'
           type='button'
+          size='sm'
           onClick={() => {
             router.push('/')
           }}
-          className='btn btn-lg btn-secondary button-size-sm mb-5'
-        >
-          Cancelar
-        </button>
+          customClasses={['btn-secondary', 'mb-5']}
+        />
 
-        <button type='submit' className='btn btn-lg btn-primary button-size-sm mb-5'>
-          Enviar
-        </button>
+        <Button
+          title='Enviar'
+          type='submit'
+          size='sm'
+          loading={loading}
+          customClasses={['btn-primary', 'mb-5']}
+        />
       </div>
     </Form>
   )
