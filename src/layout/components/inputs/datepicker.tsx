@@ -38,7 +38,6 @@ export function DatePicker({ name, label, classes, mask, ...rest }: Props) {
     registerField({
       ref: datepickerRef,
       name: fieldName,
-      ref: datepickerRef,
       getValue: (ref) => {
         return ref?.current.props.selected
       },
