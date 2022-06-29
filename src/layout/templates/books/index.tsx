@@ -18,6 +18,8 @@ export function BooksTemplate({ remoteGetAllBooks }: IBooksTemplate) {
   const [books, setBooks] = useState<IBook[]>([] as IBook[])
   const [bookName, setBookName] = useState('')
 
+  console.log(books)
+
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
   const { take, currentPage, order } = pagination

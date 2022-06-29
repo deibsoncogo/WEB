@@ -40,7 +40,7 @@ function EditBookPageTemplate({
     data: bookEditedSuccessful,
     error: editBookError,
     loading: loadingBookEdition,
-    cleanUp: cleanUpGetBook,
+    cleanUp: cleanUpEditBook,
   } = useRequest<FormData>(remoteEditBook.edit)
 
   const {
@@ -54,7 +54,6 @@ function EditBookPageTemplate({
     const { error, success } = await applyYupValidation<IBook>(bookFormSchema, data)   
 
     if (success) { 
-      console.log('success')     
       const dataFormatted = formatBookToSubmit(data)
       dataFormatted.append('id', String(bookId))
       dataFormatted.append('active', String(book?.active))
@@ -63,7 +62,6 @@ function EditBookPageTemplate({
     }
 
     if (error) {   
-      console.log('error')  
       formRef?.current?.setErrors(error)
     }
   }
@@ -83,7 +81,7 @@ function EditBookPageTemplate({
   useEffect(() => {
     if (bookEditedSuccessful) {
       toast.success('Livro Editado Com Sucesso')
-      cleanUpGetBook()
+      cleanUpEditBook()
       router.push(appRoutes.BOOKS)
     }
 
@@ -97,6 +95,7 @@ function EditBookPageTemplate({
   useEffect(() => {
     if (getBookError) {
       toast.error(getBookError)
+      cleanUpEditBook()
       router.push(appRoutes.BOOKS)
     }
 

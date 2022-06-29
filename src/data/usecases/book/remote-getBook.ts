@@ -7,7 +7,7 @@ export class RemoteGetBook implements IGetBook {
 
   get = async (params: IGetBookParams) => {
     const httpResponse = await this.httpClient.request({
-      url: `${this.url}/${params.id}`,
+      url: `${this.url}/show/${params.id}`,
       method: 'get',
     })
 
