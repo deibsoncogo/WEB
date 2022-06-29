@@ -12,7 +12,7 @@ import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditBook } from '../../components/forms/books/edit'
 import { bookFormSchema } from '../../components/forms/books/type'
 import { FullLoading } from '../../components/FullLoading/FullLoading'
-import { maskedToMoney, onlyNums } from '../../formatters/currenceFormatter'
+import { maskedToMoney } from '../../formatters/currenceFormatter'
 import { getAsyncCategoiesToSelectInput } from '../trainings/utils/getAsyncCategoriesToSelectInput'
 import { formatBookToSubmit } from './utils/formatBookToSubmit'
 
@@ -50,13 +50,11 @@ function EditBookPageTemplate({
     cleanUp: getBookCleanUp,
   } = useRequest<IBook, IGetBookParams>(remoteGetBook.get)
 
-  async function handleFormSubmit(data: IBook) {       
-    const { error, success } = await applyYupValidation<IBook>(bookFormSchema, {
-      ...data,
-      price: onlyNums(data.price)
-    })   
+  async function handleFormSubmit(data: IBook) {      
+    const { error, success } = await applyYupValidation<IBook>(bookFormSchema, data)   
 
-    if (success) {      
+    if (success) { 
+      console.log('success')     
       const dataFormatted = formatBookToSubmit(data)
       dataFormatted.append('id', String(bookId))
       dataFormatted.append('active', String(book?.active))
@@ -64,7 +62,8 @@ function EditBookPageTemplate({
       return
     }
 
-    if (error) {     
+    if (error) {   
+      console.log('error')  
       formRef?.current?.setErrors(error)
     }
   }

@@ -1,14 +1,14 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import { forwardRef, useState } from 'react'
+import { forwardRef } from 'react'
 import { IBook } from '../../../../domain/models/book'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
+import { onlyNums } from '../../../formatters/currenceFormatter'
 import { Button } from '../../buttons/CustomButton'
 import { Input, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
 import { InputSingleImage } from '../../inputs/input-single-image'
 import { SelectAsync } from '../../inputs/selectAsync'
-import { ActionModal } from '../../modals/action'
 
 type FormEditBookProps = {
   onSubmit: (data: any) => void
@@ -25,8 +25,15 @@ const FormEditBook = forwardRef<FormHandles, FormEditBookProps>((props, ref) => 
     loadingSubmit,
   } = props
 
+  const handleSubmit = async (data: IBook) => {
+    onSubmit({
+      ...data,
+      price: onlyNums(data.price),
+    })
+  }
+
   return (
-     <Form className='form' ref={ref} onSubmit={onSubmit}>
+     <Form className='form' ref={ref} onSubmit={handleSubmit}>
        <div className='d-flex flex-row gap-5 w-100'>
          <div className='w-100'>
            <h3 className='mb-5'>Dados do Livro</h3>
