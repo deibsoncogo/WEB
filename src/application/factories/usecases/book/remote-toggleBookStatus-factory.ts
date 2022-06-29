@@ -3,4 +3,4 @@ import { IToggleBookStatus } from '../../../../domain/usecases/interfaces/book/t
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteToggleBookStatus = (): IToggleBookStatus =>
-  new RemoteToggleBookStatus(makeApiUrl('/book'), makeAxiosHttpClient())
+  new RemoteToggleBookStatus(makeApiUrl('/book/toggleStatus'), makeAxiosHttpClient())

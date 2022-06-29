@@ -7,9 +7,8 @@ export class RemoteToggleBookStatus implements IToggleBookStatus {
 
   toggle = async (params: IToggleBookStatusParams) => {
     const httpResponse = await this.httpClient.request({
-      url: this.url,
-      method: 'put',
-      body: params,
+      url: `${this.url}/${params.id}`,
+      method: 'patch',
     })
 
     switch (httpResponse.statusCode) {
