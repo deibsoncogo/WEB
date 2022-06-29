@@ -29,6 +29,7 @@
     "react-inlinesvg": "^3.0.0",
     "react-input-mask": "^2.0.4",
     "react-modal": "^3.15.1",
+    "react-movable": "^3.0.4",
     "react-router-dom": "6",
     "react-select": "^5.3.2",
     "react-toastify": "^9.0.1",

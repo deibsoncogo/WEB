@@ -1,8 +1,10 @@
 import { Tooltip } from '@nextui-org/react'
+import { IItemProps } from 'react-movable'
 import { CourseClass } from '../../../../domain/models/courseClass'
 import { KTSVG } from '../../../../helpers'
 
 interface IRow {
+  props: IItemProps
   name: string
   link: string
   displayOrder: number
@@ -22,7 +24,7 @@ export function Row(props: IRow) {
 
   return (
     <>
-      <tr>
+      <tr {...props}>
         <td className='ps-4'>
           <span className='text-dark fw-bold d-block fs-7'>{props.name}</span>
         </td>

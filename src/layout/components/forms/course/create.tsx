@@ -41,7 +41,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
   const [registerCourse, setRegisterCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
   const [filesUpload] = useState<FileUpload[]>([])
-  const [courseClass] = useState<CourseClass[]>([])
+  const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
 
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
@@ -117,6 +117,10 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
   async function handleCreateCourse(data: IFormCourse) {
     const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
+    courseClass.forEach((item, index) =>(
+      item.displayOrder = index + 1 )
+    )
+
     const course = new CreateCourse(
       data.name,
       data.description,
@@ -128,7 +132,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
       price,
       data.accessTime,
       data.userId,
-      courseClass
+      courseClass 
     )
 
     const formData = new FormData();
@@ -255,7 +259,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
           </div>
         )}
         <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
-        <CoursesInternalTable courseClassArray={courseClass} formRef={formRef} />
+        <CoursesInternalTable setCourseClass={setCourseClass} courseClassArray={courseClass} formRef={formRef} />
 
         <div className='d-flex mt-10'>
          
