@@ -14,7 +14,7 @@ import { ISelectOption } from '../../../../../domain/shared/interface/SelectOpti
 import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
 
-import CustomButton from '../../../buttons/CustomButton'
+import { Button as CustomButton } from '../../../buttons/CustomButton'
 import { IGetRoom } from '../../../../../domain/usecases/interfaces/room/getCourse'
 import { IUpdateRoom } from '../../../../../domain/usecases/interfaces/room/updateRoom'
 import { IRoomResponse } from '../../../../../interfaces/api-response/roomResponse'

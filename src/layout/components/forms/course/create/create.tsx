@@ -1,33 +1,30 @@
-import {useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
-import * as Yup from 'yup'
+import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import { FormHandles} from '@unform/core'
+import * as Yup from 'yup'
 
-import { Input, InputNumber, Select, TextArea } from '../../../inputs'
 import { ICreateCourse } from '../../../../../domain/usecases/interfaces/course/createCourse'
+import { Input, InputNumber, TextArea } from '../../../inputs'
 
-import { ICategory } from '../../../../../interfaces/api-response/categoryResponse'
-import { toast } from 'react-toastify'
-import { IUserPartialResponse } from '../../../../../interfaces/api-response/userPartialResponse'
-import { CreateCourse } from '../../../../../domain/models/createCourse'
 import { Editor } from '@tinymce/tinymce-react'
-import { CourseClass } from '../../../../../domain/models/courseClass'
-import CoursesInternalTable from './courseInternalTable'
-import FilesInternalTable from '../filesUpload/filesInternalTable'
-import { FileUpload } from '../../../../../domain/models/fileUpload'
-import CustomButton from '../../../buttons/CustomButton'
+import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
+import { CourseClass } from '../../../../../domain/models/courseClass'
+import { CreateCourse } from '../../../../../domain/models/createCourse'
+import { FileUpload } from '../../../../../domain/models/fileUpload'
+import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
 import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
-import { Role } from '../../../../../domain/usecases/interfaces/user/role'
-import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
-import { SelectAsync } from '../../../inputs/selectAsync'
-import { InputSingleImage } from '../../../inputs/input-single-image'
-import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
+import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
+import { InputSingleImage } from '../../../inputs/input-single-image'
+import { SelectAsync } from '../../../inputs/selectAsync'
+import FilesInternalTable from '../filesUpload/filesInternalTable'
+import CoursesInternalTable from './courseInternalTable'
+import { Button } from '../../../buttons/CustomButton'
 
 type Props = {
   createCourse: ICreateCourse
@@ -35,7 +32,7 @@ type Props = {
   getUsers: IGetAllUsers
 }
 
-export function FormCreateCourse({createCourse, getCategories, getUsers}: Props) {
+export function FormCreateCourse({ createCourse, getCategories, getUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [registerCourse, setRegisterCourse] = useState(false)
@@ -50,7 +47,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
   function handleChange(event: any) {
     setStateEditor({ content: event })
   }
- 
+
   const searchTeachers = async (teacherName: string) => {
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
   }
@@ -61,7 +58,6 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
       remoteGetCategories: getCategories,
     })
   }
-
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
@@ -95,7 +91,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1')
           .typeError('Quantidade de parcelas deve ser um número')
-          .required('Quantidade de parcelas é necessário'),       
+          .required('Quantidade de parcelas é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
@@ -110,16 +106,14 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
           // @ts-ignore
           validationErrors[error.path] = error.message
         })
-        formRef.current.setErrors(validationErrors)        
+        formRef.current.setErrors(validationErrors)
       }
     }
   }
   async function handleCreateCourse(data: IFormCourse) {
     const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
-    courseClass.forEach((item, index) =>(
-      item.displayOrder = index + 1 )
-    )
+    courseClass.forEach((item, index) => (item.displayOrder = index + 1))
 
     const course = new CreateCourse(
       data.name,
@@ -132,30 +126,28 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
       price,
       data.accessTime,
       data.userId,
-      courseClass 
+      courseClass
     )
 
-    const formData = new FormData();
-    if(data?.image){
-      formData.append('image', data.image); 
-      filesUpload?.forEach(file => {
-        if(file?.file)
-           formData.append('attachments', file.file)
-        formData.append('filesName',  file.name)
+    const formData = new FormData()
+    if (data?.image) {
+      formData.append('image', data.image)
+      filesUpload?.forEach((file) => {
+        if (file?.file) formData.append('attachments', file.file)
+        formData.append('filesName', file.name)
       })
     }
     formData.append('course', JSON.stringify(course))
 
     setRegisterCourse(true)
-       createCourse
+    createCourse
       .create(formData)
       .then(() => {
         toast.success('Curso criado com sucesso!')
         router.push('/courses')
       })
       .catch(() => toast.error('Não foi possível criar o curso!'))
-      .finally(() => setRegisterCourse(false))         
-      
+      .finally(() => setRegisterCourse(false))
   }
 
   async function fetchData() {
@@ -169,7 +161,6 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
   useEffect(() => {
     fetchData()
   }, [])
-
 
   return (
     <>
@@ -187,8 +178,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               placeholder='Digite o nome do professor'
               defaultOptions={defaultTeacherOptions}
             />
-            
-            <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />          
+            <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
             <Input
               name='price'
               label='Preço'
@@ -205,7 +195,10 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
             />
           </div>
           <div className='w-50'>
-            <TextArea name='description' label='Descrição' style={{ minHeight: '236px', margin: 0 }}
+            <TextArea
+              name='description'
+              label='Descrição'
+              style={{ minHeight: '236px', margin: 0 }}
             />
             <SelectAsync
               searchOptions={searchCategories}
@@ -215,7 +208,7 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               placeholder='Digite o nome da categoria'
               defaultOptions={defaultCategoryOptions}
             />
-            <InputNumber name='installments' label='Quantidade de Parcelas' />           
+            <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
         </div>
 
@@ -259,12 +252,15 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
           </div>
         )}
         <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
-        <CoursesInternalTable setCourseClass={setCourseClass} courseClassArray={courseClass} formRef={formRef} />
+        <CoursesInternalTable
+          setCourseClass={setCourseClass}
+          courseClassArray={courseClass}
+          formRef={formRef}
+        />
 
         <div className='d-flex mt-10'>
-         
-          <CustomButton
-            customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          <Button
+            customClasses={['btn-secondary', 'w-125px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
             loading={registerCourse}
@@ -272,14 +268,13 @@ export function FormCreateCourse({createCourse, getCategories, getUsers}: Props)
               router.push(appRoutes.COURSES)
             }}
           />
-          <CustomButton
+          <Button
             type='submit'
-            customClasses={['w-180px', 'btn-primary']}
+            customClasses={['w-125px', 'btn-primary']}
             title='Salvar'
             disabled={registerCourse}
           />
-          
-          </div>
+        </div>
       </Form>
     </>
   )

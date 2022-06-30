@@ -4,7 +4,7 @@ import { forwardRef } from 'react'
 import { IStreaming } from '../../../../domain/models/streaming'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { KTSVG } from '../../../../helpers'
-import CustomButton from '../../buttons/CustomButton'
+import { Button } from '../../buttons/CustomButton'
 import { DatePicker, Input, Select, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
 import { InputNumber } from '../../inputs/input-number'
@@ -164,17 +164,17 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
       )}
 
       <div className='d-flex mt-10'>
-        <CustomButton
+        <Button
           title='Cancelar'
           type='button'
-          customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          customClasses={['btn-secondary', 'ms-auto', 'me-10']}
           onClick={onCancel}
         />
 
-        <CustomButton
+        <Button
           type='submit'
           title='Salvar'
-          customClasses={['w-180px', 'btn-primary']}
+          customClasses={['btn-primary']}
           loading={loadingSubmit}
         />
       </div>

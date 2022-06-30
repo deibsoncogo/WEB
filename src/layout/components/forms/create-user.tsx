@@ -16,17 +16,18 @@ import { restrictNumberInput } from '../../../utils/restrictNumberInput'
 import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
-import { validateStringWithNumber } from '../../../helpers'
+import { validateIfCPFIsValid, validateStringWithNumber } from '../../../helpers'
+import { Button } from '../buttons/CustomButton'
 
 type Props = {
   userRegister: IUserSignUp
+  verifyEmail: IUserVerifyEmail
 }
 
-export function FormCreateUser({ userRegister }: Props) {
+export function FormCreateUser({ userRegister, verifyEmail }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
-  const [cepObj, setCEPObj] = useState({})
   const [defaultValue, setDefaultValue] = useState<ZipCodeProps>()
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
@@ -53,7 +54,9 @@ export function FormCreateUser({ userRegister }: Props) {
           .required('Nome é necessário'),
         email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
         birthDate: Yup.string().required('Data de nascimento é necessária'),
-        cpf: Yup.string().required('CPF é necessário'),
+        cpf: Yup.string()
+          .test('is valid', 'CPF inválido', validateIfCPFIsValid)
+          .required('CPF é necessário'),
         phoneNumber: Yup.string().required('Telefone é necessário'),
         level: Yup.string().required('Nível de conhecimento é necessário'),
         password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é necessária'),
@@ -65,6 +68,9 @@ export function FormCreateUser({ userRegister }: Props) {
         state: Yup.string().required('Estado é necessário'),
         number: Yup.string().required('Número é necessário'),
       })
+
+      formRef.current.setFieldError('cpf', 'CPF invalido')
+
       await schema.validate(data, { abortEarly: false })
 
       handleCreateUser(data)
@@ -113,12 +119,33 @@ export function FormCreateUser({ userRegister }: Props) {
       address
     )
 
+    try {
+      await verifyEmail.verifyUserEmail(user.email)
+    } catch (err: any) {
+      console.log(err)
+      if (!formRef.current) return
+      formRef.current.setFieldError('email', 'Email já registrado')
+    }
+
     userRegister
       .signUp(user)
       .then(() => router.push('/users'))
       .catch((error: any) => {
+        console.log(error)
         toast.error(error.messages[0])
       })
+  }
+
+  function handleInputCPF() {
+    if (!formRef.current) return
+    const cpf = formRef.current?.getData().cpf
+    const matches = cpf?.match(/\d*/g)
+    const number = matches?.join('')
+
+    if (number?.length !== 11) return
+
+    const result = validateIfCPFIsValid(formRef.current?.getData().cpf)
+    if (!result) formRef.current.setFieldError('cpf', 'CPF invalido')
   }
 
   async function handleInputZipCode() {
@@ -139,9 +166,16 @@ export function FormCreateUser({ userRegister }: Props) {
             classes='h-75px'
             name='birthDate'
             label='Data de Nascimento'
-            maxDate={new Date()}
+            maxDate={new Date('01/01/2003')}
           />
-          <InputMasked classes='h-75px' name='cpf' label='CPF' type='text' mask='999.999.999-99' />
+          <InputMasked
+            classes='h-75px'
+            name='cpf'
+            label='CPF'
+            type='text'
+            mask='999.999.999-99'
+            onChange={handleInputCPF}
+          />
           <InputMasked
             classes='h-75px'
             name='phoneNumber'
@@ -232,20 +266,17 @@ export function FormCreateUser({ userRegister }: Props) {
         </button>
       </div>
 
-      <div className='mb-10 d-flex justify-content-between '>
-        <button
+      <div className='d-flex mt-10'>
+        <Button
+          title='Cancelar'
           type='button'
+          customClasses={['btn-secondary', 'ms-auto', 'me-10']}
           onClick={() => {
             router.push('/users')
           }}
-          className='btn btn-lg btn-secondary w-150px mb-5'
-        >
-          Cancelar
-        </button>
+        />
 
-        <button type='submit' className='btn btn-lg btn-primary w-180px mb-5'>
-          Salvar
-        </button>
+        <Button type='submit' title='Salvar' customClasses={['btn-primary']} />
       </div>
 
       <ProductsModal
