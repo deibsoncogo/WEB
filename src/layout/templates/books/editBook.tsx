@@ -25,7 +25,7 @@ type EditBookPageProps = {
 function EditBookPageTemplate({
   remoteGetCategories,
   remoteGetBook,
-  remoteEditBook
+  remoteEditBook,
 }: EditBookPageProps) {
   const router = useRouter()
   const { id: bookId } = router.query
@@ -50,10 +50,10 @@ function EditBookPageTemplate({
     cleanUp: getBookCleanUp,
   } = useRequest<IBook, IGetBookParams>(remoteGetBook.get)
 
-  async function handleFormSubmit(data: IBook) {      
-    const { error, success } = await applyYupValidation<IBook>(bookFormSchema, data)   
+  async function handleFormSubmit(data: IBook) {
+    const { error, success } = await applyYupValidation<IBook>(bookFormSchema, data)
 
-    if (success) { 
+    if (success) {
       const dataFormatted = formatBookToSubmit(data)
       dataFormatted.append('id', String(bookId))
       dataFormatted.append('active', String(book?.isActive))
@@ -61,7 +61,7 @@ function EditBookPageTemplate({
       return
     }
 
-    if (error) {   
+    if (error) {
       formRef?.current?.setErrors(error)
     }
   }
@@ -112,11 +112,11 @@ function EditBookPageTemplate({
         author,
         stock,
         price,
-        discount,        
+        discount,
         description,
         category,
         installments,
-        imageUrl
+        imageUrl,
       } = book
 
       formRef.current?.setFieldValue('name', name)
@@ -135,12 +135,12 @@ function EditBookPageTemplate({
   return (
     <>
       {loadingPageData && <FullLoading />}
-      <FormEditBook 
+      <FormEditBook
         ref={formRef}
         onSubmit={handleFormSubmit}
-        onCancel={handleCancel} 
+        onCancel={handleCancel}
         searchCategories={handleGetAsyncCategoriesToSelectInput}
-        loadingSubmit={loadingBookEdition}      
+        loadingSubmit={loadingBookEdition}
       />
     </>
   )

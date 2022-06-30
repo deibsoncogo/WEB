@@ -54,7 +54,7 @@ export function Row({
   }
 
   async function handleUpdateStatusOfBook() {
-    setLoading(true)  
+    setLoading(true)
 
     try {
       await toggleBookStatus.toggle({ id: String(id) })

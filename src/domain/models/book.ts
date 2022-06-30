@@ -8,8 +8,8 @@ export interface IBook {
   author: string
   discount: number
   stock: number
-  installments: number
   isActive: boolean
+  installments: number
   categoryId: string
 
   category: {
