@@ -1,4 +1,4 @@
-import { FormCreateCourse } from "../../../../layout/components/forms/course/create";
+import { FormCreateCourse } from "../../../../layout/components/forms/course/create/create";
 import { makeRemoteGetCategories } from "../../usecases/categories/remote-getCategories-factory";
 
 import { makeRemoteCreateCourse } from "../../usecases/course/remote-createCourse-factory";

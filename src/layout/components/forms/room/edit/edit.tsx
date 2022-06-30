@@ -6,8 +6,6 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-
-
 import { Input, TextArea } from '../../../inputs'
 import { SelectAsync } from '../../../inputs/selectAsync'
 import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
@@ -178,13 +176,14 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
   useEffect(() => {
     const fetchData = async () => {     
       if (typeof id == 'string') {
-        const data = await getRoom.get(id)
+        const data = await getRoom.get(id)       
         formRef.current?.setFieldValue('userId', data.userId)
         formRef.current?.setFieldValue('userId-label', data.teacherName)
         formRef.current?.setFieldValue('categoryId', data.categoryId)
         formRef.current?.setFieldValue('categoryId-label', data.categoryName)
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)    
-        formRef.current?.setFieldValue('installments', data.installments)   
+        formRef.current?.setFieldValue('installments', data.installments) 
+        setDefaultValue(data)        
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
         inputRefChat.current.checked = data.isChatActive
         inputRefChat.current.value = data.isChatActive
@@ -192,8 +191,8 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
         inputRefRoom.current.checked = data.isStreamingRoomActive
         inputRefRoom.current.value = data.isStreamingRoomActive
         setIsToShowStreaming(data.isStreamingRoomActive)
-        setStreamingRoom(startStreamingRoomHelper(data?.streamingsRoom))
-        setDefaultValue(data)
+        setStreamingRoom(startStreamingRoomHelper(data?.streamingRooms))       
+         
       }
 
       const dataTeachers = await searchTeachers('')

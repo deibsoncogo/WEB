@@ -13,7 +13,7 @@ export class CreateRoom{
     price: string; 
     userId: string;
     categoryId: string;    
-    streamingsRoom?: IStreamingRoom[]
+    streamingRooms?: IStreamingRoom[]
 
 
     constructor(name: string, description: string, discount: string, installments: string,
@@ -29,7 +29,7 @@ export class CreateRoom{
         this.price = price;
         this.userId = userId;   
         this.categoryId = categoryId;   
-        this.streamingsRoom = streamings;  
+        this.streamingRooms = streamings;  
           
     }
 }
