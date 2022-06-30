@@ -13,5 +13,6 @@ export interface ICourseResponse{
     isActive: boolean;
     categoryId: string;
     teacherName: string;  
+    categoryName: string; 
      
 }

@@ -1,31 +1,30 @@
-import {useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
-import * as Yup from 'yup'
+import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import { FormHandles} from '@unform/core'
+import * as Yup from 'yup'
 
-import { Input, InputNumber, Select, TextArea } from '../../inputs'
-import { ICreateCourse } from '../../../../domain/usecases/interfaces/course/createCourse'
+import { ICreateCourse } from '../../../../../domain/usecases/interfaces/course/createCourse'
+import { Input, InputNumber, TextArea } from '../../../inputs'
 
-import { ICategory } from '../../../../interfaces/api-response/categoryResponse'
-import { toast } from 'react-toastify'
-import { IUserPartialResponse } from '../../../../interfaces/api-response/userPartialResponse'
-import { CreateCourse } from '../../../../domain/models/createCourse'
 import { Editor } from '@tinymce/tinymce-react'
-import { CourseClass } from '../../../../domain/models/courseClass'
+import { toast } from 'react-toastify'
+import { appRoutes } from '../../../../../application/routing/routes'
+import { CourseClass } from '../../../../../domain/models/courseClass'
+import { CreateCourse } from '../../../../../domain/models/createCourse'
+import { FileUpload } from '../../../../../domain/models/fileUpload'
+import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
+import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
+import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
+import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
+import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
+import { InputSingleImage } from '../../../inputs/input-single-image'
+import { SelectAsync } from '../../../inputs/selectAsync'
+import FilesInternalTable from '../filesUpload/filesInternalTable'
 import CoursesInternalTable from './courseInternalTable'
-import FilesInternalTable from './filesUpload/filesInternalTable'
-import { FileUpload } from '../../../../domain/models/fileUpload'
-import { Button } from '../../buttons/CustomButton'
-import { appRoutes } from '../../../../application/routing/routes'
-import { IGetCategories } from '../../../../domain/usecases/interfaces/category/getCategories'
-import { IGetAllUsers } from '../../../../domain/usecases/interfaces/user/getAllUsers'
-import { Role } from '../../../../domain/usecases/interfaces/user/role'
-import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
-import { SelectAsync } from '../../inputs/selectAsync'
-import { InputSingleImage } from '../../inputs/input-single-image'
+import { Button } from '../../../buttons/CustomButton'
 
 type Props = {
   createCourse: ICreateCourse
@@ -39,54 +38,25 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
   const [registerCourse, setRegisterCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
   const [filesUpload] = useState<FileUpload[]>([])
-  const [courseClass] = useState<CourseClass[]>([])
+  const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
+
+  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
+  const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
   function handleChange(event: any) {
     setStateEditor({ content: event })
   }
 
   const searchTeachers = async (teacherName: string) => {
-    try {
-      const { data } = await getUsers.getAll({
-        name: teacherName,
-        order: 'asc',
-        page: 1,
-        take: 5,
-        role: Role.Teacher,
-      })
-
-      const teacherOptions: ISelectOption[] = data.map((teacher) => ({
-        label: teacher.name,
-        value: teacher.id,
-      }))
-
-      return teacherOptions
-    } catch {
-      toast.error('Falha em buscar os professores')
-      return []
-    }
+    return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
   }
 
   const searchCategories = async (categoryName: string) => {
-    try {
-      const { data } = await getCategories.get({
-        name: categoryName,
-        order: 'asc',
-        page: 1,
-        take: 5,
-      })
-
-      const categoryOptions: ISelectOption[] = data.map((category) => ({
-        label: category.name,
-        value: category.id,
-      }))
-
-      return categoryOptions
-    } catch {
-      toast.error('Falha em buscar as categorias')
-      return []
-    }
+    return getAsyncCategoiesToSelectInput({
+      categoryName,
+      remoteGetCategories: getCategories,
+    })
   }
 
   const currencyFormatter = (name: string) => {
@@ -121,7 +91,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1')
           .typeError('Quantidade de parcelas deve ser um número')
-          .required('Quantidade de parcelas é necessário'),       
+          .required('Quantidade de parcelas é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
@@ -136,13 +106,15 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
           // @ts-ignore
           validationErrors[error.path] = error.message
         })
-        formRef.current.setErrors(validationErrors)        
+        formRef.current.setErrors(validationErrors)
       }
     }
   }
   async function handleCreateCourse(data: IFormCourse) {
     const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
+    courseClass.forEach((item, index) => (item.displayOrder = index + 1))
+
     const course = new CreateCourse(
       data.name,
       data.description,
@@ -157,13 +129,12 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
       courseClass
     )
 
-    const formData = new FormData();
-    if(data?.image){
-      formData.append('image', data.image); 
-      filesUpload?.forEach(file => {
-        if(file?.file)
-           formData.append('attachments', file.file)
-        formData.append('filesName',  file.name)
+    const formData = new FormData()
+    if (data?.image) {
+      formData.append('image', data.image)
+      filesUpload?.forEach((file) => {
+        if (file?.file) formData.append('attachments', file.file)
+        formData.append('filesName', file.name)
       })
     }
     formData.append('course', JSON.stringify(course))
@@ -179,6 +150,18 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
       .finally(() => setRegisterCourse(false))
   }
 
+  async function fetchData() {
+    try {
+      setDefaultTeacherOptions(await searchTeachers(''))
+      setDefaultCategoryOptions(await searchCategories(''))
+    } catch (error) {
+      toast.error('Não foi possível carregar os dados')
+    }
+  }
+  useEffect(() => {
+    fetchData()
+  }, [])
+
   return (
     <>
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
@@ -193,8 +176,9 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
               label='Professor'
               classes='h-75px'
               placeholder='Digite o nome do professor'
+              defaultOptions={defaultTeacherOptions}
             />
-            <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />          
+            <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
             <Input
               name='price'
               label='Preço'
@@ -211,7 +195,10 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
             />
           </div>
           <div className='w-50'>
-            <TextArea name='description' label='Descrição' style={{ minHeight: '236px', margin: 0 }}
+            <TextArea
+              name='description'
+              label='Descrição'
+              style={{ minHeight: '236px', margin: 0 }}
             />
             <SelectAsync
               searchOptions={searchCategories}
@@ -219,8 +206,9 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
               label='Categoria'
               classes='h-75px'
               placeholder='Digite o nome da categoria'
+              defaultOptions={defaultCategoryOptions}
             />
-            <InputNumber name='installments' label='Quantidade de Parcelas' />           
+            <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
         </div>
 
@@ -264,7 +252,11 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
           </div>
         )}
         <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
-        <CoursesInternalTable courseClassArray={courseClass} formRef={formRef} />
+        <CoursesInternalTable
+          setCourseClass={setCourseClass}
+          courseClassArray={courseClass}
+          formRef={formRef}
+        />
 
         <div className='d-flex mt-10'>
           <Button

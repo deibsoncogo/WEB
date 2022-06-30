@@ -1,45 +1,39 @@
-import { FormHandles } from '@unform/core';
-import { Dispatch, RefObject, SetStateAction,useState } from 'react'
-import { Tooltip } from '@nextui-org/react'
-import { KTSVG } from '../../../../../../helpers';
-import { ICourseClassResponse } from '../../../../../../interfaces/api-response/courseClassResponse';
-import { Input } from '../../../../inputs';
-import { arrayMove, List } from 'react-movable';
 
+import { Tooltip } from '@nextui-org/react'
+import { FormHandles } from '@unform/core'
+import { Dispatch, RefObject, SetStateAction, useState } from 'react'
+import { arrayMove, List } from 'react-movable'
+import { CourseClass } from '../../../../../domain/models/courseClass'
+import { KTSVG } from '../../../../../helpers'
+import { Input } from '../../../inputs'
 
 type prop = {
-  courseClassArray: ICourseClassResponse[]
-  setCourseClass: Dispatch<SetStateAction<ICourseClassResponse[]>>
-  IdDeletedCourseClass: string[]
+  courseClassArray: CourseClass[]
+  setCourseClass: Dispatch<SetStateAction<CourseClass[]>>
   formRef: RefObject<FormHandles>
 }
 
-
-export default function CoursesInternalTable({courseClassArray, setCourseClass, IdDeletedCourseClass, formRef}: prop) {
-  const [name, setName] = useState<string>()
+export default function CoursesInternalTable(prop: prop) {
+  const [nameClass, setName] = useState<string>()
   const [link, setLink] = useState<string>()
   const [hasError, setHasError] = useState<boolean>(false)
   const [refresher, setRefresher] = useState<boolean>(false)
   const [messageError, setMessageError] = useState<string>('')
 
-
   const handleRefresher = () => {
     setRefresher(!refresher)
   }
 
-  const deleteClass = (courseClass: ICourseClassResponse) => {
-    const index = courseClassArray.indexOf(courseClass, 0)
+  const deleteClass = (courseClass: CourseClass) => {
+    const index = prop.courseClassArray.indexOf(courseClass, 0)
     if (index > -1) {
-      courseClassArray.splice(index, 1)
-      if(courseClass?.id){
-        IdDeletedCourseClass.push(courseClass.id)
-      }        
+      prop.courseClassArray.splice(index, 1)
     }
     handleRefresher()
   }
 
   async function handleClassSubmit() {
-    if (name && link) {
+    if (nameClass && link) {
       if (
         !link.match(
           /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
@@ -49,10 +43,10 @@ export default function CoursesInternalTable({courseClassArray, setCourseClass, 
         setMessageError('Link inválido e/ou ordem de exibição igual a 0 (zero)')
         return
       }
-      const courseClass = {name, link}     
-      courseClassArray.push(courseClass)
-      formRef.current?.clearField('nameClass')
-      formRef.current?.clearField('link')
+
+      prop.courseClassArray.push(new CourseClass(nameClass, link))
+      prop.formRef.current?.clearField('nameClass')
+      prop.formRef.current?.clearField('link')     
       handleRefresher()
     } else {
       setHasError(true)
@@ -77,6 +71,7 @@ export default function CoursesInternalTable({courseClassArray, setCourseClass, 
       )}
 
       <div className='d-flex flex-row align-middle gap-5'>
+
         <Input
           name='nameClass'
           label='Nome'
@@ -91,7 +86,8 @@ export default function CoursesInternalTable({courseClassArray, setCourseClass, 
           onChange={(event) => setLink(event.target.value)}
         />
 
-       <div className='fv-row d-flex align-items-center mt-4'>
+       
+        <div className='fv-row d-flex align-items-center mt-4'>
           <a onClick={handleClassSubmit} className='btn btn-sm btn-primary'>
             <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
             Adicionar aula
@@ -99,14 +95,14 @@ export default function CoursesInternalTable({courseClassArray, setCourseClass, 
         </div>
       </div>
 
-      {courseClassArray.length > 0 && (
+      {prop.courseClassArray.length > 0 && (
         <div className='card mb-5 mb-xl-8'>
           <div className='py-3 float-start'>
             <div className='table-responsive'>
               <List
-                values={courseClassArray}
+                values={prop.courseClassArray}
                 onChange={({ oldIndex, newIndex }) => {
-                 setCourseClass(arrayMove(courseClassArray, oldIndex, newIndex))                  
+                 prop.setCourseClass(arrayMove(prop.courseClassArray, oldIndex, newIndex))                  
                 }}
                 renderList={({ children, props, isDragged }) => (
                   <table
