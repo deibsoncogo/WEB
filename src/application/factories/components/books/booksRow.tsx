@@ -1,6 +1,6 @@
 import { Row } from '../../../../layout/components/tables/books-list/row'
 import { makeRemoteDeleteBooks } from '../../usecases/book/remote-deleteBookfactory'
-import { makeRemoteUpdateBooks } from '../../usecases/book/remote-updateBook'
+import { makeRemoteToggleBookStatus } from '../../usecases/book/remote-toggleBookStatus-factory'
 
 type IMakeBooksRow = {
   id: string
@@ -35,7 +35,7 @@ export function MakeBooksRow({
       stock={stock}
       active={active}
       deleteBook={makeRemoteDeleteBooks(id)}
-      updateStatusOfBook={makeRemoteUpdateBooks()}
+      toggleBookStatus={makeRemoteToggleBookStatus()}
       getBooks={getBooks}
       handleRefresher={handleRefresher}
     />

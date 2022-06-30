@@ -2,6 +2,7 @@ import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { IToggleBookStatus } from '../../../../domain/usecases/interfaces/book/toggleBookStatus'
 import { KTSVG } from '../../../../helpers'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 import { Switch } from '../../inputs'
@@ -16,7 +17,7 @@ interface IRow {
   stock: number
   active: boolean
   deleteBook: IDeleteBook
-  updateStatusOfBook: IUpdateBook
+  toggleBookStatus: IToggleBookStatus
   getBooks(): Promise<void>
   handleRefresher: () => void
 }
@@ -30,7 +31,7 @@ export function Row({
   stock,
   active,
   deleteBook,
-  updateStatusOfBook,
+  toggleBookStatus,
   getBooks,
   handleRefresher,
 }: IRow) {
@@ -53,14 +54,10 @@ export function Row({
   }
 
   async function handleUpdateStatusOfBook() {
-    setLoading(true)
-
-    const form = new FormData()
-    form.append('id', id)
-    form.append('active', !active === true ? 'true' : 'false')    
+    setLoading(true)  
 
     try {
-      await updateStatusOfBook.update(form)
+      await toggleBookStatus.toggle({ id: String(id) })
       handleRefresher()
       toast.success('Status atualizado com sucesso')
     } catch (err) {

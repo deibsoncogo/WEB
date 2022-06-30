@@ -56,6 +56,7 @@ export function BooksTemplate({ remoteGetAllBooks }: IBooksTemplate) {
     pagination.orderBy,
     currentPage,
     bookName,
+    refresher
   ])
 
   return (

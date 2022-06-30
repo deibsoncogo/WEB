@@ -83,7 +83,7 @@ export function BooksTable({
                       price={item.price}
                       author={item.author}
                       stock={item.stock}
-                      active={item.active}
+                      active={item.isActive}
                       getBooks={getBooks}
                       handleRefresher={handleRefresher}
                     />
