@@ -9,4 +9,7 @@ export const bookFormSchema = Yup.object().shape({
   discount: Yup.number().required('Desconto é necessária'),
   description: Yup.string().required('Descrição é necessária'),
   categoryId: Yup.string().required('Selecione uma categoria'),
+  installments: Yup.number()
+    .required('Quantidade de parcelas é nescessário')
+    .min(1, 'Quantidade de parcelas deve ser maior que 0'),
 })

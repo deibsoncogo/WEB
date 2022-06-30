@@ -56,7 +56,7 @@ function EditBookPageTemplate({
     if (success) { 
       const dataFormatted = formatBookToSubmit(data)
       dataFormatted.append('id', String(bookId))
-      dataFormatted.append('active', String(book?.active))
+      dataFormatted.append('active', String(book?.isActive))
       editBook(dataFormatted)
       return
     }
@@ -115,6 +115,7 @@ function EditBookPageTemplate({
         discount,        
         description,
         category,
+        installments,
         imageUrl
       } = book
 
@@ -123,6 +124,7 @@ function EditBookPageTemplate({
       formRef.current?.setFieldValue('author', author)
       formRef.current?.setFieldValue('categoryId', category.id)
       formRef.current?.setFieldValue('categoryId-label', category.name)
+      formRef.current?.setFieldValue('installments', installments)
       formRef.current?.setFieldValue('stock', stock)
       formRef.current?.setFieldValue('price', maskedToMoney(price))
       formRef.current?.setFieldValue('discount', maskedToMoney(discount))

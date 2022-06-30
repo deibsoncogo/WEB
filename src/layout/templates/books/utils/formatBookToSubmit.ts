@@ -16,6 +16,7 @@ function formatBookToSubmit(book: IBook): FormData {
     discount,
     description,
     categoryId,
+    installments
   } = formattedData
 
   const formData = new FormData()
@@ -28,6 +29,7 @@ function formatBookToSubmit(book: IBook): FormData {
   formData.append('discount', String(discount))
   formData.append('description', String(description))
   formData.append('categoryId', String(categoryId))
+  formData.append('installments', String(installments))
   formData.append('active', String(false))
 
   return formData
