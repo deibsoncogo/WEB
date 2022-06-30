@@ -2,12 +2,8 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { makeRemoteGetBookById } from '../../../application/factories/pages/books/remote-getBooks-factory'
-import { makeRemoteUpdateBook } from '../../../application/factories/pages/books/remote-updateBooks-factory'
-
-import { makeRemoteGetCategoriesNoPagination } from '../../../application/factories/usecases/categories/remote-getCategoriesNoPagination-factory'
+import { MakeEditBook } from '../../../application/factories/pages/books/edit-book-factory'
 import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
-import { FormUpdateBook } from '../../../layout/components/forms/books/edit'
 import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
 
 const EditBook: NextPage = () => {
@@ -30,12 +26,7 @@ const EditBook: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <FormUpdateBook
-                updateBook={makeRemoteUpdateBook()}
-                getBookById={makeRemoteGetBookById(id as string)}
-                getAllCategories={makeRemoteGetCategoriesNoPagination()}
-                id={id}
-              />
+              <MakeEditBook />
             </div>
           </div>
         </div>

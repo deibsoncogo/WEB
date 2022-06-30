@@ -15,5 +15,5 @@ export interface IRoomResponse{
     categoryId: string;
     teacherName: string;
     categoryName: string;
-    streamingsRoom: IStreamingRoom[]
+    streamingRooms: IStreamingRoom[]
 }

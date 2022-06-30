@@ -1,23 +1,24 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import { ICreateBook } from '../../../domain/usecases/interfaces/book/createBook'
 import { getAuthHeadersMultipart } from '../../../helpers/axios/axiosHeaderMultipart'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteUpdateBook implements IUpdateBook {
-  constructor(private readonly url: string, private readonly httpClient: HttpClient<string>) {}
+export class RemoteCreateBook implements ICreateBook {
+  constructor(private readonly url: string, private readonly httpClient: HttpClient<boolean>) {}
 
-  update = async (updateBook: FormData) => {
+  async create(bookData: FormData) {
     const httpResponse = await this.httpClient.request({
       url: this.url,
-      method: 'put',
-      body: updateBook,
+      method: 'post',
+      body: bookData,
       headers: getAuthHeadersMultipart(),
     })
 
     switch (httpResponse.statusCode) {
-      case HttpStatusCode.ok:
-        return httpResponse.body
+      case HttpStatusCode.created:
+        return true
       case HttpStatusCode.badRequest:
-        throw new InvalidParamsError(['Livro já cadastrado.'])
+        throw new InvalidParamsError(httpResponse.body?.message)
       default:
         throw new UnexpectedError()
     }

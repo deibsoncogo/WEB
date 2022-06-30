@@ -1,118 +1,142 @@
+import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useState } from 'react'
-
+import { toast } from 'react-toastify'
+import { IToggleBookStatus } from '../../../../domain/usecases/interfaces/book/toggleBookStatus'
 import { KTSVG } from '../../../../helpers'
-
+import { maskedToMoney } from '../../../formatters/currenceFormatter'
+import { Switch } from '../../inputs'
 import ConfirmationModal from '../../modal/ConfirmationModal'
-import { ActionModal } from '../../modals/action'
 
-interface IBookRow {
+interface IRow {
   id: string
   name: string
   description: string
-  price: string
-  author: string
+  price: string | number
+  authorName: string
   stock: number
-  isActive: boolean
-  deleteBook: (bookId: string) => void
-  activeBook: boolean
-  loadingDeletion: boolean
-  isModalDeletionOpen: boolean
-  closeModalDeleteConfirmation: () => void
-  openModalDeleteConfirmation: () => void
+  active: boolean
+  deleteBook: IDeleteBook
+  toggleBookStatus: IToggleBookStatus
+  getBooks(): Promise<void>
+  handleRefresher: () => void
 }
 
 export function Row({
-  isActive,
   id,
-  author,
-  description,
-  stock,
-  price,
   name,
+  description,
+  price,
+  authorName,
+  stock,
+  active,
   deleteBook,
-  activeBook,
-  loadingDeletion,
-  isModalDeletionOpen,
-  closeModalDeleteConfirmation,
-  openModalDeleteConfirmation,
-}: IBookRow) {
-  const handleDeleteBook = () => {
-    deleteBook(id)
+  toggleBookStatus,
+  getBooks,
+  handleRefresher,
+}: IRow) {
+  const [loading, setLoading] = useState(false)
+  const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false)
+  const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false)
+
+  async function handleDeleteBook() {
+    setLoading(true)
+    try {
+      setLoading(true)
+      await deleteBook.deleteBook()
+      getBooks()
+      toast.success('Livro excluído com sucesso')
+    } catch (err) {
+      toast.error('Erro ao excluir o livro')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleActiveBook = () => {
-    setOpenModal(true)
+  async function handleUpdateStatusOfBook() {
+    setLoading(true)
+
+    try {
+      await toggleBookStatus.toggle({ id: String(id) })
+      handleRefresher()
+      toast.success('Status atualizado com sucesso')
+    } catch (err) {
+      toast.error('Erro ao atualizar o status do livro')
+    }
+    setIsModalUpdateOpen(false)
+    setLoading(false)
   }
 
-  async function handleActionModal() {
-    console.log('first')
-    setIsActiveCurrent(!isActiveCurrent)
-    setOpenModal(false)
-  }
-  const [isActiveCurrent, setIsActiveCurrent] = useState(isActive)
-  const [openModal, setOpenModal] = useState(false)
   return (
     <tr>
       <td className='ps-4'>
         <span className='text-dark fw-bold d-block fs-7'>{name}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{description}</span>
+        <span
+          className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'
+          title={description}
+        >
+          {description}
+        </span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{price}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{maskedToMoney(price)}</span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{author}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{authorName}</span>
       </td>
       <td>
         <span className='text-dark fw-bold d-block fs-7'>{stock}</span>
       </td>
-      <td className='justify-content-between d-flex'>
-        <div className='form-check form-switch form-switch-sm form-check-custom'>
-          <input
-            onClick={() => {
-              handleActiveBook()
-            }}
-            className='form-check-input'
-            type='checkbox'
-            checked={isActiveCurrent}
-          />
-        </div>
-      </td>
       <td>
-        <Link href={`/books/edit/${id}`}>
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-            <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-          </button>
-        </Link>
+        <Switch active={active} setModalUpdate={setIsModalUpdateOpen} />
+      </td>
 
-        <button
-          onClick={openModalDeleteConfirmation}
-          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+      <td className='text-start d-flex justify-content-start px-4'>
+        <Tooltip content='Editar' rounded color='primary'>
+          <Link href={`/books/edit/${id}`}>
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+              <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+            </button>
+          </Link>
+        </Tooltip>
+
+        <Tooltip
+          content='Deletar'
+          rounded
+          color='primary'
+          onClick={() => {
+            setIsDeleteCategoryModalOpen(true)
+          }}
+          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
         >
-          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-        </button>
+          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
+            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+          </button>
+        </Tooltip>
       </td>
 
       <ConfirmationModal
-        isOpen={isModalDeletionOpen}
-        loading={loadingDeletion}
-        onRequestClose={closeModalDeleteConfirmation}
+        isOpen={isDeleteCategoryModalOpen}
+        loading={loading}
+        onRequestClose={() => {
+          setIsDeleteCategoryModalOpen(false)
+        }}
         onConfimation={handleDeleteBook}
         content='Você tem certeza que deseja excluir este livro?'
         title='Deletar'
       />
 
-      <ActionModal
-        isOpen={openModal}
-        modalTitle='Confirmação'
-        message='Você tem certeza que deseja alterar o status deste livro?'
-        action={handleActionModal}
+      <ConfirmationModal
+        isOpen={isModalUpdateOpen}
+        loading={loading}
         onRequestClose={() => {
-          setOpenModal(false)
+          setIsModalUpdateOpen(false)
         }}
+        onConfimation={handleUpdateStatusOfBook}
+        content='Você tem certeza que deseja alterar o status deste livro?'
+        title='Confirmação'
       />
     </tr>
   )
