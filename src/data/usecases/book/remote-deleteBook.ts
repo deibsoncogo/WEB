@@ -1,14 +1,12 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { IDeleteBook, IDeleteBookParams } from '../../../domain/usecases/interfaces/book/deleteBook'
-
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteDeleteBook implements IDeleteBook {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<string>) {}
 
-  delete = async (params: IDeleteBookParams) => {
+  deleteBook = async () => {
     const httpResponse = await this.httpClient.request({
-      url: `${this.url}/${params.id}`,
+      url: this.url,
       method: 'delete',
     })
 
@@ -16,7 +14,7 @@ export class RemoteDeleteBook implements IDeleteBook {
       case HttpStatusCode.ok:
         return httpResponse.body
       case HttpStatusCode.badRequest:
-        throw new InvalidParamsError(['Livro não encontrada'])
+        throw new InvalidParamsError(['Livro não encontrado'])
       default:
         throw new UnexpectedError()
     }

@@ -1,10 +1,8 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
 import { IBook } from '../../../domain/models/book'
 import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
-import {
-  IGetAllBooks,
-  IGetAllBooksParams,
-} from '../../../domain/usecases/interfaces/books/getAllBooks'
+import { IGetAllBooks, IGetAllBooksParams } from '../../../domain/usecases/interfaces/book/getAllBooks'
+
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteGetAllBooks implements IGetAllBooks {

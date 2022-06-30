@@ -2,11 +2,15 @@ export interface IBook {
   id: string
   name: string
   imageUrl: string
+  image: Blob
   description: string
-  price: string
+  price: number
   author: string
-  discount: string
+  discount: number
   stock: number
+  installments: number
+  isActive: boolean
+  categoryId: string
 
   category: {
     id: string
