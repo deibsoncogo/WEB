@@ -3,21 +3,14 @@ import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-import { Input, InputNumber, Select, SelectAsync, TextArea } from '../../../inputs'
-import { ICategory } from '../../../../../interfaces/api-response/categoryResponse'
-import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { Input, InputNumber, SelectAsync, TextArea } from '../../../inputs'
 import { toast } from 'react-toastify'
-import { IGetAllUsersByRole } from '../../../../../domain/usecases/interfaces/user/getAllUsersByRole'
-import { IUserPartialResponse } from '../../../../../interfaces/api-response/userPartialResponse'
-import { roles } from '../../../../../application/wrappers/authWrapper'
-import { UserQueryRole } from '../../../../../domain/models/userQueryRole'
 import { IUpdateCourse } from '../../../../../domain/usecases/interfaces/course/upDateCourse'
 import { IGetCourse } from '../../../../../domain/usecases/interfaces/course/getCourse'
 import { ICourseResponse } from '../../../../../interfaces/api-response/courseResponse'
 import { currenceMaskOnlyValue } from '../../../../formatters/currenceFormatter'
 import { UpdateCourse } from '../../../../../domain/models/updateCourse'
 import { Editor } from '@tinymce/tinymce-react'
-import { Loading } from '../../../loading/loading'
 import { IGetAllAttachmentByCourseId } from '../../../../../domain/usecases/interfaces/courseAttachment/getAllAttachmentByCourseId'
 import { IGetAllCourseClassByCourseId } from '../../../../../domain/usecases/interfaces/courseClass/getAllCourseClassByCourseId'
 import { ICourseAttachmentResponse } from '../../../../../interfaces/api-response/courseAttachmentResponse'
@@ -50,8 +43,7 @@ type Props = {
 export function FormUpdateCourse(props: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
-  const [categories, setCategories] = useState<ICategory[]>([])
-  const [users, setUsers] = useState<IUserPartialResponse[]>([])
+
   const [attachments, setAttachment] = useState<ICourseAttachmentResponse[]>([])
   const [courseClass, setCourseClass] = useState<ICourseClassResponse[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
@@ -65,14 +57,9 @@ export function FormUpdateCourse(props: Props) {
   const [filesUploadUpdate] = useState<FileUpload[]>([])
 
   const [IdDeletedCourseClass] = useState<string[]>([])
-  const [courseClassUpdate] = useState<CourseClass[]>([])
-
+ 
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
-
-  const findCategoryById = (id: string) => {
-    return categories.find((category) => category.id == id)
-  }
 
   function handleChange(event: any) {
     setStateEditor({ content: event })
@@ -143,6 +130,11 @@ export function FormUpdateCourse(props: Props) {
     const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
 
+    
+    courseClass.forEach((item, index) => (     
+     item.displayOrder = index + 1)
+    )
+       
     const course = new UpdateCourse(
       defaultValue?.id,
       data.name,
@@ -156,7 +148,7 @@ export function FormUpdateCourse(props: Props) {
       price,
       data.accessTime,
       data.userId,
-      courseClassUpdate,
+      courseClass,
       IdDeletedFiles
     )
 
@@ -205,7 +197,7 @@ export function FormUpdateCourse(props: Props) {
        setDefaultValue(data)
        setStateEditor({ content: data.content })
        setAttachment(await props.getAttachments.getAllByCourseId(props.id))
-       setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
+       setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))       
       }       
       setDefaultTeacherOptions(await searchTeachers(''))
       setDefaultCategoryOptions(await searchCategories(''))    
@@ -320,8 +312,8 @@ export function FormUpdateCourse(props: Props) {
           <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
           <CoursesInternalTable
             courseClassArray={courseClass}
+            setCourseClass={setCourseClass}
             IdDeletedCourseClass={IdDeletedCourseClass}
-            courseClassUpdate={courseClassUpdate}
             formRef={formRef}
           />
 

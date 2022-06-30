@@ -1,28 +1,23 @@
 import { FormHandles } from '@unform/core';
-import { RefObject, useEffect, useState } from 'react'
-import { CourseClass } from '../../../../../../domain/models/courseClass';
+import { Dispatch, RefObject, SetStateAction,useState } from 'react'
+import { Tooltip } from '@nextui-org/react'
 import { KTSVG } from '../../../../../../helpers';
 import { ICourseClassResponse } from '../../../../../../interfaces/api-response/courseClassResponse';
 import { Input } from '../../../../inputs';
-import { Row } from './row';
+import { arrayMove, List } from 'react-movable';
+
 
 type prop = {
   courseClassArray: ICourseClassResponse[]
+  setCourseClass: Dispatch<SetStateAction<ICourseClassResponse[]>>
   IdDeletedCourseClass: string[]
-  courseClassUpdate: CourseClass[]
   formRef: RefObject<FormHandles>
 }
 
-let currentId = 0;
 
-function getNewId() { 
-  return ++currentId;
-}
-
-export default function CoursesInternalTable(props: prop) {
+export default function CoursesInternalTable({courseClassArray, setCourseClass, IdDeletedCourseClass, formRef}: prop) {
   const [name, setName] = useState<string>()
   const [link, setLink] = useState<string>()
-  const [displayOrder, setDisplayOrder] = useState<number>()
   const [hasError, setHasError] = useState<boolean>(false)
   const [refresher, setRefresher] = useState<boolean>(false)
   const [messageError, setMessageError] = useState<string>('')
@@ -32,24 +27,32 @@ export default function CoursesInternalTable(props: prop) {
     setRefresher(!refresher)
   }
 
+  const deleteClass = (courseClass: ICourseClassResponse) => {
+    const index = courseClassArray.indexOf(courseClass, 0)
+    if (index > -1) {
+      courseClassArray.splice(index, 1)
+      if(courseClass?.id){
+        IdDeletedCourseClass.push(courseClass.id)
+      }        
+    }
+    handleRefresher()
+  }
+
   async function handleClassSubmit() {
-    if (name && link && displayOrder) {
+    if (name && link) {
       if (
         !link.match(
           /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
-        ) ||
-        displayOrder == 0
+        )
       ) {
         setHasError(true)
         setMessageError('Link inválido e/ou ordem de exibição igual a 0 (zero)')
         return
       }
-      const courseClass = {name, link, displayOrder}     
-      props.courseClassArray.push(courseClass)
-      props.courseClassUpdate.push(courseClass)
-      props.formRef.current?.clearField('nameClass')
-      props.formRef.current?.clearField('link')
-      props.formRef.current?.clearField('displayOrder')
+      const courseClass = {name, link}     
+      courseClassArray.push(courseClass)
+      formRef.current?.clearField('nameClass')
+      formRef.current?.clearField('link')
       handleRefresher()
     } else {
       setHasError(true)
@@ -88,15 +91,7 @@ export default function CoursesInternalTable(props: prop) {
           onChange={(event) => setLink(event.target.value)}
         />
 
-        <Input
-          min='1'
-          name='displayOrder'
-          label='Ordem de exibição'
-          type='number'
-          onChange={(event) => setDisplayOrder(event.target.value)}
-        />
-
-        <div className='fv-row d-flex align-items-center '>
+       <div className='fv-row d-flex align-items-center '>
           <a onClick={handleClassSubmit} className='btn btn-sm btn-primary'>
             <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
             Adicionar aula
@@ -104,36 +99,75 @@ export default function CoursesInternalTable(props: prop) {
         </div>
       </div>
 
-      {props.courseClassArray.length > 0 && (
+      {courseClassArray.length > 0 && (
         <div className='card mb-5 mb-xl-8'>
           <div className='py-3 float-start'>
             <div className='table-responsive'>
-              <table className='table align-middle gs-0 gy-4'>
-                <thead>
-                  <tr className='fw-bolder text-muted bg-light'>
-                    <th className='text-dark ps-4 min-w-200px rounded-start'>Nome</th>
-                    <th className='text-dark min-w-200px'>Link</th>
-                    <th className='text-dark min-w-150px'>Ordem de exibição</th>
-                    <th className='text-dark min-w-70px text-end rounded-end' />
-                  </tr>
-                </thead>
+              <List
+                values={courseClassArray}
+                onChange={({ oldIndex, newIndex }) => {
+                 setCourseClass(arrayMove(courseClassArray, oldIndex, newIndex))                  
+                }}
+                renderList={({ children, props, isDragged }) => (
+                  <table
+                    style={{
+                      cursor: isDragged ? 'grabbing' : undefined,
+                    }}
+                    className='table align-middle gs-0 gy-4'>
+                    <thead>
+                      <tr className='fw-bolder text-muted bg-light'>
+                        <th className='text-dark ps-4 min-w-200px rounded-start'>Nome</th>
+                        <th className='text-dark min-w-200px'>Link</th>                        
+                        <th className='text-dark min-w-100px text-end rounded-end' />
+                      </tr>
+                    </thead>
+                    <tbody {...props}>{children}</tbody>
+                  </table>
+                )}
+                renderItem={({ value, props, isDragged, isSelected }) => {
 
-                <tbody>
-                  {props?.courseClassArray?.map((item) => (
-                    <Row
-                      key={getNewId()}
-                      name={item.name}
-                      link={item.link}
-                      displayOrder={item.displayOrder}
-                      classCourse={item}
-                      courseClassArray={props.courseClassArray}
-                      courseClassUpdate={props.courseClassUpdate}
-                      handleRefresher={handleRefresher}
-                      IdDeletedCourseClass = {props.IdDeletedCourseClass}  
-                    />
-                  ))}
-                </tbody>
-              </table>
+                  const row = (<tr {...props}
+                    style={{
+                      ...props.style,
+                      cursor: isDragged ? 'grabbing' : 'grab',
+                      backgroundColor: isDragged || isSelected ? '#EEE' : '#fafafa'
+                    }}
+                    >
+                    <td className='ps-4'>
+                      <span className='text-dark fw-bold d-block fs-7'>{value.name}</span>
+                    </td>
+            
+                    <td>
+                      <span className='text-dark fw-bold d-block fs-7'>{value.link}</span>
+                    </td>
+                               
+            
+                    <td className = 'text-center'>
+                      <Tooltip content={'Deletar'} rounded color='primary'>
+                        <a
+                          onClick={() => {
+                           deleteClass(value)
+                          }}
+                          className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
+                        >
+                          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+                        </a>
+                      </Tooltip>
+                    </td>
+                  </tr>)
+                  return isDragged ? (
+                    <table style={{ ...props.style, borderSpacing: 0 }}>
+                      <tbody>
+                        {
+                          row
+                        }
+                      </tbody>
+                    </table>
+                  ) : (
+                    row
+                  )
+                }}
+              />
             </div>
           </div>
         </div>
