@@ -46,9 +46,7 @@ export default function CoursesTable(props: Props) {
   })
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
-    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-      name
-    )}`
+    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn( name )}`
   }
 
   useEffect(() => {
@@ -65,12 +63,11 @@ export default function CoursesTable(props: Props) {
         setCourses(data.data)
         setTotalPage(data.total)
       })
-      .catch((error) => toast.error('Não foi possível listar os cursos.'))
-      .finally(() =>
-        setTimeout(() => {
+      .catch(() => toast.error('Não foi possível listar os cursos.'))
+      .finally(() =>        
           setLoading(false)
-        }, 500)
-      )
+       )
+      
   }, [refresher, pagination.take, pagination.currentPage, pagination.order, courseName])
 
   return (

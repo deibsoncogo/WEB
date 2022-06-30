@@ -14,7 +14,7 @@ export class UpdateRoom{
     price: string; 
     userId: string;
     categoryId: string;
-    streamingsRoom?: IStreamingRoom[]
+    streamingRooms?: IStreamingRoom[]
 
 
     constructor(id: string | undefined, name: string, description: string, discount: string, installments: string,
@@ -31,7 +31,7 @@ export class UpdateRoom{
         this.price = price;
         this.userId = userId;   
         this.categoryId = categoryId;   
-        this.streamingsRoom = streamings;       
+        this.streamingRooms = streamings;       
         
     }
 }

@@ -16,8 +16,7 @@ export class RemoteGetCourse implements IGetCourse {
     const httpResponse = await this.httpClient.request({
       url: `${this.url}/${id}`,
       method: 'get',
-    })
- 
+    })   
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body

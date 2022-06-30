@@ -1,6 +1,6 @@
-import { FormCreateCourse } from '../../../../layout/components/forms/course/create'
-import { makeRemoteGetCategories } from '../../usecases/categories/remote-getCategories-factory'
+import { FormCreateCourse } from '../../../../layout/components/forms/course/create/create'
 
+import { makeRemoteGetCategories } from '../../usecases/categories/remote-getCategories-factory'
 import { makeRemoteCreateCourse } from '../../usecases/course/remote-createCourse-factory'
 import { makeRemoteGetAllUsers } from '../../usecases/remote-getAllUsers-factory'
 

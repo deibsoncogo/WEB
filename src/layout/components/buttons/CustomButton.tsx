@@ -27,9 +27,18 @@ function Button({
   buttonClasses.push(...customClasses)
 
   return (
-    <button className={buttonClasses.join(' ')} disabled={loading} {...props}>
-      {loading ? <Spinner animation='border' /> : title}
-    </button>
+    <div className='d-flex'>
+      <button className={buttonClasses.join(' ')} disabled={loading} {...props}>
+        {loading ? (
+          // span element prevent button bootstrap classes afect sppiner classes
+          <span>
+            <Spinner animation='border' />
+          </span>
+        ) : (
+          title
+        )}
+      </button>
+    </div>
   )
 }
 
