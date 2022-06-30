@@ -44,6 +44,7 @@ function EditTrainingPageTemplate({
   const router = useRouter()
   const { id: trainingId } = router.query
 
+  const [training, setTraining] = useState<ITraining>()
   const [streamList, setStreamList] = useState<IStreaming[]>([])
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
   const [loadingPageData, setLoadingPageData] = useState(true)
@@ -55,11 +56,12 @@ function EditTrainingPageTemplate({
     data: trainingEditedSuccessful,
     error: editTrainingError,
     loading: loadingTrainingEdition,
+    cleanUp: cleanUpGetTraining,
   } = useRequest<FormData>(remoteEditTraining.edit)
 
   const {
     makeRequest: getTraining,
-    data: training,
+    data: trainingData,
     error: getTrainingError,
     cleanUp: getTrainingCleanUp,
   } = useRequest<ITraining, IGetTrainingParams>(remoteGetTraining.get)
@@ -80,6 +82,7 @@ function EditTrainingPageTemplate({
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)
       dataFormatted.append('id', String(trainingId))
+      dataFormatted.append('active', String(training?.active))
       editTraining(dataFormatted)
       return
     }
@@ -143,9 +146,45 @@ function EditTrainingPageTemplate({
   useEffect(() => {
     if (trainingEditedSuccessful) {
       toast.success('Treinamemto Editado Com Sucesso')
+      cleanUpGetTraining()
       router.push(appRoutes.TRAININGS)
     }
 
+    if (trainingData) {
+      setTraining(trainingData)
+      setLoadingPageData(false)
+      getTrainingCleanUp()
+    }
+
+    if (zoomUsers) {
+      const options: ISelectOption[] = zoomUsers.map((user) => ({
+        label: `${user.first_name} ${user.last_name}`,
+        value: user.id,
+      }))
+      setZoomUsersOptions(options)
+      getTraining({ id: trainingId as string })
+      getZoomUsersCleanUp()
+    }
+  }, [trainingEditedSuccessful, training, zoomUsers])
+
+  useEffect(() => {
+    if (getTrainingError) {
+      toast.error(getTrainingError)
+      router.push(appRoutes.TRAININGS)
+    }
+
+    if (editTrainingError) {
+      toast.error(editTrainingError)
+      setLoadingPageData(false)
+    }
+
+    if (getZoomUsersError) {
+      toast.error(getZoomUsersError)
+      setLoadingPageData(false)
+    }
+  }, [editTrainingError, getTrainingError, getZoomUsersError])
+
+  useEffect(() => {
     if (training) {
       const {
         streamings,
@@ -178,37 +217,8 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('imagePreview', imageUrl)
       formRef.current?.setFieldValue('zoomUserId', zoomUserId)
       setStreamList(formattedStreamings)
-      setLoadingPageData(false)
-      getTrainingCleanUp()
     }
-
-    if (zoomUsers) {
-      const options: ISelectOption[] = zoomUsers.map((user) => ({
-        label: `${user.first_name} ${user.last_name}`,
-        value: user.id,
-      }))
-      setZoomUsersOptions(options)
-      getTraining({ id: trainingId as string })
-      getZoomUsersCleanUp()
-    }
-  }, [trainingEditedSuccessful, training, zoomUsers])
-
-  useEffect(() => {
-    if (getTrainingError) {
-      toast.error(getTrainingError)
-      router.push(appRoutes.TRAININGS)
-    }
-
-    if (editTrainingError) {
-      toast.error(editTrainingError)
-      setLoadingPageData(false)
-    }
-
-    if (getZoomUsersError) {
-      toast.error(getZoomUsersError)
-      setLoadingPageData(false)
-    }
-  }, [editTrainingError, getTrainingError, getZoomUsersError])
+  }, [training])
 
   return (
     <>

@@ -10,13 +10,13 @@ export class RemoteGetAllRooms implements IGetAllRooms {
     private readonly httpClient: HttpClient<apiPaginationResponse<IRoomPartialResponse>>
   ) {}
 
-  async getAll(query: GetRoomParams) {    
+  getAll = async (query: GetRoomParams) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',
-      params: query
+      params: query,
     })
-   
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body

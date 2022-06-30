@@ -1,9 +1,7 @@
-import { Loading } from '../../loading/loading'
-import { Pagination } from '../../pagination/Pagination'
-import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { MakeTrainingsRow } from '../../../../application/factories/components/rows/trainingsRow'
+import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { ITraining } from '../../../../domain/models/training'
-import { useState } from 'react'
+import { Pagination } from '../../pagination/Pagination'
 
 type ITrainingsTable = {
   trainings: ITraining[]
@@ -12,9 +10,13 @@ type ITrainingsTable = {
   handleRefresher: () => void
 }
 
-export function TrainingsTable({ trainings, paginationHook, getTrainings, handleRefresher }: ITrainingsTable) {
+export function TrainingsTable({
+  trainings,
+  paginationHook,
+  getTrainings,
+  handleRefresher,
+}: ITrainingsTable) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
-  const [loading, setLoading] = useState(false)
 
   const getColumnHeaderClasses = (name: string) => {
     return `text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
@@ -67,25 +69,22 @@ export function TrainingsTable({ trainings, paginationHook, getTrainings, handle
                 </thead>
 
                 <tbody>
-                  {!loading &&
-                    trainings?.map((item) => (
-                      <MakeTrainingsRow
-                        key={item.id}
-                        id={item.id as string}
-                        name={item.name}
-                        description={item.description}
-                        price={item.price}
-                        teacher={item.teacher}
-                        active={item.active}
-                        getTrainings={getTrainings}
-                        handleRefresher={handleRefresher}
-                      />
-                    ))}
+                  {trainings?.map((item) => (
+                    <MakeTrainingsRow
+                      key={item.id}
+                      id={item.id as string}
+                      name={item.name}
+                      description={item.description}
+                      price={item.price}
+                      teacher={item.teacher}
+                      active={item.active}
+                      getTrainings={getTrainings}
+                      handleRefresher={handleRefresher}
+                    />
+                  ))}
                 </tbody>
               </table>
             </div>
-
-            {loading && <Loading />}
           </div>
           <div className='ms-auto'>
             <Pagination paginationHook={paginationHook} />
