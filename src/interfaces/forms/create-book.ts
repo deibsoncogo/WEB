@@ -8,5 +8,6 @@ export interface IFormBook {
   description: string
   categoryId: string
   installments: string
+  isActive: boolean
   stock: number
 }

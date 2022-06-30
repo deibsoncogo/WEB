@@ -46,7 +46,6 @@ export function Row({
   }
 
   async function handleActionModal() {
-    console.log('first')
     setIsActiveCurrent(!isActiveCurrent)
     setOpenModal(false)
   }

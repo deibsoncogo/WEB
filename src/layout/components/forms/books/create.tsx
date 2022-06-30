@@ -42,6 +42,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
     formData.append('categoryId', String(data.categoryId))
     formData.append('installments', String(data.installments))
     formData.append('id', String(data.id))
+    formData.append('isActive', String(false))
 
     await remoteCreateBook
       .create(formData)
