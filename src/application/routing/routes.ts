@@ -16,6 +16,8 @@ export const appRoutes = {
   SALES: '/sales',
   USERS: '/users',
   NOTFOUND: '/404',
+  CHATROOM: '/rooms/chat/[id]',
+  CHATTRAINING: '/trainings/chat/[id]'
 }
 
 export const publicRoutes = [
@@ -28,6 +30,8 @@ export const professorRoutes = [
   appRoutes.ALERTS,
   appRoutes.CONTENTS,
   appRoutes.COURSES,
+  appRoutes.CHATROOM,
+  appRoutes.CHATTRAINING,
   appRoutes.DASHBOARD,
   appRoutes.ROOMS,
   appRoutes.TRAININGS,
