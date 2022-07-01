@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import { toast } from 'react-toastify'
+import { ConflitctEntitiesError } from '../../../../domain/errors/conflict-entities-error'
 import { IToggleTrainingStatus } from '../../../../domain/usecases/interfaces/trainings/toggleTrainingStatus'
 import { KTSVG } from '../../../../helpers'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
@@ -48,6 +49,10 @@ export function Row({
       getTrainings()
       toast.success('Treinamento excluído com sucesso')
     } catch (err) {
+      if (err instanceof ConflitctEntitiesError) {
+        toast.error('Existem produtos vinculados a este treinamento')
+        return
+      }
       toast.error('Erro ao deletar o treinamento Treinamento')
     } finally {
       setLoading(false)
@@ -57,7 +62,6 @@ export function Row({
   async function handleToggleTrainingStatus() {
     try {
       setLoading(true)
-      console.log(active)
       await remoteToggleTrainingStatus.toggle({ id })
       getTrainings()
       toast.success('Status do treinamento atualizado com sucesso.')
