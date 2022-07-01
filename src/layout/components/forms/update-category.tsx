@@ -25,7 +25,7 @@ const UpdateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) =
         <div className='mb-10 d-flex justify-content-between'>
           <Button
             type='submit'
-            form='create-category-form'
+            form='update-category-form'
             size='lg'
             customClasses={['btn-primary', 'mb-5', 'px-20']}
             title='Salvar'
@@ -35,7 +35,6 @@ const UpdateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) =
           <Button
             title='Cancelar'
             type='button'
-            loading={loading}
             onClick={close}
             size='lg'
             customClasses={['btn-secondary', 'mb-5', '', 'px-20']}
