@@ -3,6 +3,7 @@ import { makeRemoteCreateChatRoom } from "../../../usecases/chatRoom/remote-crea
 import { makeRemoteGetAllChatRooms } from "../../../usecases/chatRoom/remote-getAllChatRooms-factory"
 
 
+
 export const MakeChatRoomInner = () => {
     return <ChatInner getAllChatRooms = {makeRemoteGetAllChatRooms()} createChatRoom = {makeRemoteCreateChatRoom()}/>
   }
