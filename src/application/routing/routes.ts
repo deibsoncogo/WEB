@@ -15,6 +15,7 @@ export const appRoutes = {
   COUPONS: '/coupons',
   SALES: '/sales',
   USERS: '/users',
+  NOTFOUND: '/404',
 }
 
 export const publicRoutes = [
@@ -30,6 +31,7 @@ export const professorRoutes = [
   appRoutes.DASHBOARD,
   appRoutes.ROOMS,
   appRoutes.TRAININGS,
+  appRoutes.NOTFOUND
 ]
 
 export const adminRoutes = [
