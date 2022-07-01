@@ -4,6 +4,7 @@ import { IPlan } from '../../../../domain/models/plan'
 import { ITogglePlanStatusParams } from '../../../../domain/usecases/interfaces/plan/togglePlanStatus'
 import { KTSVG } from '../../../../helpers'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
+import { Switch } from '../../inputs'
 
 type PlanTableRowProps = {
   plan: IPlan
@@ -36,15 +37,7 @@ const PlanTableRow = ({ plan, togglePlanStatus }: PlanTableRowProps) => {
       </td>
 
       <td>
-        <div className='form-check form-switch form-check-custom form-check-solid'>
-          <input
-            className='form-check-input'
-            type='checkbox'
-            checked={plan.isActive}
-            id='flexSwitchDefault'
-            onChange={handlePlanStatusChange}
-          />
-        </div>
+        <Switch active={plan.isActive} setModalUpdate={handlePlanStatusChange} />
       </td>
 
       <td className='d-flex' style={{ minWidth: '150px' }}>
