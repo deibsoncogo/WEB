@@ -29,7 +29,8 @@ export function AuthWrapper({ children }: any) {
           setHasPermission(true)
         }
         else{
-          setHasPermission(false)   
+          setHasPermission(false) 
+          localStorage.clear()  
           route.push('/')       
        }        
       }
