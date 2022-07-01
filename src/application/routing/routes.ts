@@ -25,6 +25,7 @@ export const publicRoutes = [
 
 export const professorRoutes = [
   appRoutes.ALERTS,
+  appRoutes.CONTENTS,
   appRoutes.COURSES,
   appRoutes.DASHBOARD,
   appRoutes.ROOMS,
@@ -33,8 +34,7 @@ export const professorRoutes = [
 
 export const adminRoutes = [
   appRoutes.ALERTS,
-  appRoutes.BOOKS,
-  appRoutes.CONTENTS,
+  appRoutes.BOOKS,  
   appRoutes.BANNERS,
   appRoutes.PLANS,
   appRoutes.CATEGORIES,
