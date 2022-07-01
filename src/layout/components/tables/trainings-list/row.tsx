@@ -106,7 +106,7 @@ export function Row({
       </td>
       <td>
         <Tooltip content='Chat' rounded color='primary'>
-          <Link href='/trainings/chat'>
+          <Link href={`/trainings/chat/${id}`}>
             {active ? (
               <button className='btn btn-icon  btn-active-color-primary btn-sm me-1'>
                 <KTSVG path='/icons/com003.svg' className='svg-icon-3 svg-icon-primary' />
