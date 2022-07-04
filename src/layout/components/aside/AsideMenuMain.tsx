@@ -81,12 +81,12 @@ export function AsideMenuMain() {
         title='Categorias'
         icon={<BiCategory size={20} className='svg-icon-2 mh-50px' />}
       />}
-      {isAdmin &&
+      
       <AsideMenuItem
         to='/contents'
         title='Conteudos'
         icon={<RiFileCopy2Fill size={20} className='svg-icon-2 mh-50px' />}
-      />}
+      />
       {isAdmin &&
       <AsideMenuItem
         to='/banners'

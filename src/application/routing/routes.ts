@@ -15,8 +15,9 @@ export const appRoutes = {
   COUPONS: '/coupons',
   SALES: '/sales',
   USERS: '/users',
-  LOGOUT: '/logout',
-  UNAUTHORIZED: '/unauthorized',
+  NOTFOUND: '/404',
+  CHATROOM: '/rooms/chat/[id]',
+  CHATTRAINING: '/trainings/chat/[id]'
 }
 
 export const publicRoutes = [
@@ -26,19 +27,24 @@ export const publicRoutes = [
 ]
 
 export const professorRoutes = [
-  appRoutes.DASHBOARD,
-  appRoutes.CATEGORIES,
-  appRoutes.CONTENTS,
-  appRoutes.BANNERS,
   appRoutes.ALERTS,
-  appRoutes.PLANS,
+  appRoutes.CONTENTS,
   appRoutes.COURSES,
-  appRoutes.BOOKS,
+  appRoutes.CHATROOM,
+  appRoutes.CHATTRAINING,
+  appRoutes.DASHBOARD,
   appRoutes.ROOMS,
-  appRoutes.UNAUTHORIZED,
-  appRoutes.LOGOUT,
+  appRoutes.TRAININGS,
+  appRoutes.NOTFOUND
 ]
 
-export const adminRoutes = [appRoutes.USERS, appRoutes.SALES, appRoutes.COUPONS].concat(
-  professorRoutes
-)
+export const adminRoutes = [
+  appRoutes.ALERTS,
+  appRoutes.BOOKS,  
+  appRoutes.BANNERS,
+  appRoutes.PLANS,
+  appRoutes.CATEGORIES,
+  appRoutes.USERS,
+  appRoutes.SALES,
+  appRoutes.COUPONS,
+].concat(professorRoutes)

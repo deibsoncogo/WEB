@@ -18,18 +18,18 @@ export function AuthWrapper({ children }: any) {
   useEffect(() => {
     const token = localStorage.getItem('access_token')
     if (token) {
-      const values = jwtDecode<IToken>(token)
+      const values = jwtDecode<IToken>(token)  
       if (parseInt(values.exp) < Date.now() / 1000) {
         localStorage.clear()
         return
       } else {
         setIsAuthenticate(true)
-
-        if((values.role === roles.ADMIN) || (values.role == roles.TEACHER && professorRoutes.includes(currentRoute))){
-          setHasPermission(true)
+        if((values.role === roles.ADMIN) || (values.role === roles.TEACHER && professorRoutes.includes(currentRoute))){
+          setHasPermission(true)        
         }
-        else{
-          setHasPermission(false)   
+        else{         
+          setHasPermission(false) 
+          localStorage.clear()  
           route.push('/')       
        }        
       }
