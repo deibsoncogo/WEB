@@ -64,7 +64,7 @@ export function TrainingsTable({
                     >
                       Ativo
                     </th>
-                    <th className='text-dark min-w-50px rounded-end'>Ações</th>
+                    <th className='text-dark min-w-50px text-start rounded-end'>Ações</th>
                   </tr>
                 </thead>
 
