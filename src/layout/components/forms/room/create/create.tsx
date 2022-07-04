@@ -245,7 +245,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
 
         <div className='d-flex mt-10'>
           <Button
-            customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+            customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
             loading={registerRoom}
@@ -255,7 +255,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
           />
           <Button
             type='submit'
-            customClasses={['w-180px', 'btn-primary']}
+            customClasses={['px-20', 'btn-primary']}
             title='Salvar'
             disabled={registerRoom}
           />
