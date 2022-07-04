@@ -145,14 +145,14 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
         <CustomButton
           title='Cancelar'
           type='button'
-          customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
           onClick={onCancel}
         />
 
         <CustomButton
           type='submit'
           title='Salvar'
-          customClasses={['w-180px', 'btn-primary']}
+          customClasses={['px-20', 'btn-primary']}
           loading={loadingFormSubmit}
         />
       </div>
