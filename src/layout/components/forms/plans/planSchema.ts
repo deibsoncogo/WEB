@@ -5,8 +5,8 @@ export const planFormSchema = Yup.object().shape({
   name: Yup.string().required('Nome é necessário'),
   price: Yup.number().required('Preço é necessário').min(0.01, 'Preço deve ser maior que zero'),
   planType: Yup.string().required('Tipo de plano é necessário'),
-  description: Yup.string().required('Descrição é necessário'),
-  imagePreview: Yup.string().required('Imagem é necessário'),
+  description: Yup.string().required('Descrição é necessária'),
+  imagePreview: Yup.string().required('Imagem é necessária'),
   installments: Yup.number().when('planType', {
     is: PlanType.SINGLE_PAYMENT,
     then: Yup.number()

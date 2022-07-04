@@ -5,8 +5,8 @@ export const trainingFormSchema = Yup.object().shape({
   teacherId: Yup.string().required('Professor é necessário'),
   zoomUserId: Yup.string().required('Usuário zoom é necessário'),
   price: Yup.number().required('Preço é necessário').min(0.1, 'Preço deve ser maior que zero'),
-  description: Yup.string().required('Descriçao é necessário'),
-  imagePreview: Yup.string().required('Imagem é necessário'),
+  description: Yup.string().required('Descriçao é necessária'),
+  imagePreview: Yup.string().required('Imagem é necessária'),
   installments: Yup.number()
     .required('Quantidade de parcelas é necessário')
     .min(1, 'Quantidade de parcelas deve ser maior que 0'),
