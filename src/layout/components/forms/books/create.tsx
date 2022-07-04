@@ -78,13 +78,16 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
 
     try {
       formRef.current.setErrors({})
-
+      data.price = onlyNums(data.price)
       const schema = Yup.object().shape({
-        imagePreview: Yup.string().required('Imagem é necessária.'),
+        imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Título é necessário'),
         author: Yup.string().required('Autor é necessário'),
-        stock: Yup.number().required('Estoque é necessário'),
-        price: Yup.string().required('Preço é necessário'),
+        stock: Yup.number()       
+        .min(1, 'Quantidade de estoque deve ser maior ou igual a 1')
+        .required('Estoque é necessário'),
+        price: Yup.number().required('Preço é necessário')
+         .min(0.1, 'Preço deve ser maior que zero'),           
         discount: Yup.string().required('Desconto é necessária'),
         description: Yup.string().required('Descrição é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
@@ -93,7 +96,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
           .min(1, 'Quantidade de parcelas deve ser maior que 0'),
       })
 
-      await schema.validate(data, { abortEarly: false })
+      await schema.validate(data,  { abortEarly: false })
 
       handleCreateBook(data)
     } catch (err) {
@@ -124,7 +127,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
             >
               <Input name='name' label='Título' type='text' classes='h-75px' />
               <Input name='author' label='Autor' type='text' classes='h-75px' />
-              <Input name='stock' label='Estoque' type='number' classes='h-75px' />
+              <InputNumber name='stock' label='Estoque' type='number' classes='h-75px'/>
               <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
               <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
             </div>
