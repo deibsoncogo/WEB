@@ -89,7 +89,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         description: Yup.string().required('Descrição é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         installments: Yup.number()
-          .required('Quantidade de parcelas é nescessário')
+          .required('Quantidade de parcelas é necessário')
           .min(1, 'Quantidade de parcelas deve ser maior que 0'),
       })
 

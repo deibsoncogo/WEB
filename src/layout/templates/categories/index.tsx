@@ -38,7 +38,7 @@ type Props = {
 }
 
 const schema = Yup.object().shape({
-  name: Yup.string().required('Nome é Nescessário'),
+  name: Yup.string().required('Nome é necessário'),
 })
 
 function CategoriesTemplate({
