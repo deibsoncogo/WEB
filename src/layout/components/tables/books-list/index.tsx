@@ -69,7 +69,7 @@ export function BooksTable({
                     >
                       Ativo
                     </th>
-                    <th className='text-dark min-w-50px rounded-end'>Ações</th>
+                    <th className='text-dark min-w-50px rounded-end'>Ação</th>
                   </tr>
                 </thead>
 
