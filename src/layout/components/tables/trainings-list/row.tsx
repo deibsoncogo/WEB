@@ -131,7 +131,7 @@ export function Row({
         </div>
       </td>
 
-      <td className='text-end d-flex justify-content-end px-4'>
+      <td className='text-end d-flex justify-content-start px-4'>
         <Tooltip content='Editar' rounded color='primary'>
           <Link href={`/trainings/edit/${id}`}>
             <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
