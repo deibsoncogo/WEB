@@ -127,7 +127,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
             >
               <Input name='name' label='Título' type='text' classes='h-75px' />
               <Input name='author' label='Autor' type='text' classes='h-75px' />
-              <InputNumber name='stock' label='Estoque' type='number' classes='h-75px'/>
+              <InputNumber name='stock' label='Estoque'  classes='h-75px'/>              
               <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
               <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
             </div>

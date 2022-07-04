@@ -43,7 +43,7 @@ const FormEditBook = forwardRef<FormHandles, FormEditBookProps>((props, ref) => 
               <InputSingleImage name='image' />
               <Input name='name' label='Título' type='text' />
               <Input name='author' label='Autor' type='text' />
-              <Input name='stock' label='Estoque' type='number' />
+              <InputNumber name='stock' label='Estoque'  classes='h-75px'/> 
               <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
               <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
             </div>
@@ -58,7 +58,7 @@ const FormEditBook = forwardRef<FormHandles, FormEditBookProps>((props, ref) => 
                 placeholder='Digite o nome da categoria'
               />
 
-              <InputNumber name='installments' label='Quantidade de Parcelas' classes='h-75px' />
+             <InputNumber name='installments' label='Quantidade de Parcelas' classes='h-75px' />
             </div>
           </div>
           <div className='mb-10 d-flex justify-content-end'>
