@@ -3,9 +3,11 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import { toast } from 'react-toastify'
+import { ConflitctEntitiesError } from '../../../../domain/errors/conflict-entities-error'
 import { IToggleTrainingStatus } from '../../../../domain/usecases/interfaces/trainings/toggleTrainingStatus'
 import { KTSVG } from '../../../../helpers'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
+import { Switch } from '../../inputs'
 import ConfirmationModal from '../../modal/ConfirmationModal'
 
 interface IRow {
@@ -47,6 +49,10 @@ export function Row({
       getTrainings()
       toast.success('Treinamento excluído com sucesso')
     } catch (err) {
+      if (err instanceof ConflitctEntitiesError) {
+        toast.error('Existem produtos vinculados a este treinamento')
+        return
+      }
       toast.error('Erro ao deletar o treinamento Treinamento')
     } finally {
       setLoading(false)
@@ -56,7 +62,7 @@ export function Row({
   async function handleToggleTrainingStatus() {
     try {
       setLoading(true)
-      await remoteToggleTrainingStatus.toggle({ id, active: active ? 'false' : 'true' })
+      await remoteToggleTrainingStatus.toggle({ id })
       getTrainings()
       toast.success('Status do treinamento atualizado com sucesso.')
     } catch {
@@ -119,16 +125,9 @@ export function Row({
           </Link>
         </Tooltip>
       </td>
+
       <td>
-        <div className='form-check form-switch form-check-custom form-check-solid'>
-          <input
-            className='form-check-input'
-            type='checkbox'
-            checked={active}
-            id='flexSwitchDefault'
-            onChange={handleToggleTrainingStatus}
-          />
-        </div>
+        <Switch active={active} setModalUpdate={handleToggleTrainingStatus} />
       </td>
 
       <td className='text-end d-flex justify-content-end px-4'>

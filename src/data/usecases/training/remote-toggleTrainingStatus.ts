@@ -10,8 +10,8 @@ export class RemoteToggleTrainingStatus implements IToggleTrainingStatus {
 
   toggle = async (params: IToggleTrainingStatusParams) => {
     const httpResponse = await this.httpClient.request({
-      url: this.url,
-      method: 'put',
+      url: `${this.url}/${params.id}`,
+      method: 'patch',
       body: params,
     })
 
