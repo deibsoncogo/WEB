@@ -85,7 +85,7 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
             {planType === PlanType.RECURRING_PAYMENT && (
               <InputNumber
                 name='intervalPaymentMonths'
-                label='Intervalo de Pagamento (messes)'
+                label='Intervalo de Pagamento (meses)'
                 classes='h-75px'
               />
             )}
@@ -104,7 +104,7 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
             {planType === PlanType.SINGLE_PAYMENT && (
               <InputNumber
                 name='intervalAccessMonths'
-                label='Acesso ao Conteúdo (messes)'
+                label='Acesso ao conteúdo (meses)'
                 classes='h-75px'
               />
             )}
