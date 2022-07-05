@@ -30,6 +30,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   const formRef = useRef<FormHandles>(null)
 
   const [defaultValue, setDefaultValue] = useState({})
+  const [updateUser, setUpdateUser] = useState(false)
 
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
@@ -116,11 +117,15 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   async function handleUpdateUser(data: any) {
     setHasError(false)
     try {
+      setUpdateUser(true)
       await userRegister.updateUser(data)
       router.push('/users')
       toast.success('Usuário editado com sucesso!')
     } catch (err: any) {
       toast.error(Array.isArray(err.messages) ? err.messages[0] : err.messages)
+    }
+    finally{
+      setUpdateUser(false)
     }
   }
 
@@ -279,13 +284,19 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           <Button
             title='Cancelar'
             type='button'
-            customClasses={['btn-secondary', 'ms-auto', 'me-10']}
+            customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
+             loading={updateUser}
             onClick={() => {
               router.push('/users')
             }}
           />
 
-          <Button type='submit' title='Salvar' customClasses={['btn-primary']} />
+          <Button
+           type='submit' 
+           title='Salvar' 
+           customClasses={['px-20', 'btn-primary']}
+           disabled={updateUser} /> 
+           
         </div>
       </Form>
 

@@ -31,6 +31,7 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
   const [defaultValue, setDefaultValue] = useState<ZipCodeProps>()
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
+  const [registerUser, setRegisterUser] = useState(false)
 
   const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
 
@@ -118,6 +119,7 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
       formRef.current.setFieldError('email', 'Email já registrado')
     }
 
+    setRegisterUser(true)
     userRegister
       .signUp(user)
       .then(() => {
@@ -127,6 +129,8 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
       .catch((error: any) => {        
         toast.error(error.messages[0])
       })
+      .finally(() =>
+      setRegisterUser(false))
   }
 
   function handleInputCPF() {
@@ -263,13 +267,17 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
         <Button
           title='Cancelar'
           type='button'
-          customClasses={['btn-secondary', 'ms-auto', 'me-10']}
+          customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
+          loading={registerUser}
           onClick={() => {
             router.push('/users')
           }}
         />
 
-        <Button type='submit' title='Salvar' customClasses={['btn-primary']} />
+        <Button type='submit'
+         title='Salvar' 
+         customClasses={['px-20', 'btn-primary']}
+         disabled={registerUser} />
       </div>
 
       <ProductsModal
