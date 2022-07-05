@@ -84,7 +84,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         name: Yup.string().required('Título é necessário'),
         author: Yup.string().required('Autor é necessário'),
         stock: Yup.number()       
-        .min(1, 'Quantidade de estoque deve ser maior ou igual a 1')
+        .min(1, 'Quantidade de estoque deve ser maior que zero')
         .required('Estoque é necessário'),
         price: Yup.number().required('Preço é necessário')
          .min(0.1, 'Preço deve ser maior que zero'),           
@@ -93,7 +93,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         categoryId: Yup.string().required('Selecione uma categoria'),
         installments: Yup.number()
           .required('Quantidade de parcelas é necessário')
-          .min(1, 'Quantidade de parcelas deve ser maior que 0'),
+          .min(1, 'Quantidade de parcelas deve ser maior que zero'),
       })
 
       await schema.validate(data,  { abortEarly: false })

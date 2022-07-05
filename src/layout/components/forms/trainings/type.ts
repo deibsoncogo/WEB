@@ -9,7 +9,7 @@ export const trainingFormSchema = Yup.object().shape({
   imagePreview: Yup.string().required('Imagem é necessária'),
   installments: Yup.number()
     .required('Quantidade de parcelas é necessário')
-    .min(1, 'Quantidade de parcelas deve ser maior que 0'),
+    .min(1, 'Quantidade de parcelas deve ser maior que zero'),
   categoryId: Yup.string().required('Selecione uma categoria'),
   trainingEndDate: Yup.date().required('Data é necessária'),
   deactiveChatDate: Yup.date().required('Data é necessária'),
