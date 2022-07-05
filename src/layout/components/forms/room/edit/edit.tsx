@@ -14,7 +14,7 @@ import { ISelectOption } from '../../../../../domain/shared/interface/SelectOpti
 import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
 
-import { Button as CustomButton } from '../../../buttons/CustomButton'
+import { Button} from '../../../buttons/CustomButton'
 import { IGetRoom } from '../../../../../domain/usecases/interfaces/room/getCourse'
 import { IUpdateRoom } from '../../../../../domain/usecases/interfaces/room/updateRoom'
 import { IRoomResponse } from '../../../../../interfaces/api-response/roomResponse'
@@ -304,8 +304,8 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
         )}
 
         <div className='d-flex mt-10'>
-          <CustomButton
-            customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          <Button
+            customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
             loading={update}
@@ -313,9 +313,9 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
               router.push(appRoutes.ROOMS)
             }}
           />
-          <CustomButton
+          <Button
             type='submit'
-            customClasses={['w-180px', 'btn-primary']}
+            customClasses={['px-20', 'btn-primary']}
             title='Salvar'
             disabled={update}
           />

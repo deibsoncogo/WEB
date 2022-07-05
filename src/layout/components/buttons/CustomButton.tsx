@@ -32,7 +32,7 @@ function Button({
         {loading ? (
           // span element prevent button bootstrap classes afect sppiner classes
           <span>
-            <Spinner animation='border' />
+            <Spinner animation='border' className='spinner-border-custom'/>
           </span>
         ) : (
           title
