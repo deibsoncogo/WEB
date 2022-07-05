@@ -3,4 +3,4 @@ import { IGetAllTrainings } from '../../../../domain/usecases/interfaces/trainin
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteGetAllTrainings = (): IGetAllTrainings =>
-  new RemoteGetAllTrainings(makeApiUrl('/training'), makeAxiosHttpClient())
+  new RemoteGetAllTrainings(makeApiUrl('training'), makeAxiosHttpClient())

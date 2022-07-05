@@ -5,4 +5,4 @@ import { makeApiUrl, makeAxiosHttpClient } from "../../http";
 
 
 export const makeRemoteDeleteCourse = (): IDeleteCourse =>
-  new RemoteDeleteCourse(makeApiUrl(`/courses`), makeAxiosHttpClient())
+  new RemoteDeleteCourse(makeApiUrl(`courses`), makeAxiosHttpClient())

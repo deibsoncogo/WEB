@@ -3,5 +3,5 @@ import { ICreateCategory } from '../../../../domain/usecases/interfaces/category
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteCreateCategory = (): ICreateCategory => {
-  return new RemoteCreateCategory(makeApiUrl('/category'), makeAxiosHttpClient())
+  return new RemoteCreateCategory(makeApiUrl('category'), makeAxiosHttpClient())
 }

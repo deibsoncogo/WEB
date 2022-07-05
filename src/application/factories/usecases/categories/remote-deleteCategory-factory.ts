@@ -3,5 +3,5 @@ import { IDeleteCategory } from '../../../../domain/usecases/interfaces/category
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteDeleteCategories = (): IDeleteCategory => {
-  return new RemoteDeleteCategory(makeApiUrl('/category'), makeAxiosHttpClient())
+  return new RemoteDeleteCategory(makeApiUrl('category'), makeAxiosHttpClient())
 }
