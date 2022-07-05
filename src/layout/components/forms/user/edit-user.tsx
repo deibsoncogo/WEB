@@ -6,18 +6,18 @@ import { Form } from '@unform/web'
 import { toast } from 'react-toastify'
 import { FormHandles } from '@unform/core'
 
-import { findCEP, ZipCodeProps } from '../../../utils/findCEP'
-import { formatDateToUTC, validateIfCPFIsValid, validateStringWithNumber } from '../../../helpers'
-import { levelOptions, roleOptions } from '../../../utils/selectOptions'
+import { findCEP, ZipCodeProps } from '../../../../utils/findCEP'
+import { formatDateToUTC, validateIfCPFIsValid, validateStringWithNumber } from '../../../../helpers'
+import { levelOptions, roleOptions } from '../../../../utils/selectOptions'
 
-import { DatePicker, Input, InputMasked, Select } from '../inputs'
+import { DatePicker, Input, InputMasked, Select } from '../../inputs'
 
-import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
-import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
-import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
-import { ProductsModal } from '../modals/products'
-import { ProductsTable } from '../tables/products-list'
-import { Button } from '../buttons/CustomButton'
+import { IGetUser } from '../../../../domain/usecases/interfaces/user/getUser'
+import { IUpdateUser } from '../../../../domain/usecases/interfaces/user/updateUser'
+import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
+import { ProductsModal } from '../../modals/products'
+import { ProductsTable } from '../../tables/products-list'
+import { Button } from '../../buttons/CustomButton'
 
 type IFormEditUser = {
   id: string
