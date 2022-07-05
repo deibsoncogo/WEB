@@ -16,6 +16,7 @@ import { InputSingleImage } from '../../inputs/input-single-image'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { getAsyncCategoiesToSelectInput } from '../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 import { IGetCategories } from '../../../../domain/usecases/interfaces/category/getCategories'
+import { Button } from '../../buttons/CustomButton'
 
 type FormCreateBookProps = {
   remoteGetCategories: IGetCategories
@@ -26,6 +27,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
+  const [registerBook, setRegisterBook] = useState(false)
   const [defaultValue, setDefaultValue] = useState({})
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
 
@@ -44,6 +46,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
     formData.append('id', String(data.id))
     formData.append('isActive', String(false))
 
+    setRegisterBook(true)
     await remoteCreateBook
       .create(formData)
       .then(() => {
@@ -53,6 +56,9 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
       .catch((error: any) => {
         toast.error(error.messages[0])
       })
+      .finally(() => setRegisterBook(false))
+
+      
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
@@ -154,21 +160,24 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         </div>
       </div>
 
-      <div className='mb-10 d-flex justify-content-end'>
-        <button
+      <div className='d-flex mt-10'>
+        <Button
           type='button'
+          title='Cancelar'
+          loading={registerBook}
           onClick={() => {
             router.push('/books')
           }}
-          style={{ marginRight: '10px' }}
-          className='btn btn-lg btn-secondary w-150px mr-10'
-        >
-          Cancelar
-        </button>
+          customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
+          
+        />         
 
-        <button type='submit' className='btn btn-lg btn-primary w-180px'>
-          Salvar
-        </button>
+        <Button 
+         type='submit'        
+         title='Salvar'
+         disabled={registerBook}
+         customClasses={['px-20', 'btn-primary']}
+          />
       </div>
     </Form>
   )

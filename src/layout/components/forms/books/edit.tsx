@@ -65,7 +65,7 @@ const FormEditBook = forwardRef<FormHandles, FormEditBookProps>((props, ref) => 
               <InputNumber name='installments' label='Quantidade de Parcelas' classes='h-75px' />
             </div>
           </div>
-          <div className='mb-10 d-flex justify-content-end'>
+          <div className='d-flex mt-10'>
             <Button
               title='Cancelar'
               type='button'
