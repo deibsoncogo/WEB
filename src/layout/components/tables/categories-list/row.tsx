@@ -21,7 +21,7 @@ export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryD
   return (
     <tr className='d-flex justify-content-between'>
       <td className='ps-4'>
-        <span className='text-muted fw-bold text-muted d-block fs-7'>{name}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{name}</span>
       </td>
 
       <td className='d-flex' style={{ minWidth: '150px' }}>
@@ -31,7 +31,7 @@ export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryD
           color='primary'
           onClick={handleOpenUpdateCategoryDrawer}
         >
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-md me-1'>
+          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
             <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
           </button>
         </Tooltip>
@@ -42,7 +42,7 @@ export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryD
           color='primary'
           onClick={handleOpenDeleteCategoryModal}
         >
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-md'>
+          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
           </button>
         </Tooltip>

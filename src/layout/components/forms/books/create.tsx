@@ -16,6 +16,7 @@ import { InputSingleImage } from '../../inputs/input-single-image'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { getAsyncCategoiesToSelectInput } from '../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 import { IGetCategories } from '../../../../domain/usecases/interfaces/category/getCategories'
+import { Button } from '../../buttons/CustomButton'
 
 type FormCreateBookProps = {
   remoteGetCategories: IGetCategories
@@ -26,6 +27,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
+  const [registerBook, setRegisterBook] = useState(false)
   const [defaultValue, setDefaultValue] = useState({})
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
 
@@ -44,6 +46,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
     formData.append('id', String(data.id))
     formData.append('isActive', String(false))
 
+    setRegisterBook(true)
     await remoteCreateBook
       .create(formData)
       .then(() => {
@@ -53,6 +56,9 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
       .catch((error: any) => {
         toast.error(error.messages[0])
       })
+      .finally(() => setRegisterBook(false))
+
+      
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
@@ -78,19 +84,23 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
 
     try {
       formRef.current.setErrors({})
-
+      data.price = onlyNums(data.price)
       const schema = Yup.object().shape({
-        imagePreview: Yup.string().required('Imagem é necessária.'),
+        imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Título é necessário'),
         author: Yup.string().required('Autor é necessário'),
-        stock: Yup.number().required('Estoque é necessário'),
-        price: Yup.string().required('Preço é necessário'),
+        stock: Yup.number()
+          .min(1, 'Quantidade de estoque deve ser maior que zero')
+          .required('Estoque é necessário'),
+        price: Yup.number()
+          .required('Preço é necessário')
+          .min(0.1, 'Preço deve ser maior que zero'),
         discount: Yup.string().required('Desconto é necessária'),
         description: Yup.string().required('Descrição é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         installments: Yup.number()
-          .required('Quantidade de parcelas é nescessário')
-          .min(1, 'Quantidade de parcelas deve ser maior que 0'),
+          .required('Quantidade de parcelas é necessário')
+          .min(1, 'Quantidade de parcelas deve ser maior que zero'),
       })
 
       await schema.validate(data, { abortEarly: false })
@@ -124,12 +134,16 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
             >
               <Input name='name' label='Título' type='text' classes='h-75px' />
               <Input name='author' label='Autor' type='text' classes='h-75px' />
-              <Input name='stock' label='Estoque' type='number' classes='h-75px' />
+              <InputNumber name='stock' label='Estoque' classes='h-75px' />
               <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
               <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
             </div>
             <div className='d-flex justify-content-start flex-column w-100'>
-              <TextArea name='description' label='Descrição' rows={10} />
+              <TextArea
+                name='description'
+                label='Descrição'
+                style={{ minHeight: '240px', margin: 0 }}
+              />
 
               <SelectAsync
                 searchOptions={handleGetAsyncCategoriesToSelectInput}
@@ -146,21 +160,24 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         </div>
       </div>
 
-      <div className='mb-10 d-flex justify-content-end'>
-        <button
+      <div className='d-flex mt-10'>
+        <Button
           type='button'
+          title='Cancelar'
+          loading={registerBook}
           onClick={() => {
             router.push('/books')
           }}
-          style={{ marginRight: '10px' }}
-          className='btn btn-lg btn-secondary w-150px mr-10'
-        >
-          Cancelar
-        </button>
+          customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
+          
+        />         
 
-        <button type='submit' className='btn btn-lg btn-primary w-180px'>
-          Salvar
-        </button>
+        <Button 
+         type='submit'        
+         title='Salvar'
+         disabled={registerBook}
+         customClasses={['px-20', 'btn-primary']}
+          />
       </div>
     </Form>
   )

@@ -33,6 +33,7 @@ const FormEditBook = forwardRef<FormHandles, FormEditBookProps>((props, ref) => 
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-100'>
           <h3 className='mb-5'>Dados do Livro</h3>
+          <InputSingleImage name='image' />
           <div className='d-flex justify-content-start flex-row '>
             <div
               className='d-flex justify-content-center flex-column w-100'
@@ -40,15 +41,18 @@ const FormEditBook = forwardRef<FormHandles, FormEditBookProps>((props, ref) => 
                 marginRight: '10%',
               }}
             >
-              <InputSingleImage name='image' />
               <Input name='name' label='Título' type='text' />
               <Input name='author' label='Autor' type='text' />
-              <Input name='stock' label='Estoque' type='number' />
+              <InputNumber name='stock' label='Estoque' classes='h-75px' />
               <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
               <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
             </div>
             <div className='d-flex justify-content-start flex-column w-100'>
-              <TextArea name='description' label='Descrição' rows={10} />
+              <TextArea
+                name='description'
+                label='Descrição'
+                style={{ minHeight: '240px', margin: 0 }}
+              />
 
               <SelectAsync
                 searchOptions={searchCategories}
@@ -61,7 +65,7 @@ const FormEditBook = forwardRef<FormHandles, FormEditBookProps>((props, ref) => 
               <InputNumber name='installments' label='Quantidade de Parcelas' classes='h-75px' />
             </div>
           </div>
-          <div className='mb-10 d-flex justify-content-end'>
+          <div className='d-flex mt-10'>
             <Button
               title='Cancelar'
               type='button'

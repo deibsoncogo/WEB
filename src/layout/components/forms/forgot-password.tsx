@@ -23,7 +23,7 @@ export function FormForgotPassword() {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        email: Yup.string().email('Insira um email válido.').required('Email é nescessário.'),
+        email: Yup.string().email('Insira um email válido.').required('Email é necessário.'),
       })
       await schema.validate(data, { abortEarly: false })
 

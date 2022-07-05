@@ -81,7 +81,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
         userId: Yup.string().required('Selecione um professor'),
         price: Yup.string().required('Preço é necessário'),
         installments: Yup.number()
-          .min(1, 'Quantidade de parcelas deve ser maior ou igual a 1')
+          .min(1, 'Quantidade de parcelas deve ser maior maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário'),
         description: Yup.string().required('Descriçao é necessária'),

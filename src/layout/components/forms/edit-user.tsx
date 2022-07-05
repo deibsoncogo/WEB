@@ -55,20 +55,20 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
         name: Yup.string()
           .test('no number', 'O campo não deve conter números', validateStringWithNumber)
           .required('Nome é necessário'),
-        email: Yup.string().email('Insira um email válido.').required('Email é nescessário'),
-        birthDate: Yup.string().required('Data de nascimento é nescessária'),
+        email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
+        birthDate: Yup.string().required('Data de nascimento é necessária'),
         cpf: Yup.string()
           .test('is valid', 'CPF inválido', validateIfCPFIsValid)
           .required('CPF é necessário'),
-        phoneNumber: Yup.string().required('Telefone é nescessário'),
-        level: Yup.string().required('Nível de conhecimento é nescessário'),
-        role: Yup.string().required('Premissão é nescessária'),
-        zipCode: Yup.string().required('CEP é nescessário'),
-        street: Yup.string().required('Rua é nescessário'),
-        neighborhood: Yup.string().required('Bairro é nescessário'),
-        city: Yup.string().required('Cidade é nescessária'),
-        state: Yup.string().required('Estado é nescessário'),
-        number: Yup.string().required('Número é nescessário'),
+        phoneNumber: Yup.string().required('Telefone é necessário'),
+        level: Yup.string().required('Nível de conhecimento é necessário'),
+        role: Yup.string().required('Premissão é necessário'),
+        zipCode: Yup.string().required('CEP é necessário'),
+        street: Yup.string().required('Rua é necessária'),
+        neighborhood: Yup.string().required('Bairro é necessário'),
+        city: Yup.string().required('Cidade é necessária'),
+        state: Yup.string().required('Estado é necessário'),
+        number: Yup.string().required('Número é necessário'),
       })
       await schema.validate(data, { abortEarly: false })
 

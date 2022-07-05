@@ -73,7 +73,7 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                   style={{ maxWidth: '130px' }}
                   onClick={() => handleOrdenation('intervalAccessMonths')}
                 >
-                  Acesso ao Conteúdo (meses)
+                  Acesso ao conteúdo (meses)
                 </th>
                 <th
                   className={getColumnHeaderClasses({ title: 'isActive' })}
