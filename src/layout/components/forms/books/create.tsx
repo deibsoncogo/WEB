@@ -57,8 +57,6 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         toast.error(error.messages[0])
       })
       .finally(() => setRegisterBook(false))
-
-      
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
@@ -125,13 +123,8 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
           <h3 className='mb-5'>Dados do Livro</h3>
 
           <InputSingleImage name='image' />
-          <div className='d-flex justify-content-start flex-row '>
-            <div
-              className='d-flex justify-content-center flex-column w-100'
-              style={{
-                marginRight: '10%',
-              }}
-            >
+          <div className='d-flex justify-content-start flex-row gap-5'>
+            <div className='d-flex justify-content-center flex-column w-100'>
               <Input name='name' label='Título' type='text' classes='h-75px' />
               <Input name='author' label='Autor' type='text' classes='h-75px' />
               <InputNumber name='stock' label='Estoque' classes='h-75px' />
@@ -169,15 +162,14 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
             router.push('/books')
           }}
           customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
-          
-        />         
+        />
 
-        <Button 
-         type='submit'        
-         title='Salvar'
-         disabled={registerBook}
-         customClasses={['px-20', 'btn-primary']}
-          />
+        <Button
+          type='submit'
+          title='Salvar'
+          disabled={registerBook}
+          customClasses={['px-20', 'btn-primary']}
+        />
       </div>
     </Form>
   )
