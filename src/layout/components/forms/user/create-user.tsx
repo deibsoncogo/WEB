@@ -62,8 +62,7 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
         role: Yup.string().required('Permissão é necessária'),       
       })
 
-      formRef.current.setFieldError('cpf', 'CPF inválido')
-
+      
       await schema.validate(data, { abortEarly: false })
 
       handleCreateUser(data)
@@ -122,9 +121,11 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
 
     userRegister
       .signUp(user)
-      .then(() => router.push('/users'))
-      .catch((error: any) => {
-        console.log(error)
+      .then(() => {
+          toast.success('Usuário cadastrado com sucesso')
+          router.push('/users')
+        })
+      .catch((error: any) => {        
         toast.error(error.messages[0])
       })
   }

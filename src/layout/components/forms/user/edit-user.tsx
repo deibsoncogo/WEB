@@ -95,7 +95,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       email: data.email,
       cpf: cpf,
       photo: data.photo,
-      birthDate: formatDateToUTC(data.birthDate).toISOString().split('T')[0],
+      birthDate: formatDateToUTC(data?.birthDate).toISOString().split('T')[0],
       phoneNumber: phoneNumber,
       role: data.role,
       address: [
