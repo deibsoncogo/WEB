@@ -45,31 +45,24 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
 
   async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
-
+    
+   
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string()
           .test('no number', 'O campo não deve conter números', validateStringWithNumber)
-          .required('Nome é necessário'),
+          .required('Nome é necessário'),          
         email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
-        birthDate: Yup.string().required('Data de nascimento é necessária'),
-        cpf: Yup.string()
-          .test('is valid', 'CPF inválido', validateIfCPFIsValid)
-          .required('CPF é necessário'),
-        phoneNumber: Yup.string().required('Telefone é necessário'),
-        level: Yup.string().required('Nível de conhecimento é necessário'),
-        password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é necessária'),
-        role: Yup.string().required('Permissão é necessária'),
-        zipCode: Yup.string().required('CEP é necessário'),
-        street: Yup.string().required('Rua é necessário'),
-        neighborhood: Yup.string().required('Bairro é necessário'),
-        city: Yup.string().required('Cidade é necessária'),
-        state: Yup.string().required('Estado é necessário'),
-        number: Yup.string().required('Número é necessário'),
+        cpf:  Yup.string().test(
+        {name: 'is valid',
+        message: 'CPF inválido',
+        test: (value) => value? validateIfCPFIsValid(value): true}),                   
+        password: Yup.string().min(6, 'No mínimo 6 caracteres'),
+        role: Yup.string().required('Permissão é necessária'),       
       })
 
-      formRef.current.setFieldError('cpf', 'CPF invalido')
+      formRef.current.setFieldError('cpf', 'CPF inválido')
 
       await schema.validate(data, { abortEarly: false })
 

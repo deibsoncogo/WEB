@@ -56,19 +56,12 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           .test('no number', 'O campo não deve conter números', validateStringWithNumber)
           .required('Nome é necessário'),
         email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
-        birthDate: Yup.string().required('Data de nascimento é necessária'),
-        cpf: Yup.string()
-          .test('is valid', 'CPF inválido', validateIfCPFIsValid)
-          .required('CPF é necessário'),
-        phoneNumber: Yup.string().required('Telefone é necessário'),
-        level: Yup.string().required('Nível de conhecimento é necessário'),
-        role: Yup.string().required('Premissão é necessário'),
-        zipCode: Yup.string().required('CEP é necessário'),
-        street: Yup.string().required('Rua é necessária'),
-        neighborhood: Yup.string().required('Bairro é necessário'),
-        city: Yup.string().required('Cidade é necessária'),
-        state: Yup.string().required('Estado é necessário'),
-        number: Yup.string().required('Número é necessário'),
+        cpf:  Yup.string().test(
+          {name: 'is valid',
+          message: 'CPF inválido',
+          test: (value) => value? validateIfCPFIsValid(value): true}),           
+        password: Yup.string().min(6, 'No mínimo 6 caracteres'),
+        role: Yup.string().required('Permissão é necessária'), 
       })
       await schema.validate(data, { abortEarly: false })
 
