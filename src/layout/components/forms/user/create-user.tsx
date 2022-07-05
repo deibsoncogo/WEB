@@ -113,8 +113,7 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
 
     try {
       await verifyEmail.verifyUserEmail(user.email)
-    } catch (err: any) {
-      console.log(err)
+    } catch (err: any) {     
       if (!formRef.current) return
       formRef.current.setFieldError('email', 'Email já registrado')
     }

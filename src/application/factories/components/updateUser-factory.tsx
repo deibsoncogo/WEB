@@ -1,4 +1,5 @@
-import { FormEditUser } from '../../../layout/components/forms/edit-user'
+
+import { FormEditUser } from '../../../layout/components/forms/user/edit-user'
 import { makeRemoteGetUser } from '../usecases/remote-getUser-factory'
 import { makeRemoteUpdateUser } from '../usecases/remote-updateUser-factory'
 
