@@ -165,7 +165,7 @@ function EditTrainingPageTemplate({
       getTraining({ id: trainingId as string })
       getZoomUsersCleanUp()
     }
-  }, [trainingEditedSuccessful, training, zoomUsers])
+  }, [trainingEditedSuccessful, training, zoomUsers, trainingData])
 
   useEffect(() => {
     if (getTrainingError) {
