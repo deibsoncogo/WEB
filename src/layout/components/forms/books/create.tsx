@@ -83,11 +83,12 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Título é necessário'),
         author: Yup.string().required('Autor é necessário'),
-        stock: Yup.number()       
-        .min(1, 'Quantidade de estoque deve ser maior que zero')
-        .required('Estoque é necessário'),
-        price: Yup.number().required('Preço é necessário')
-         .min(0.1, 'Preço deve ser maior que zero'),           
+        stock: Yup.number()
+          .min(1, 'Quantidade de estoque deve ser maior que zero')
+          .required('Estoque é necessário'),
+        price: Yup.number()
+          .required('Preço é necessário')
+          .min(0.1, 'Preço deve ser maior que zero'),
         discount: Yup.string().required('Desconto é necessária'),
         description: Yup.string().required('Descrição é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
@@ -96,7 +97,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
           .min(1, 'Quantidade de parcelas deve ser maior que zero'),
       })
 
-      await schema.validate(data,  { abortEarly: false })
+      await schema.validate(data, { abortEarly: false })
 
       handleCreateBook(data)
     } catch (err) {
@@ -127,12 +128,16 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
             >
               <Input name='name' label='Título' type='text' classes='h-75px' />
               <Input name='author' label='Autor' type='text' classes='h-75px' />
-              <InputNumber name='stock' label='Estoque'  classes='h-75px'/>              
+              <InputNumber name='stock' label='Estoque' classes='h-75px' />
               <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
               <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
             </div>
             <div className='d-flex justify-content-start flex-column w-100'>
-              <TextArea name='description' label='Descrição' rows={10} />
+              <TextArea
+                name='description'
+                label='Descrição'
+                style={{ minHeight: '240px', margin: 0 }}
+              />
 
               <SelectAsync
                 searchOptions={handleGetAsyncCategoriesToSelectInput}
