@@ -7,14 +7,14 @@ type ITrainingsTable = {
   trainings: ITraining[]
   paginationHook: usePaginationType
   getTrainings(): Promise<void>
-  handleRefresher: () => void
+  openToggleStatusConfirmationModal: (trainingId: string) => void
 }
 
 export function TrainingsTable({
   trainings,
   paginationHook,
   getTrainings,
-  handleRefresher,
+  openToggleStatusConfirmationModal,
 }: ITrainingsTable) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
@@ -79,7 +79,7 @@ export function TrainingsTable({
                       teacher={item.teacher}
                       active={item.active}
                       getTrainings={getTrainings}
-                      handleRefresher={handleRefresher}
+                      handleToggleStatusConfirmation={openToggleStatusConfirmationModal}
                     />
                   ))}
                 </tbody>

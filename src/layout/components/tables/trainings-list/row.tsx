@@ -18,10 +18,8 @@ interface IRow {
   teacherName: string
   active: boolean
   deleteTraining: IDeleteTraining
-  updateStatusOfTraining: IUpdateTraining
   getTrainings(): Promise<void>
-  remoteToggleTrainingStatus: IToggleTrainingStatus
-  handleRefresher: () => void
+  handleToggleStatusConfirmation: (trainingId: string) => void
 }
 
 export function Row({
@@ -32,10 +30,8 @@ export function Row({
   teacherName,
   active,
   deleteTraining,
-  remoteToggleTrainingStatus,
-  updateStatusOfTraining,
   getTrainings,
-  handleRefresher,
+  handleToggleStatusConfirmation,
 }: IRow) {
   const [loading, setLoading] = useState(false)
   const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false)
@@ -59,36 +55,8 @@ export function Row({
     }
   }
 
-  async function handleToggleTrainingStatus() {
-    try {
-      setLoading(true)
-      await remoteToggleTrainingStatus.toggle({ id })
-      getTrainings()
-      toast.success('Status do treinamento atualizado com sucesso.')
-    } catch {
-      toast.error('Error ao alterar o status do treinamento')
-    } finally {
-      setLoading(false)
-    }
-    setLoading(false)
-  }
-
   async function handleUpdateStatusOfTraining() {
-    setLoading(true)
-
-    const form = new FormData()
-    form.append('id', id)
-    form.append('active', !active === true ? 'true' : 'false')
-
-    try {
-      await updateStatusOfTraining.update(form)
-      handleRefresher()
-      toast.success('Status atualizado com sucesso')
-    } catch (err) {
-      toast.error('Erro ao atualizar o treinamento Treinamento')
-    }
-    setIsModalUpdateOpen(false)
-    setLoading(false)
+    handleToggleStatusConfirmation(id)
   }
 
   return (
@@ -127,7 +95,7 @@ export function Row({
       </td>
 
       <td>
-        <Switch active={active} setModalUpdate={handleToggleTrainingStatus} />
+        <Switch active={active} setModalUpdate={handleUpdateStatusOfTraining} />
       </td>
 
       <td className='text-end d-flex justify-content-start px-4'>
