@@ -117,7 +117,7 @@ export function Row({
             onClick={() => {
               setIsModalDeleteOpen(true)
             }}
-            className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
           >
             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
           </button>
