@@ -6,12 +6,12 @@ export class UserSignUp {
   email: string
   password: string
   passwordConfirm: string
-  cpf: string
-  birthDate: string
-  phoneNumber: string
+  cpf?: string
+  birthDate?: string
+  phoneNumber?: string
   role: string
-  level: string
-  address: Address[]
+  level?: string
+  address?: Address[]
 
   constructor(
     name: string,
@@ -29,12 +29,14 @@ export class UserSignUp {
     this.email = email
     this.password = password
     this.passwordConfirm = passwordConfirmation
-    this.cpf = cpf
-    this.birthDate = birthDate.toISOString().split('T')[0]
-    this.phoneNumber = phoneNumber
+    this.cpf = cpf? cpf: undefined
+    this.birthDate = birthDate? birthDate.toISOString().split('T')[0]: undefined
+    this.phoneNumber = phoneNumber? phoneNumber: undefined
     this.role = role
-    this.level = level
+    this.level = level? level: undefined
     this.address = new Array()
-    this.address.push(address)
+    if(!address.hasUndefinedProperty())
+        this.address.push(address)
+    
   }
 }

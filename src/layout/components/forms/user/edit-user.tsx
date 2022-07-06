@@ -6,18 +6,19 @@ import { Form } from '@unform/web'
 import { toast } from 'react-toastify'
 import { FormHandles } from '@unform/core'
 
-import { findCEP, ZipCodeProps } from '../../../utils/findCEP'
-import { formatDateToUTC, validateIfCPFIsValid, validateStringWithNumber } from '../../../helpers'
-import { levelOptions, roleOptions } from '../../../utils/selectOptions'
+import { findCEP, ZipCodeProps } from '../../../../utils/findCEP'
+import { formatDateToUTC, validateIfCPFIsValid, validateStringWithNumber } from '../../../../helpers'
+import { levelOptions, roleOptions, stateOptions } from '../../../../utils/selectOptions'
 
-import { DatePicker, Input, InputMasked, Select } from '../inputs'
+import { DatePicker, Input, InputMasked, Select } from '../../inputs'
 
-import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
-import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
-import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
-import { ProductsModal } from '../modals/products'
-import { ProductsTable } from '../tables/products-list'
-import { Button } from '../buttons/CustomButton'
+import { IGetUser } from '../../../../domain/usecases/interfaces/user/getUser'
+import { IUpdateUser } from '../../../../domain/usecases/interfaces/user/updateUser'
+import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
+import { ProductsModal } from '../../modals/products'
+import { ProductsTable } from '../../tables/products-list'
+import { Button } from '../../buttons/CustomButton'
+import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
 
 type IFormEditUser = {
   id: string
@@ -30,6 +31,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   const formRef = useRef<FormHandles>(null)
 
   const [defaultValue, setDefaultValue] = useState({})
+  const [updateUser, setUpdateUser] = useState(false)
 
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
@@ -56,26 +58,19 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           .test('no number', 'O campo não deve conter números', validateStringWithNumber)
           .required('Nome é necessário'),
         email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
-        birthDate: Yup.string().required('Data de nascimento é necessária'),
-        cpf: Yup.string()
-          .test('is valid', 'CPF inválido', validateIfCPFIsValid)
-          .required('CPF é necessário'),
-        phoneNumber: Yup.string().required('Telefone é necessário'),
-        level: Yup.string().required('Nível de conhecimento é necessário'),
-        role: Yup.string().required('Premissão é necessário'),
-        zipCode: Yup.string().required('CEP é necessário'),
-        street: Yup.string().required('Rua é necessária'),
-        neighborhood: Yup.string().required('Bairro é necessário'),
-        city: Yup.string().required('Cidade é necessária'),
-        state: Yup.string().required('Estado é necessário'),
-        number: Yup.string().required('Número é necessário'),
+        cpf:  Yup.string().test(
+          {name: 'is valid',
+          message: 'CPF inválido',
+          test: (value) => value? validateIfCPFIsValid(value): true}),             
+        password: Yup.string().min(6, 'No mínimo 6 caracteres'),
+        role: Yup.string().required('Permissão é necessária'), 
       })
       await schema.validate(data, { abortEarly: false })
 
       const dataToSend = formatDataToSend(data)
-      handleCreateUser(dataToSend)
+      handleUpdateUser(dataToSend)
     } catch (err) {
-      const validationErrors = {}
+      const validationErrors = {}  
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
           // @ts-ignore
@@ -100,20 +95,19 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       id,
       name: data.name,
       email: data.email,
-      cpf: cpf,
-      photo: data.photo,
-      birthDate: formatDateToUTC(data.birthDate).toISOString().split('T')[0],
-      phoneNumber: phoneNumber,
+      cpf: cpf || null,
+      birthDate: data?.birthDate? formatDateToUTC(data.birthDate).toISOString().split('T')[0] : null,
+      phoneNumber: phoneNumber || null,
       role: data.role,
       address: [
         {
-          zipCode: zipCode,
-          street: data.street,
-          neighborhood: data.neighborhood,
-          city: data.city,
-          state: data.state,
-          number: data.number,
-          complement: data.complement,
+          zipCode: zipCode || null,
+          street: data.street || null,
+          neighborhood: data.neighborhood || null,
+          city: data.city || null,
+          state: data.state || null,
+          number: data.number || null,
+          complement: data.complement || null,
         },
       ],
     }
@@ -121,14 +115,20 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     return userData
   }
 
-  async function handleCreateUser(data: any) {
+  async function handleUpdateUser(data: any) {
     setHasError(false)
     try {
+      setUpdateUser(true)
       await userRegister.updateUser(data)
       router.push('/users')
       toast.success('Usuário editado com sucesso!')
-    } catch (err: any) {
-      toast.error(Array.isArray(err.messages) ? err.messages[0] : err.messages)
+    } catch (error: any) {
+      if (error instanceof UnexpectedError){
+        toast.error('Erro Inesperado. Não foi possível atualizar o usuário.')
+    }
+    }
+    finally{
+      setUpdateUser(false)
     }
   }
 
@@ -144,21 +144,21 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     getUser
       .getOne()
       .then((res) => {
-        const newData: any = {
+       const newData: any = {
           name: res.name,
           email: res.email,
-          birthDate: formatDateToUTC(res.birthDate),
-          cpf: res.cpf,
-          phoneNumber: res.phoneNumber,
-          level: res.level,
+          birthDate: res?.birthDate? formatDateToUTC(res?.birthDate): '',
+          cpf: res?.cpf || '',
+          phoneNumber: res?.phoneNumber || '',
+          level: res?.level || '',
           role: res.role,
-          zipCode: res.address[0]?.zipCode || '',
-          street: res.address[0]?.street || '',
-          neighborhood: res.address[0]?.neighborhood || '',
-          city: res.address[0]?.city || '',
-          state: res.address[0]?.state || '',
-          number: res.address[0]?.number || '',
-          complement: res.address[0]?.complement || '',
+          zipCode: res?.address[0]?.zipCode || '',
+          street: res?.address[0]?.street || '',
+          neighborhood: res?.address[0]?.neighborhood || '',
+          city: res?.address[0]?.city || '',
+          state: res?.address[0]?.state || '',
+          number: res?.address[0]?.number || '',
+          complement: res?.address[0]?.complement || '',
         }
         setKeys(newData)
       })
@@ -168,6 +168,22 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   useEffect(() => {
     setKeys(defaultValue)
   }, [defaultValue])
+
+  const stateName = async (result: ZipCodeProps | undefined) => {
+    let state = ''
+    stateOptions.forEach((element) => {
+      if (element.value === result?.state) {
+        state = element.label
+      }
+    })
+    return state
+  }
+  async function handleInputZipCode() {
+    const zipCode = formRef.current?.getData().zipCode
+    const result = await findCEP(zipCode)
+    formRef.current?.setFieldValue('city', result?.city)   
+    formRef.current?.setFieldValue('state', await stateName(result))    
+  }
 
   function handleInputCPF() {
     if (!formRef.current) return
@@ -231,9 +247,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
               name='zipCode'
               label='CEP'
               mask='99999-999'
-              onChange={async () => {
-                setDefaultValue(findCEP(formRef.current?.getData().zipCode))
-              }}
+              onChange={handleInputZipCode}
             />
             <Input name='street' label='Logradouro' />
             <Input name='number' label='Número' type='number' />
@@ -273,13 +287,19 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           <Button
             title='Cancelar'
             type='button'
-            customClasses={['btn-secondary', 'ms-auto', 'me-10']}
+            customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
+             loading={updateUser}
             onClick={() => {
               router.push('/users')
             }}
           />
 
-          <Button type='submit' title='Salvar' customClasses={['btn-primary']} />
+          <Button
+           type='submit' 
+           title='Salvar' 
+           customClasses={['px-20', 'btn-primary']}
+           disabled={updateUser} /> 
+           
         </div>
       </Form>
 

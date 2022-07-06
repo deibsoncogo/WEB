@@ -5,19 +5,20 @@ import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { DatePicker, Input, InputMasked, Select } from '../inputs'
-import { Address } from '../../../domain/models/address'
-import { UserSignUp } from '../../../domain/models/userSignUp'
-import { levelOptions, roleOptions, stateOptions } from '../../../utils/selectOptions'
+import { DatePicker, Input, InputMasked, Select } from '../../inputs'
+import { Address } from '../../../../domain/models/address'
+import { UserSignUp } from '../../../../domain/models/userSignUp'
+import { levelOptions, roleOptions, stateOptions } from '../../../../utils/selectOptions'
 import { toast } from 'react-toastify'
-import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
-import { findCEP, ZipCodeProps } from '../../../utils/findCEP'
-import { restrictNumberInput } from '../../../utils/restrictNumberInput'
-import { ProductsModal } from '../modals/products'
-import { ProductsTable } from '../tables/products-list'
-import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
-import { validateIfCPFIsValid, validateStringWithNumber } from '../../../helpers'
-import { Button } from '../buttons/CustomButton'
+import { IUserSignUp } from '../../../../domain/usecases/interfaces/user/userSignUp'
+import { findCEP, ZipCodeProps } from '../../../../utils/findCEP'
+import { restrictNumberInput } from '../../../../utils/restrictNumberInput'
+import { ProductsModal } from '../../modals/products'
+import { ProductsTable } from '../../tables/products-list'
+import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
+import { validateIfCPFIsValid, validateStringWithNumber } from '../../../../helpers'
+import { Button } from '../../buttons/CustomButton'
+import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
 
 type Props = {
   userRegister: IUserSignUp
@@ -31,6 +32,7 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
   const [defaultValue, setDefaultValue] = useState<ZipCodeProps>()
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
+  const [registerUser, setRegisterUser] = useState(false)
 
   const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
 
@@ -45,32 +47,24 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
 
   async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
-
+    
+   
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string()
           .test('no number', 'O campo não deve conter números', validateStringWithNumber)
-          .required('Nome é necessário'),
+          .required('Nome é necessário'),          
         email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
-        birthDate: Yup.string().required('Data de nascimento é necessária'),
-        cpf: Yup.string()
-          .test('is valid', 'CPF inválido', validateIfCPFIsValid)
-          .required('CPF é necessário'),
-        phoneNumber: Yup.string().required('Telefone é necessário'),
-        level: Yup.string().required('Nível de conhecimento é necessário'),
-        password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é necessária'),
-        role: Yup.string().required('Permissão é necessária'),
-        zipCode: Yup.string().required('CEP é necessário'),
-        street: Yup.string().required('Rua é necessário'),
-        neighborhood: Yup.string().required('Bairro é necessário'),
-        city: Yup.string().required('Cidade é necessária'),
-        state: Yup.string().required('Estado é necessário'),
-        number: Yup.string().required('Número é necessário'),
+        cpf:  Yup.string().test(
+        {name: 'is valid',
+        message: 'CPF inválido',
+        test: (value) => value? validateIfCPFIsValid(value): true}),                   
+        password: Yup.string().min(6, 'No mínimo 6 caracteres'),
+        role: Yup.string().required('Permissão é necessária'),       
       })
 
-      formRef.current.setFieldError('cpf', 'CPF invalido')
-
+      
       await schema.validate(data, { abortEarly: false })
 
       handleCreateUser(data)
@@ -121,19 +115,25 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
 
     try {
       await verifyEmail.verifyUserEmail(user.email)
-    } catch (err: any) {
-      console.log(err)
+    } catch (err: any) {     
       if (!formRef.current) return
       formRef.current.setFieldError('email', 'Email já registrado')
     }
 
+    setRegisterUser(true)
     userRegister
       .signUp(user)
-      .then(() => router.push('/users'))
-      .catch((error: any) => {
-        console.log(error)
-        toast.error(error.messages[0])
+      .then(() => {
+          toast.success('Usuário cadastrado com sucesso')
+          router.push('/users')
+        })
+      .catch((error: any) => {         
+        if (error instanceof UnexpectedError){
+            toast.error('Erro Inesperado. Não foi possível cadastrar o usuário.')
+        }   
       })
+      .finally(() =>
+      setRegisterUser(false))
   }
 
   function handleInputCPF() {
@@ -270,13 +270,17 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
         <Button
           title='Cancelar'
           type='button'
-          customClasses={['btn-secondary', 'ms-auto', 'me-10']}
+          customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
+          loading={registerUser}
           onClick={() => {
             router.push('/users')
           }}
         />
 
-        <Button type='submit' title='Salvar' customClasses={['btn-primary']} />
+        <Button type='submit'
+         title='Salvar' 
+         customClasses={['px-20', 'btn-primary']}
+         disabled={registerUser} />
       </div>
 
       <ProductsModal
