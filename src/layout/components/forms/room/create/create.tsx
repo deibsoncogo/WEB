@@ -72,7 +72,8 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
 
   async function handleFormSubmit(data: IFormRoom) {
     if (!formRef.current) throw new Error()
-
+    console.log('Amoooooooooo')
+    console.log(data)
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
@@ -116,22 +117,24 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
       price,
       data.userId,
       data.categoryId,
-      data.itemRoom ? streamingRoom : undefined
+      data.itemRoom? data.zoomUserId: undefined,
+      data.itemRoom? streamingRoom : undefined
     )
 
-    const formData = new FormData()
+    
+    // const formData = new FormData()
 
-    if (data?.image) formData.append('image', data.image)
-    formData.append('room', JSON.stringify(room))
-    setRegisterRoom(true)
-    createRoom
-      .create(formData)
-      .then(() => {
-        toast.success('Sala criada com sucesso!')
-        router.push(appRoutes.ROOMS)
-      })
-      .catch(() => toast.error('Não foi possível criar sala!'))
-      .finally(() => setRegisterRoom(false))
+    // if (data?.image) formData.append('image', data.image)
+    // formData.append('room', JSON.stringify(room))
+    // setRegisterRoom(true)
+    // createRoom
+    //   .create(formData)
+    //   .then(() => {
+    //     toast.success('Sala criada com sucesso!')
+    //     router.push(appRoutes.ROOMS)
+    //   })
+    //   .catch(() => toast.error('Não foi possível criar sala!'))
+    //   .finally(() => setRegisterRoom(false))
   }
 
   const searchTeachers = async (teacherName: string) => {
