@@ -18,6 +18,7 @@ import { IPartialProductResponse } from '../../../../interfaces/api-response/pro
 import { ProductsModal } from '../../modals/products'
 import { ProductsTable } from '../../tables/products-list'
 import { Button } from '../../buttons/CustomButton'
+import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
 
 type IFormEditUser = {
   id: string
@@ -121,8 +122,10 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       await userRegister.updateUser(data)
       router.push('/users')
       toast.success('Usuário editado com sucesso!')
-    } catch (err: any) {
-      toast.error(Array.isArray(err.messages) ? err.messages[0] : err.messages)
+    } catch (error: any) {
+      if (error instanceof UnexpectedError){
+        toast.error('Erro Inesperado. Não foi possível atualizar o usuário.')
+    }
     }
     finally{
       setUpdateUser(false)

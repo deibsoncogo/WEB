@@ -18,6 +18,7 @@ import { ProductsTable } from '../../tables/products-list'
 import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
 import { validateIfCPFIsValid, validateStringWithNumber } from '../../../../helpers'
 import { Button } from '../../buttons/CustomButton'
+import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
 
 type Props = {
   userRegister: IUserSignUp
@@ -126,8 +127,10 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
           toast.success('Usuário cadastrado com sucesso')
           router.push('/users')
         })
-      .catch((error: any) => {        
-        toast.error(error.messages[0])
+      .catch((error: any) => {         
+        if (error instanceof UnexpectedError){
+            toast.error('Erro Inesperado. Não foi possível cadastrar o usuário.')
+        }   
       })
       .finally(() =>
       setRegisterUser(false))
