@@ -238,15 +238,13 @@ export function ProductsModal({
             </div>
 
             <div className='modal-footer'>
-
-            <button type='button' className='btn btn-light px-10' onClick={onRequestClose}>
+              <button type='button' className='btn btn-light px-10' onClick={onRequestClose}>
                 Cancelar
               </button>
 
               <button type='submit' className='btn btn-primary px-10'>
                 Confirmar
               </button>
-             
             </div>
           </Form>
         </div>

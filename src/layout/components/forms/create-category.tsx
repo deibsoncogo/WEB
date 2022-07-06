@@ -23,16 +23,14 @@ const CreateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) =
         </Form>
 
         <div className='mb-10 d-flex justify-content-between'>
-
-        <Button
+          <Button
             title='Cancelar'
             type='button'
-            loading={loading}
             onClick={close}
             size='lg'
             customClasses={['btn-secondary', 'mb-5', 'px-20']}
           />
-          
+
           <Button
             type='submit'
             form='create-category-form'
@@ -41,8 +39,6 @@ const CreateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) =
             title='Salvar'
             loading={loading}
           />
-
-         
         </div>
       </div>
     </DrawerRight>

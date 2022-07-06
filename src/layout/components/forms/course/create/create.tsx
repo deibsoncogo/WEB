@@ -263,7 +263,6 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
             customClasses={['btn-secondary', 'w-125px', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
-            loading={registerCourse}
             onClick={() => {
               router.push(appRoutes.COURSES)
             }}

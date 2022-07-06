@@ -157,7 +157,6 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         <Button
           type='button'
           title='Cancelar'
-          loading={registerBook}
           onClick={() => {
             router.push('/books')
           }}

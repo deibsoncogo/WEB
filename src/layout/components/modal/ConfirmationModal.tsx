@@ -30,7 +30,6 @@ function ConfirmationModal({
         <Button
           type='button'
           title='Cancelar'
-          loading={loading}
           onClick={onRequestClose}
           size='sm'
           customClasses={['btn-secondary', 'mb-5', 'px-20']}
