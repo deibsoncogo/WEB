@@ -15,11 +15,13 @@ export class RemoteCreatePlan implements ICreatePlan {
       },
     })
 
+    console.log(httpResponse)
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.created:
         return httpResponse.body
       case HttpStatusCode.badRequest:
-        throw new InvalidParamsError(httpResponse.body?.message)
+        throw new InvalidParamsError([httpResponse.body?.message])
       default:
         throw new UnexpectedError()
     }
