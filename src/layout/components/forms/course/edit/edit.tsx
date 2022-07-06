@@ -17,11 +17,10 @@ import { ICourseAttachmentResponse } from '../../../../../interfaces/api-respons
 import { ICourseClassResponse } from '../../../../../interfaces/api-response/courseClassResponse'
 import { FileUpload } from '../../../../../domain/models/fileUpload'
 import CoursesInternalTable from './courseClass/courseInternalTable'
-import { CourseClass } from '../../../../../domain/models/courseClass'
 import FilesInternalTable from './filesUpload/filesInternalTable'
 import { DeleteFileUpload } from '../../../../../domain/models/deleteFile'
 import { appRoutes } from '../../../../../application/routing/routes'
-import { Button as CustomButton } from '../../../buttons/CustomButton'
+import { Button} from '../../../buttons/CustomButton'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
@@ -318,8 +317,8 @@ export function FormUpdateCourse(props: Props) {
           />
 
           <div className='d-flex mt-10'>
-            <CustomButton
-              customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+            <Button
+              customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
               title='Cancelar'
               type='button'
               loading={updateCourse}
@@ -327,9 +326,9 @@ export function FormUpdateCourse(props: Props) {
                 router.push(appRoutes.COURSES)
               }}
             />
-            <CustomButton
+            <Button
               type='submit'
-              customClasses={['w-180px', 'btn-primary']}
+              customClasses={['px-20', 'btn-primary']}
               title='Salvar'
               disabled={updateCourse}
             />          
