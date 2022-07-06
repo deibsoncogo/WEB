@@ -65,7 +65,7 @@ export function BooksTable({
                     </th>
                     <th
                       className={getColumnHeaderClasses('active')}
-                      onClick={() => handleOrdenation('active')}
+                      onClick={() => handleOrdenation('isActive')}
                     >
                       Ativo
                     </th>
