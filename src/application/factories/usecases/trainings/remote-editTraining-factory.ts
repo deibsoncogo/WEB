@@ -3,4 +3,4 @@ import { IEditTraining } from '../../../../domain/usecases/interfaces/trainings/
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteEditTraining = (): IEditTraining =>
-  new RemoteEditTraining(makeApiUrl('/training'), makeAxiosHttpClient())
+  new RemoteEditTraining(makeApiUrl('training'), makeAxiosHttpClient())

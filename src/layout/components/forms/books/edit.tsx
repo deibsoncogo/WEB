@@ -34,13 +34,8 @@ const FormEditBook = forwardRef<FormHandles, FormEditBookProps>((props, ref) => 
         <div className='w-100'>
           <h3 className='mb-5'>Dados do Livro</h3>
           <InputSingleImage name='image' />
-          <div className='d-flex justify-content-start flex-row '>
-            <div
-              className='d-flex justify-content-center flex-column w-100'
-              style={{
-                marginRight: '10%',
-              }}
-            >
+          <div className='d-flex justify-content-start flex-row gap-5'>
+            <div className='d-flex justify-content-center flex-column w-100'>
               <Input name='name' label='Título' type='text' />
               <Input name='author' label='Autor' type='text' />
               <InputNumber name='stock' label='Estoque' classes='h-75px' />

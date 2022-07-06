@@ -6,4 +6,4 @@ import { makeApiUrl, makeAxiosHttpClient } from '../../http';
 
 
 export const makeRemoteUpdateCourse = (): IUpdateCourse =>
-  new RemoteUpdateCourse(makeApiUrl('/courses'), makeAxiosHttpClient());
+  new RemoteUpdateCourse(makeApiUrl('courses'), makeAxiosHttpClient());
