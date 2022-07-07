@@ -174,16 +174,20 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
 
  
   useEffect(() => {
-    const fetchData = async () => {     
+       
       if (typeof id == 'string') {
-        const data = await getRoom.get(id)       
+        getRoom.get(id).then(data => {
+        formRef.current?.setFieldValue('name', data.name)
+        formRef.current?.setFieldValue('description', data.description)
         formRef.current?.setFieldValue('userId', data.userId)
         formRef.current?.setFieldValue('userId-label', data.teacherName)
         formRef.current?.setFieldValue('categoryId', data.categoryId)
-        formRef.current?.setFieldValue('categoryId-label', data.categoryName)
+        formRef.current?.setFieldValue('categoryId-label', data.categoryName)      
+        formRef.current?.setFieldValue('price', currenceMaskOnlyValue(data.price))
+        formRef.current?.setFieldValue('discount', currenceMaskOnlyValue(data.discount))
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)    
         formRef.current?.setFieldValue('installments', data.installments) 
-        setDefaultValue(data)        
+        formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)                
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
         inputRefChat.current.checked = data.isChatActive
         inputRefChat.current.value = data.isChatActive
@@ -192,32 +196,32 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
         inputRefRoom.current.value = data.isStreamingRoomActive
         setIsToShowStreaming(data.isStreamingRoomActive)
         setStreamingRoom(startStreamingRoomHelper(data?.streamingRooms))       
-         
+        getZoomUsers.get().then((zoomListUsers) => {
+          if (zoomListUsers) {
+            const options: ISelectOption[] = zoomListUsers.map((user) => ({
+              label: `${user.first_name} ${user.last_name}`,
+              value: user.id,
+            }))
+            setZoomUsersOptions(options)
+          }
+         })  
+         .finally(()=>{
+          formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)
+          setLoading(false)                   
+        }) 
+        })         
       }
 
-      const dataTeachers = await searchTeachers('')
-      setDefaultTeacherOptions(dataTeachers )
+      searchTeachers('').then(dataTeachers =>{
+        setDefaultTeacherOptions(dataTeachers )
+      })
 
-      const dataCategories = await searchCategories('')
-      setDefaultCategoryOptions(dataCategories)
-
-      const zoomLisUsers = await getZoomUsers.get()
-        if (zoomLisUsers) {
-          const options: ISelectOption[] = zoomLisUsers.map((user) => ({
-            label: `${user.first_name} ${user.last_name}`,
-            value: user.id,
-          }))
-          setZoomUsersOptions(options)
-        }
-    }
-        
-    fetchData().
-    catch(() => toast.error("Não foi possível carregar os dados"))
-    .finally(() => setTimeout(() => {
-      setLoading(false)
-     }, 500) ) 
-         
-  }, [])
+      searchCategories('').then(dataCategories =>{
+        setDefaultCategoryOptions(dataCategories)
+      }) 
+     
+           
+  }, [])  
 
   return (
     <>
@@ -237,16 +241,14 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
               defaultOptions={defaultTeacherOptions}
            
             />
-            <Input
-              defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
+            <Input              
               name='price'
               label='Preço'
               type='text'
               placeholderText='R$ 0,00'
               onChange={() => currencyFormatter('price')}
             />
-            <Input
-              defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}
+            <Input             
               name='discount'
               label='Desconto'
               type='text'
