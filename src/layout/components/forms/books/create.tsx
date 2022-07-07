@@ -17,6 +17,7 @@ import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { getAsyncCategoiesToSelectInput } from '../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 import { IGetCategories } from '../../../../domain/usecases/interfaces/category/getCategories'
 import { Button } from '../../buttons/CustomButton'
+import is from 'date-fns/esm/locale/is/index.js'
 
 type FormCreateBookProps = {
   remoteGetCategories: IGetCategories
@@ -54,7 +55,11 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         toast.success('Livro criado com sucesso!')
       })
       .catch((error: any) => {
-        toast.error(error.messages[0])
+        if (Array.isArray(error.messages?.[0])) {
+          toast.error(error.messages?.[0])
+          return
+        }
+        toast.error(error.message)
       })
       .finally(() => setRegisterBook(false))
   }
