@@ -3,12 +3,16 @@ import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-import { Input, InputNumber, SelectAsync, TextArea } from '../../../inputs'
+import { Input, InputCurrence, InputNumber, SelectAsync, TextArea } from '../../../inputs'
 import { toast } from 'react-toastify'
 import { IUpdateCourse } from '../../../../../domain/usecases/interfaces/course/upDateCourse'
 import { IGetCourse } from '../../../../../domain/usecases/interfaces/course/getCourse'
 import { ICourseResponse } from '../../../../../interfaces/api-response/courseResponse'
-import { currenceMaskOnlyValue } from '../../../../formatters/currenceFormatter'
+import {
+  currenceMaskOnlyValue,
+  maskedToMoney,
+  onlyNums,
+} from '../../../../formatters/currenceFormatter'
 import { UpdateCourse } from '../../../../../domain/models/updateCourse'
 import { Editor } from '@tinymce/tinymce-react'
 import { IGetAllAttachmentByCourseId } from '../../../../../domain/usecases/interfaces/courseAttachment/getAllAttachmentByCourseId'
@@ -65,20 +69,6 @@ export function FormUpdateCourse(props: Props) {
     setStateEditor({ content: event })
   }
 
-  const currencyFormatter = (name: string) => {
-    var value = formRef.current?.getFieldValue(name)
-    value = value + ''
-    value = parseInt(value.replace(/[\D]+/g, ''))
-    value = value + ''
-    value = value.replace(/([0-9]{2})$/g, ',$1')
-
-    if (value.length > 6) {
-      value = value.replace(/([0-9]{3}),([0-9]{2}$)/g, '.$1,$2')
-    }
-    formRef.current?.setFieldValue(name, value)
-    if (value == 'NaN') formRef.current?.setFieldValue(name, '')
-  }
-
   async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
 
@@ -127,8 +117,8 @@ export function FormUpdateCourse(props: Props) {
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
-    const price = data.price.replace('.', '').replace(',', '.')
-    const discount = data.discount.replace('.', '').replace(',', '.')
+    const price = onlyNums(data.price)
+    const discount = onlyNums(data.discount)
 
     courseClass.forEach((item, index) => (item.displayOrder = index + 1))
 
@@ -190,6 +180,8 @@ export function FormUpdateCourse(props: Props) {
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)
         formRef.current?.setFieldValue('installments', data.installments)
         formRef.current?.setFieldValue('accessTime', data?.accessTime)
+        formRef.current?.setFieldValue('price', maskedToMoney(data?.price))
+        formRef.current?.setFieldValue('discount', maskedToMoney(data?.discount))
         setDefaultValue(data)
         setStateEditor({ content: data.content })
         setAttachment(await props.getAttachments.getAllByCourseId(props.id))
@@ -226,22 +218,8 @@ export function FormUpdateCourse(props: Props) {
               defaultOptions={defaultTeacherOptions}
             />
             <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
-            <Input
-              name='price'
-              defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
-              label='Preço'
-              type='text'
-              placeholderText='R$'
-              onChange={() => currencyFormatter('price')}
-            />
-            <Input
-              name='discount'
-              defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}
-              label='Desconto'
-              type='text'
-              placeholderText='R$'
-              onChange={() => currencyFormatter('discount')}
-            />
+            <InputCurrence name='price' label='Preço' />
+            <InputCurrence name='discount' label='Desconto' type='text' />
           </div>
           <div className='w-50'>
             <TextArea
