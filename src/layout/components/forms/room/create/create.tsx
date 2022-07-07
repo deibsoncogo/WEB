@@ -122,19 +122,19 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
     )
 
     
-    // const formData = new FormData()
+     const formData = new FormData()
 
-    // if (data?.image) formData.append('image', data.image)
-    // formData.append('room', JSON.stringify(room))
-    // setRegisterRoom(true)
-    // createRoom
-    //   .create(formData)
-    //   .then(() => {
-    //     toast.success('Sala criada com sucesso!')
-    //     router.push(appRoutes.ROOMS)
-    //   })
-    //   .catch(() => toast.error('Não foi possível criar sala!'))
-    //   .finally(() => setRegisterRoom(false))
+     if (data?.image) formData.append('image', data.image)
+     formData.append('room', JSON.stringify(room))
+     setRegisterRoom(true)
+     createRoom
+       .create(formData)
+       .then(() => {
+         toast.success('Sala criada com sucesso!')
+         router.push(appRoutes.ROOMS)
+       })
+       .catch(() => toast.error('Não foi possível criar sala!'))
+       .finally(() => setRegisterRoom(false))
   }
 
   const searchTeachers = async (teacherName: string) => {
