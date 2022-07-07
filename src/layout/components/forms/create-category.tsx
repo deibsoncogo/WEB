@@ -22,15 +22,16 @@ const CreateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) =
           <Input name='name' label='Nome' placeholder='Nome da categoria' type='text' />
         </Form>
 
+
         <div className='d-flex mb-15'>
-        <Button
+          <Button
+
             title='Cancelar'
             type='button'
-            loading={loading}
             onClick={close}
             customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
           />
-          
+
           <Button
             type='submit'
             form='create-category-form'
@@ -38,8 +39,6 @@ const CreateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) =
             title='Salvar'
             loading={loading}
           />
-
-         
         </div>
       </div>
     </DrawerRight>

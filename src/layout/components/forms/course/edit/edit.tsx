@@ -337,3 +337,4 @@ export function FormUpdateCourse(props: Props) {
     </>
   )
 }
+

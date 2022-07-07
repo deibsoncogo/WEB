@@ -42,7 +42,7 @@ const EditPlanPageTemplate = ({
   const { id: planId } = router.query
 
   const [hasAtLastOneProduct, setHasAtLastOneProduct] = useState(true)
-  const [planType, setPlanType] = useState<PlanType | ''>('')
+  const [planType, setPlanType] = useState<PlanType | null>(null)
   const [plan, setPlan] = useState<IPlan | null>(null)
 
   const editPlanFormRef = useRef<FormHandles>(null)
@@ -177,8 +177,8 @@ const EditPlanPageTemplate = ({
         rooms = [],
       } = plan
 
-      setFiledValue('planType', defaultPlan)
-      setPlanType(defaultPlan)
+      setFiledValue('planType', planType || defaultPlan)
+      setPlanType(planType || defaultPlan)
       setFiledValue('name', name)
       setFiledValue('price', maskedToMoney(price))
       setFiledValue('description', description)

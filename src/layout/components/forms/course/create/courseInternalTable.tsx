@@ -1,4 +1,3 @@
-
 import { Tooltip } from '@nextui-org/react'
 import { FormHandles } from '@unform/core'
 import { Dispatch, RefObject, SetStateAction, useState } from 'react'
@@ -46,7 +45,7 @@ export default function CoursesInternalTable(prop: prop) {
 
       prop.courseClassArray.push(new CourseClass(nameClass, link))
       prop.formRef.current?.clearField('nameClass')
-      prop.formRef.current?.clearField('link')     
+      prop.formRef.current?.clearField('link')
       handleRefresher()
     } else {
       setHasError(true)
@@ -71,7 +70,6 @@ export default function CoursesInternalTable(prop: prop) {
       )}
 
       <div className='d-flex flex-row align-middle gap-5'>
-
         <Input
           name='nameClass'
           label='Nome'
@@ -86,7 +84,6 @@ export default function CoursesInternalTable(prop: prop) {
           onChange={(event) => setLink(event.target.value)}
         />
 
-       
         <div className='fv-row d-flex align-items-center mt-4'>
           <a onClick={handleClassSubmit} className='btn btn-sm btn-primary'>
             <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
@@ -102,18 +99,19 @@ export default function CoursesInternalTable(prop: prop) {
               <List
                 values={prop.courseClassArray}
                 onChange={({ oldIndex, newIndex }) => {
-                 prop.setCourseClass(arrayMove(prop.courseClassArray, oldIndex, newIndex))                  
+                  prop.setCourseClass(arrayMove(prop.courseClassArray, oldIndex, newIndex))
                 }}
                 renderList={({ children, props, isDragged }) => (
                   <table
                     style={{
                       cursor: isDragged ? 'grabbing' : undefined,
                     }}
-                    className='table align-middle gs-0 gy-4'>
+                    className='table align-middle gs-0 gy-4'
+                  >
                     <thead>
                       <tr className='fw-bolder text-muted bg-light'>
                         <th className='text-dark ps-4 min-w-200px rounded-start'>Nome</th>
-                        <th className='text-dark min-w-200px'>Link</th>                        
+                        <th className='text-dark min-w-200px'>Link</th>
                         <th className='text-dark min-w-100px text-end rounded-end' />
                       </tr>
                     </thead>
@@ -121,43 +119,39 @@ export default function CoursesInternalTable(prop: prop) {
                   </table>
                 )}
                 renderItem={({ value, props, isDragged, isSelected }) => {
-
-                  const row = (<tr {...props}
-                    style={{
-                      ...props.style,
-                      cursor: isDragged ? 'grabbing' : 'grab',
-                      backgroundColor: isDragged || isSelected ? '#EEE' : '#fafafa'
-                    }}
+                  const row = (
+                    <tr
+                      {...props}
+                      style={{
+                        cursor: isDragged ? 'grabbing' : 'grab',
+                        backgroundColor: isDragged || isSelected ? '#EEE' : '#fafafa',
+                      }}
                     >
-                    <td className='ps-4'>
-                      <span className='text-dark fw-bold d-block fs-7'>{value.name}</span>
-                    </td>
-            
-                    <td>
-                      <span className='text-dark fw-bold d-block fs-7'>{value.link}</span>
-                    </td>
-                               
-            
-                    <td className = 'text-center'>
-                      <Tooltip content={'Deletar'} rounded color='primary'>
-                        <a
-                          onClick={() => {
-                           deleteClass(value)
-                          }}
-                          className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
-                        >
-                          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-                        </a>
-                      </Tooltip>
-                    </td>
-                  </tr>)
+                      <td className='ps-4'>
+                        <span className='text-dark fw-bold d-block fs-7'>{value.name}</span>
+                      </td>
+
+                      <td>
+                        <span className='text-dark fw-bold d-block fs-7'>{value.link}</span>
+                      </td>
+
+                      <td className='text-center'>
+                        <Tooltip content={'Deletar'} rounded color='primary'>
+                          <a
+                            onClick={() => {
+                              deleteClass(value)
+                            }}
+                            className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
+                          >
+                            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+                          </a>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  )
                   return isDragged ? (
                     <table style={{ ...props.style, borderSpacing: 0 }}>
-                      <tbody>
-                        {
-                          row
-                        }
-                      </tbody>
+                      <tbody>{row}</tbody>
                     </table>
                   ) : (
                     row

@@ -2,4 +2,4 @@ import { RemoteDeleteTraining } from '../../../../data/usecases/training/remote-
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteDeleteTrainings = (id: string): IDeleteTraining =>
-  new RemoteDeleteTraining(makeApiUrl(`/training/${id}`), makeAxiosHttpClient())
+  new RemoteDeleteTraining(makeApiUrl(`training/${id}`), makeAxiosHttpClient())

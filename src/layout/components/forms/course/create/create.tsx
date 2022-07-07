@@ -7,7 +7,7 @@ import { Form } from '@unform/web'
 import * as Yup from 'yup'
 
 import { ICreateCourse } from '../../../../../domain/usecases/interfaces/course/createCourse'
-import { Input, InputNumber, TextArea } from '../../../inputs'
+import { Input, InputCurrence, InputNumber, TextArea } from '../../../inputs'
 
 import { Editor } from '@tinymce/tinymce-react'
 import { toast } from 'react-toastify'
@@ -25,6 +25,7 @@ import { SelectAsync } from '../../../inputs/selectAsync'
 import FilesInternalTable from '../filesUpload/filesInternalTable'
 import CoursesInternalTable from './courseInternalTable'
 import { Button } from '../../../buttons/CustomButton'
+import { onlyNums } from '../../../../formatters/currenceFormatter'
 
 type Props = {
   createCourse: ICreateCourse
@@ -57,21 +58,6 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
       categoryName,
       remoteGetCategories: getCategories,
     })
-  }
-
-  const currencyFormatter = (name: string) => {
-    var value = formRef.current?.getFieldValue(name)
-
-    value = value + ''
-    value = parseInt(value.replace(/[\D]+/g, ''))
-    value = value + ''
-    value = value.replace(/([0-9]{2})$/g, ',$1')
-
-    if (value.length > 6) {
-      value = value.replace(/([0-9]{3}),([0-9]{2}$)/g, '.$1,$2')
-    }
-    formRef.current?.setFieldValue(name, value)
-    if (value == 'NaN') formRef.current?.setFieldValue(name, '')
   }
 
   async function handleFormSubmit(data: IFormCourse) {
@@ -111,8 +97,8 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
     }
   }
   async function handleCreateCourse(data: IFormCourse) {
-    const price = data.price.replace('.', '').replace(',', '.')
-    const discount = data.discount.replace('.', '').replace(',', '.')
+    const price = onlyNums(data.price)
+    const discount = onlyNums(data.discount)
     courseClass.forEach((item, index) => (item.displayOrder = index + 1))
 
     const course = new CreateCourse(
@@ -179,20 +165,8 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
               defaultOptions={defaultTeacherOptions}
             />
             <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
-            <Input
-              name='price'
-              label='Preço'
-              type='text'
-              placeholderText='R$ 0,00'
-              onChange={() => currencyFormatter('price')}
-            />
-            <Input
-              name='discount'
-              label='Desconto'
-              type='text'
-              placeholderText='R$ 0,00'
-              onChange={() => currencyFormatter('discount')}
-            />
+            <InputCurrence name='price' label='Preço' />
+            <InputCurrence name='discount' label='Desconto' />
           </div>
           <div className='w-50'>
             <TextArea
@@ -263,7 +237,6 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
             customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
-            loading={registerCourse}
             onClick={() => {
               router.push(appRoutes.COURSES)
             }}

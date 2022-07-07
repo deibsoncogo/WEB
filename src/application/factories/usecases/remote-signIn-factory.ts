@@ -6,4 +6,4 @@ import { makeApiUrl } from '../http';
 
 
 export const makeRemoteSignIn = (): IUserSignIn =>
-  new RemoteUserSignIn(makeApiUrl('/auth/admin/login'), makeAxiosHttpClient());
+  new RemoteUserSignIn(makeApiUrl('auth/admin/login'), makeAxiosHttpClient());

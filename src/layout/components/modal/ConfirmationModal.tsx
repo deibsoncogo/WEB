@@ -27,16 +27,13 @@ function ConfirmationModal({
       <Modal.Body>{content}</Modal.Body>
 
       <Modal.Footer>
-
-      <Button
+        <Button
           type='button'
           title='Cancelar'
-          loading={loading}
           onClick={onRequestClose}
           size='sm'
           customClasses={['btn-secondary', 'mb-5', 'px-20']}
         />
-        
         <Button
           type='button'
           title='Confirmar'
@@ -45,7 +42,6 @@ function ConfirmationModal({
           size='sm'
           customClasses={['btn-primary', 'mb-5']}
         />
-       
       </Modal.Footer>
     </Modal>
   )

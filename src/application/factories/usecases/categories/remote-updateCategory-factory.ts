@@ -3,5 +3,5 @@ import { IUpdateCategory } from '../../../../domain/usecases/interfaces/category
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteUpdateCategory = (): IUpdateCategory => {
-  return new RemoteUpdateCategory(makeApiUrl('/category'), makeAxiosHttpClient())
+  return new RemoteUpdateCategory(makeApiUrl('category'), makeAxiosHttpClient())
 }

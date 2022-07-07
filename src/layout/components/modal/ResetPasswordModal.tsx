@@ -73,17 +73,15 @@ function ResetPasswordModal({
       </Modal.Body>
 
       <Modal.Footer>
-        
         <Button
           type='button'
           title='Cancelar'
-          loading={loading}
           onClick={onRequestClose}
           size='sm'
           customClasses={['btn-secondary', 'mb-5', 'px-20']}
         />
 
-       <Button
+        <Button
           type='submit'
           title='Salvar'
           form='reset-password-form'
