@@ -44,15 +44,13 @@ export default function RoomInternalTable({
       const streaming = {
         date: formatDate(streamingDate, 'YYYY-MM-DD'),
         hour: formattedStreamingHour,
-        start: false,
-        zoomUserId: zoomUserId,
+        start: false,      
       }
       streamingRoomArray.push(streaming)
       streamRoomUpdate.push(streaming)
       formRef.current?.clearField('streamingDate')
       formRef.current?.clearField('streamingHour')
-      formRef.current?.clearField('zoomUserId')
-
+  
       handleRefresher()
     } else {
       setHasError(true)
@@ -72,15 +70,15 @@ export default function RoomInternalTable({
 
       <div className='d-flex flex-row align-middle gap-5'>
         <div className='col-3'>
-          <Select name='zoomUserId' label='Usuário do Zoom' defaultValue=''>
-            <option disabled value=''>
-              Selecione
-            </option>
-            {zoomUsersOptions?.map(({ label, value }) => (
-              <option value={value} key={value}>
-                {label}
+         <Select name='zoomUserId' label='Usuário do Zoom' defaultValue= ''>
+              <option disabled value=''>
+                Selecione
               </option>
-            ))}
+              {zoomUsersOptions?.map(({ label, value }) => (
+                <option value={value} key={value}>
+                  {label}
+                </option>
+              ))}
           </Select>
         </div>
 

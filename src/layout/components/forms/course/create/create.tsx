@@ -234,7 +234,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
 
         <div className='d-flex mt-10'>
           <Button
-            customClasses={['btn-secondary', 'w-125px', 'ms-auto', 'me-10']}
+            customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
             onClick={() => {
@@ -243,7 +243,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
           />
           <Button
             type='submit'
-            customClasses={['w-125px', 'btn-primary']}
+            customClasses={['px-20', 'btn-primary']}
             title='Salvar'
             disabled={registerCourse}
           />

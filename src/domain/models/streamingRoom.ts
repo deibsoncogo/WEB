@@ -1,6 +1,5 @@
 export interface IStreamingRoom {
-  id?: string
-  zoomUserId: string
+  id?: string  
   date: string
   hour: string
   start?: boolean

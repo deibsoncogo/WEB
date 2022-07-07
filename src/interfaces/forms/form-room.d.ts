@@ -11,6 +11,5 @@ interface IFormRoom {
   price: string; 
   userId: string;
   categoryId: string;    
-  zoomUserId: string  
- 
+  zoomUserId: string 
 }

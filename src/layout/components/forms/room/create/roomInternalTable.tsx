@@ -39,14 +39,11 @@ export default function RoomInternalTable({
       const streaming = {
         date: formatDate(streamingDate, 'YYYY-MM-DD'),
         hour: formattedStreamingHour,
-        start: false,
-        zoomUserId: zoomUserId,
+        start: false
       }
       streamingRoomArray.push(streaming)
       formRef.current?.clearField('streamingDate')
       formRef.current?.clearField('streamingHour')
-      formRef.current?.clearField('zoomUserId')
-
       handleRefresher()
     } else {
       setHasError(true)

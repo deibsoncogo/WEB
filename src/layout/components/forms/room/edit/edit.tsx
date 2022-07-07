@@ -17,7 +17,6 @@ import { appRoutes } from '../../../../../application/routing/routes'
 import { Button } from '../../../buttons/CustomButton'
 import { IGetRoom } from '../../../../../domain/usecases/interfaces/room/getCourse'
 import { IUpdateRoom } from '../../../../../domain/usecases/interfaces/room/updateRoom'
-import { IRoomResponse } from '../../../../../interfaces/api-response/roomResponse'
 import { IGetZoomUsers } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { currencyInputFormmater } from '../../../../formatters/currencyInputFormatter'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
@@ -55,7 +54,6 @@ export function FormUpdateRoom({
   const formRef = useRef<FormHandles>(null)
   const [loading, setLoading] = useState(true)
   const [update, setUpdate] = useState(false)
-  const [defaultValue, setDefaultValue] = useState<IRoomResponse>()
 
   const [isToShowStreaming, setIsToShowStreaming] = useState(false)
   const [streamingRoom, setStreamingRoom] = useState<IStreamingRoom[]>([])
@@ -100,8 +98,7 @@ export function FormUpdateRoom({
   }
 
   async function handleFormSubmit(data: IFormRoom) {
-    if (!formRef.current) throw new Error()
-
+    if (!formRef.current) throw new Error()  
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
@@ -135,7 +132,7 @@ export function FormUpdateRoom({
     const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
     const room = new UpdateRoom(
-      defaultValue?.id,
+      typeof id === 'string' ? id : undefined,
       data.name,
       data.description,
       discount,
@@ -146,6 +143,7 @@ export function FormUpdateRoom({
       price,
       data.userId,
       data.categoryId,
+      data.zoomUserId,
       streamRoomUpdate
     )
 
@@ -172,16 +170,19 @@ export function FormUpdateRoom({
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (typeof id == 'string') {
-        const data = await getRoom.get(id)
+    if (typeof id == 'string') {
+      getRoom.get(id).then((data) => {
+        formRef.current?.setFieldValue('name', data.name)
+        formRef.current?.setFieldValue('description', data.description)
         formRef.current?.setFieldValue('userId', data.userId)
         formRef.current?.setFieldValue('userId-label', data.teacherName)
         formRef.current?.setFieldValue('categoryId', data.categoryId)
         formRef.current?.setFieldValue('categoryId-label', data.categoryName)
+        formRef.current?.setFieldValue('price', currenceMaskOnlyValue(data.price))
+        formRef.current?.setFieldValue('discount', currenceMaskOnlyValue(data.discount))
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)
         formRef.current?.setFieldValue('installments', data.installments)
-        setDefaultValue(data)
+        formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
         inputRefChat.current.checked = data.isChatActive
         inputRefChat.current.value = data.isChatActive
@@ -190,37 +191,37 @@ export function FormUpdateRoom({
         inputRefRoom.current.value = data.isStreamingRoomActive
         setIsToShowStreaming(data.isStreamingRoomActive)
         setStreamingRoom(startStreamingRoomHelper(data?.streamingRooms))
-      }
-
-      const dataTeachers = await searchTeachers('')
-      setDefaultTeacherOptions(dataTeachers)
-
-      const dataCategories = await searchCategories('')
-      setDefaultCategoryOptions(dataCategories)
-
-      const zoomLisUsers = await getZoomUsers.get()
-      if (zoomLisUsers) {
-        const options: ISelectOption[] = zoomLisUsers.map((user) => ({
-          label: `${user.first_name} ${user.last_name}`,
-          value: user.id,
-        }))
-        setZoomUsersOptions(options)
-      }
+        getZoomUsers
+          .get()
+          .then((zoomListUsers) => {
+            if (zoomListUsers) {
+              const options: ISelectOption[] = zoomListUsers.map((user) => ({
+                label: `${user.first_name} ${user.last_name}`,
+                value: user.id,
+              }))
+              setZoomUsersOptions(options)
+            }
+          })
+          .finally(() => {
+            formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)
+            setLoading(false)
+          })
+      })
     }
 
-    fetchData()
-      .catch(() => toast.error('Não foi possível carregar os dados'))
-      .finally(() =>
-        setTimeout(() => {
-          setLoading(false)
-        }, 500)
-      )
+    searchTeachers('').then((dataTeachers) => {
+      setDefaultTeacherOptions(dataTeachers)
+    })
+
+    searchCategories('').then((dataCategories) => {
+      setDefaultCategoryOptions(dataCategories)
+    })
   }, [])
 
   return (
     <>
       {loading && <FullLoading />}
-      <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+      <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações da Sala</h3>
         <InputSingleImage name='image' />
         <div className='d-flex flex-row gap-5 w-100'>
@@ -235,7 +236,6 @@ export function FormUpdateRoom({
               defaultOptions={defaultTeacherOptions}
             />
             <Input
-              defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
               name='price'
               label='Preço'
               type='text'
@@ -243,7 +243,6 @@ export function FormUpdateRoom({
               onChange={() => currencyFormatter('price')}
             />
             <Input
-              defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}
               name='discount'
               label='Desconto'
               type='text'
@@ -251,11 +250,7 @@ export function FormUpdateRoom({
               onChange={() => currencyFormatter('discount')}
             />
 
-            <InputNumber
-              name='installments'
-              defaultValue={defaultValue?.installments}
-              label='Quantidade de Parcelas'
-            />
+            <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
           <div className='w-50'>
             <TextArea
@@ -308,6 +303,7 @@ export function FormUpdateRoom({
             customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
+            loading={update}
             onClick={() => {
               router.push(appRoutes.ROOMS)
             }}
