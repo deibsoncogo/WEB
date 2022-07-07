@@ -15,8 +15,6 @@ export class RemoteCreatePlan implements ICreatePlan {
       },
     })
 
-    console.log(httpResponse)
-
     switch (httpResponse.statusCode) {
       case HttpStatusCode.created:
         return httpResponse.body

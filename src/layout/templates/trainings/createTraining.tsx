@@ -71,6 +71,7 @@ function CreateTrainingPageTemplate({
 
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)
+      dataFormatted.append('active', 'false')
       createTraining(dataFormatted)
     }
   }
