@@ -14,10 +14,9 @@ import { ISelectOption } from '../../../../../domain/shared/interface/SelectOpti
 import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
 
-import { Button} from '../../../buttons/CustomButton'
+import { Button } from '../../../buttons/CustomButton'
 import { IGetRoom } from '../../../../../domain/usecases/interfaces/room/getCourse'
 import { IUpdateRoom } from '../../../../../domain/usecases/interfaces/room/updateRoom'
-import { IRoomResponse } from '../../../../../interfaces/api-response/roomResponse'
 import { IGetZoomUsers } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { currencyInputFormmater } from '../../../../formatters/currencyInputFormatter'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
@@ -28,27 +27,33 @@ import { InputCheckbox } from '../../../inputs/input-checkbox'
 import { UpdateRoom } from '../../../../../domain/models/updateRoom'
 import { currenceMaskOnlyValue } from '../../../../formatters/currenceFormatter'
 import { InputNumber } from '../../../inputs/input-number'
-import {startStreamingRoomHelper} from '../../../../../helpers/startStreamingRoomHelper'
+import { startStreamingRoomHelper } from '../../../../../helpers/startStreamingRoomHelper'
 
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import RoomInternalTable from './roomInternalTable'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 
 type Props = {
-  id: string| string[] | undefined
+  id: string | string[] | undefined
   getRoom: IGetRoom
-  updateRoom: IUpdateRoom  
+  updateRoom: IUpdateRoom
   getCategories: IGetCategories
   getUsers: IGetAllUsers
   getZoomUsers: IGetZoomUsers
 }
 
-export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUsers, getZoomUsers}: Props) {
+export function FormUpdateRoom({
+  id,
+  getRoom,
+  updateRoom,
+  getCategories,
+  getUsers,
+  getZoomUsers,
+}: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [loading, setLoading] = useState(true)
   const [update, setUpdate] = useState(false)
-  const [defaultValue, setDefaultValue] = useState<IRoomResponse>()
 
   const [isToShowStreaming, setIsToShowStreaming] = useState(false)
   const [streamingRoom, setStreamingRoom] = useState<IStreamingRoom[]>([])
@@ -62,8 +67,6 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
 
   const [idDeletedStreamingRoom] = useState<string[]>([])
   const [streamRoomUpdate] = useState<IStreamingRoom[]>([])
-  
-
 
   const searchTeachers = async (teacherName: string) => {
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
@@ -76,51 +79,46 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
     })
   }
 
-  
-  async function verifyErrorStreamingRoom(data: IFormRoom) {    
-  
+  async function verifyErrorStreamingRoom(data: IFormRoom) {
     if (!data.itemChat && !data.itemRoom)
       setMessageError('Você precisa adicionar, no mínimo, um dos itens')
     else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
       setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
-    else {     
+    else {
       return false
     }
-    return true;    
-  
+    return true
   }
 
   const currencyFormatter = (name: string) => {
     var value = formRef.current?.getFieldValue(name)
-    value = currencyInputFormmater(value) 
+    value = currencyInputFormmater(value)
     formRef.current?.setFieldValue(name, value)
     if (value == 'NaN') formRef.current?.setFieldValue(name, '')
   }
 
   async function handleFormSubmit(data: IFormRoom) {
-    if (!formRef.current) throw new Error()
-    
+    if (!formRef.current) throw new Error()  
     try {
       formRef.current.setErrors({})
-      const schema = Yup.object().shape({     
-        imagePreview: Yup.string().required('Imagem é necessária'),  
+      const schema = Yup.object().shape({
+        imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         price: Yup.string().required('Preço é necessário'),
         installments: Yup.number()
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário')
-          .positive('Quantidade de parcelas deve ser positiva'),         
+          .positive('Quantidade de parcelas deve ser positiva'),
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
-      
-      const hasError = await verifyErrorStreamingRoom(data) 
+
+      const hasError = await verifyErrorStreamingRoom(data)
       await schema.validate(data, { abortEarly: false })
-      hasError? setHasErrorRoom(hasError): handleUpdateRoom(data)
-    
-    } catch (err) {    
-      const validationErrors = {}     
+      hasError ? setHasErrorRoom(hasError) : handleUpdateRoom(data)
+    } catch (err) {
+      const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
           // @ts-ignore
@@ -131,11 +129,10 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
     }
   }
   async function handleUpdateRoom(data: IFormRoom) {
-   
     const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
     const room = new UpdateRoom(
-      defaultValue?.id,
+      typeof id === 'string' ? id : undefined,
       data.name,
       data.description,
       discount,
@@ -146,8 +143,8 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
       price,
       data.userId,
       data.categoryId,
+      data.zoomUserId,
       streamRoomUpdate
-      
     )
 
     const formData = new FormData()
@@ -158,7 +155,7 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
       idDeletedStreamingRoom.forEach((idRoom) => {
         formData.append('deleteStreamingRooms', idRoom)
       })
-    }  
+    }
     formData.append('room', JSON.stringify(room))
 
     setUpdate(true)
@@ -172,22 +169,20 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
       .finally(() => setUpdate(false))
   }
 
- 
   useEffect(() => {
-       
-      if (typeof id == 'string') {
-        getRoom.get(id).then(data => {
+    if (typeof id == 'string') {
+      getRoom.get(id).then((data) => {
         formRef.current?.setFieldValue('name', data.name)
         formRef.current?.setFieldValue('description', data.description)
         formRef.current?.setFieldValue('userId', data.userId)
         formRef.current?.setFieldValue('userId-label', data.teacherName)
         formRef.current?.setFieldValue('categoryId', data.categoryId)
-        formRef.current?.setFieldValue('categoryId-label', data.categoryName)      
+        formRef.current?.setFieldValue('categoryId-label', data.categoryName)
         formRef.current?.setFieldValue('price', currenceMaskOnlyValue(data.price))
         formRef.current?.setFieldValue('discount', currenceMaskOnlyValue(data.discount))
-        formRef.current?.setFieldValue('imagePreview', data.imageUrl)    
-        formRef.current?.setFieldValue('installments', data.installments) 
-        formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)                
+        formRef.current?.setFieldValue('imagePreview', data.imageUrl)
+        formRef.current?.setFieldValue('installments', data.installments)
+        formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
         inputRefChat.current.checked = data.isChatActive
         inputRefChat.current.value = data.isChatActive
@@ -195,38 +190,38 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
         inputRefRoom.current.checked = data.isStreamingRoomActive
         inputRefRoom.current.value = data.isStreamingRoomActive
         setIsToShowStreaming(data.isStreamingRoomActive)
-        setStreamingRoom(startStreamingRoomHelper(data?.streamingRooms))       
-        getZoomUsers.get().then((zoomListUsers) => {
-          if (zoomListUsers) {
-            const options: ISelectOption[] = zoomListUsers.map((user) => ({
-              label: `${user.first_name} ${user.last_name}`,
-              value: user.id,
-            }))
-            setZoomUsersOptions(options)
-          }
-         })  
-         .finally(()=>{
-          formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)
-          setLoading(false)                   
-        }) 
-        })         
-      }
-
-      searchTeachers('').then(dataTeachers =>{
-        setDefaultTeacherOptions(dataTeachers )
+        setStreamingRoom(startStreamingRoomHelper(data?.streamingRooms))
+        getZoomUsers
+          .get()
+          .then((zoomListUsers) => {
+            if (zoomListUsers) {
+              const options: ISelectOption[] = zoomListUsers.map((user) => ({
+                label: `${user.first_name} ${user.last_name}`,
+                value: user.id,
+              }))
+              setZoomUsersOptions(options)
+            }
+          })
+          .finally(() => {
+            formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)
+            setLoading(false)
+          })
       })
+    }
 
-      searchCategories('').then(dataCategories =>{
-        setDefaultCategoryOptions(dataCategories)
-      }) 
-     
-           
-  }, [])  
+    searchTeachers('').then((dataTeachers) => {
+      setDefaultTeacherOptions(dataTeachers)
+    })
+
+    searchCategories('').then((dataCategories) => {
+      setDefaultCategoryOptions(dataCategories)
+    })
+  }, [])
 
   return (
     <>
-     {loading && <FullLoading />}
-     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+      {loading && <FullLoading />}
+      <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações da Sala</h3>
         <InputSingleImage name='image' />
         <div className='d-flex flex-row gap-5 w-100'>
@@ -239,24 +234,23 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
               classes='h-75px'
               placeholder='Digite o nome do professor'
               defaultOptions={defaultTeacherOptions}
-           
             />
-            <Input              
+            <Input
               name='price'
               label='Preço'
               type='text'
               placeholderText='R$ 0,00'
               onChange={() => currencyFormatter('price')}
             />
-            <Input             
+            <Input
               name='discount'
               label='Desconto'
               type='text'
               placeholderText='R$ 0,00'
               onChange={() => currencyFormatter('discount')}
             />
-            
-            <InputNumber name='installments' defaultValue={defaultValue?.installments} label='Quantidade de Parcelas' />
+
+            <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
           <div className='w-50'>
             <TextArea
@@ -264,14 +258,13 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
               label='Descrição'
               style={{ minHeight: '246px', margin: 0 }}
             />
-             <SelectAsync
+            <SelectAsync
               searchOptions={searchCategories}
               name='categoryId'
               label='Categoria'
               classes='h-75px'
               placeholder='Digite o nome da categoria'
               defaultOptions={defaultCategoryOptions}
-              
             />
           </div>
         </div>
@@ -280,7 +273,7 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
         {hasErrorRoom && (
           <ErrorMandatoryItem
             mainMessage='Não é possível atualizar Sala!'
-            secondaryMessage= {errorMessage}
+            secondaryMessage={errorMessage}
             setHasError={setHasErrorRoom}
           />
         )}
@@ -292,7 +285,7 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getCategories, getUser
           setIsToShowStreaming={setIsToShowStreaming}
         />
 
-      {isToShowStreaming && (
+        {isToShowStreaming && (
           <div>
             <h3 className='mb-5 mt-5 text-muted'>Datas da Transmissão</h3>
             <RoomInternalTable

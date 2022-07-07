@@ -72,8 +72,6 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
 
   async function handleFormSubmit(data: IFormRoom) {
     if (!formRef.current) throw new Error()
-    console.log('Amoooooooooo')
-    console.log(data)
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({

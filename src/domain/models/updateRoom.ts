@@ -14,11 +14,12 @@ export class UpdateRoom{
     price: string; 
     userId: string;
     categoryId: string;
+    zoomUserId?: string 
     streamingRooms?: IStreamingRoom[]
 
 
     constructor(id: string | undefined, name: string, description: string, discount: string, installments: string,
-        isActive: boolean, isChatActive: boolean, isStreamingRoomActive: boolean,  price: string, userId: string, categoryId: string, streamings?: IStreamingRoom[])
+        isActive: boolean, isChatActive: boolean, isStreamingRoomActive: boolean,  price: string, userId: string, categoryId: string, zoomUserId?: string, streamings?: IStreamingRoom[])
     {
         this.id = id;
         this.name = name;
@@ -30,7 +31,8 @@ export class UpdateRoom{
         this.isStreamingRoomActive = isStreamingRoomActive;
         this.price = price;
         this.userId = userId;   
-        this.categoryId = categoryId;   
+        this.categoryId = categoryId;  
+        this.zoomUserId = zoomUserId; 
         this.streamingRooms = streamings;       
         
     }
