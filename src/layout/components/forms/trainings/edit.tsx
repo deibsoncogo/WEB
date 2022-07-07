@@ -59,7 +59,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
             <InputNumber name='installments' label='Quantidade de Parcelas' classes='h-75px' />
           </div>
 
-          <div className='col d-flex flex-column align-items-stretch justify-content-between'>
+          <div className='col d-flex flex-column'>
             <TextArea
               name='description'
               label='Descrição'

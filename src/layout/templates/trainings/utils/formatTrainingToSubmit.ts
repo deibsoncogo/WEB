@@ -44,7 +44,6 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
   formData.append('name', String(name))
   formData.append('description', String(description))
   formData.append('installments', String(installments))
-  formData.append('active', String(false))
   formData.append('trainingEndDate', String(trainingEndDate))
   formData.append('deactiveChatDate', String(deactiveChatDate))
   formData.append('zoomUserId', String(zoomUserId))

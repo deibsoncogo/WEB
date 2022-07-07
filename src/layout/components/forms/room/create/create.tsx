@@ -2,33 +2,34 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
-import * as Yup from 'yup'
-import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
+import { Form } from '@unform/web'
+import * as Yup from 'yup'
 
-import { Input, TextArea } from '../../../inputs'
-import { SelectAsync } from '../../../inputs/selectAsync'
-import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
-import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
-import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
 import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
 import { CreateRoom } from '../../../../../domain/models/createRoom'
+import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
+import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
+import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
 import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
-import { InputNumber } from '../../../inputs/input-number'
-import RoomInternalTable from './roomInternalTable'
-import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
-import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
+import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
 import {
   IGetZoomUsers,
   IZoomUser,
 } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
-import { InputCheckbox } from '../../../inputs/input-checkbox'
-import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
-import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
+import { onlyNums } from '../../../../formatters/currenceFormatter'
 import { currencyInputFormmater } from '../../../../formatters/currencyInputFormatter'
-import { InputSingleImage } from '../../../inputs/input-single-image'
+import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
+import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { Button } from '../../../buttons/CustomButton'
+import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
+import { Input, InputCurrence, TextArea } from '../../../inputs'
+import { InputCheckbox } from '../../../inputs/input-checkbox'
+import { InputNumber } from '../../../inputs/input-number'
+import { InputSingleImage } from '../../../inputs/input-single-image'
+import { SelectAsync } from '../../../inputs/selectAsync'
+import RoomInternalTable from './roomInternalTable'
 
 type Props = {
   createRoom: ICreateRoom
@@ -63,13 +64,6 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
     return true
   }
 
-  const currencyFormatter = (name: string) => {
-    var value = formRef.current?.getFieldValue(name)
-    value = currencyInputFormmater(value)
-    formRef.current?.setFieldValue(name, value)
-    if (value == 'NaN') formRef.current?.setFieldValue(name, '')
-  }
-
   async function handleFormSubmit(data: IFormRoom) {
     if (!formRef.current) throw new Error()
     try {
@@ -102,37 +96,34 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
     }
   }
   async function handleCreateRoom(data: IFormRoom) {
-    const price = data.price.replace('.', '').replace(',', '.')
-    const discount = data.discount.replace('.', '').replace(',', '.')
     const room = new CreateRoom(
       data.name,
       data.description,
-      discount,
+      onlyNums(data.discount),
       data.installments,
       false,
       data.itemChat,
       data.itemRoom,
-      price,
+      onlyNums(data.price),
       data.userId,
       data.categoryId,
-      data.itemRoom? data.zoomUserId: undefined,
-      data.itemRoom? streamingRoom : undefined
+      data.itemRoom ? data.zoomUserId : undefined,
+      data.itemRoom ? streamingRoom : undefined
     )
 
-    
-     const formData = new FormData()
+    const formData = new FormData()
 
-     if (data?.image) formData.append('image', data.image)
-     formData.append('room', JSON.stringify(room))
-     setRegisterRoom(true)
-     createRoom
-       .create(formData)
-       .then(() => {
-         toast.success('Sala criada com sucesso!')
-         router.push(appRoutes.ROOMS)
-       })
-       .catch(() => toast.error('Não foi possível criar sala!'))
-       .finally(() => setRegisterRoom(false))
+    if (data?.image) formData.append('image', data.image)
+    formData.append('room', JSON.stringify(room))
+    setRegisterRoom(true)
+    createRoom
+      .create(formData)
+      .then(() => {
+        toast.success('Sala criada com sucesso!')
+        router.push(appRoutes.ROOMS)
+      })
+      .catch(() => toast.error('Não foi possível criar sala!'))
+      .finally(() => setRegisterRoom(false))
   }
 
   const searchTeachers = async (teacherName: string) => {
@@ -184,20 +175,8 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
               placeholder='Digite o nome do professor'
               defaultOptions={defaultTeacherOptions}
             />
-            <Input
-              name='price'
-              label='Preço'
-              type='text'
-              placeholderText='R$ 0,00'
-              onChange={() => currencyFormatter('price')}
-            />
-            <Input
-              name='discount'
-              label='Desconto'
-              type='text'
-              placeholderText='R$ 0,00'
-              onChange={() => currencyFormatter('discount')}
-            />
+            <InputCurrence name='price' label='Preço' />
+            <InputCurrence name='discount' label='Desconto' />
             <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
           <div className='w-50'>

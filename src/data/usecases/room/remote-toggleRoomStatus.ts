@@ -1,25 +1,25 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan'
+import {
+  IToggleRoomStatus,
+  IToggleRoomStatusParams,
+} from '../../../domain/usecases/interfaces/room/toggleRoomStatus'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteCreatePlan implements ICreatePlan {
+export class RemoteToggleRoomStatus implements IToggleRoomStatus {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<void>) {}
 
-  create = async (data: FormData) => {
+  toggle = async (params: IToggleRoomStatusParams) => {
     const httpResponse = await this.httpClient.request({
-      url: this.url,
-      method: 'post',
-      body: data,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      url: `${this.url}/${params.id}`,
+      method: 'patch',
+      body: params,
     })
 
     switch (httpResponse.statusCode) {
-      case HttpStatusCode.created:
+      case HttpStatusCode.ok:
         return httpResponse.body
       case HttpStatusCode.badRequest:
-        throw new InvalidParamsError([httpResponse.body?.message])
+        throw new InvalidParamsError(httpResponse.body?.message)
       default:
         throw new UnexpectedError()
     }

@@ -44,7 +44,6 @@ function EditTrainingPageTemplate({
   const router = useRouter()
   const { id: trainingId } = router.query
 
-  const [training, setTraining] = useState<ITraining>()
   const [streamList, setStreamList] = useState<IStreaming[]>([])
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
   const [loadingPageData, setLoadingPageData] = useState(true)
@@ -82,7 +81,6 @@ function EditTrainingPageTemplate({
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)
       dataFormatted.append('id', String(trainingId))
-      dataFormatted.append('active', String(training?.active))
       editTraining(dataFormatted)
       return
     }
@@ -151,7 +149,39 @@ function EditTrainingPageTemplate({
     }
 
     if (trainingData) {
-      setTraining(trainingData)
+      const {
+        streamings,
+        name,
+        description,
+        teacher,
+        price,
+        discount,
+        trainingEndDate,
+        deactiveChatDate,
+        category,
+        imageUrl,
+        installments,
+        zoomUserId,
+        active,
+      } = trainingData
+      const formattedStreamings = formatStreamingList(streamings)
+
+      formRef.current?.setFieldValue('name', name)
+      formRef.current?.setFieldValue('description', description)
+      formRef.current?.setFieldValue('installments', installments)
+      formRef.current?.setFieldValue('teacherId', teacher.id)
+      formRef.current?.setFieldValue('teacherId-label', teacher.name)
+      formRef.current?.setFieldValue('categoryId', category.id)
+      formRef.current?.setFieldValue('categoryId-label', category.name)
+      formRef.current?.setFieldValue('price', maskedToMoney(price))
+      formRef.current?.setFieldValue('discount', maskedToMoney(discount))
+      formRef.current?.setFieldValue('trainingEndDate', new Date(trainingEndDate))
+      formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDate))
+      formRef.current?.setFieldValue('imagePreview', imageUrl)
+      formRef.current?.setFieldValue('zoomUserId', zoomUserId)
+      formRef.current?.setFieldValue('active', active)
+      setStreamList(formattedStreamings)
+
       setLoadingPageData(false)
       getTrainingCleanUp()
     }
@@ -165,7 +195,7 @@ function EditTrainingPageTemplate({
       getTraining({ id: trainingId as string })
       getZoomUsersCleanUp()
     }
-  }, [trainingEditedSuccessful, training, zoomUsers, trainingData])
+  }, [trainingEditedSuccessful, zoomUsers, trainingData])
 
   useEffect(() => {
     if (getTrainingError) {
@@ -183,42 +213,6 @@ function EditTrainingPageTemplate({
       setLoadingPageData(false)
     }
   }, [editTrainingError, getTrainingError, getZoomUsersError])
-
-  useEffect(() => {
-    if (training) {
-      const {
-        streamings,
-        name,
-        description,
-        teacher,
-        price,
-        discount,
-        trainingEndDate,
-        deactiveChatDate,
-        category,
-        imageUrl,
-        installments,
-        zoomUserId,
-      } = training
-
-      const formattedStreamings = formatStreamingList(streamings)
-
-      formRef.current?.setFieldValue('name', name)
-      formRef.current?.setFieldValue('description', description)
-      formRef.current?.setFieldValue('installments', installments)
-      formRef.current?.setFieldValue('teacherId', teacher.id)
-      formRef.current?.setFieldValue('teacherId-label', teacher.name)
-      formRef.current?.setFieldValue('categoryId', category.id)
-      formRef.current?.setFieldValue('categoryId-label', category.name)
-      formRef.current?.setFieldValue('price', maskedToMoney(price))
-      formRef.current?.setFieldValue('discount', maskedToMoney(discount))
-      formRef.current?.setFieldValue('trainingEndDate', new Date(trainingEndDate))
-      formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDate))
-      formRef.current?.setFieldValue('imagePreview', imageUrl)
-      formRef.current?.setFieldValue('zoomUserId', zoomUserId)
-      setStreamList(formattedStreamings)
-    }
-  }, [training])
 
   return (
     <>

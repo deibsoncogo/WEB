@@ -2,36 +2,36 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
-import * as Yup from 'yup'
-import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
+import { Form } from '@unform/web'
+import * as Yup from 'yup'
 
-import { Input, TextArea } from '../../../inputs'
-import { SelectAsync } from '../../../inputs/selectAsync'
-import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
-import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
-import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
 import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
+import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
+import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
+import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
+import { Input, InputCurrence, TextArea } from '../../../inputs'
+import { SelectAsync } from '../../../inputs/selectAsync'
 
-import { Button } from '../../../buttons/CustomButton'
+import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
+import { UpdateRoom } from '../../../../../domain/models/updateRoom'
 import { IGetRoom } from '../../../../../domain/usecases/interfaces/room/getCourse'
 import { IUpdateRoom } from '../../../../../domain/usecases/interfaces/room/updateRoom'
 import { IGetZoomUsers } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
+import { startStreamingRoomHelper } from '../../../../../helpers/startStreamingRoomHelper'
+import { maskedToMoney, onlyNums } from '../../../../formatters/currenceFormatter'
 import { currencyInputFormmater } from '../../../../formatters/currencyInputFormatter'
-import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
-import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
+import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
+import { Button } from '../../../buttons/CustomButton'
 import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
 import { InputCheckbox } from '../../../inputs/input-checkbox'
-import { UpdateRoom } from '../../../../../domain/models/updateRoom'
-import { currenceMaskOnlyValue } from '../../../../formatters/currenceFormatter'
 import { InputNumber } from '../../../inputs/input-number'
-import { startStreamingRoomHelper } from '../../../../../helpers/startStreamingRoomHelper'
 
 import { FullLoading } from '../../../FullLoading/FullLoading'
-import RoomInternalTable from './roomInternalTable'
 import { InputSingleImage } from '../../../inputs/input-single-image'
+import RoomInternalTable from './roomInternalTable'
 
 type Props = {
   id: string | string[] | undefined
@@ -90,15 +90,8 @@ export function FormUpdateRoom({
     return true
   }
 
-  const currencyFormatter = (name: string) => {
-    var value = formRef.current?.getFieldValue(name)
-    value = currencyInputFormmater(value)
-    formRef.current?.setFieldValue(name, value)
-    if (value == 'NaN') formRef.current?.setFieldValue(name, '')
-  }
-
   async function handleFormSubmit(data: IFormRoom) {
-    if (!formRef.current) throw new Error()  
+    if (!formRef.current) throw new Error()
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
@@ -129,18 +122,16 @@ export function FormUpdateRoom({
     }
   }
   async function handleUpdateRoom(data: IFormRoom) {
-    const price = data.price.replace('.', '').replace(',', '.')
-    const discount = data.discount.replace('.', '').replace(',', '.')
     const room = new UpdateRoom(
       typeof id === 'string' ? id : undefined,
       data.name,
       data.description,
-      discount,
+      onlyNums(data.discount),
       data.installments,
-      false,
+      data.isActive,
       data.itemChat,
       data.itemRoom,
-      price,
+      onlyNums(data.price),
       data.userId,
       data.categoryId,
       data.zoomUserId,
@@ -178,11 +169,13 @@ export function FormUpdateRoom({
         formRef.current?.setFieldValue('userId-label', data.teacherName)
         formRef.current?.setFieldValue('categoryId', data.categoryId)
         formRef.current?.setFieldValue('categoryId-label', data.categoryName)
-        formRef.current?.setFieldValue('price', currenceMaskOnlyValue(data.price))
-        formRef.current?.setFieldValue('discount', currenceMaskOnlyValue(data.discount))
+        formRef.current?.setFieldValue('price', maskedToMoney(data.price))
+        formRef.current?.setFieldValue('discount', maskedToMoney(data.discount))
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)
         formRef.current?.setFieldValue('installments', data.installments)
         formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)
+        formRef.current?.setFieldValue('isActive', data.isActive)
+
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
         inputRefChat.current.checked = data.isChatActive
         inputRefChat.current.value = data.isChatActive
@@ -235,20 +228,8 @@ export function FormUpdateRoom({
               placeholder='Digite o nome do professor'
               defaultOptions={defaultTeacherOptions}
             />
-            <Input
-              name='price'
-              label='Preço'
-              type='text'
-              placeholderText='R$ 0,00'
-              onChange={() => currencyFormatter('price')}
-            />
-            <Input
-              name='discount'
-              label='Desconto'
-              type='text'
-              placeholderText='R$ 0,00'
-              onChange={() => currencyFormatter('discount')}
-            />
+            <InputCurrence name='price' label='Preço' />
+            <InputCurrence name='discount' label='Desconto' />
 
             <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
