@@ -79,8 +79,6 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               defaultOptions={defaultCategoryOptions}
             />
           </div>
-
-          <div className='row'></div>
         </div>
       </div>
 
