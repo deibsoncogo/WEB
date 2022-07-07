@@ -1,23 +1,23 @@
+import { FormHandles } from '@unform/core'
 import Link from 'next/link'
-import { KTSVG } from '../../../../helpers'
-import { Search } from '../../search/Search'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
+import { usePagination } from '../../../../application/hooks/usePagination'
+import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
 import {
   GetCoursesParams,
   IGetAllCourses,
 } from '../../../../domain/usecases/interfaces/course/getAllCourses'
-import { currenceMask } from '../../../formatters/currenceFormatter'
-import { toast } from 'react-toastify'
-import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
-import { Row } from './row'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
+import { KTSVG } from '../../../../helpers'
 import { debounce } from '../../../../helpers/debounce'
-import { FormHandles } from '@unform/core'
-import { usePagination } from '../../../../application/hooks/usePagination'
-import { Pagination } from '../../pagination/Pagination'
 import { IPartialCourseResponse } from '../../../../interfaces/api-response/coursePartialResponse'
-import { ItemNotFound } from '../../search/ItemNotFound'
+import { maskedToMoney } from '../../../formatters/currenceFormatter'
 import { Loading } from '../../loading/loading'
+import { Pagination } from '../../pagination/Pagination'
+import { ItemNotFound } from '../../search/ItemNotFound'
+import { Search } from '../../search/Search'
+import { Row } from './row'
 
 type Props = {
   getAllCourses: IGetAllCourses
@@ -46,7 +46,9 @@ export default function CoursesTable(props: Props) {
   })
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
-    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn( name )}`
+    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+      name
+    )}`
   }
 
   useEffect(() => {
@@ -64,10 +66,7 @@ export default function CoursesTable(props: Props) {
         setTotalPage(data.total)
       })
       .catch(() => toast.error('Não foi possível listar os cursos.'))
-      .finally(() =>        
-          setLoading(false)
-       )
-      
+      .finally(() => setLoading(false))
   }, [refresher, pagination.take, pagination.currentPage, pagination.order, courseName])
 
   return (
@@ -142,8 +141,8 @@ export default function CoursesTable(props: Props) {
                           id={item.id}
                           name={item.name}
                           description={item.description}
-                          price={currenceMask(item.price)}
-                          discount={currenceMask(item.discount)}
+                          price={maskedToMoney(item.price)}
+                          discount={maskedToMoney(item.discount)}
                           teacher={item.teacherName}
                           active={item.isActive}
                           deleteCourse={props.deleteCourse}
