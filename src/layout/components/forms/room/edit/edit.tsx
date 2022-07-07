@@ -98,7 +98,7 @@ export function FormUpdateRoom({
   }
 
   async function handleFormSubmit(data: IFormRoom) {
-    if (!formRef.current) throw new Error()  
+    if (!formRef.current) throw new Error()
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
@@ -137,7 +137,7 @@ export function FormUpdateRoom({
       data.description,
       discount,
       data.installments,
-      false,
+      data.isActive,
       data.itemChat,
       data.itemRoom,
       price,
@@ -183,6 +183,8 @@ export function FormUpdateRoom({
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)
         formRef.current?.setFieldValue('installments', data.installments)
         formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)
+        formRef.current?.setFieldValue('isActive', data.isActive)
+
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
         inputRefChat.current.checked = data.isChatActive
         inputRefChat.current.value = data.isChatActive
