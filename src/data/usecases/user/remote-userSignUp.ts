@@ -13,6 +13,7 @@ export class RemoteUserSignUp implements IUserSignUp {
       method: 'post',
       body: userSignUp,
     })
+   
     switch (httpResponse.statusCode) {
       case HttpStatusCode.created:
         return true

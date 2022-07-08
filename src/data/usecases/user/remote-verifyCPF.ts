@@ -10,6 +10,7 @@ export class RemoteUserVerifyCPF implements IUserVerifyCPF {
       url: `${this.url}/${cpf}`,
       method: 'get',
     })
+    
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body

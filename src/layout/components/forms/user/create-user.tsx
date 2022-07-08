@@ -81,6 +81,24 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
     }
   }
 
+  async function VerifyIfEmailAlreadyRegistered(email: string){
+    try {
+      await verifyEmail.verifyUserEmail(email)
+    } catch (err: any) {     
+      if (!formRef.current) return
+      formRef.current.setFieldError('email', 'Email já registrado')
+    }
+  }
+
+  async function VerifyIfCPFAlreadyRegistered(cpf: string){
+    try {
+      await isCPFAlreadyRegistered.verifyUserCPF(cpf)
+    } catch (err: any) {     
+      if (!formRef.current) return
+      formRef.current.setFieldError('cpf', 'CPF já registrado')
+    }
+  }
+
   async function handleCreateUser(data: any) {
     const matchesCPF = data.cpf.match(/\d*/g)
     const cpf = matchesCPF?.join('')
@@ -114,13 +132,10 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
       address
     )
 
-    try {
-      await verifyEmail.verifyUserEmail(user.email)
-    } catch (err: any) {     
-      if (!formRef.current) return
-      formRef.current.setFieldError('email', 'Email já registrado')
-    }
-
+    await VerifyIfEmailAlreadyRegistered(user.email)
+    if(user?.cpf)
+      await VerifyIfCPFAlreadyRegistered(user.cpf)
+    
     setRegisterUser(true)
     userRegister
       .signUp(user)
@@ -128,8 +143,9 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
           toast.success('Usuário cadastrado com sucesso')
           router.push('/users')
         })
-      .catch((error: any) => {         
-        if (error instanceof UnexpectedError){
+      .catch((error: any) => {
+
+       if (error instanceof UnexpectedError){
             toast.error('Erro Inesperado. Não foi possível cadastrar o usuário.')
         }   
       })
