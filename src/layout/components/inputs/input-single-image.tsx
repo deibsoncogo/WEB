@@ -23,13 +23,13 @@ export function InputSingleImage({ name, ...rest }: IInputImage) {
 
   const handlePreview = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) {
-      setPreview('')
-      return
+  
+    if (file) {
+      const previewURL = URL.createObjectURL(file)
+      setPreview(previewURL)
+      clearErrorPreview()
     }
-    const previewURL = URL.createObjectURL(file)
-    setPreview(previewURL)
-    clearErrorPreview()
+    
   }, [])
 
   const handleRemoveFile = () => {
