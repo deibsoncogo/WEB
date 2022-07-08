@@ -23,9 +23,10 @@ import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
 type Props = {
   userRegister: IUserSignUp
   verifyEmail: IUserVerifyEmail
+  isCPFAlreadyRegistered: IUserVerifyCPF
 }
 
-export function FormCreateUser({ userRegister, verifyEmail }: Props) {
+export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegistered}: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
