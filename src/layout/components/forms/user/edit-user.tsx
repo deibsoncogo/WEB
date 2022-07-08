@@ -30,8 +30,10 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
-  const [defaultValue, setDefaultValue] = useState({})
+
   const [updateUser, setUpdateUser] = useState(false)
+ 
+  const [cpf, setCPF] = useState()
 
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
@@ -134,9 +136,9 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
 
   function setKeys(obj: any) {
     Object.keys(obj).forEach((key) => {
-      formRef.current?.setFieldValue(key, obj[key])
+      formRef.current?.setFieldValue(key, obj[key])      
     })
-    formRef.current?.setErrors({})
+    formRef.current?.setErrors({})  
   }
 
   useEffect(() => {
@@ -160,14 +162,13 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           number: res?.address[0]?.number || '',
           complement: res?.address[0]?.complement || '',
         }
+   
+        setCPF(newData.cpf)
         setKeys(newData)
       })
       .catch((err) => toast.error(err.messages))
   }, [])
 
-  useEffect(() => {
-    setKeys(defaultValue)
-  }, [defaultValue])
 
   const stateName = async (result: ZipCodeProps | undefined) => {
     let state = ''
@@ -199,13 +200,13 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
 
   return (
     <>
-      <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+      <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-100'>
             <h3 className='mb-5'>Dados Pessoais</h3>
 
             <Input name='name' label='Nome' />
-            <Input name='email' label='Email' type='email' />
+            <Input name='email' label='Email' type='email' disabled={true} />
             <DatePicker name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
             <InputMasked
               classes='h-75px'
@@ -213,6 +214,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
               label='CPF'
               type='text'
               mask='999.999.999-99'
+              disabled={!!cpf}
               onChange={handleInputCPF}
             />
             <InputMasked name='phoneNumber' label='Telefone' mask='(99) 9 9999-9999' />
