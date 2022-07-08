@@ -47,24 +47,23 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
 
   async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
-    
-   
+
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string()
           .test('no number', 'O campo não deve conter números', validateStringWithNumber)
-          .required('Nome é necessário'),          
+          .required('Nome é necessário'),
         email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
-        cpf:  Yup.string().test(
-        {name: 'is valid',
-        message: 'CPF inválido',
-        test: (value) => value? validateIfCPFIsValid(value): true}),                   
+        cpf: Yup.string().test({
+          name: 'is valid',
+          message: 'CPF inválido',
+          test: (value) => (value ? validateIfCPFIsValid(value) : true),
+        }),
         password: Yup.string().min(6, 'No mínimo 6 caracteres'),
-        role: Yup.string().required('Permissão é necessária'),       
+        role: Yup.string().required('Permissão é necessária'),
       })
 
-      
       await schema.validate(data, { abortEarly: false })
 
       handleCreateUser(data)
@@ -115,7 +114,7 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
 
     try {
       await verifyEmail.verifyUserEmail(user.email)
-    } catch (err: any) {     
+    } catch (err: any) {
       if (!formRef.current) return
       formRef.current.setFieldError('email', 'Email já registrado')
     }
@@ -124,16 +123,15 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
     userRegister
       .signUp(user)
       .then(() => {
-          toast.success('Usuário cadastrado com sucesso')
-          router.push('/users')
-        })
-      .catch((error: any) => {         
-        if (error instanceof UnexpectedError){
-            toast.error('Erro Inesperado. Não foi possível cadastrar o usuário.')
-        }   
+        toast.success('Usuário cadastrado com sucesso')
+        router.push('/users')
       })
-      .finally(() =>
-      setRegisterUser(false))
+      .catch((error: any) => {
+        if (error instanceof UnexpectedError) {
+          toast.error('Erro Inesperado. Não foi possível cadastrar o usuário.')
+        }
+      })
+      .finally(() => setRegisterUser(false))
   }
 
   function handleInputCPF() {
@@ -271,16 +269,18 @@ export function FormCreateUser({ userRegister, verifyEmail }: Props) {
           title='Cancelar'
           type='button'
           customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
-          loading={registerUser}
           onClick={() => {
             router.push('/users')
           }}
         />
 
-        <Button type='submit'
-         title='Salvar' 
-         customClasses={['px-20', 'btn-primary']}
-         disabled={registerUser} />
+        <Button
+          type='submit'
+          title='Salvar'
+          customClasses={['px-20', 'btn-primary']}
+          loading={registerUser}
+          disabled={registerUser}
+        />
       </div>
 
       <ProductsModal

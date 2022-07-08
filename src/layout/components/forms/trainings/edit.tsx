@@ -169,6 +169,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
           title='Salvar'
           customClasses={['btn-primary']}
           loading={loadingSubmit}
+          disabled={loadingSubmit}
         />
       </div>
     </Form>

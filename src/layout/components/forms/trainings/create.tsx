@@ -174,6 +174,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
           title='Salvar'
           customClasses={['btn-primary']}
           loading={loadingSubmit}
+          disabled={loadingSubmit}
         />
       </div>
     </Form>

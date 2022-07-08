@@ -20,7 +20,7 @@ import CoursesInternalTable from './courseClass/courseInternalTable'
 import FilesInternalTable from './filesUpload/filesInternalTable'
 import { DeleteFileUpload } from '../../../../../domain/models/deleteFile'
 import { appRoutes } from '../../../../../application/routing/routes'
-import { Button} from '../../../buttons/CustomButton'
+import { Button } from '../../../buttons/CustomButton'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
@@ -47,7 +47,7 @@ export function FormUpdateCourse(props: Props) {
   const [courseClass, setCourseClass] = useState<ICourseClassResponse[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
   const [defaultValue, setDefaultValue] = useState<ICourseResponse>()
- 
+
   const [loading, setLoading] = useState(true)
   const [updateCourse, setUpdateCourse] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
@@ -56,7 +56,7 @@ export function FormUpdateCourse(props: Props) {
   const [filesUploadUpdate] = useState<FileUpload[]>([])
 
   const [IdDeletedCourseClass] = useState<string[]>([])
- 
+
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
@@ -100,7 +100,7 @@ export function FormUpdateCourse(props: Props) {
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
       data.content = stateEditor.content
-      await schema.validate(data, { abortEarly: false })     
+      await schema.validate(data, { abortEarly: false })
       courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
     } catch (err) {
       const validationErrors = {}
@@ -109,7 +109,7 @@ export function FormUpdateCourse(props: Props) {
           // @ts-ignore
           validationErrors[error.path] = error.message
         })
-        formRef.current.setErrors(validationErrors)      
+        formRef.current.setErrors(validationErrors)
       }
     }
   }
@@ -129,11 +129,8 @@ export function FormUpdateCourse(props: Props) {
     const price = data.price.replace('.', '').replace(',', '.')
     const discount = data.discount.replace('.', '').replace(',', '.')
 
-    
-    courseClass.forEach((item, index) => (     
-     item.displayOrder = index + 1)
-    )
-       
+    courseClass.forEach((item, index) => (item.displayOrder = index + 1))
+
     const course = new UpdateCourse(
       defaultValue?.id,
       data.name,
@@ -182,49 +179,44 @@ export function FormUpdateCourse(props: Props) {
   }
 
   async function fetchData() {
-    try{      
-
+    try {
       if (typeof props.id == 'string') {
-       const data =  await props.getCourse.get(props.id)     
-       formRef.current?.setFieldValue('userId', data.userId)
-       formRef.current?.setFieldValue('userId-label', data.teacherName)
-       formRef.current?.setFieldValue('categoryId', data.categoryId)
-       formRef.current?.setFieldValue('categoryId-label', data.categoryName) 
-       formRef.current?.setFieldValue('imagePreview', data.imageUrl) 
-       formRef.current?.setFieldValue('installments', data.installments)
-       formRef.current?.setFieldValue('accessTime', data?.accessTime)
-       setDefaultValue(data)
-       setStateEditor({ content: data.content })
-       setAttachment(await props.getAttachments.getAllByCourseId(props.id))
-       setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))       
-      }       
+        const data = await props.getCourse.get(props.id)
+        formRef.current?.setFieldValue('userId', data.userId)
+        formRef.current?.setFieldValue('userId-label', data.teacherName)
+        formRef.current?.setFieldValue('categoryId', data.categoryId)
+        formRef.current?.setFieldValue('categoryId-label', data.categoryName)
+        formRef.current?.setFieldValue('imagePreview', data.imageUrl)
+        formRef.current?.setFieldValue('installments', data.installments)
+        formRef.current?.setFieldValue('accessTime', data?.accessTime)
+        setDefaultValue(data)
+        setStateEditor({ content: data.content })
+        setAttachment(await props.getAttachments.getAllByCourseId(props.id))
+        setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
+      }
       setDefaultTeacherOptions(await searchTeachers(''))
-      setDefaultCategoryOptions(await searchCategories(''))    
-    }
-    catch(error){      
-      toast.error("Não foi possível carregar os dados")
-    }
-    finally{
+      setDefaultCategoryOptions(await searchCategories(''))
+    } catch (error) {
+      toast.error('Não foi possível carregar os dados')
+    } finally {
       setLoading(false)
     }
-
   }
- 
+
   useEffect(() => {
-    fetchData()      
+    fetchData()
   }, [])
 
-  
   return (
     <>
-      {loading && <FullLoading />}      
-        <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
-          <h3 className='mb-5'>Informações do Curso</h3>
-          <InputSingleImage name='image' />
-          <div className='d-flex flex-row gap-5 w-100'>
-            <div className='w-50'>
-              <Input name='name' label='Nome' />
-              <SelectAsync
+      {loading && <FullLoading />}
+      <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+        <h3 className='mb-5'>Informações do Curso</h3>
+        <InputSingleImage name='image' />
+        <div className='d-flex flex-row gap-5 w-100'>
+          <div className='w-50'>
+            <Input name='name' label='Nome' />
+            <SelectAsync
               searchOptions={searchTeachers}
               name='userId'
               label='Professor'
@@ -232,27 +224,31 @@ export function FormUpdateCourse(props: Props) {
               placeholder='Digite o nome do professor'
               defaultOptions={defaultTeacherOptions}
             />
-              <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
-             <Input
-                name='price'
-                defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
-                label='Preço'
-                type='text'
-                placeholderText='R$'
-                onChange={() => currencyFormatter('price')}
-              />
-              <Input
-                name='discount'
-                defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}
-                label='Desconto'
-                type='text'
-                placeholderText='R$'
-                onChange={() => currencyFormatter('discount')}
-              />
-            </div>
-            <div className='w-50'>
-              <TextArea name='description' label='Descrição' style={{ minHeight: '236px', margin: 0 }} />
-              <SelectAsync
+            <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
+            <Input
+              name='price'
+              defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
+              label='Preço'
+              type='text'
+              placeholderText='R$'
+              onChange={() => currencyFormatter('price')}
+            />
+            <Input
+              name='discount'
+              defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}
+              label='Desconto'
+              type='text'
+              placeholderText='R$'
+              onChange={() => currencyFormatter('discount')}
+            />
+          </div>
+          <div className='w-50'>
+            <TextArea
+              name='description'
+              label='Descrição'
+              style={{ minHeight: '236px', margin: 0 }}
+            />
+            <SelectAsync
               searchOptions={searchCategories}
               name='categoryId'
               label='Categoria'
@@ -260,81 +256,80 @@ export function FormUpdateCourse(props: Props) {
               placeholder='Digite o nome da categoria'
               defaultOptions={defaultCategoryOptions}
             />
-              <InputNumber name='installments' label='Quantidade de Parcelas'/>  
-            </div>
+            <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
+        </div>
 
-          <h3 className='mb-5 mt-5'>Conteúdo e Materiais do Curso</h3>
-          <h5 className='mb-5 mt-5 text-muted'>Conteúdo Prográmatico do Curso</h5>
+        <h3 className='mb-5 mt-5'>Conteúdo e Materiais do Curso</h3>
+        <h5 className='mb-5 mt-5 text-muted'>Conteúdo Prográmatico do Curso</h5>
 
-          <Editor
-            init={{
-              plugins:
-                'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',
-              menubar: false,
-              toolbar:
-                'undo redo | bold italic underline strikethrough | fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
-              toolbar_sticky: true,
-              height: 300,
-              quickbars_selection_toolbar:
-                'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
-              noneditable_class: 'mceNonEditable',
-              contextmenu: 'link image table',
-            }}
-            value={stateEditor.content}
-            onEditorChange={handleChange}
-          />
+        <Editor
+          init={{
+            plugins:
+              'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',
+            menubar: false,
+            toolbar:
+              'undo redo | bold italic underline strikethrough | fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+            toolbar_sticky: true,
+            height: 300,
+            quickbars_selection_toolbar:
+              'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+            noneditable_class: 'mceNonEditable',
+            contextmenu: 'link image table',
+          }}
+          value={stateEditor.content}
+          onEditorChange={handleChange}
+        />
 
-          <Input name='content' hidden={true} />
+        <Input name='content' hidden={true} />
 
-          <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>
-          <FilesInternalTable
-            filesUpload={attachments}
-            IdDeletedFiles={IdDeletedFiles}
-            filesUploadUpdate={filesUploadUpdate}
-            formRef={formRef}
-          />
+        <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>
+        <FilesInternalTable
+          filesUpload={attachments}
+          IdDeletedFiles={IdDeletedFiles}
+          filesUploadUpdate={filesUploadUpdate}
+          formRef={formRef}
+        />
 
-          {hasErrorClass && (
-            <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
-              <strong>Não é possível atualizar o curso!</strong>O curso deve possuir, no mínimo, uma
-              aula.
-              <button
-                type='button'
-                onClick={() => setHasErrorClass(false)}
-                className='btn-close'
-                data-bs-dismiss='alert'
-                aria-label='Close'
-              ></button>
-            </div>
-          )}
-          <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
-          <CoursesInternalTable
-            courseClassArray={courseClass}
-            setCourseClass={setCourseClass}
-            IdDeletedCourseClass={IdDeletedCourseClass}
-            formRef={formRef}
-          />
-
-          <div className='d-flex mt-10'>
-            <Button
-              customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
-              title='Cancelar'
+        {hasErrorClass && (
+          <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
+            <strong>Não é possível atualizar o curso!</strong>O curso deve possuir, no mínimo, uma
+            aula.
+            <button
               type='button'
-              loading={updateCourse}
-              onClick={() => {
-                router.push(appRoutes.COURSES)
-              }}
-            />
-            <Button
-              type='submit'
-              customClasses={['px-20', 'btn-primary']}
-              title='Salvar'
-              disabled={updateCourse}
-            />          
+              onClick={() => setHasErrorClass(false)}
+              className='btn-close'
+              data-bs-dismiss='alert'
+              aria-label='Close'
+            ></button>
           </div>
-        </Form>      
+        )}
+        <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
+        <CoursesInternalTable
+          courseClassArray={courseClass}
+          setCourseClass={setCourseClass}
+          IdDeletedCourseClass={IdDeletedCourseClass}
+          formRef={formRef}
+        />
+
+        <div className='d-flex mt-10'>
+          <Button
+            customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
+            title='Cancelar'
+            type='button'
+            onClick={() => {
+              router.push(appRoutes.COURSES)
+            }}
+          />
+          <Button
+            type='submit'
+            customClasses={['px-20', 'btn-primary']}
+            title='Salvar'
+            disabled={updateCourse}
+            loading={updateCourse}
+          />
+        </div>
+      </Form>
     </>
   )
 }
-

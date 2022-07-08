@@ -292,7 +292,6 @@ export function FormUpdateRoom({
             customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
-            loading={update}
             onClick={() => {
               router.push(appRoutes.ROOMS)
             }}
@@ -302,6 +301,7 @@ export function FormUpdateRoom({
             customClasses={['px-20', 'btn-primary']}
             title='Salvar'
             disabled={update}
+            loading={update}
           />
         </div>
       </Form>

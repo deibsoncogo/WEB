@@ -39,6 +39,7 @@ function ConfirmationModal({
           title='Confirmar'
           onClick={onConfimation}
           disabled={loading}
+          loading={loading}
           size='sm'
           customClasses={['btn-primary', 'mb-5']}
         />
