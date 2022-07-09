@@ -24,9 +24,10 @@ type IFormEditUser = {
   id: string
   userRegister: IUpdateUser
   getUser: IGetUser
+  isCPFAlreadyRegistered: IUserVerifyCPF
 }
 
-export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
+export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered}: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -117,10 +118,9 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     return userData
   }
 
-  async function handleUpdateUser(data: any) {
-    setHasError(false)
-    try {
-      setUpdateUser(true)
+  async function updateUserRequest(data: any){
+
+    try {      
       await userRegister.updateUser(data)
       router.push('/users')
       toast.success('Usuário editado com sucesso!')
@@ -132,6 +132,26 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     finally{
       setUpdateUser(false)
     }
+
+  }
+
+  async function handleUpdateUser(data: any) { 
+
+    if(!cpf){
+      setUpdateUser(true)
+      updateUserRequest(data)      
+    }else{
+      
+      const hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)
+      if (hasAlreadyCPF){
+          formRef?.current?.setFieldError('cpf', 'CPF já registrado')
+          return
+      } 
+      setUpdateUser(true)
+      updateUserRequest(data)
+
+    }
+      
   }
 
   function setKeys(obj: any) {
