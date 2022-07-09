@@ -19,6 +19,7 @@ import { IPartialProductResponse } from '../../../../interfaces/api-response/pro
 import { validateIfCPFIsValid, validateStringWithNumber } from '../../../../helpers'
 import { Button } from '../../buttons/CustomButton'
 import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
+import { appRoutes } from '../../../../application/routing/routes'
 
 type Props = {
   userRegister: IUserSignUp
@@ -68,7 +69,8 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
       
       await schema.validate(data, { abortEarly: false })
 
-      handleCreateUser(data)
+      const dataToSend = formatDataToSend(data)
+      handleCreateUser(dataToSend)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -81,25 +83,19 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
     }
   }
 
-  async function VerifyIfEmailAlreadyRegistered(email: string){
+  async function emailIsAlreadyRegistered(email: string){
     try {
       await verifyEmail.verifyUserEmail(email)
+      return false
     } catch (err: any) {     
       if (!formRef.current) return
       formRef.current.setFieldError('email', 'Email já registrado')
+      return true
     }
   }
 
-  async function VerifyIfCPFAlreadyRegistered(cpf: string){
-    try {
-      await isCPFAlreadyRegistered.verifyUserCPF(cpf)
-    } catch (err: any) {     
-      if (!formRef.current) return
-      formRef.current.setFieldError('cpf', 'CPF já registrado')
-    }
-  }
-
-  async function handleCreateUser(data: any) {
+  
+  function formatDataToSend(data: any) {
     const matchesCPF = data.cpf.match(/\d*/g)
     const cpf = matchesCPF?.join('')
 
@@ -132,25 +128,38 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
       address
     )
 
-    await VerifyIfEmailAlreadyRegistered(user.email)
-    if(user?.cpf)
-      await VerifyIfCPFAlreadyRegistered(user.cpf)
+    return user
+  }
+
+  async function createUserRequest(data: any) {  
+
+    try {
+      await userRegister.signUp(data)
+      router.push(appRoutes.USERS)
+      toast.success('Usuário cadastrado com sucesso')
+    } catch (error: any) {
+      if (error instanceof UnexpectedError) {
+        toast.error('Erro Inesperado. Não foi possível cadastrar o usuário.')
+      }
+    }
+    finally{
+      setRegisterUser(false)  
+    }
+  }
+
+  async function handleCreateUser(data: any) {
     
     setRegisterUser(true)
-    userRegister
-      .signUp(user)
-      .then(() => {
-          toast.success('Usuário cadastrado com sucesso')
-          router.push('/users')
-        })
-      .catch((error: any) => {
-
-       if (error instanceof UnexpectedError){
-            toast.error('Erro Inesperado. Não foi possível cadastrar o usuário.')
-        }   
-      })
-      .finally(() =>
-      setRegisterUser(false))
+    const hasEmailRegistered = await emailIsAlreadyRegistered(data.email)
+    const hasCPFRegistered  = data?.cpf? await isCPFAlreadyRegistered.verifyUserCPF(data.cpf): false  
+  
+    if (!hasEmailRegistered  && !hasCPFRegistered){
+        await createUserRequest(data)
+    }
+    else if(hasCPFRegistered){
+      formRef?.current?.setFieldError('cpf', 'CPF já registrado')       
+    }
+    setRegisterUser(false)   
   }
 
   function handleInputCPF() {

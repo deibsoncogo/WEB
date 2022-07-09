@@ -10,10 +10,10 @@ export class RemoteUserVerifyCPF implements IUserVerifyCPF {
       url: `${this.url}/${cpf}`,
       method: 'get',
     })
-    
+      
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
-        return httpResponse.body.data
+        return httpResponse.response.data.data
       case HttpStatusCode.badRequest:       
           throw new InvalidParamsError(httpResponse.body?.message)       
       default:
