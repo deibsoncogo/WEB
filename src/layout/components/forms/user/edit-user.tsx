@@ -36,9 +36,6 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
  
   const [cpf, setCPF] = useState()
 
-  const [hasError, setHasError] = useState(false)
-  const [message, setMessage] = useState('')
-
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
   const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
 
@@ -136,7 +133,7 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
   async function handleUpdateUser(data: any) { 
     setUpdateUser(true)
     const hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)  
-    console.log(hasAlreadyCPF)  
+  
     if(cpf || !hasAlreadyCPF){      
       updateUserRequest(data)    
     }    
@@ -270,12 +267,7 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
             <Input name='neighborhood' label='Bairro' />
             <Input name='city' label='Cidade' />
             <Input name='state' label='Estado' />
-
-            {hasError && (
-              <div className='fv-row alert alert-danger mt-13'>
-                <span>{message}</span>
-              </div>
-            )}
+          
           </div>
         </div>
 
