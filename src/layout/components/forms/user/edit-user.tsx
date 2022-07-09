@@ -118,40 +118,33 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
     return userData
   }
 
-  async function updateUserRequest(data: any){
-
-    try {      
+  async function updateUserRequest(data: any) {
+    try {
       await userRegister.updateUser(data)
       router.push('/users')
       toast.success('Usuário editado com sucesso!')
     } catch (error: any) {
-      if (error instanceof UnexpectedError){
+      if (error instanceof UnexpectedError) {
         toast.error('Erro Inesperado. Não foi possível atualizar o usuário.')
-    }
+      }
     }
     finally{
-      setUpdateUser(false)
+      setUpdateUser(false)  
     }
-
   }
 
   async function handleUpdateUser(data: any) { 
-
-    if(!cpf){
-      setUpdateUser(true)
-      updateUserRequest(data)      
-    }else{
-      
-      const hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)
-      if (hasAlreadyCPF){
-          formRef?.current?.setFieldError('cpf', 'CPF já registrado')
-          return
-      } 
-      setUpdateUser(true)
-      updateUserRequest(data)
-
+    setUpdateUser(true)
+    const hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)  
+    console.log(hasAlreadyCPF)  
+    if(cpf || !hasAlreadyCPF){      
+      updateUserRequest(data)    
+    }    
+    else {
+      formRef?.current?.setFieldError('cpf', 'CPF já registrado') 
+      setUpdateUser(false)  
     }
-      
+       
   }
 
   function setKeys(obj: any) {
@@ -215,7 +208,7 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
     if (number?.length !== 11) return
 
     const result = validateIfCPFIsValid(formRef.current?.getData().cpf)
-    if (!result) formRef.current.setFieldError('cpf', 'CPF invalido')
+    if (!result) formRef.current.setFieldError('cpf', 'CPF inválido')
   }
 
   return (
