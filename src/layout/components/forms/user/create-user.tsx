@@ -171,7 +171,7 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
     if (number?.length !== 11) return
 
     const result = validateIfCPFIsValid(formRef.current?.getData().cpf)
-    if (!result) formRef.current.setFieldError('cpf', 'CPF invalido')
+    if (!result) formRef.current.setFieldError('cpf', 'CPF inválido')
   }
 
   async function handleInputZipCode() {
