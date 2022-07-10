@@ -7,7 +7,11 @@ import { toast } from 'react-toastify'
 import { FormHandles } from '@unform/core'
 
 import { findCEP, ZipCodeProps } from '../../../../utils/findCEP'
-import { formatDateToUTC, validateIfCPFIsValid, validateStringWithNumber } from '../../../../helpers'
+import {
+  formatDateToUTC,
+  validateIfCPFIsValid,
+  validateStringWithNumber,
+} from '../../../../helpers'
 import { levelOptions, roleOptions, stateOptions } from '../../../../utils/selectOptions'
 
 import { DatePicker, Input, InputMasked, Select } from '../../inputs'
@@ -58,19 +62,20 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
           .test('no number', 'O campo não deve conter números', validateStringWithNumber)
           .required('Nome é necessário'),
         email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
-        cpf:  Yup.string().test(
-          {name: 'is valid',
+        cpf: Yup.string().test({
+          name: 'is valid',
           message: 'CPF inválido',
-          test: (value) => value? validateIfCPFIsValid(value): true}),             
+          test: (value) => (value ? validateIfCPFIsValid(value) : true),
+        }),
         password: Yup.string().min(6, 'No mínimo 6 caracteres'),
-        role: Yup.string().required('Permissão é necessária'), 
+        role: Yup.string().required('Permissão é necessária'),
       })
       await schema.validate(data, { abortEarly: false })
 
       const dataToSend = formatDataToSend(data)
       handleUpdateUser(dataToSend)
     } catch (err) {
-      const validationErrors = {}  
+      const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
           // @ts-ignore
@@ -96,7 +101,9 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
       name: data.name,
       email: data.email,
       cpf: cpf || null,
-      birthDate: data?.birthDate? formatDateToUTC(data.birthDate).toISOString().split('T')[0] : null,
+      birthDate: data?.birthDate
+        ? formatDateToUTC(data.birthDate).toISOString().split('T')[0]
+        : null,
       phoneNumber: phoneNumber || null,
       role: data.role,
       address: [
@@ -130,6 +137,7 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
     }
   }
 
+
   async function handleUpdateUser(data: any) { 
     setUpdateUser(true)
     const hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)  
@@ -156,10 +164,10 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
     getUser
       .getOne()
       .then((res) => {
-       const newData: any = {
+        const newData: any = {
           name: res.name,
           email: res.email,
-          birthDate: res?.birthDate? formatDateToUTC(res?.birthDate): '',
+          birthDate: res?.birthDate ? formatDateToUTC(res?.birthDate) : '',
           cpf: res?.cpf || '',
           phoneNumber: res?.phoneNumber || '',
           level: res?.level || '',
@@ -192,8 +200,8 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
   async function handleInputZipCode() {
     const zipCode = formRef.current?.getData().zipCode
     const result = await findCEP(zipCode)
-    formRef.current?.setFieldValue('city', result?.city)   
-    formRef.current?.setFieldValue('state', await stateName(result))    
+    formRef.current?.setFieldValue('city', result?.city)
+    formRef.current?.setFieldValue('state', await stateName(result))
   }
 
   function handleInputCPF() {
@@ -295,18 +303,18 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
             title='Cancelar'
             type='button'
             customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
-             loading={updateUser}
             onClick={() => {
               router.push('/users')
             }}
           />
 
           <Button
-           type='submit' 
-           title='Salvar' 
-           customClasses={['px-20', 'btn-primary']}
-           disabled={updateUser} /> 
-           
+            type='submit'
+            title='Salvar'
+            customClasses={['px-20', 'btn-primary']}
+            loading={updateUser}
+            disabled={updateUser}
+          />
         </div>
       </Form>
 

@@ -228,6 +228,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
             customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
+            disabled={registerRoom}
             onClick={() => {
               router.push(appRoutes.ROOMS)
             }}
@@ -237,6 +238,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
             customClasses={['px-20', 'btn-primary']}
             title='Salvar'
             disabled={registerRoom}
+            loading={registerRoom}
           />
         </div>
       </Form>
