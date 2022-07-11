@@ -1,16 +1,19 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 import { usePagination } from "../../../../application/hooks/usePagination"
+import { GetFreeContentParams, IGetAllFreeContent } from "../../../../domain/usecases/interfaces/freeContent/getAllRooms"
 import { KTSVG } from "../../../../helpers"
 import { debounce } from "../../../../helpers/debounce"
-import { FullLoading } from "../../FullLoading/FullLoading"
+import { IFreeContentResponse } from "../../../../interfaces/api-response/freeContentResponse"
+import { Loading } from "../../loading/loading"
 import { Pagination } from "../../pagination/Pagination"
 import { ItemNotFound } from "../../search/ItemNotFound"
 import { Search } from "../../search/Search"
 import { Row } from "./row"
 
 type FreeContentTableProps = {
-  getAllFreeContent: any
+  getAllFreeContent: IGetAllFreeContent
   deleteFreeContent: any
 }
 
@@ -22,7 +25,7 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
   const [loading, setLoading] = useState(true)
   const [refresher, setRefresher] = useState(true)
 
-  const [freeContent, setFreeContent] = useState<any>([])
+  const [freeContent, setFreeContent] = useState<IFreeContentResponse[]>([])
   const [freeContentQuery, setFreeContentQuery] = useState('')
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
@@ -32,25 +35,25 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
   }
 
   useEffect(() => {
-    // const paginationParams: GetRoomParams = {
-    //   take: pagination.take,
-    //   order: pagination.order,
-    //   orderBy: pagination.orderBy,
-    //   page: pagination.currentPage,
-    //   name: roomName,
-    // }
-    // getAllRooms
-    //   .getAll(paginationParams)
-    //   .then((data) => {
-    //     setRooms(data.data)
-    //     setTotalPage(data.total)
-    //   })
-    //   .catch(() => toast.error('Não foi possível listar as salas.'))
-    //   .finally(() =>
-    //     setTimeout(() => {
-    //       setLoading(false)
-    //     }, 500)
-    //   )
+     const paginationParams: GetFreeContentParams = {
+       take: pagination.take,
+       order: pagination.order,
+       orderBy: pagination.orderBy,
+       page: pagination.currentPage,
+       name: freeContentQuery,
+     }
+     getAllFreeContent
+       .getAll(paginationParams)
+       .then((data) => {
+         setFreeContent(data.data)
+         setTotalPage(data.total)
+       })
+       .catch(() => toast.error('Não foi possível listar os conteúdos gratuitos.'))
+       .finally(() =>
+         setTimeout(() => {
+           setLoading(false)
+         }, 500)
+       )
   }, [pagination.take, pagination.currentPage, pagination.order, freeContentQuery])
 
   function handleRefresher() {
@@ -120,15 +123,15 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
 
                 <tbody>
                   {!loading &&
-                    freeContent?.map((item: any) => (
+                    freeContent?.map((item) => (
                       <Row
                         key={item.id}
                         id={item.id}
                         title={item.title}
                         description={item.description}
                         contentType={item.contentType}
-                        link={item.isActive}
-                        articleContent={item.articleContent}
+                        link={item?.link}
+                        articleContent={item?.articleContent}
                         deleteFreeContent={deleteFreeContent}                        
                       />
                     ))}
@@ -140,7 +143,7 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
 
         {freeContent.length == 0 && !loading && <ItemNotFound message='Conteúdo não encontrado' />}
 
-        {loading && <FullLoading/>}
+        {loading && <Loading/>}
 
         <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
           <div />

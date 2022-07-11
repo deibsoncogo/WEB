@@ -83,8 +83,8 @@ export function AsideMenuMain() {
       />}
       
       <AsideMenuItem
-        to='/contents'
-        title='Conteudos'
+        to='/freeContent'
+        title='Conteúdos'
         icon={<RiFileCopy2Fill size={20} className='svg-icon-2 mh-50px' />}
       />
       {isAdmin &&

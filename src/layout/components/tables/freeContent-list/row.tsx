@@ -10,8 +10,8 @@ interface IRow {
   title: string
   description: string
   contentType: string
-  link: string
-  articleContent: string
+  link: string | undefined
+  articleContent: string | undefined
   deleteFreeContent: any
 
 }
