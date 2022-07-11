@@ -1,5 +1,6 @@
 import { NextPage } from "next"
 import Head from "next/head"
+import { MakeFreeContentTable } from "../../application/factories/components/freeContent/freeContentTable-factory"
 import { AsideDefault } from "../../layout/components/aside/AsideDefault"
 import { HeaderWrapper } from "../../layout/components/header/HeaderWrapper"
 
@@ -17,7 +18,7 @@ const FreeContent: NextPage = () => {
           <HeaderWrapper title='Conteúdos Gratuitos' />
 
           <div id='kt_content_container' className='container'>
-           {/* {MakeRoomTable()} */}
+           {MakeFreeContentTable()}
           </div>
         </div>
       </div>
