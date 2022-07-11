@@ -1,0 +1,153 @@
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import { usePagination } from "../../../../application/hooks/usePagination"
+import { KTSVG } from "../../../../helpers"
+import { debounce } from "../../../../helpers/debounce"
+import { FullLoading } from "../../FullLoading/FullLoading"
+import { Pagination } from "../../pagination/Pagination"
+import { ItemNotFound } from "../../search/ItemNotFound"
+import { Search } from "../../search/Search"
+import { Row } from "./row"
+
+type FreeContentTableProps = {
+  getAllFreeContent: any
+  deleteFreeContent: any
+}
+
+export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeContentTableProps) {
+  const paginationHook = usePagination()
+  const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
+    paginationHook
+
+  const [loading, setLoading] = useState(true)
+  const [refresher, setRefresher] = useState(true)
+
+  const [freeContent, setFreeContent] = useState<any>([])
+  const [freeContentQuery, setFreeContentQuery] = useState('')
+
+  const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
+    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
+      name
+    )}`
+  }
+
+  useEffect(() => {
+    // const paginationParams: GetRoomParams = {
+    //   take: pagination.take,
+    //   order: pagination.order,
+    //   orderBy: pagination.orderBy,
+    //   page: pagination.currentPage,
+    //   name: roomName,
+    // }
+    // getAllRooms
+    //   .getAll(paginationParams)
+    //   .then((data) => {
+    //     setRooms(data.data)
+    //     setTotalPage(data.total)
+    //   })
+    //   .catch(() => toast.error('Não foi possível listar as salas.'))
+    //   .finally(() =>
+    //     setTimeout(() => {
+    //       setLoading(false)
+    //     }, 500)
+    //   )
+  }, [pagination.take, pagination.currentPage, pagination.order, freeContentQuery])
+
+  function handleRefresher() {
+    setRefresher(!refresher)
+  }
+
+  const handleSearchFreeContent = debounce((text: string) => {
+    setFreeContentQuery(text)
+  })
+
+  return (
+    <>
+      <div className='card mb-5 mb-xl-8'>
+        <div className='card-header border-0 pt-5'>
+          <h3 className='card-title align-items-start flex-column'>
+            <Search onChangeText={handleSearchFreeContent} />
+          </h3>
+          <div className='card-toolbar'>
+            <Link href='/rooms/create'>
+              <a className='btn btn-sm btn-light-primary'>
+                <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+                Novo Conteúdo
+              </a>
+            </Link>
+          </div>
+        </div>
+
+        {freeContent.length > 0 && (
+          <div className='card-body py-3'>
+            <div className='table-responsive'>
+              <table className='table align-middle gs-0 gy-4'>
+                <thead>
+                  <tr className='fw-bolder text-muted bg-light'>
+                    <th
+                      className={getColumnHeaderClasses('title')}
+                      onClick={() => handleOrdenation('title')}
+                    >
+                      Título
+                    </th>
+                    <th
+                      className={getColumnHeaderClasses('description', 'min-w-150px')}
+                      onClick={() => handleOrdenation('description')}
+                    >
+                      Descrição
+                    </th>
+                    <th
+                      className={getColumnHeaderClasses('contentType')}
+                      onClick={() => handleOrdenation('contentType')}
+                    >
+                      Tipo
+                    </th>
+                    <th
+                      className={getColumnHeaderClasses('link')}
+                      onClick={() => handleOrdenation('link')}
+                    >
+                      Link
+                    </th>                
+                    <th
+                      className={getColumnHeaderClasses('articleContent', 'min-w-150px')}
+                      onClick={() => handleOrdenation('articleContent')}
+                    >
+                      Texto
+                    </th>
+                    <th className='text-dark min-w-80px text-start rounded-end'>Ação</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {!loading &&
+                    freeContent?.map((item: any) => (
+                      <Row
+                        key={item.id}
+                        id={item.id}
+                        title={item.title}
+                        description={item.description}
+                        contentType={item.contentType}
+                        link={item.isActive}
+                        articleContent={item.articleContent}
+                        deleteFreeContent={deleteFreeContent}                        
+                      />
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {freeContent.length == 0 && !loading && <ItemNotFound message='Conteúdo não encontrado' />}
+
+        {loading && <FullLoading/>}
+
+        <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
+          <div />
+
+          <Pagination paginationHook={paginationHook} />
+        </div>
+      </div>
+    </>
+  )
+}
