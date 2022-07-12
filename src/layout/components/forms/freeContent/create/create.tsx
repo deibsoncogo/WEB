@@ -6,6 +6,7 @@ import { appRoutes } from "../../../../../application/routing/routes"
 import { Button } from "../../../buttons/CustomButton"
 import { InputRadio } from "../../../inputs/input-radio"
 import { VideoFreeContentForm } from "./video/videoForm"
+import * as Yup from 'yup'
 
 type Props = {
 
@@ -17,10 +18,72 @@ export function CreateFreeContentForm() {
 
   const [contentType, setContentType] = useState<string>('')
   
-  async function handleFormSubmit(data: any) {
-    data.contentType = contentType
-   console.log(data)
+  function formatDataToSend(data: IFormFreeContent) {
+
   }
+
+  async function handleFormSubmit(data: IFormFreeContent) {
+    if (!formRef.current) throw new Error()
+    try {
+      formRef.current.setErrors({})
+      const schema = Yup.object().shape({      
+        title: Yup.string().required('Título é necessário'),
+        description: Yup.string().required('Descriçao é necessária'),
+        contentType: Yup.string().required('Tipo do conteúdo é necessário'),
+        link: Yup.string().when('contentType', {
+            is: (value: string) => value && value === "video",
+            then: Yup.string().matches(
+                /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+                'Insira um link válido'
+            ).required('Link é necessário'),
+        }),
+        imagePreview: Yup.string().when('contentType', {
+            is: (value: string) => value && value === "text",
+            then: Yup.string().required('Imagem é necessária'),
+        }),
+        authorName: Yup.string().when('contentType', {
+            is: (value: string) => value && value === "text",
+            then: Yup.string().required('O nome do autor é necessário'),
+        }),
+        articleContent: Yup.string().when('contentType', {
+            is: (value: string) => value && value === "text",
+            then: Yup.string().required('O conteúdo do artigo é obrigatório'),
+        }),
+     
+      })
+
+      await schema.validate(data, { abortEarly: false })
+
+      const formattedData = formatDataToSend(data)
+      //handleCreateFreeContent(data)
+    } catch (err) {
+      const validationErrors = {}
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          // @ts-ignore
+          validationErrors[error.path] = error.message
+        })
+        formRef.current.setErrors(validationErrors)
+      }
+    }
+  }
+
+  async function handleCreateFreeContent(data: IFormFreeContent) {
+    // const formData = new FormData()
+
+    // if (data?.image) formData.append('image', data.image)
+    // formData.append('room', JSON.stringify(room))
+    // setRegisterRoom(true)
+    // createRoom
+    //   .create(formData)
+    //   .then(() => {
+    //     toast.success('Sala criada com sucesso!')
+    //     router.push(appRoutes.ROOMS)
+    //   })
+    //   .catch(() => toast.error('Não foi possível criar sala!'))
+    //   .finally(() => setRegisterRoom(false))
+  }
+
 
   return (
     <>
