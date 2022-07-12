@@ -28,17 +28,17 @@ type IFormEditUser = {
   id: string
   userRegister: IUpdateUser
   getUser: IGetUser
+  isCPFAlreadyRegistered: IUserVerifyCPF
 }
 
-export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
+export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered}: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
-  const [defaultValue, setDefaultValue] = useState({})
-  const [updateUser, setUpdateUser] = useState(false)
 
-  const [hasError, setHasError] = useState(false)
-  const [message, setMessage] = useState('')
+  const [updateUser, setUpdateUser] = useState(false)
+ 
+  const [cpf, setCPF] = useState()
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
   const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
@@ -122,10 +122,8 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     return userData
   }
 
-  async function handleUpdateUser(data: any) {
-    setHasError(false)
+  async function updateUserRequest(data: any) {
     try {
-      setUpdateUser(true)
       await userRegister.updateUser(data)
       router.push('/users')
       toast.success('Usuário editado com sucesso!')
@@ -133,16 +131,32 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
       if (error instanceof UnexpectedError) {
         toast.error('Erro Inesperado. Não foi possível atualizar o usuário.')
       }
-    } finally {
-      setUpdateUser(false)
     }
+    finally{
+      setUpdateUser(false)  
+    }
+  }
+
+
+  async function handleUpdateUser(data: any) { 
+    setUpdateUser(true)
+    const hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)  
+  
+    if(cpf || !hasAlreadyCPF){      
+      updateUserRequest(data)    
+    }    
+    else {
+      formRef?.current?.setFieldError('cpf', 'CPF já registrado') 
+      setUpdateUser(false)  
+    }
+       
   }
 
   function setKeys(obj: any) {
     Object.keys(obj).forEach((key) => {
-      formRef.current?.setFieldValue(key, obj[key])
+      formRef.current?.setFieldValue(key, obj[key])      
     })
-    formRef.current?.setErrors({})
+    formRef.current?.setErrors({})  
   }
 
   useEffect(() => {
@@ -166,14 +180,13 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
           number: res?.address[0]?.number || '',
           complement: res?.address[0]?.complement || '',
         }
+   
+        setCPF(newData.cpf)
         setKeys(newData)
       })
       .catch((err) => toast.error(err.messages))
   }, [])
 
-  useEffect(() => {
-    setKeys(defaultValue)
-  }, [defaultValue])
 
   const stateName = async (result: ZipCodeProps | undefined) => {
     let state = ''
@@ -200,18 +213,18 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
     if (number?.length !== 11) return
 
     const result = validateIfCPFIsValid(formRef.current?.getData().cpf)
-    if (!result) formRef.current.setFieldError('cpf', 'CPF invalido')
+    if (!result) formRef.current.setFieldError('cpf', 'CPF inválido')
   }
 
   return (
     <>
-      <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+      <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-100'>
             <h3 className='mb-5'>Dados Pessoais</h3>
 
             <Input name='name' label='Nome' />
-            <Input name='email' label='Email' type='email' />
+            <Input name='email' label='Email' type='email' disabled={true} />
             <DatePicker name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
             <InputMasked
               classes='h-75px'
@@ -219,6 +232,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
               label='CPF'
               type='text'
               mask='999.999.999-99'
+              disabled={!!cpf}
               onChange={handleInputCPF}
             />
             <InputMasked name='phoneNumber' label='Telefone' mask='(99) 9 9999-9999' />
@@ -261,12 +275,7 @@ export function FormEditUser({ id, userRegister, getUser }: IFormEditUser) {
             <Input name='neighborhood' label='Bairro' />
             <Input name='city' label='Cidade' />
             <Input name='state' label='Estado' />
-
-            {hasError && (
-              <div className='fv-row alert alert-danger mt-13'>
-                <span>{message}</span>
-              </div>
-            )}
+          
           </div>
         </div>
 
