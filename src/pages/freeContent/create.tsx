@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
+import { CreateFreeContentForm } from '../../layout/components/forms/freeContent/create/create'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 
 
@@ -19,7 +20,7 @@ const CreateFreeContent: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              {/* {MakeFormCreateRoom()} */}
+              <CreateFreeContentForm/>
               </div>
           </div>
         </div>
