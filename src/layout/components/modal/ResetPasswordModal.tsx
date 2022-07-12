@@ -86,6 +86,7 @@ function ResetPasswordModal({
           title='Salvar'
           form='reset-password-form'
           disabled={loading}
+          loading={loading}
           size='sm'
           customClasses={['btn-primary', 'mb-5', 'px-20']}
         />

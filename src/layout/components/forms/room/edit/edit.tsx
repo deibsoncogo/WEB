@@ -64,6 +64,7 @@ export function FormUpdateRoom({
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
+  const [zoomUserId, setZoomUserId] = useState<string | null>(null)
 
   const [idDeletedStreamingRoom] = useState<string[]>([])
   const [streamRoomUpdate] = useState<IStreamingRoom[]>([])
@@ -196,7 +197,8 @@ export function FormUpdateRoom({
             }
           })
           .finally(() => {
-            formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)
+            setZoomUserId(data.zoomUserId)
+
             setLoading(false)
           })
       })
@@ -210,6 +212,12 @@ export function FormUpdateRoom({
       setDefaultCategoryOptions(dataCategories)
     })
   }, [])
+
+  useEffect(() => {
+    if (zoomUserId) {
+      formRef.current?.setFieldValue('zoomUserId', zoomUserId)
+    }
+  }, [zoomUserId, zoomUsersOptions])
 
   return (
     <>
@@ -284,7 +292,6 @@ export function FormUpdateRoom({
             customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
-            loading={update}
             onClick={() => {
               router.push(appRoutes.ROOMS)
             }}
@@ -294,6 +301,7 @@ export function FormUpdateRoom({
             customClasses={['px-20', 'btn-primary']}
             title='Salvar'
             disabled={update}
+            loading={update}
           />
         </div>
       </Form>

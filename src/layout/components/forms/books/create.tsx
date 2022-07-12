@@ -29,7 +29,6 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
   const formRef = useRef<FormHandles>(null)
 
   const [registerBook, setRegisterBook] = useState(false)
-  const [defaultValue, setDefaultValue] = useState({})
   const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
 
   async function handleCreateBook(data: IFormBook) {
@@ -61,7 +60,9 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         }
         toast.error(error.message)
       })
-      .finally(() => setRegisterBook(false))
+      .finally(() => {
+        setRegisterBook(false)
+      })
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
@@ -122,7 +123,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
   }
 
   return (
-    <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
+    <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-100'>
           <h3 className='mb-5'>Dados do Livro</h3>
@@ -173,6 +174,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
           title='Salvar'
           disabled={registerBook}
           customClasses={['px-20', 'btn-primary']}
+          loading={registerBook}
         />
       </div>
     </Form>
