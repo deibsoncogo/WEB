@@ -1,5 +1,4 @@
-import { useField } from '@unform/core'
-import { Dispatch, InputHTMLAttributes, SetStateAction, useEffect, useRef, useState } from 'react'
+import { Dispatch, InputHTMLAttributes, SetStateAction, useRef} from 'react'
 
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
