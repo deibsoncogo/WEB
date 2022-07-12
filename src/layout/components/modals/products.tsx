@@ -6,27 +6,23 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { KTSVG } from '../../../helpers'
 import { DatePicker, Select } from '../inputs'
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
-import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
-import { IGetAllPlans } from '../../../domain/usecases/interfaces/plans/getAllPlans'
-import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { toast } from 'react-toastify'
+import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 
 type NewTransactionModalProps = {
   isOpen: boolean
   modalTitle: string
   action: () => Promise<void>
   onRequestClose: () => void
-  grantedProducts: IPartialProductResponse[]
+  chosenProducts: IPartialProductResponse[]
   onAddProduct: Dispatch<SetStateAction<IPartialProductResponse[]>>
-  getCourses: IGetAllCourses
-  getPlans: IGetAllPlans
-  getTrainings: IGetAllTrainings
+  getProducts: IGetAllProducts
 }
 
 type SelectedProduct = {
   id: string
   name: string
-  label: string
+  type: string
   expireDate: string
 }
 
@@ -34,23 +30,22 @@ export function ProductsModal({
   isOpen,
   modalTitle,
   onRequestClose,
-  grantedProducts,
+  chosenProducts,
   onAddProduct,
-  getCourses,
-  getPlans,
-  getTrainings
+  getProducts
 }: NewTransactionModalProps) {
   const formRef = useRef<FormHandles>(null)
   const [defaultValue, setDefaultValue] = useState({})
   const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([])
-  
+
   const [courses, setCourses] = useState<IPartialProductResponse[]>()
   const [plans, setPlans] = useState<IPartialProductResponse[]>()
   const [trainings, setTrainings] = useState<IPartialProductResponse[]>()
+  const [products, setProducts] = useState<IPartialProductResponse[]>()
 
   function handleIncreaseProduct(fieldName: string, fieldExpireDate: string) {
-    const name = formRef.current?.getFieldValue(fieldName)    
-    const expireDate = formRef.current?.getFieldValue(fieldExpireDate)    
+    const name = formRef.current?.getFieldValue(fieldName)
+    const expireDate = formRef.current?.getFieldValue(fieldExpireDate)
 
     if (!name) {
       toast.error('Selecione um produto!')
@@ -62,51 +57,59 @@ export function ProductsModal({
       return
     }
 
-    if(selectedProducts.some(product => product.name === name)) {
+    if (selectedProducts.some((product) => product.name === name)) {
       toast.error('Esse produto já foi selecionado!')
       return
     }
 
-    const id = getProductId(fieldName, name)
+    const id = getProductId(name)
 
     const newProduct = {
       id,
       name,
-      label:
-        fieldName === 'courses' ? 'Cursos' : fieldName === 'trainings' ? 'Treinamentos' : 'Planos',
-      expireDate: expireDate,
-    }
+      type: fieldName,
+      expireDate: expireDate
+    }    
 
     setSelectedProducts((prevProducts) => [...prevProducts, newProduct])
   }
 
-  function getProductId(type: string, name: string) {
-    return type === 'courses' ? courses?.find(course => course.name === name)?.id! :
-      type === 'trainings' ? trainings?.find(training => training.name === name)?.id! :
-      plans?.find(plan => plan.name === name)?.id!
+  function getProductId(name: string) {
+    return products?.find((prod) => prod.name === name)?.id!
+  }
+
+  function setProductLabel(type: string) {
+    return type === 'course' ? 'Cursos' : type === 'training' ? 'Treinamentos' : 'Planos'
   }
 
   function handleDecreaseProduct(id: string) {
-    const filteredSelectedProducts = selectedProducts.filter(product => product.id !== id)
+    const filteredSelectedProducts = selectedProducts.filter((product) => product.id !== id)
 
     setSelectedProducts(filteredSelectedProducts)
   }
 
   function checkIfAProductIsGranted() {
-    let productName;
-    const isAProductGranted = grantedProducts.some(granted => selectedProducts.some(selected => {
-      productName = selected.name
-      return selected.id === granted.id
-    }))
-    
-    if(isAProductGranted) {
+    let productName
+    const isAProductGranted = chosenProducts.some((chosen) =>
+      selectedProducts.some((selected) => {
+        productName = selected.name
+        return selected.id === chosen.id
+      })
+    )
+
+    if (isAProductGranted) {
       toast.error(`O produto ${productName} já foi concedido!`)
-      return true      
+      return true
     }
   }
 
-  function handleAddProducts() {  
-    if(checkIfAProductIsGranted()) return
+  function handleAddProducts() {
+    if (checkIfAProductIsGranted()) return
+    
+    if (selectedProducts.length === 0) {
+      toast.error('Nenhum produto foi selecionado!')
+      return
+    }
 
     onAddProduct((prevState) => [...prevState, ...selectedProducts])
     setSelectedProducts([])
@@ -114,19 +117,22 @@ export function ProductsModal({
     toast.success('Produtos concedidos com sucesso!')
   }
 
-  useEffect(() => {    
-    getCourses
-      .getAll().then((res) => setCourses(res.data))
+  function findProducts(type: string) {
+    return products?.filter(prod => prod.type === type)
+  }
 
-    getTrainings
-      .getAll().then((res) => setTrainings(res.data))
-
-    getPlans
-      .getAll().then((res) => setPlans(res.data))
+  useEffect(() => {
+    getProducts.getAll().then((res) => setProducts(res.data))
   }, [])
 
   useEffect(() => {
-    selectedProducts.forEach(product => {
+    setCourses(findProducts('course'))
+    setPlans(findProducts('plan'))
+    setTrainings(findProducts('training'))
+  }, [products])
+
+  useEffect(() => {
+    selectedProducts.forEach((product) => {
       formRef.current?.setFieldValue(`${product.name}-expireDate`, product.expireDate)
     })
   }, [selectedProducts])
@@ -152,12 +158,7 @@ export function ProductsModal({
             </button>
           </div>
 
-          <Form
-            className='form w-100'
-            ref={formRef}
-            initialData={defaultValue}
-            onSubmit={() => {}}
-          >
+          <Form className='form w-100' ref={formRef} initialData={defaultValue} onSubmit={() => {}}>
             <div className='modal-body'>
               {selectedProducts.length > 0 && (
                 <>
@@ -166,13 +167,14 @@ export function ProductsModal({
                       <div className='col w-50'>
                         <div className='d-flex align-items-center gap-5'>
                           <div className='w-75'>
-                            <Select name={product.name} label={product.label} value={product.name}>                            
-                              <option value={product.name}>
-                                {product.name}
-                              </option>
+                            <Select name={product.name} label={setProductLabel(product.type)} value={product.name}>
+                              <option value={product.name}>{product.name}</option>
                             </Select>
                           </div>
-                          <DatePicker name={`${product.name}-expireDate`} label='Data de expiração' />
+                          <DatePicker
+                            name={`${product.name}-expireDate`}
+                            label='Data de expiração'
+                          />
                         </div>
                       </div>
                       <div className='col align-self-end w-50 h-100 mb-8'>
@@ -196,10 +198,10 @@ export function ProductsModal({
                 <div className='col w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75'>
-                      <Select name='courses' label='Cursos'>
-                        {courses?.map((product) => (
-                          <option key={product.id} value={product.name}>
-                            {product.name}
+                      <Select name='course' label='Cursos'>
+                        {courses?.map((course) => (
+                          <option key={course.id} value={course.name}>
+                            {course.name}
                           </option>
                         ))}
                       </Select>
@@ -213,7 +215,7 @@ export function ProductsModal({
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseProduct('courses', 'courseExpireDate')}
+                    onClick={() => handleIncreaseProduct('course', 'courseExpireDate')}
                   >
                     + Adicionar outro curso
                   </button>
@@ -224,10 +226,10 @@ export function ProductsModal({
                 <div className='col w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75'>
-                      <Select name='trainings' label='Treinamentos'>
-                        {trainings?.map((product) => (
-                          <option key={product.id} value={product.name}>
-                            {product.name}
+                      <Select name='training' label='Treinamentos'>
+                        {trainings?.map((training) => (
+                          <option key={training.id} value={training.name}>
+                            {training.name}
                           </option>
                         ))}
                       </Select>
@@ -241,9 +243,9 @@ export function ProductsModal({
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseProduct('trainings', 'trainingExpireDate')}
+                    onClick={() => handleIncreaseProduct('training', 'trainingExpireDate')}
                   >
-                    + Adicionar outro curso
+                    + Adicionar outro treinamento
                   </button>
                 </div>
               </div>
@@ -252,10 +254,10 @@ export function ProductsModal({
                 <div className='col w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75'>
-                      <Select name='plans' label='Planos'>
-                        {plans?.map((product) => (
-                          <option key={product.id} value={product.name}>
-                            {product.name}
+                      <Select name='plan' label='Planos'>
+                        {plans?.map((plan) => (
+                          <option key={plan.id} value={plan.name}>
+                            {plan.name}
                           </option>
                         ))}
                       </Select>
@@ -269,9 +271,9 @@ export function ProductsModal({
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseProduct('plans', 'planExpireDate')}
+                    onClick={() => handleIncreaseProduct('plan', 'planExpireDate')}
                   >
-                    + Adicionar outro curso
+                    + Adicionar outro plano
                   </button>
                 </div>
               </div>
@@ -281,10 +283,14 @@ export function ProductsModal({
               <button type='button' className='btn btn-primary' onClick={handleAddProducts}>
                 Confirmar
               </button>
-              <button type='button' className='btn btn-light' onClick={() => {
-                setSelectedProducts([])
-                onRequestClose()
-              }}>
+              <button
+                type='button'
+                className='btn btn-light'
+                onClick={() => {
+                  setSelectedProducts([])
+                  onRequestClose()
+                }}
+              >
                 Cancelar
               </button>
             </div>

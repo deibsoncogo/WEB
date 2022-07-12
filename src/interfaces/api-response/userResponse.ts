@@ -1,4 +1,5 @@
 import { IAddressResponse } from './addressResponse'
+import { IGrantedProductsResponse } from './grantedProductsResponse'
 
 export interface IUserResponse {
   id: string
@@ -10,4 +11,5 @@ export interface IUserResponse {
   address: IAddressResponse[]
   level: string
   role: string
+  grantedProduct: IGrantedProductsResponse[]
 }
