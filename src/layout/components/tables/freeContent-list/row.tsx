@@ -2,6 +2,7 @@ import { Tooltip } from "@nextui-org/react"
 import Link from "next/link"
 import { useState } from "react"
 import { toast } from "react-toastify"
+import { IDeleteFreeContent } from "../../../../domain/usecases/interfaces/freeContent/deleteFreeContent"
 import { KTSVG } from "../../../../helpers"
 import ConfirmationModal from "../../modal/ConfirmationModal"
 
@@ -12,7 +13,8 @@ interface IRow {
   contentType: string
   link: string | undefined
   articleContent: string | undefined
-  deleteFreeContent: any
+  deleteFreeContent: IDeleteFreeContent
+  handleRefresher: () => void;
 
 }
 
@@ -24,6 +26,7 @@ export function Row({
   link,
   articleContent,
   deleteFreeContent,
+  handleRefresher
  
 }: IRow) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
@@ -35,7 +38,8 @@ export function Row({
       setLoading(true)
       await deleteFreeContent.delete(id)
       setIsModalDeleteOpen(false)
-      toast.success('Conteúdo deletado com sucesso.')      
+      toast.success('Conteúdo deletado com sucesso.')  
+      handleRefresher()    
     } catch {
       toast.error('Não foi possível deletar o conteúdo.')
     } finally {

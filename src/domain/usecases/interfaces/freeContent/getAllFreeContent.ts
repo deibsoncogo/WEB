@@ -1,4 +1,4 @@
-import { IFreeContentResponse } from './../../../../interfaces/api-response/freeContentResponse';
+import { IFreeContentResponse } from '../../../../interfaces/api-response/freeContentResponse';
 import { InputPagination } from "../../../shared/interface/InputPagination";
 import { OutputPagination } from "../../../shared/interface/OutputPagination";
 

@@ -1,5 +1,5 @@
 import { IFreeContentResponse } from './../../../interfaces/api-response/freeContentResponse';
-import { GetFreeContentParams, IGetAllFreeContent } from './../../../domain/usecases/interfaces/freeContent/getAllRooms';
+import { GetFreeContentParams, IGetAllFreeContent } from '../../../domain/usecases/interfaces/freeContent/getAllFreeContent';
 import { HttpClient, HttpStatusCode } from '../../protocols';
 import { apiPaginationResponse } from '../../../interfaces/api-response/apiPaginationResponse';
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors';

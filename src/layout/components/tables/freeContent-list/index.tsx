@@ -2,7 +2,8 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { usePagination } from "../../../../application/hooks/usePagination"
-import { GetFreeContentParams, IGetAllFreeContent } from "../../../../domain/usecases/interfaces/freeContent/getAllRooms"
+import { IDeleteFreeContent } from "../../../../domain/usecases/interfaces/freeContent/deleteFreeContent"
+import { GetFreeContentParams, IGetAllFreeContent } from "../../../../domain/usecases/interfaces/freeContent/getAllFreeContent"
 import { KTSVG } from "../../../../helpers"
 import { debounce } from "../../../../helpers/debounce"
 import { IFreeContentResponse } from "../../../../interfaces/api-response/freeContentResponse"
@@ -14,7 +15,7 @@ import { Row } from "./row"
 
 type FreeContentTableProps = {
   getAllFreeContent: IGetAllFreeContent
-  deleteFreeContent: any
+  deleteFreeContent: IDeleteFreeContent
 }
 
 export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeContentTableProps) {
@@ -54,7 +55,7 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
            setLoading(false)
          }, 500)
        )
-  }, [pagination.take, pagination.currentPage, pagination.order, freeContentQuery])
+  }, [refresher, pagination.take, pagination.currentPage, pagination.order, freeContentQuery])
 
   function handleRefresher() {
     setRefresher(!refresher)
@@ -132,7 +133,8 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
                         contentType={item.contentType}
                         link={item?.link}
                         articleContent={item?.articleContent}
-                        deleteFreeContent={deleteFreeContent}                        
+                        deleteFreeContent={deleteFreeContent} 
+                        handleRefresher={handleRefresher}                       
                       />
                     ))}
                 </tbody>
