@@ -1,4 +1,5 @@
 import { Address } from './address'
+import { GrantedProduct } from './grantedProduct'
 
 
 export class UserSignUp {
@@ -12,6 +13,7 @@ export class UserSignUp {
   role: string
   level: string
   address: Address[]
+  grantedProduct: GrantedProduct[]
 
   constructor(
     name: string,
@@ -23,7 +25,8 @@ export class UserSignUp {
     phoneNumber: string,
     role: string,
     level: string,
-    address: Address
+    address: Address,
+    grantedProduct: GrantedProduct[]
   ) {
     this.name = name
     this.email = email
@@ -36,5 +39,6 @@ export class UserSignUp {
     this.level = level
     this.address = new Array()
     this.address.push(address)
+    this.grantedProduct = grantedProduct
   }
 }
