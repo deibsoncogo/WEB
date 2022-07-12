@@ -123,7 +123,10 @@ export function FormCreateUser({ userRegister, getProducts }: Props) {
 
     userRegister
       .signUp(user)
-      .then(() => router.push('/users'))
+      .then(() => {
+        router.push('/users')
+        toast.success('Usuário cadastrado com sucesso!')
+      })
       .catch((error: any) => {
         toast.error(error.messages[0])
       })
