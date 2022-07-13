@@ -1,11 +1,4 @@
-import { FormHandles } from "@unform/core"
-import { Form } from "@unform/web"
 import { Input, TextArea } from "../../../../inputs"
-
-
-type Props = {
-
-}
 
 export function VideoFreeContentForm() {
 
