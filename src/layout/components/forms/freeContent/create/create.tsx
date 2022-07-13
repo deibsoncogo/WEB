@@ -23,8 +23,23 @@ export function CreateFreeContentForm({createFreeContent}: CreateFreeContentProp
   const [contentType, setContentType] = useState<string>('')
   const [registerFreeContent, setRegisterFreeContent] = useState(false)
   
+  function formatDataToSend(data: IFormFreeContent) {
+
+    const formData = new FormData()
+    if (data?.image) formData.append('image', data?.image)    
+    formData.append('title', data.title)
+    formData.append('description', data.description)
+    formData.append('contentType', data.contentType)
+    data?.link? formData.append('link', String(data?.link)): ''
+    data?.authorName? formData.append('authorName', String(data?.authorName)): ''
+    data?.articleContent? formData.append('articleContent', String(data?.articleContent)): ''
+    return formData
+
+  }
  
   async function handleFormSubmit(data: IFormFreeContent) {
+    
+    data.contentType = contentType
     if (!formRef.current) throw new Error()
     try {
       formRef.current.setErrors({})
@@ -54,35 +69,27 @@ export function CreateFreeContentForm({createFreeContent}: CreateFreeContentProp
      
       })
 
-      await schema.validate(data, { abortEarly: false })
+      await schema.validate(data, { abortEarly: false })      
+      createFreeContentRequest(data)
 
-      
-      //handleCreateFreeContent(data)
-    } catch (err) {
+    } catch (err) {   
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
         err.inner.forEach((error) => {
           // @ts-ignore
           validationErrors[error.path] = error.message
         })
-        formRef.current.setErrors(validationErrors)
+        contentType? formRef.current.setErrors(validationErrors): formRef.current.setErrors({}) 
       }
     }
   }
 
   async function createFreeContentRequest(data: IFormFreeContent) {
 
-    const dataToSubmit = new CreateFreeContent(data.title, data.description, data.contentType, data?.link,
-        data?.authorName, data?.articleContent)
-
-    const formData = new FormData()
-
-    if (data?.image) formData.append('image', data.image)
-    
-    formData.append('room', JSON.stringify(dataToSubmit))
+    const dataToSubmit = formatDataToSend(data)
     setRegisterFreeContent(true)
     createFreeContent
-       .create(formData)
+       .create(dataToSubmit)
        .then(() => {
          toast.success('Conteúdo criado com sucesso!')
          router.push(appRoutes.CONTENTS)
