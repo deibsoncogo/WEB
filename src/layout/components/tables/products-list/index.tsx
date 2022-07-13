@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction, useState } from 'react'
 import { Row } from './row'
-import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
+import { GrantedProduct } from '../../../../domain/models/grantedProduct'
 
 type Props = {
-  products: IPartialProductResponse[]
-  setProducts: Dispatch<SetStateAction<IPartialProductResponse[]>>
+  grantedProducts: GrantedProduct[]
+  setGrantedProducts: Dispatch<SetStateAction<GrantedProduct[]>>
 }
 
-export function ProductsTable({ products, setProducts }: Props) {
+export function ProductsTable({ grantedProducts, setGrantedProducts }: Props) {
 
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
@@ -24,7 +24,7 @@ export function ProductsTable({ products, setProducts }: Props) {
         </thead>
 
         <tbody>
-          {products.length === 0 && (
+          {grantedProducts.length === 0 && (
             <tr>
               <td colSpan={3} className='text-center fs-7 pt-5 pb-8'>
                 Nenhum produto foi concedido!
@@ -32,13 +32,13 @@ export function ProductsTable({ products, setProducts }: Props) {
             </tr>
           )}
           {!loading &&
-            products?.map((item) => (
+            grantedProducts?.map((item) => (
               <Row
-                key={item.id}
-                id={item.id}
-                name={item.name}
-                expireDate={item.expireDate!}
-                setProducts={setProducts}
+                key={item.productId}
+                id={item.productId}
+                name={item.product.name}
+                expireDate={item.expireDate}
+                setGrantedProducts={setGrantedProducts}
               />
             ))}
         </tbody>

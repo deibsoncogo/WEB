@@ -8,29 +8,30 @@ import { DatePicker, Select } from '../inputs'
 import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 import { toast } from 'react-toastify'
 import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
+import { GrantedProduct } from '../../../domain/models/grantedProduct'
+import { Product } from '../../../domain/models/product'
 
 type NewTransactionModalProps = {
   isOpen: boolean
   modalTitle: string
   action: () => Promise<void>
   onRequestClose: () => void
-  chosenProducts: IPartialProductResponse[]
-  onAddProduct: Dispatch<SetStateAction<IPartialProductResponse[]>>
+  grantedProducts: GrantedProduct[]
+  onAddProduct: Dispatch<SetStateAction<GrantedProduct[]>>
   getProducts: IGetAllProducts
 }
 
 type SelectedProduct = {
-  id: string
-  name: string
-  type: string
-  expireDate: string
+  productId: string
+  expireDate: Date
+  product: Product
 }
 
 export function ProductsModal({
   isOpen,
   modalTitle,
   onRequestClose,
-  chosenProducts,
+  grantedProducts,
   onAddProduct,
   getProducts
 }: NewTransactionModalProps) {
@@ -57,21 +58,21 @@ export function ProductsModal({
       return
     }
 
-    if (selectedProducts.some((product) => product.name === name)) {
+    if (selectedProducts.some((selected) => selected.product.name === name)) {
       toast.error('Esse produto já foi selecionado!')
       return
     }
 
     const id = getProductId(name)
-
-    const newProduct = {
+    const product = products?.find(prod => prod.id === id)
+    
+    const newGrantedProduct = new GrantedProduct(
       id,
-      name,
-      type: fieldName,
-      expireDate: expireDate
-    }    
+      expireDate,
+      product
+    ) 
 
-    setSelectedProducts((prevProducts) => [...prevProducts, newProduct])
+    setSelectedProducts((prevProducts) => [...prevProducts, newGrantedProduct])
   }
 
   function getProductId(name: string) {
@@ -83,17 +84,17 @@ export function ProductsModal({
   }
 
   function handleDecreaseProduct(id: string) {
-    const filteredSelectedProducts = selectedProducts.filter((product) => product.id !== id)
+    const filteredSelectedProducts = selectedProducts.filter((product) => product.productId !== id)
 
     setSelectedProducts(filteredSelectedProducts)
   }
 
   function checkIfAProductIsGranted() {
     let productName
-    const isAProductGranted = chosenProducts.some((chosen) =>
+    const isAProductGranted = grantedProducts.some((chosen) =>
       selectedProducts.some((selected) => {
-        productName = selected.name
-        return selected.id === chosen.id
+        productName = selected.product.name
+        return selected.productId === chosen.productId
       })
     )
 
@@ -133,7 +134,7 @@ export function ProductsModal({
 
   useEffect(() => {
     selectedProducts.forEach((product) => {
-      formRef.current?.setFieldValue(`${product.name}-expireDate`, product.expireDate)
+      formRef.current?.setFieldValue(`${product.product.name}-expireDate`, product.expireDate)
     })
   }, [selectedProducts])
 
@@ -162,17 +163,17 @@ export function ProductsModal({
             <div className='modal-body'>
               {selectedProducts.length > 0 && (
                 <>
-                  {selectedProducts.map((product) => (
-                    <div key={product.id} className='container gap-20 row mh-175px overflow-auto'>
+                  {selectedProducts.map((selectedProduct) => (
+                    <div key={selectedProduct.productId} className='container gap-20 row mh-175px overflow-auto'>
                       <div className='col w-50'>
                         <div className='d-flex align-items-center gap-5'>
                           <div className='w-75'>
-                            <Select name={product.name} label={setProductLabel(product.type)} value={product.name}>
-                              <option value={product.name}>{product.name}</option>
+                            <Select name={selectedProduct.product.name} label={setProductLabel(selectedProduct.product.type)} value={selectedProduct.product.name}>
+                              <option value={selectedProduct.product.name}>{selectedProduct.product.name}</option>
                             </Select>
                           </div>
                           <DatePicker
-                            name={`${product.name}-expireDate`}
+                            name={`${selectedProduct.product.name}-expireDate`}
                             label='Data de expiração'
                           />
                         </div>
@@ -182,7 +183,7 @@ export function ProductsModal({
                           type='button'
                           title='Remover'
                           onClick={() => {
-                            handleDecreaseProduct(product.id)
+                            handleDecreaseProduct(selectedProduct.productId)
                           }}
                           className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
                         >

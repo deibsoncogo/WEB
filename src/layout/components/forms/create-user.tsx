@@ -15,9 +15,7 @@ import { findCEP } from '../../../utils/findCEP'
 import { restrictNumberInput } from '../../../utils/restrictNumberInput'
 import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
-import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 import { GrantedProduct } from '../../../domain/models/grantedProduct'
-import { formatDateToUTC } from '../../../helpers'
 import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 
 type Props = {
@@ -34,7 +32,7 @@ export function FormCreateUser({ userRegister, getProducts }: Props) {
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
 
-  const [chosenProducts, setChosenProducts] = useState<IPartialProductResponse[]>([])
+  const [grantedProducts, setGrantedProducts] = useState<GrantedProduct[]>([])
 
   async function handleOpenModal() {
     try {
@@ -101,10 +99,11 @@ export function FormCreateUser({ userRegister, getProducts }: Props) {
       data.complement
     )
 
-    const grantedProduct = chosenProducts.map((product) => {
+    const grantedProduct = grantedProducts.map((product) => {
       return new GrantedProduct(
-        product.id,
-        formatDateToUTC(product.expireDate)
+        product.productId,
+        product.expireDate,
+        product.product
     )})
 
     const user = new UserSignUp(
@@ -215,10 +214,10 @@ export function FormCreateUser({ userRegister, getProducts }: Props) {
         </div>
       </div>
 
-      {chosenProducts && (
+      {grantedProducts && (
         <div className='w-50'>
           <h4 className='mb-5'>Acessos concedidos</h4>
-          <ProductsTable products={chosenProducts} setProducts={setChosenProducts} />
+          <ProductsTable grantedProducts={grantedProducts} setGrantedProducts={setGrantedProducts} />
         </div>
       )}
 
@@ -257,8 +256,8 @@ export function FormCreateUser({ userRegister, getProducts }: Props) {
         onRequestClose={() => {
           setIsProductsModalOpen(false)
         }}
-        chosenProducts={chosenProducts}
-        onAddProduct={setChosenProducts}
+        grantedProducts={grantedProducts}
+        onAddProduct={setGrantedProducts}
         getProducts={getProducts}
       />
     </Form>
