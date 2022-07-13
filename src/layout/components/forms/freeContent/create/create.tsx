@@ -7,21 +7,23 @@ import { Button } from "../../../buttons/CustomButton"
 import { InputRadio } from "../../../inputs/input-radio"
 import { VideoFreeContentForm } from "./video/videoForm"
 import * as Yup from 'yup'
+import { CreateFreeContent } from "../../../../../domain/models/createFreeContent"
+import { ICreateFreeContent } from "../../../../../domain/usecases/interfaces/freeContent/createFreeContent"
+import { toast } from "react-toastify"
 
-type Props = {
+type CreateFreeContentProps = {
+   createFreeContent: ICreateFreeContent
 
 }
 
-export function CreateFreeContentForm() {
+export function CreateFreeContentForm({createFreeContent}: CreateFreeContentProps) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
   const [contentType, setContentType] = useState<string>('')
+  const [registerFreeContent, setRegisterFreeContent] = useState(false)
   
-  function formatDataToSend(data: IFormFreeContent) {
-
-  }
-
+ 
   async function handleFormSubmit(data: IFormFreeContent) {
     if (!formRef.current) throw new Error()
     try {
@@ -54,7 +56,7 @@ export function CreateFreeContentForm() {
 
       await schema.validate(data, { abortEarly: false })
 
-      const formattedData = formatDataToSend(data)
+      
       //handleCreateFreeContent(data)
     } catch (err) {
       const validationErrors = {}
@@ -68,22 +70,26 @@ export function CreateFreeContentForm() {
     }
   }
 
-  async function handleCreateFreeContent(data: IFormFreeContent) {
-    // const formData = new FormData()
+  async function createFreeContentRequest(data: IFormFreeContent) {
 
-    // if (data?.image) formData.append('image', data.image)
-    // formData.append('room', JSON.stringify(room))
-    // setRegisterRoom(true)
-    // createRoom
-    //   .create(formData)
-    //   .then(() => {
-    //     toast.success('Sala criada com sucesso!')
-    //     router.push(appRoutes.ROOMS)
-    //   })
-    //   .catch(() => toast.error('Não foi possível criar sala!'))
-    //   .finally(() => setRegisterRoom(false))
+    const dataToSubmit = new CreateFreeContent(data.title, data.description, data.contentType, data?.link,
+        data?.authorName, data?.articleContent)
+
+    const formData = new FormData()
+
+    if (data?.image) formData.append('image', data.image)
+    
+    formData.append('room', JSON.stringify(dataToSubmit))
+    setRegisterFreeContent(true)
+    createFreeContent
+       .create(formData)
+       .then(() => {
+         toast.success('Conteúdo criado com sucesso!')
+         router.push(appRoutes.CONTENTS)
+       })
+       .catch(() => toast.error('Não foi possível criar o conteúdo!'))
+       .finally(() => setRegisterFreeContent(false))
   }
-
 
   return (
     <>
@@ -105,6 +111,7 @@ export function CreateFreeContentForm() {
             customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
+            disabled={registerFreeContent}
             onClick={() => {
               router.push(appRoutes.CONTENTS)
             }}
@@ -112,7 +119,9 @@ export function CreateFreeContentForm() {
           <Button
             type='submit'
             customClasses={['px-20', 'btn-primary']}
-            title='Salvar'           
+            title='Salvar'    
+            disabled={registerFreeContent}
+            loading={registerFreeContent}       
           />
         </div>
         </Form>

@@ -8,8 +8,8 @@ export class CreateFreeContent{
     authorName?: string;
     articleContent?: string
 
-    constructor(title: string, description: string, contentType: string, link: string,
-        authorName: string, articleContent: string)
+    constructor(title: string, description: string, contentType: string, link?: string,
+        authorName?: string, articleContent?: string)
     {
         this.title = title;
         this.description = description;
