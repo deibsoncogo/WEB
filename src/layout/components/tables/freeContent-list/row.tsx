@@ -33,6 +33,12 @@ export function Row({
 
   const [loading, setLoading] = useState(false)
 
+  function formatText(articleContent?: string){
+    const textLimit = 100  
+    const textLimited = articleContent? articleContent.substring(0, articleContent.length >= textLimit? textLimit: articleContent.length): ''  
+    return textLimited.length >= textLimit? textLimited + ' ...': textLimited
+  }
+  
   async function handleDeleteFreeContent() {
     try {
       setLoading(true)
@@ -69,7 +75,7 @@ export function Row({
         </td>
 
         <td>
-          <span className='text-dark fw-bold d-block fs-7'>{articleContent}</span>
+          <span className='text-dark fw-bold d-block fs-7' dangerouslySetInnerHTML={{__html: formatText(articleContent)}}></span>
         </td>
       
         <td className='text-end d-flex justify-content-start px-4'>
