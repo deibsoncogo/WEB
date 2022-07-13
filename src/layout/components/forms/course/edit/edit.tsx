@@ -3,12 +3,12 @@ import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-import { Input, InputNumber, SelectAsync, TextArea } from '../../../inputs'
+import { Input, InputCurrence, InputNumber, SelectAsync, TextArea } from '../../../inputs'
 import { toast } from 'react-toastify'
 import { IUpdateCourse } from '../../../../../domain/usecases/interfaces/course/upDateCourse'
 import { IGetCourse } from '../../../../../domain/usecases/interfaces/course/getCourse'
 import { ICourseResponse } from '../../../../../interfaces/api-response/courseResponse'
-import { currenceMaskOnlyValue } from '../../../../formatters/currenceFormatter'
+import { currenceMaskOnlyValue, onlyNums } from '../../../../formatters/currenceFormatter'
 import { UpdateCourse } from '../../../../../domain/models/updateCourse'
 import { Editor } from '@tinymce/tinymce-react'
 import { IGetAllAttachmentByCourseId } from '../../../../../domain/usecases/interfaces/courseAttachment/getAllAttachmentByCourseId'
@@ -91,7 +91,9 @@ export function FormUpdateCourse(props: Props) {
           .min(1, 'Tempo de acesso deve ser maior que zero')
           .typeError('Tempo de acesso deve ser um número')
           .required('Tempo de acesso é necessário'),
-        price: Yup.string().required('Preço é necessário'),
+        price: Yup.number()
+          .required('Preço é necessário')
+          .min(0.01, 'Preço deve ser maior que zero'),
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
@@ -99,8 +101,9 @@ export function FormUpdateCourse(props: Props) {
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
+      console.log(data.price, typeof data.price)
       data.content = stateEditor.content
-      await schema.validate(data, { abortEarly: false })
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
     } catch (err) {
       const validationErrors = {}
@@ -225,14 +228,7 @@ export function FormUpdateCourse(props: Props) {
               defaultOptions={defaultTeacherOptions}
             />
             <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
-            <Input
-              name='price'
-              defaultValue={currenceMaskOnlyValue(defaultValue?.price)}
-              label='Preço'
-              type='text'
-              placeholderText='R$'
-              onChange={() => currencyFormatter('price')}
-            />
+            <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
             <Input
               name='discount'
               defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}

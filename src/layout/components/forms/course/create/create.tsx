@@ -73,7 +73,9 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
           .min(1, 'Tempo de acesso deve ser maior que zero')
           .typeError('Tempo de acesso deve ser um número')
           .required('Tempo de acesso é necessário'),
-        price: Yup.string().required('Preço é necessário'),
+        price: Yup.number()
+          .required('Preço é necessário')
+          .min(0.01, 'Preço deve ser maior que zero'),
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
@@ -83,7 +85,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
       })
 
       data.content = stateEditor.content
-      await schema.validate(data, { abortEarly: false })
+      await schema.validate({...data, price: onlyNums(data.price)}, { abortEarly: false })
       courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
     } catch (err) {
       const validationErrors = {}
@@ -165,7 +167,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
               defaultOptions={defaultTeacherOptions}
             />
             <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
-            <InputCurrence name='price' label='Preço' />
+            <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
             <InputCurrence name='discount' label='Desconto' />
           </div>
           <div className='w-50'>
