@@ -1,8 +1,8 @@
 import { HttpClient, HttpStatusCode } from '../../protocols'
-import { UserSignUp } from '../../../domain/models/userSignUp'
 import { IUserResponse } from '../../../interfaces/api-response'
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
 import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
+import { UserUpdate } from '../../../domain/models/userUpdate'
 
 export class RemoteUpdateUser implements IUpdateUser {
   constructor(
@@ -10,7 +10,7 @@ export class RemoteUpdateUser implements IUpdateUser {
     private readonly httpClient: HttpClient<IUserResponse[]>
   ) {}
 
-  async updateUser(userSignUp: UserSignUp) {
+  updateUser = async (userSignUp: UserUpdate) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'put',

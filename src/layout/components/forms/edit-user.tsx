@@ -14,25 +14,21 @@ import { DatePicker, Input, InputMasked, Select } from '../inputs'
 
 import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
 import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser'
-import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 import { ProductsModal } from '../modals/products'
 import { ProductsTable } from '../tables/products-list'
 import { IPartialPurchaseResponse } from '../../../interfaces/api-response/purchasePartialResponse'
 import { PurchasesTable } from '../tables/purchashes-list'
-import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
-import { IGetAllPlans } from '../../../domain/usecases/interfaces/plans/getAllPlans'
-import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
+import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
+import { GrantedProduct } from '../../../domain/models/grantedProduct'
 
 type IFormEditUser = {
   id: string
   userRegister: IUpdateUser
   getUser: IGetUser
-  getCourses: IGetAllCourses
-  getPlans: IGetAllPlans
-  getTrainings: IGetAllTrainings
+  getProducts: IGetAllProducts
 }
 
-export function FormEditUser({ id, userRegister, getUser, getCourses, getPlans, getTrainings }: IFormEditUser) {
+export function FormEditUser({ id, userRegister, getUser, getProducts }: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -42,7 +38,7 @@ export function FormEditUser({ id, userRegister, getUser, getCourses, getPlans, 
   const [message, setMessage] = useState('')
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
-  const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
+  const [grantedProducts, setGrantedProducts] = useState<GrantedProduct[]>([])
 
   const [purchases, setPurchases] = useState<IPartialPurchaseResponse[]>([
     {
@@ -128,6 +124,7 @@ export function FormEditUser({ id, userRegister, getUser, getCourses, getPlans, 
           complement: data.complement,
         },
       ],
+      grantedProduct: grantedProducts
     }
 
     return userData
@@ -152,7 +149,8 @@ export function FormEditUser({ id, userRegister, getUser, getCourses, getPlans, 
   }
 
   useEffect(() => {
-    if (!formRef.current) return
+    if (!formRef.current) return    
+
     getUser
       .getOne()
       .then((res) => {
@@ -172,6 +170,9 @@ export function FormEditUser({ id, userRegister, getUser, getCourses, getPlans, 
           number: res.address[0]?.number || '',
           complement: res.address[0]?.complement || '',
         }
+
+        setGrantedProducts(res.grantedProduct)
+
         setKeys(newData)
       })
       .catch((err) => toast.error(err.messages))
@@ -245,7 +246,7 @@ export function FormEditUser({ id, userRegister, getUser, getCourses, getPlans, 
         <div className='d-flex justify-content-between gap-5'>
           <div className='w-50'>
             <h4 className='mb-5'>Acessos Concedidos</h4>
-            <ProductsTable products={grantedProducts} setProducts={setGrantedProducts} />
+            <ProductsTable grantedProducts={grantedProducts} setGrantedProducts={setGrantedProducts} />
           </div>
 
           <div className='w-50'>
@@ -292,9 +293,7 @@ export function FormEditUser({ id, userRegister, getUser, getCourses, getPlans, 
         }}
         grantedProducts={grantedProducts}
         onAddProduct={setGrantedProducts}
-        getCourses={getCourses}
-        getPlans={getPlans}
-        getTrainings={getTrainings}
+        getProducts={getProducts}
       />
     </>
   )
