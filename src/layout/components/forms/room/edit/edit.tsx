@@ -99,7 +99,7 @@ export function FormUpdateRoom({
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
-        price: Yup.string().required('Preço é necessário'),
+        price: Yup.number().required('Preço é necessário').min(0.1, 'Preço deve ser maior que zero'),
         installments: Yup.number()
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário')
@@ -109,7 +109,7 @@ export function FormUpdateRoom({
       })
 
       const hasError = await verifyErrorStreamingRoom(data)
-      await schema.validate(data, { abortEarly: false })
+      await schema.validate({...data, price: onlyNums(data.price)}, { abortEarly: false })
       hasError ? setHasErrorRoom(hasError) : handleUpdateRoom(data)
     } catch (err) {
       const validationErrors = {}
