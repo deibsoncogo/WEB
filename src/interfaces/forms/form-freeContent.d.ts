@@ -6,6 +6,6 @@ interface IFormFreeContent {
   imagePreview?:string;
   link?: string       
   authorName?: string;
-  articleContent?: string
+  content?: string;
  
 }

@@ -7,9 +7,9 @@ import { Button } from "../../../buttons/CustomButton"
 import { InputRadio } from "../../../inputs/input-radio"
 import { VideoFreeContentForm } from "./video/videoForm"
 import * as Yup from 'yup'
-import { CreateFreeContent } from "../../../../../domain/models/createFreeContent"
 import { ICreateFreeContent } from "../../../../../domain/usecases/interfaces/freeContent/createFreeContent"
 import { toast } from "react-toastify"
+import { TextFreeContentForm } from "./text/textForm"
 
 type CreateFreeContentProps = {
    createFreeContent: ICreateFreeContent
@@ -22,7 +22,15 @@ export function CreateFreeContentForm({createFreeContent}: CreateFreeContentProp
 
   const [contentType, setContentType] = useState<string>('')
   const [registerFreeContent, setRegisterFreeContent] = useState(false)
-  
+  const [stateEditor, setStateEditor] = useState({ content: '' })
+
+  function handleChangeStateEditor(value: string) { 
+    if(formRef && formRef.current?.getFieldError('content')){    
+        formRef.current?.setFieldError('content', '')         
+    }    
+    setStateEditor({ content: value })
+  }
+
   function formatDataToSend(data: IFormFreeContent) {
 
     const formData = new FormData()
@@ -32,14 +40,14 @@ export function CreateFreeContentForm({createFreeContent}: CreateFreeContentProp
     formData.append('contentType', data.contentType)
     data?.link? formData.append('link', String(data?.link)): ''
     data?.authorName? formData.append('authorName', String(data?.authorName)): ''
-    data?.articleContent? formData.append('articleContent', String(data?.articleContent)): ''
+    data?.content? formData.append('articleContent', String(data?.content)): ''
     return formData
-
   }
  
   async function handleFormSubmit(data: IFormFreeContent) {
     
     data.contentType = contentType
+    data.content = stateEditor.content
     if (!formRef.current) throw new Error()
     try {
       formRef.current.setErrors({})
@@ -62,7 +70,7 @@ export function CreateFreeContentForm({createFreeContent}: CreateFreeContentProp
             is: (value: string) => value && value === "text",
             then: Yup.string().required('O nome do autor é necessário'),
         }),
-        articleContent: Yup.string().when('contentType', {
+        content: Yup.string().when('contentType', {
             is: (value: string) => value && value === "text",
             then: Yup.string().required('O conteúdo do artigo é obrigatório'),
         }),
@@ -109,6 +117,7 @@ export function CreateFreeContentForm({createFreeContent}: CreateFreeContentProp
                 <InputRadio name='contentType' label='Em vídeo' value='video' setContentType={setContentType}/>
                 <InputRadio name='contentType' label='Em texto' value='text' setContentType={setContentType}/> 
                 {contentType === 'video' && <VideoFreeContentForm/>}
+                {contentType === 'text' && <TextFreeContentForm stateEditor={stateEditor} handleChangeStateEditor={handleChangeStateEditor}/>}
             </div>  
 
         </div>  
