@@ -1,7 +1,7 @@
 import { FormHandles } from "@unform/core"
 import { Form } from "@unform/web"
 import { useRouter } from "next/router"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { appRoutes } from "../../../../../application/routing/routes"
 import { Button } from "../../../buttons/CustomButton"
 import { InputRadio } from "../../../inputs/input-radio"
@@ -11,21 +11,27 @@ import { toast } from "react-toastify"
 import { VideoFreeContentForm } from "../create/video/videoForm"
 import { TextFreeContentForm } from "../create/text/textForm"
 import { IGetFreeContent } from "../../../../../domain/usecases/interfaces/freeContent/getFreeContent"
+import { FullLoading } from "../../../FullLoading/FullLoading"
+import { IUpdateFreeContent } from "../../../../../domain/usecases/interfaces/freeContent/updateFreeContent"
 
 
 type UpdateFreeContentProps = {
-    getFreeContent: IGetFreeContent
-    updateFreeContent: ICreateFreeContent
+  id: string
+  getFreeContent: IGetFreeContent
+  updateFreeContent: IUpdateFreeContent
 
 }
 
-export function UpdateFreeContentForm({getFreeContent, updateFreeContent}: UpdateFreeContentProps) {
+export function UpdateFreeContentForm({id, getFreeContent, updateFreeContent}: UpdateFreeContentProps) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
   const [contentType, setContentType] = useState<string>('')
-  const [registerFreeContent, setRegisterFreeContent] = useState(false)
+  const [updateContent, setUpdateContent] = useState(false)
   const [stateEditor, setStateEditor] = useState({ content: '' })
+  
+  const [loading, setLoading] = useState(true)
+
 
   function handleChangeStateEditor(value: string) { 
     if(formRef && formRef.current?.getFieldError('content')){    
@@ -109,8 +115,27 @@ export function UpdateFreeContentForm({getFreeContent, updateFreeContent}: Updat
     //    .finally(() => setRegisterFreeContent(false))
   }
 
+
+  useEffect(() => {         
+        getFreeContent.get(id).then((data) => {
+        formRef.current?.setFieldValue('title', data.title)
+        formRef.current?.setFieldValue('description', data.description)
+        formRef.current?.setFieldValue('imagePreview', data?.imageUrl)
+        formRef.current?.setFieldValue('link', data?.link)
+        formRef.current?.setFieldValue('authorName', data?.authorName)
+        setStateEditor({ content: data?.articleContent? data?.articleContent: '' })
+        setContentType(data.contentType)
+      }).catch(() => {
+        toast.error('Não foi possível carregar os dados')
+      }).finally( ()=>{
+        setLoading(false)
+      })
+    
+  }, [])
+
   return (
     <>
+       {loading && <FullLoading />}
        <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do conteúdo</h3>
         
@@ -130,7 +155,7 @@ export function UpdateFreeContentForm({getFreeContent, updateFreeContent}: Updat
             customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
             title='Cancelar'
             type='button'
-            disabled={registerFreeContent}
+            disabled={updateContent}
             onClick={() => {
               router.push(appRoutes.CONTENTS)
             }}
@@ -139,8 +164,8 @@ export function UpdateFreeContentForm({getFreeContent, updateFreeContent}: Updat
             type='submit'
             customClasses={['px-20', 'btn-primary']}
             title='Salvar'    
-            disabled={registerFreeContent}
-            loading={registerFreeContent}       
+            disabled={updateContent}
+            loading={updateContent}       
           />
         </div>
         </Form>

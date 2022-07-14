@@ -6,6 +6,7 @@ export interface IFreeContentResponse{
     contentType: string 
     link?: string       
     articleContent?: string
+    authorName?: string
     imageUrl?: string;
      
 }
