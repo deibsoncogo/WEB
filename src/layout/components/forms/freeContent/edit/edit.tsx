@@ -118,20 +118,22 @@ export function UpdateFreeContentForm({id, getFreeContent, updateFreeContent}: U
 
   useEffect(() => {         
         getFreeContent.get(id).then((data) => {
-        formRef.current?.setFieldValue('title', data.title)
-        formRef.current?.setFieldValue('description', data.description)
-        formRef.current?.setFieldValue('imagePreview', data?.imageUrl)
-        formRef.current?.setFieldValue('link', data?.link)
-        formRef.current?.setFieldValue('authorName', data?.authorName)
-        setStateEditor({ content: data?.articleContent? data?.articleContent: '' })
-        setContentType(data.contentType)
+          
+          formRef.current?.setFieldValue('title', data.title)
+          formRef.current?.setFieldValue('description', data.description)
+          formRef.current?.setFieldValue('imagePreview', data?.imageUrl)
+          formRef.current?.setFieldValue('link', data?.link)
+          formRef.current?.setFieldValue('authorName', data?.authorName)            
+          setContentType(data.contentType)
+          setStateEditor({ content: data?.articleContent? data?.articleContent: '' })   
+        
       }).catch(() => {
         toast.error('Não foi possível carregar os dados')
       }).finally( ()=>{
         setLoading(false)
       })
     
-  }, [])
+  }, [contentType])
 
   return (
     <>
@@ -142,8 +144,8 @@ export function UpdateFreeContentForm({id, getFreeContent, updateFreeContent}: U
         <div className='container p-0 m-0'>
             <div className='col'>
                 <h3 className='fs-6 fw-bolder text-dark'>Tipo</h3>
-                <InputRadio name='contentType' label='Em vídeo' value='video' setContentType={setContentType}/>
-                <InputRadio name='contentType' label='Em texto' value='text' setContentType={setContentType}/> 
+                <InputRadio name='contentType' label='Em vídeo' value='video' disabled = {true} checkedValue = {contentType === 'video'}/>
+                <InputRadio name='contentType' label='Em texto' value='text' disabled = {true} checkedValue = {contentType === 'text'}/> 
                 {contentType === 'video' && <VideoFreeContentForm/>}
                 {contentType === 'text' && <TextFreeContentForm stateEditor={stateEditor} handleChangeStateEditor={handleChangeStateEditor}/>}
             </div>  

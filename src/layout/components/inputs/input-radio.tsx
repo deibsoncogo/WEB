@@ -3,12 +3,14 @@ import { Dispatch, InputHTMLAttributes, SetStateAction, useRef} from 'react'
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   value: string
+  disabled?: boolean
+  checkedValue?: boolean 
   label?: string
   classes?: string
   setContentType?: Dispatch<SetStateAction<string>>
 }
 
-export function InputRadio({ name, value, label, classes, setContentType, ...rest }: IInputProps) {
+export function InputRadio({ name, value, disabled = false, checkedValue = false, label, classes, setContentType, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   
   return (
@@ -17,9 +19,11 @@ export function InputRadio({ name, value, label, classes, setContentType, ...res
         className='form-check-input'
         value={value}
         name={name}
+        disabled={disabled}
         ref={inputRef}
         onChange={(event) => setContentType? setContentType(event.currentTarget.value): ''}
-        defaultChecked={false}        
+        checked={checkedValue}
+        defaultChecked={checkedValue}        
         type='radio'     
         {...rest}
       />
