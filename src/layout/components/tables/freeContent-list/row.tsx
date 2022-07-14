@@ -106,7 +106,7 @@ export function Row({
             setIsModalDeleteOpen(false)
           }}
           onConfimation={handleDeleteFreeContent}
-          content='Você tem ceterza que deseja excluir este conteúdo?'
+          content='Você tem certeza que deseja excluir este conteúdo?'
           title='Deletar'
         />      
       </tr>
