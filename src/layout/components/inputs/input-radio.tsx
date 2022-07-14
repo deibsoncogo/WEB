@@ -22,7 +22,6 @@ export function InputRadio({ name, value, disabled = false, checkedValue = false
         disabled={disabled}
         ref={inputRef}
         onChange={(event) => setContentType? setContentType(event.currentTarget.value): ''}
-        checked={checkedValue}
         defaultChecked={checkedValue}        
         type='radio'     
         {...rest}
