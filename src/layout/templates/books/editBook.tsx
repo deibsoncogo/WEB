@@ -51,7 +51,7 @@ function EditBookPageTemplate({
   } = useRequest<IBook, IGetBookParams>(remoteGetBook.get)
 
   async function handleFormSubmit(data: IBook) {
-    const { error, success } = await applyYupValidation<IBook>(bookFormSchema, data)
+    const { error, success } = await applyYupValidation<IBook>(bookFormSchema(data), data)
 
     if (success) {
       const dataFormatted = formatBookToSubmit(data)

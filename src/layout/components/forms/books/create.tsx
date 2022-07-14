@@ -18,6 +18,7 @@ import { getAsyncCategoiesToSelectInput } from '../../../templates/trainings/uti
 import { IGetCategories } from '../../../../domain/usecases/interfaces/category/getCategories'
 import { Button } from '../../buttons/CustomButton'
 import is from 'date-fns/esm/locale/is/index.js'
+import { currencyInputFormmater } from '../../../formatters/currencyInputFormatter'
 
 type FormCreateBookProps = {
   remoteGetCategories: IGetCategories
@@ -88,7 +89,9 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
 
     try {
       formRef.current.setErrors({})
-      data.price = onlyNums(data.price)
+     
+      data.price = onlyNums(data.price)   
+      data.discount = onlyNums(data?.discount)      
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Título é necessário'),
@@ -98,8 +101,11 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
           .required('Estoque é necessário'),
         price: Yup.number()
           .required('Preço é necessário')
-          .min(0.1, 'Preço deve ser maior que zero'),
-        discount: Yup.string().required('Desconto é necessária'),
+          .min(0.1, 'Preço deve ser maior que zero'),                  
+        discount: Yup.number().test(
+          {name: 'validation',
+          message: 'Desconto deve ser menor que preço',
+          test: (value) => value?  parseFloat(data.discount+'') <= parseFloat(data.price+'') : true}),      
         description: Yup.string().required('Descrição é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         installments: Yup.number()
@@ -108,8 +114,8 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
       })
 
       await schema.validate(data, { abortEarly: false })
-
-      handleCreateBook(data)
+     
+     handleCreateBook(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
