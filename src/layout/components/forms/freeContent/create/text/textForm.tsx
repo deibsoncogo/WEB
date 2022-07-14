@@ -34,6 +34,7 @@ export function TextFreeContentForm({stateEditor, handleChangeStateEditor}: Text
           <label className='form-label fs-6 fw-bolder text-dark'>Conteúdo do Artigo</label>
           <Editor
           init={{
+            placeholder: "Insira seu texto aqui...",
             plugins:
               'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',
             menubar: false,
@@ -45,7 +46,7 @@ export function TextFreeContentForm({stateEditor, handleChangeStateEditor}: Text
               'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
             noneditable_class: 'mceNonEditable',
             contextmenu: 'link image table',
-          }}
+          }}          
           value={stateEditor.content}
           onEditorChange={handleChangeStateEditor}
         />
