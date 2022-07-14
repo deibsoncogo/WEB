@@ -1,33 +1,40 @@
-import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useRef, useState } from 'react'
 
-import * as Yup from 'yup'
-import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
+import { Form } from '@unform/web'
+import * as Yup from 'yup'
 
-import { DatePicker, Input, InputMasked, Select } from '../../inputs'
-import { Address } from '../../../../domain/models/address'
-import { UserSignUp } from '../../../../domain/models/userSignUp'
-import { levelOptions, roleOptions, stateOptions } from '../../../../utils/selectOptions'
 import { toast } from 'react-toastify'
+import { appRoutes } from '../../../../application/routing/routes'
+import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
+import { Address } from '../../../../domain/models/address'
+import { GrantedProduct } from '../../../../domain/models/grantedProduct'
+import { UserSignUp } from '../../../../domain/models/userSignUp'
+import { IGetAllProducts } from '../../../../domain/usecases/interfaces/product/getAllProducts'
 import { IUserSignUp } from '../../../../domain/usecases/interfaces/user/userSignUp'
+import { validateIfCPFIsValid, validateStringWithNumber } from '../../../../helpers'
 import { findCEP, ZipCodeProps } from '../../../../utils/findCEP'
 import { restrictNumberInput } from '../../../../utils/restrictNumberInput'
+import { levelOptions, roleOptions, stateOptions } from '../../../../utils/selectOptions'
+import { Button } from '../../buttons/CustomButton'
+import { DatePicker, Input, InputMasked, Select } from '../../inputs'
 import { ProductsModal } from '../../modals/products'
 import { ProductsTable } from '../../tables/products-list'
-import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
-import { validateIfCPFIsValid, validateStringWithNumber } from '../../../../helpers'
-import { Button } from '../../buttons/CustomButton'
-import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
-import { appRoutes } from '../../../../application/routing/routes'
 
 type Props = {
   userRegister: IUserSignUp
   verifyEmail: IUserVerifyEmail
   isCPFAlreadyRegistered: IUserVerifyCPF
+  getProducts: IGetAllProducts
 }
 
-export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegistered}: Props) {
+export function FormCreateUser({
+  userRegister,
+  verifyEmail,
+  isCPFAlreadyRegistered,
+  getProducts,
+}: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -36,7 +43,7 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
   const [registerUser, setRegisterUser] = useState(false)
 
-  const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
+  const [grantedProducts, setGrantedProducts] = useState<GrantedProduct[]>([])
 
   async function handleOpenModal() {
     try {
@@ -49,24 +56,23 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
 
   async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
-    
-   
+
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string()
           .test('no number', 'O campo não deve conter números', validateStringWithNumber)
-          .required('Nome é necessário'),          
+          .required('Nome é necessário'),
         email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
-        cpf:  Yup.string().test(
-        {name: 'is valid',
-        message: 'CPF inválido',
-        test: (value) => value? validateIfCPFIsValid(value): true}),                   
+        cpf: Yup.string().test({
+          name: 'is valid',
+          message: 'CPF inválido',
+          test: (value) => (value ? validateIfCPFIsValid(value) : true),
+        }),
         password: Yup.string().min(6, 'No mínimo 6 caracteres'),
-        role: Yup.string().required('Permissão é necessária'),       
+        role: Yup.string().required('Permissão é necessária'),
       })
 
-      
       await schema.validate(data, { abortEarly: false })
 
       const dataToSend = formatDataToSend(data)
@@ -83,18 +89,17 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
     }
   }
 
-  async function emailIsAlreadyRegistered(email: string){
+  async function emailIsAlreadyRegistered(email: string) {
     try {
       await verifyEmail.verifyUserEmail(email)
       return false
-    } catch (err: any) {     
+    } catch (err: any) {
       if (!formRef.current) return
       formRef.current.setFieldError('email', 'Email já registrado')
       return true
     }
   }
 
-  
   function formatDataToSend(data: any) {
     const matchesCPF = data.cpf.match(/\d*/g)
     const cpf = matchesCPF?.join('')
@@ -115,6 +120,10 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
       data.complement
     )
 
+    const grantedProduct = grantedProducts.map((product) => {
+      return new GrantedProduct(product.productId, product.expireDate, product.product)
+    })
+
     const user = new UserSignUp(
       data.name,
       data.email,
@@ -125,14 +134,23 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
       phoneNumber,
       data.role,
       data.level,
-      address
+      address,
+      grantedProduct
     )
 
+    userRegister
+      .signUp(user)
+      .then(() => {
+        router.push('/users')
+        toast.success('Usuário cadastrado com sucesso!')
+      })
+      .catch((error: any) => {
+        toast.error(error.messages[0])
+      })
     return user
   }
 
-  async function createUserRequest(data: any) {  
-
+  async function createUserRequest(data: any) {
     try {
       await userRegister.signUp(data)
       router.push(appRoutes.USERS)
@@ -141,25 +159,24 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
       if (error instanceof UnexpectedError) {
         toast.error('Erro Inesperado. Não foi possível cadastrar o usuário.')
       }
-    }
-    finally{
-      setRegisterUser(false)  
+    } finally {
+      setRegisterUser(false)
     }
   }
 
   async function handleCreateUser(data: any) {
-    
     setRegisterUser(true)
     const hasEmailRegistered = await emailIsAlreadyRegistered(data.email)
-    const hasCPFRegistered  = data?.cpf? await isCPFAlreadyRegistered.verifyUserCPF(data.cpf): false  
-  
-    if (!hasEmailRegistered  && !hasCPFRegistered){
-        await createUserRequest(data)
+    const hasCPFRegistered = data?.cpf
+      ? await isCPFAlreadyRegistered.verifyUserCPF(data.cpf)
+      : false
+
+    if (!hasEmailRegistered && !hasCPFRegistered) {
+      await createUserRequest(data)
+    } else if (hasCPFRegistered) {
+      formRef?.current?.setFieldError('cpf', 'CPF já registrado')
     }
-    else if(hasCPFRegistered){
-      formRef?.current?.setFieldError('cpf', 'CPF já registrado')       
-    }
-    setRegisterUser(false)   
+    setRegisterUser(false)
   }
 
   function handleInputCPF() {
@@ -276,7 +293,10 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
       {grantedProducts && (
         <div className='w-50'>
           <h4 className='mb-5'>Acessos concedidos</h4>
-          <ProductsTable products={grantedProducts} setProducts={setGrantedProducts} />
+          <ProductsTable
+            grantedProducts={grantedProducts}
+            setGrantedProducts={setGrantedProducts}
+          />
         </div>
       )}
 
@@ -303,10 +323,12 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
           }}
         />
 
-        <Button type='submit'
-         title='Salvar' 
-         customClasses={['px-20', 'btn-primary']}
-         disabled={registerUser} />
+        <Button
+          type='submit'
+          title='Salvar'
+          customClasses={['px-20', 'btn-primary']}
+          disabled={registerUser}
+        />
       </div>
 
       <ProductsModal
@@ -316,9 +338,10 @@ export function FormCreateUser({ userRegister, verifyEmail, isCPFAlreadyRegister
         onRequestClose={() => {
           setIsProductsModalOpen(false)
         }}
+        grantedProducts={grantedProducts}
         onAddProduct={setGrantedProducts}
+        getProducts={getProducts}
       />
     </Form>
   )
 }
-

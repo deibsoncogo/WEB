@@ -1,47 +1,65 @@
-import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useEffect, useRef, useState } from 'react'
 
-import * as Yup from 'yup'
+import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import { toast } from 'react-toastify'
-import { FormHandles } from '@unform/core'
+import * as Yup from 'yup'
 
-import { findCEP, ZipCodeProps } from '../../../../utils/findCEP'
 import {
   formatDateToUTC,
   validateIfCPFIsValid,
   validateStringWithNumber,
 } from '../../../../helpers'
+import { findCEP, ZipCodeProps } from '../../../../utils/findCEP'
 import { levelOptions, roleOptions, stateOptions } from '../../../../utils/selectOptions'
 
 import { DatePicker, Input, InputMasked, Select } from '../../inputs'
 
+import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
+import { GrantedProduct } from '../../../../domain/models/grantedProduct'
+import { IGetAllProducts } from '../../../../domain/usecases/interfaces/product/getAllProducts'
 import { IGetUser } from '../../../../domain/usecases/interfaces/user/getUser'
 import { IUpdateUser } from '../../../../domain/usecases/interfaces/user/updateUser'
-import { IPartialProductResponse } from '../../../../interfaces/api-response/productsPartialResponse'
+import { IPartialPurchaseResponse } from '../../../../interfaces/api-response/purchasePartialResponse'
+import { Button } from '../../buttons/CustomButton'
 import { ProductsModal } from '../../modals/products'
 import { ProductsTable } from '../../tables/products-list'
-import { Button } from '../../buttons/CustomButton'
-import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
+import { PurchasesTable } from '../../tables/purchashes-list'
 
 type IFormEditUser = {
   id: string
   userRegister: IUpdateUser
   getUser: IGetUser
+  getProducts: IGetAllProducts
   isCPFAlreadyRegistered: IUserVerifyCPF
 }
 
-export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered}: IFormEditUser) {
+export function FormEditUser({
+  id,
+  userRegister,
+  getUser,
+  isCPFAlreadyRegistered,
+  getProducts,
+}: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
-
   const [updateUser, setUpdateUser] = useState(false)
- 
+
   const [cpf, setCPF] = useState()
 
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
-  const [grantedProducts, setGrantedProducts] = useState<IPartialProductResponse[]>([])
+  const [grantedProducts, setGrantedProducts] = useState<GrantedProduct[]>([])
+
+  const [purchases, setPurchases] = useState<IPartialPurchaseResponse[]>([
+    {
+      date: '2022-06-22',
+      transactionId: '123456',
+      totalPrice: 1200,
+      status: 'Pago',
+    },
+  ])
 
   async function handleOpenModal() {
     try {
@@ -117,6 +135,7 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
           complement: data.complement || null,
         },
       ],
+      grantedProduct: grantedProducts,
     }
 
     return userData
@@ -131,36 +150,33 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
       if (error instanceof UnexpectedError) {
         toast.error('Erro Inesperado. Não foi possível atualizar o usuário.')
       }
-    }
-    finally{
-      setUpdateUser(false)  
+    } finally {
+      setUpdateUser(false)
     }
   }
 
-
-  async function handleUpdateUser(data: any) { 
+  async function handleUpdateUser(data: any) {
     setUpdateUser(true)
-    const hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)  
-  
-    if(cpf || !hasAlreadyCPF){      
-      updateUserRequest(data)    
-    }    
-    else {
-      formRef?.current?.setFieldError('cpf', 'CPF já registrado') 
-      setUpdateUser(false)  
+    const hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)
+
+    if (cpf || !hasAlreadyCPF) {
+      updateUserRequest(data)
+    } else {
+      formRef?.current?.setFieldError('cpf', 'CPF já registrado')
+      setUpdateUser(false)
     }
-       
   }
 
   function setKeys(obj: any) {
     Object.keys(obj).forEach((key) => {
-      formRef.current?.setFieldValue(key, obj[key])      
+      formRef.current?.setFieldValue(key, obj[key])
     })
-    formRef.current?.setErrors({})  
+    formRef.current?.setErrors({})
   }
 
   useEffect(() => {
     if (!formRef.current) return
+
     getUser
       .getOne()
       .then((res) => {
@@ -180,13 +196,14 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
           number: res?.address[0]?.number || '',
           complement: res?.address[0]?.complement || '',
         }
-   
+
+        setGrantedProducts(res.grantedProduct)
+
         setCPF(newData.cpf)
         setKeys(newData)
       })
       .catch((err) => toast.error(err.messages))
   }, [])
-
 
   const stateName = async (result: ZipCodeProps | undefined) => {
     let state = ''
@@ -275,16 +292,23 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
             <Input name='neighborhood' label='Bairro' />
             <Input name='city' label='Cidade' />
             <Input name='state' label='Estado' />
-          
           </div>
         </div>
 
-        {grantedProducts.length > 0 && (
+        <div className='d-flex justify-content-between gap-5'>
           <div className='w-50'>
-            <h4 className='mb-5'>Acessos concedidos</h4>
-            <ProductsTable products={grantedProducts} setProducts={setGrantedProducts} />
+            <h4 className='mb-5'>Acessos Concedidos</h4>
+            <ProductsTable
+              grantedProducts={grantedProducts}
+              setGrantedProducts={setGrantedProducts}
+            />
           </div>
-        )}
+
+          <div className='w-50'>
+            <h4 className='mb-5'>Compras Realizadas</h4>
+            <PurchasesTable userId={id} purchases={purchases} />
+          </div>
+        </div>
 
         <div className='w-100'>
           <button
@@ -325,7 +349,9 @@ export function FormEditUser({ id, userRegister, getUser, isCPFAlreadyRegistered
         onRequestClose={() => {
           setIsProductsModalOpen(false)
         }}
+        grantedProducts={grantedProducts}
         onAddProduct={setGrantedProducts}
+        getProducts={getProducts}
       />
     </>
   )
