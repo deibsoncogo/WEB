@@ -19,7 +19,7 @@ const EditFreeContent: NextPage = () => {
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Editar Conteúdo' />
+          <HeaderWrapper title='Editar Conteúdo Gratuito' />
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
