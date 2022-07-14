@@ -2,7 +2,7 @@ import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import React from 'react'
 import { UpdateCategoryParams } from '../../../domain/usecases/interfaces/category/updateCategory'
-import CustomButton from '../buttons/CustomButton'
+import { Button } from '../buttons/CustomButton'
 import { DrawerRight } from '../drawerRight/DrawerRight'
 import { Input } from '../inputs'
 
@@ -22,20 +22,23 @@ const UpdateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) =
           <Input name='name' label='Nome' placeholder='Nome da categoria' type='text' />
         </Form>
 
-        <div className='mb-10 d-flex justify-content-between'>
-          <CustomButton
-            type='submit'
-            customClasses={['btn-primary', 'w-25']}
-            form='update-category-form'
-            disabled={loading}
-            title='Salvar'
+        <div className='d-flex mb-15'>
+        
+          <Button
+            title='Cancelar'
+            type='button'
+            onClick={close}
+            size='lg'
+            customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
           />
 
-          <CustomButton
-            customClasses={['btn-secondary', 'mb-5', 'px-20']}
-            title='Cancelar'
+          <Button
+            type='submit'
+            form='update-category-form'
+            size='lg'
+            customClasses={['px-20', 'btn-primary']}
+            title='Salvar'
             loading={loading}
-            onClick={close}
           />
         </div>
       </div>

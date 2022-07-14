@@ -1,6 +1,7 @@
-import { FormEditUser } from '../../../layout/components/forms/edit-user'
+import { FormEditUser } from '../../../layout/components/forms/user/edit-user'
 import { makeRemoteGetAllProducts } from '../usecases/remote-getAllProducts-factory'
 import { makeRemoteGetUser } from '../usecases/remote-getUser-factory'
+import { makeRemoteVerifyCPF } from '../usecases/remote-getVerifyUserCPF'
 import { makeRemoteUpdateUser } from '../usecases/remote-updateUser-factory'
 
 interface IMakeFormUpdateUser {
@@ -13,6 +14,7 @@ export const MakeFormUpdateUser = ({ id }: IMakeFormUpdateUser) => {
       id={id}
       userRegister={makeRemoteUpdateUser()}
       getUser={makeRemoteGetUser(id)}
+      isCPFAlreadyRegistered={makeRemoteVerifyCPF()}
       getProducts={makeRemoteGetAllProducts()}
     />
   )

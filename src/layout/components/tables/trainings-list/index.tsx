@@ -1,20 +1,22 @@
-import { Loading } from '../../loading/loading'
-import { Pagination } from '../../pagination/Pagination'
-import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { MakeTrainingsRow } from '../../../../application/factories/components/rows/trainingsRow'
+import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { ITraining } from '../../../../domain/models/training'
-import { useState } from 'react'
+import { Pagination } from '../../pagination/Pagination'
 
 type ITrainingsTable = {
   trainings: ITraining[]
   paginationHook: usePaginationType
   getTrainings(): Promise<void>
-  handleRefresher: () => void
+  openToggleStatusConfirmationModal: (trainingId: string) => void
 }
 
-export function TrainingsTable({ trainings, paginationHook, getTrainings, handleRefresher }: ITrainingsTable) {
+export function TrainingsTable({
+  trainings,
+  paginationHook,
+  getTrainings,
+  openToggleStatusConfirmationModal,
+}: ITrainingsTable) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
-  const [loading, setLoading] = useState(false)
 
   const getColumnHeaderClasses = (name: string) => {
     return `text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
@@ -62,30 +64,27 @@ export function TrainingsTable({ trainings, paginationHook, getTrainings, handle
                     >
                       Ativo
                     </th>
-                    <th className='text-dark min-w-50px rounded-end'>Ações</th>
+                    <th className='text-dark min-w-50px text-start rounded-end'>Ação</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {!loading &&
-                    trainings?.map((item) => (
-                      <MakeTrainingsRow
-                        key={item.id}
-                        id={item.id as string}
-                        name={item.name}
-                        description={item.description}
-                        price={item.price}
-                        teacher={item.teacher}
-                        active={item.active}
-                        getTrainings={getTrainings}
-                        handleRefresher={handleRefresher}
-                      />
-                    ))}
+                  {trainings?.map((item) => (
+                    <MakeTrainingsRow
+                      key={item.id}
+                      id={item.id as string}
+                      name={item.name}
+                      description={item.description}
+                      price={item.price}
+                      teacher={item.teacher}
+                      active={item.active}
+                      getTrainings={getTrainings}
+                      handleToggleStatusConfirmation={openToggleStatusConfirmationModal}
+                    />
+                  ))}
                 </tbody>
               </table>
             </div>
-
-            {loading && <Loading />}
           </div>
           <div className='ms-auto'>
             <Pagination paginationHook={paginationHook} />

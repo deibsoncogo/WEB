@@ -36,7 +36,7 @@ export function Row(props: IRow) {
               onClick={() => {
                 deleteClass()
               }}
-              className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
+              className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
             >
               <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
             </a>

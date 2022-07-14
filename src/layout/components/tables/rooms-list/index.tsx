@@ -1,32 +1,31 @@
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Row } from './row'
-import { KTSVG } from '../../../../helpers'
-import { Search } from '../../search/Search'
-import { Pagination } from '../../pagination/Pagination'
+import { useEffect, useState } from 'react'
 import { usePagination } from '../../../../application/hooks/usePagination'
-import { Room } from '../../../../interfaces/model/Room'
-import { debounce } from '../../../../helpers/debounce'
+import { KTSVG } from '../../../../helpers'
+import { Pagination } from '../../pagination/Pagination'
+import { Search } from '../../search/Search'
+import { Row } from './row'
+
+import { toast } from 'react-toastify'
 import { IDeleteRoom } from '../../../../domain/usecases/interfaces/room/deleteRoom'
-import { currenceMask } from '../../../formatters/currenceFormatter'
-import { IGetRoom } from '../../../../domain/usecases/interfaces/room/getCourse'
-import { IUpdateRoom } from '../../../../domain/usecases/interfaces/room/updateRoom'
 import {
   GetRoomParams,
   IGetAllRooms,
 } from '../../../../domain/usecases/interfaces/room/getAllRooms'
-import { toast } from 'react-toastify'
+import { IToggleRoomStatus } from '../../../../domain/usecases/interfaces/room/toggleRoomStatus'
+import { debounce } from '../../../../helpers/debounce'
 import { IRoomPartialResponse } from '../../../../interfaces/api-response/roomPartialResponse'
+import { currenceMask, maskedToMoney } from '../../../formatters/currenceFormatter'
 import { Loading } from '../../loading/loading'
 import { ItemNotFound } from '../../search/ItemNotFound'
 
 type Props = {
   getAllRooms: IGetAllRooms
-  updateRoom: IUpdateRoom
+  toggleStatus: IToggleRoomStatus
   deleteRoom: IDeleteRoom
 }
 
-export function RoomsTable({ getAllRooms, updateRoom, deleteRoom }: Props) {
+export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
@@ -91,77 +90,78 @@ export function RoomsTable({ getAllRooms, updateRoom, deleteRoom }: Props) {
         </div>
 
         {rooms.length > 0 && (
-          <>
-            <div className='card-body py-3'>
-              <div className='table-responsive'>
-                <table className='table align-middle gs-0 gy-4'>
-                  <thead>
-                    <tr className='fw-bolder text-muted bg-light'>
-                      <th
-                        className={getColumnHeaderClasses('name')}
-                        onClick={() => handleOrdenation('name')}
-                      >
-                        Nome
-                      </th>
-                      <th
-                        className={getColumnHeaderClasses('description', 'min-w-150px')}
-                        onClick={() => handleOrdenation('description')}
-                      >
-                        Descrição
-                      </th>
-                      <th
-                        className={getColumnHeaderClasses('price')}
-                        onClick={() => handleOrdenation('price')}
-                      >
-                        Preço
-                      </th>
-                      <th
-                        className={getColumnHeaderClasses('teacher')}
-                        onClick={() => handleOrdenation('teacher')}
-                      >
-                        Professor
-                      </th>
-                      <th className='text-dark min-w-100px'>Chat</th>
-                      <th
-                        className={getColumnHeaderClasses('isActive', 'min-w-110px')}
-                        onClick={() => handleOrdenation('isActive')}
-                      >
-                        Ativo
-                      </th>
-                      <th className='text-dark min-w-50px text-center rounded-end'>Ação</th>
-                    </tr>
-                  </thead>
+          <div className='card-body py-3'>
+            <div className='table-responsive'>
+              <table className='table align-middle gs-0 gy-4'>
+                <thead>
+                  <tr className='fw-bolder text-muted bg-light'>
+                    <th
+                      className={getColumnHeaderClasses('name')}
+                      onClick={() => handleOrdenation('name')}
+                    >
+                      Nome
+                    </th>
+                    <th
+                      className={getColumnHeaderClasses('description', 'min-w-150px')}
+                      onClick={() => handleOrdenation('description')}
+                    >
+                      Descrição
+                    </th>
+                    <th
+                      className={getColumnHeaderClasses('price')}
+                      onClick={() => handleOrdenation('price')}
+                    >
+                      Preço
+                    </th>
+                    <th
+                      className={getColumnHeaderClasses('teacher')}
+                      onClick={() => handleOrdenation('teacher')}
+                    >
+                      Professor
+                    </th>
+                    <th className='text-dark min-w-50px'>Chat</th>
+                    <th
+                      className={getColumnHeaderClasses('isActive', 'min-w-80px')}
+                      onClick={() => handleOrdenation('isActive')}
+                    >
+                      Ativo
+                    </th>
+                    <th className='text-dark min-w-80px text-start rounded-end'>Ação</th>
+                  </tr>
+                </thead>
 
-                  <tbody>
-                    {!loading &&
-                      rooms?.map((item) => (
-                        <Row
-                          key={item.id}
-                          id={item.id}
-                          name={item.name}
-                          description={item.description}
-                          price={currenceMask(item.price + '')}
-                          teacher={item.teacherName}
-                          isActive={item.isActive}
-                          updateRoom={updateRoom}
-                          deleteRoom={deleteRoom}
-                          handleRefresher={handleRefresher}
-                        />
-                      ))}
-                  </tbody>
-                </table>
-              </div>
+                <tbody>
+                  {!loading &&
+                    rooms?.map((item) => (
+                      <Row
+                        key={item.id}
+                        id={item.id}
+                        name={item.name}
+                        description={item.description}
+                        price={maskedToMoney(item.price)}
+                        teacher={item.teacherName}
+                        isActive={item.isActive}
+                        toggleStatus={toggleStatus}
+                        deleteRoom={deleteRoom}
+                        isChatActive={item.isChatActive}
+                        handleRefresher={handleRefresher}
+                      />
+                    ))}
+                </tbody>
+              </table>
             </div>
-
-            <div className='card d-flex flex-row justify-content-end align-items-center ps-9 pe-9 pb-5'>
-              <Pagination paginationHook={paginationHook} />
-            </div>
-          </>
+          </div>
         )}
 
         {rooms.length == 0 && !loading && <ItemNotFound message='Nenhuma sala encontrada' />}
 
         {loading && <Loading />}
+
+        <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
+          <div />
+
+          <Pagination paginationHook={paginationHook} />
+        </div>
       </div>
     </>
   )

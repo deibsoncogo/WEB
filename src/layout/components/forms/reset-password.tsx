@@ -7,11 +7,13 @@ import { FormHandles } from '@unform/core'
 
 import { Input } from '../inputs'
 import { api } from '../../../application/services/api'
+import { Button } from '../buttons/CustomButton'
 
 export function FormResetPassword() {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
+  const [loading, setLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -21,11 +23,11 @@ export function FormResetPassword() {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é nescessária'),
+        password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é necessária'),
         passwordConfirm: Yup.string()
           .min(6, 'No mínimo 6 caracteres')
           .oneOf([Yup.ref('password'), null], 'As senhas devem ser idênticas')
-          .required('Senha é nescessária'),
+          .required('Senha é necessária'),
       })
       await schema.validate(data, { abortEarly: false })
 
@@ -44,6 +46,7 @@ export function FormResetPassword() {
 
   async function handleResetPassword(data: any) {
     setHasError(false)
+    setLoading(true)
     const token = router.query.token
     try {
       await api.post(`/auth/resetPassword/${token}`, data)
@@ -56,6 +59,7 @@ export function FormResetPassword() {
       }
       setMessage(err.response.data.message[0])
     }
+    setLoading(false)
   }
 
   return (
@@ -75,19 +79,21 @@ export function FormResetPassword() {
       />
 
       <div className='mb-10 d-flex justify-content-between '>
-        <button
+        <Button
+          title='Cancelar'
           type='button'
           onClick={() => {
             router.push('/')
           }}
-          className='btn btn-lg btn-secondary button-size-lg mb-5'
-        >
-          Cancelar
-        </button>
+          customClasses={['btn-secondary', 'mb-5']}
+        />
 
-        <button type='submit' className='btn btn-lg btn-primary button-size-lg mb-5'>
-          Redefinir senha
-        </button>
+        <Button
+          title='Redefinir senha'
+          type='submit'
+          loading={loading}
+          customClasses={['btn-primary', 'mb-5']}
+        />
       </div>
     </Form>
   )

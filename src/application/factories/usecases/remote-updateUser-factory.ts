@@ -3,4 +3,4 @@ import { IUpdateUser } from '../../../domain/usecases/interfaces/user/updateUser
 import { makeApiUrl, makeAxiosHttpClient } from '../http'
 
 export const makeRemoteUpdateUser = (): IUpdateUser =>
-  new RemoteUpdateUser(makeApiUrl(`/user`), makeAxiosHttpClient())
+  new RemoteUpdateUser(makeApiUrl(`user`), makeAxiosHttpClient())

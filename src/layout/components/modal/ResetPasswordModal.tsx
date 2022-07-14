@@ -3,7 +3,7 @@ import { Form } from '@unform/web'
 import * as Yup from 'yup'
 import React, { useEffect, useRef } from 'react'
 import { Modal } from 'react-bootstrap'
-import CustomButton from '../buttons/CustomButton'
+import { Button } from '../buttons/CustomButton'
 import { Input } from '../inputs'
 import { isStrongPassword } from '../../../domain/shared/reggexPatterns/isPasswordStrong'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
@@ -73,20 +73,22 @@ function ResetPasswordModal({
       </Modal.Body>
 
       <Modal.Footer>
-        <CustomButton
+        <Button
+          type='button'
+          title='Cancelar'
+          onClick={onRequestClose}
+          size='sm'
+          customClasses={['btn-secondary', 'mb-5', 'px-20']}
+        />
+
+        <Button
           type='submit'
-          customClasses={['btn-primary', 'w-25']}
           title='Salvar'
           form='reset-password-form'
           disabled={loading}
-        />
-
-        <CustomButton
-          type='button'
-          customClasses={['btn-secondary', 'mb-5', 'px-20']}
-          title='Cancelar'
           loading={loading}
-          onClick={onRequestClose}
+          size='sm'
+          customClasses={['btn-primary', 'mb-5', 'px-20']}
         />
       </Modal.Footer>
     </Modal>

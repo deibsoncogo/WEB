@@ -1,14 +1,14 @@
-import Modal from 'react-modal'
-import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
+import { Form } from '@unform/web'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import Modal from 'react-modal'
 
-import { KTSVG } from '../../../helpers'
-import { DatePicker, Select } from '../inputs'
 import { toast } from 'react-toastify'
-import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { GrantedProduct } from '../../../domain/models/grantedProduct'
 import { Product } from '../../../domain/models/product'
+import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
+import { KTSVG } from '../../../helpers'
+import { DatePicker, Select } from '../inputs'
 
 type NewTransactionModalProps = {
   isOpen: boolean
@@ -26,7 +26,7 @@ export function ProductsModal({
   onRequestClose,
   grantedProducts,
   onAddProduct,
-  getProducts
+  getProducts,
 }: NewTransactionModalProps) {
   const formRef = useRef<FormHandles>(null)
   const [defaultValue, setDefaultValue] = useState({})
@@ -57,13 +57,9 @@ export function ProductsModal({
     }
 
     const id = getProductId(name)
-    const product = products?.find(prod => prod.id === id)!
-    
-    const newGrantedProduct = new GrantedProduct(
-      id,
-      expireDate,
-      product
-    ) 
+    const product = products?.find((prod) => prod.id === id)!
+
+    const newGrantedProduct = new GrantedProduct(id, expireDate, product)
 
     setSelectedProducts((prevProducts) => [...prevProducts, newGrantedProduct])
   }
@@ -99,7 +95,7 @@ export function ProductsModal({
 
   function handleAddProducts() {
     if (checkIfAProductIsGranted()) return
-    
+
     if (selectedProducts.length === 0) {
       toast.error('Nenhum produto foi selecionado!')
       return
@@ -112,11 +108,13 @@ export function ProductsModal({
   }
 
   function findProducts(type: string) {
-    return products?.filter(prod => prod.type === type)
+    return products?.filter((prod) => prod.type === type)
   }
 
   useEffect(() => {
-    getProducts.getAll().then((res) => setProducts(res.data))
+    getProducts
+      .getAll({ name: '', order: 'asc', page: 1, take: 5 })
+      .then((res) => setProducts(res.data as any))
   }, [])
 
   useEffect(() => {
@@ -157,12 +155,21 @@ export function ProductsModal({
               {selectedProducts.length > 0 && (
                 <>
                   {selectedProducts.map((selectedProduct) => (
-                    <div key={selectedProduct.productId} className='container gap-20 row mh-175px overflow-auto'>
+                    <div
+                      key={selectedProduct.productId}
+                      className='container gap-20 row mh-175px overflow-auto'
+                    >
                       <div className='col w-50'>
                         <div className='d-flex align-items-center gap-5'>
                           <div className='w-75'>
-                            <Select name={selectedProduct.product.name} label={setProductLabel(selectedProduct.product.type)} value={selectedProduct.product.name}>
-                              <option value={selectedProduct.product.name}>{selectedProduct.product.name}</option>
+                            <Select
+                              name={selectedProduct.product.name}
+                              label={setProductLabel(selectedProduct.product.type)}
+                              value={selectedProduct.product.name}
+                            >
+                              <option value={selectedProduct.product.name}>
+                                {selectedProduct.product.name}
+                              </option>
                             </Select>
                           </div>
                           <DatePicker
@@ -274,9 +281,6 @@ export function ProductsModal({
             </div>
 
             <div className='modal-footer'>
-              <button type='button' className='btn btn-primary' onClick={handleAddProducts}>
-                Confirmar
-              </button>
               <button
                 type='button'
                 className='btn btn-light'
@@ -286,6 +290,9 @@ export function ProductsModal({
                 }}
               >
                 Cancelar
+              </button>
+              <button type='button' className='btn btn-primary' onClick={handleAddProducts}>
+                Confirmar
               </button>
             </div>
           </Form>

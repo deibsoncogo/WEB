@@ -4,7 +4,7 @@ import { makeRemoteDeleteCategories } from '../../usecases/categories/remote-del
 import { makeRemoteGetCategories } from '../../usecases/categories/remote-getCategories-factory'
 import { makeRemoteUpdateCategory } from '../../usecases/categories/remote-updateCategory-factory'
 
-export const MakeCategoriesPage = () => {
+export const MakeCategoryPage = () => {
   return (
     <CategoriesTemplate
       remoteCreateCategory={makeRemoteCreateCategory()}

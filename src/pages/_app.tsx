@@ -3,7 +3,7 @@ import '../styles/sass/general.scss'
 import type { AppProps } from 'next/app'
 import { LayoutProvider, LayoutSplashScreen, PageDataProvider } from '../layout/core'
 import { useRouter } from 'next/router'
-import { unprotectedRoutes } from '../application/routing/routes'
+import { publicRoutes } from '../application/routing/routes'
 import { AuthWrapper } from '../application/wrappers/authWrapper'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -22,7 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <PageDataProvider>
           <ToastContainer theme='light' autoClose={2000} />
 
-          {unprotectedRoutes.includes(currentPath) ? (
+          {publicRoutes.includes(currentPath) ? (
             <Component {...pageProps} />
           ) : (        
               <AuthWrapper>

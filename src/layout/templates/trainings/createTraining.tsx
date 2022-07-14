@@ -14,6 +14,7 @@ import { IGetZoomUsers, IZoomUser } from '../../../domain/usecases/interfaces/zo
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormCreateTraining } from '../../components/forms/trainings/create'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
+import { onlyNums } from '../../formatters/currenceFormatter'
 import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
 import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from './utils/getAsyncTeachersToSelectInput'
@@ -54,7 +55,10 @@ function CreateTrainingPageTemplate({
   } = useRequest<IZoomUser[]>(remoteGetZoomUsers.get)
 
   async function handleFormSubmit(data: ITraining) {
-    const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, data)
+    const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, {
+      ...data,
+      price: onlyNums(data.price),
+    })
 
     if (error || streamList.length === 0) {
       formRef?.current?.setErrors(error || {})
@@ -67,6 +71,7 @@ function CreateTrainingPageTemplate({
 
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)
+      dataFormatted.append('active', 'false')
       createTraining(dataFormatted)
     }
   }
@@ -85,13 +90,11 @@ function CreateTrainingPageTemplate({
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    const options = await getAsyncCategoiesToSelectInput({ categoryName, remoteGetCategories })
-    return options
+    return getAsyncCategoiesToSelectInput({ categoryName, remoteGetCategories })
   }
 
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
-    const options = await getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers })
-    return options
+    return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers })
   }
 
   const handlePopulateSelectInputs = async () => {
@@ -137,22 +140,20 @@ function CreateTrainingPageTemplate({
   }, [createTrainingError, getZoomUsersError])
 
   return (
-    <>
-      <FormCreateTraining
-        ref={formRef}
-        removeStreamItem={removeStreamItem}
-        addStreamingDate={addStreamingDate}
-        onSubmit={handleFormSubmit}
-        onCancel={handleCancel}
-        searchTeachers={handleGetAsyncTeachersToSelectInput}
-        searchCategories={handleGetAsyncCategoriesToSelectInput}
-        streamList={streamList}
-        loadingSubmit={loadingTrainingCreation}
-        zoomUsersOptions={zoomUsersOptions}
-        defaultCategoryOptions={defaultCategoryOptions}
-        defaultTeacherOptions={defaultTeacherOptions}
-      />
-    </>
+    <FormCreateTraining
+      ref={formRef}
+      removeStreamItem={removeStreamItem}
+      addStreamingDate={addStreamingDate}
+      onSubmit={handleFormSubmit}
+      onCancel={handleCancel}
+      searchTeachers={handleGetAsyncTeachersToSelectInput}
+      searchCategories={handleGetAsyncCategoriesToSelectInput}
+      streamList={streamList}
+      loadingSubmit={loadingTrainingCreation}
+      zoomUsersOptions={zoomUsersOptions}
+      defaultCategoryOptions={defaultCategoryOptions}
+      defaultTeacherOptions={defaultTeacherOptions}
+    />
   )
 }
 

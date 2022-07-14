@@ -3,8 +3,11 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import { toast } from 'react-toastify'
+import { ConflitctEntitiesError } from '../../../../domain/errors/conflict-entities-error'
 import { IToggleTrainingStatus } from '../../../../domain/usecases/interfaces/trainings/toggleTrainingStatus'
 import { KTSVG } from '../../../../helpers'
+import { maskedToMoney } from '../../../formatters/currenceFormatter'
+import { Switch } from '../../inputs'
 import ConfirmationModal from '../../modal/ConfirmationModal'
 
 interface IRow {
@@ -15,10 +18,8 @@ interface IRow {
   teacherName: string
   active: boolean
   deleteTraining: IDeleteTraining
-  updateStatusOfTraining: IUpdateTraining
   getTrainings(): Promise<void>
-  remoteToggleTrainingStatus: IToggleTrainingStatus
-  handleRefresher: () => void
+  handleToggleStatusConfirmation: (trainingId: string) => void
 }
 
 export function Row({
@@ -29,10 +30,8 @@ export function Row({
   teacherName,
   active,
   deleteTraining,
-  remoteToggleTrainingStatus,
-  updateStatusOfTraining,
   getTrainings,
-  handleRefresher,
+  handleToggleStatusConfirmation,
 }: IRow) {
   const [loading, setLoading] = useState(false)
   const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false)
@@ -46,42 +45,18 @@ export function Row({
       getTrainings()
       toast.success('Treinamento excluído com sucesso')
     } catch (err) {
+      if (err instanceof ConflitctEntitiesError) {
+        toast.error('Existem produtos vinculados a este treinamento')
+        return
+      }
       toast.error('Erro ao deletar o treinamento Treinamento')
     } finally {
       setLoading(false)
     }
   }
 
-  async function handleToggleTrainingStatus() {
-    try {
-      setLoading(true)
-      await remoteToggleTrainingStatus.toggle({ id, active: active ? 'false' : 'true' })
-      getTrainings()
-      toast.success('Status do treinamento atualizado com sucesso.')
-    } catch {
-      toast.error('Error ao alterar o status do treinamento')
-    } finally {
-      setLoading(false)
-    }
-    setLoading(false)
-  }
-
   async function handleUpdateStatusOfTraining() {
-    setLoading(true)
-
-    const form = new FormData()
-    form.append('id', id)
-    form.append('active', !active === true ? 'true' : 'false')
-
-    try {
-      await updateStatusOfTraining.update(form)
-      handleRefresher()
-      toast.success('Status atualizado com sucesso')
-    } catch (err) {
-      toast.error('Erro ao atualizar o treinamento Treinamento')
-    }
-    setIsModalUpdateOpen(false)
-    setLoading(false)
+    handleToggleStatusConfirmation(id)
   }
 
   return (
@@ -98,14 +73,14 @@ export function Row({
         </span>
       </td>
       <td>
-        <span className='text-dark fw-bold d-block fs-7'>{price}</span>
+        <span className='text-dark fw-bold d-block fs-7'>{maskedToMoney(price)}</span>
       </td>
       <td>
         <span className='text-dark fw-bold d-block fs-7'>{teacherName}</span>
       </td>
       <td>
         <Tooltip content='Chat' rounded color='primary'>
-          <Link href='/trainings/chat'>
+          <Link href={`/trainings/chat/${id}`}>
             {active ? (
               <button className='btn btn-icon  btn-active-color-primary btn-sm me-1'>
                 <KTSVG path='/icons/com003.svg' className='svg-icon-3 svg-icon-primary' />
@@ -118,37 +93,33 @@ export function Row({
           </Link>
         </Tooltip>
       </td>
-      <td>
-        <div className='form-check form-switch form-check-custom form-check-solid'>
-          <input
-            className='form-check-input'
-            type='checkbox'
-            checked={active}
-            id='flexSwitchDefault'
-            onChange={handleToggleTrainingStatus}
-          />
-        </div>
-      </td>
 
       <td>
-        <Link href={`/trainings/edit/${id}`}>
-          <button
-            title='Editar'
-            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-          >
-            <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-          </button>
-        </Link>
-        <button
-          title='Deletar'
+        <Switch active={active} setModalUpdate={handleUpdateStatusOfTraining} />
+      </td>
+
+      <td className='text-end d-flex justify-content-start px-4'>
+        <Tooltip content='Editar' rounded color='primary'>
+          <Link href={`/trainings/edit/${id}`}>
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+              <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
+            </button>
+          </Link>
+        </Tooltip>
+
+        <Tooltip
+          content='Deletar'
+          rounded
+          color='primary'
           onClick={() => {
             setIsDeleteCategoryModalOpen(true)
           }}
+          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
         >
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
           </button>
-        </button>
+        </Tooltip>
       </td>
 
       <ConfirmationModal

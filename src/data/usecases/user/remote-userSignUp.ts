@@ -4,7 +4,6 @@ import { InvalidParamsError } from '../../../domain/errors'
 import { IUserSignUp } from '../../../domain/usecases/interfaces/user/userSignUp'
 import { UserSignUp } from '../../../domain/models/userSignUp'
 
-
 export class RemoteUserSignUp implements IUserSignUp {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<void>) {}
 
@@ -14,6 +13,7 @@ export class RemoteUserSignUp implements IUserSignUp {
       method: 'post',
       body: userSignUp,
     })
+   
     switch (httpResponse.statusCode) {
       case HttpStatusCode.created:
         return true

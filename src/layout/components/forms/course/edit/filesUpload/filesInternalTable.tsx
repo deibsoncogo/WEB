@@ -1,4 +1,5 @@
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
+import { FormHandles } from '@unform/core'
+import { ChangeEvent, RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { DeleteFileUpload } from '../../../../../../domain/models/deleteFile'
 import { FileUpload } from '../../../../../../domain/models/fileUpload'
 import { KTSVG } from '../../../../../../helpers'
@@ -11,6 +12,7 @@ type prop = {
   filesUpload: ICourseAttachmentResponse[]
   IdDeletedFiles: DeleteFileUpload[]
   filesUploadUpdate: FileUpload[]
+  formRef: RefObject<FormHandles>
 }
 
 let currentId = 0
@@ -21,14 +23,12 @@ function getNewId() {
 
 export default function FilesInternalTable(props: prop) {
   const [fileName, setname] = useState<string>()
-  const [originalName, setOriginalName] = useState<string>()
   const [file, setFile] = useState<File>()
   const [hasError, setHasError] = useState<boolean>(false)
   const [refresher, setRefresher] = useState<boolean>(false)
   const [messageError, setMessageError] = useState<string>('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {}, [refresher])
 
   const handleRefresher = () => {
     setRefresher(!refresher)
@@ -38,25 +38,25 @@ export default function FilesInternalTable(props: prop) {
   }
 
   const handleUploadFiles = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const fileUpload = e.target.files?.[0]
 
-     if (!file)     
+     if (!fileUpload )     
        return
-    setOriginalName(file?.name)
-    setFile(file)
+    
+    props.formRef.current?.setFieldValue('Arquivo', fileUpload?.name)
+    setFile(fileUpload )
       
   }, [])
 
   async function handleFileSubmit() {
     
-    if (fileName && file) {
-    
-         
-      const originalName = file.name
-      const fileObject = {name: fileName, originalName, file}     
+    if (fileName && file) {    
+               
+      const fileObject = {name: fileName, originalName: file.name, file}     
       props.filesUpload.push(fileObject)      
       props.filesUploadUpdate.push(fileObject)
-
+      props.formRef.current?.clearField('fileName')
+      props.formRef.current?.clearField('Arquivo')
       handleRefresher()
     } else {
       setHasError(true)
@@ -90,7 +90,7 @@ export default function FilesInternalTable(props: prop) {
           onChange={(event) => setname(event.target.value)}
         />
 
-        <Input readOnly name='Arquivo' label='Arquivo' type='text' value={originalName} />
+        <Input readOnly name='Arquivo' label='Arquivo' type='text'/>
 
         <div className='fv-row d-flex align-items-center '>
           <input

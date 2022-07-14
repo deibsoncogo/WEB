@@ -1,6 +1,7 @@
-import { useRef, useEffect, ReactNode, SelectHTMLAttributes } from 'react'
+import { ReactNode, SelectHTMLAttributes, useEffect, useRef } from 'react'
 
 import { useField } from '@unform/core'
+import { Form } from '@unform/web'
 
 type SelectFace = SelectHTMLAttributes<HTMLSelectElement> & {
   name: string
@@ -10,7 +11,7 @@ type SelectFace = SelectHTMLAttributes<HTMLSelectElement> & {
   fixedValue?: string
 }
 
-export function Select({ name, label, classes, fixedValue, children, ...rest }: SelectFace) {
+export function Select({ name, label, classes, children, ...rest }: SelectFace) {
   const selectRef = useRef(null)
 
   const { fieldName, registerField, error, clearError } = useField(name)
@@ -45,14 +46,14 @@ export function Select({ name, label, classes, fixedValue, children, ...rest }: 
         name={name}
         className='form-select form-select-solid'
         onChangeCapture={clearError}
-        onChange={() => clearError()}
         {...rest}
       >
-        <option value='' hidden disabled selected>
-          {error ? error : fixedValue ? fixedValue : 'Selecione'}
+        <option value='' hidden disabled>
+          Selecione
         </option>
         {children}
       </select>
+      {error && <span className='text-danger'>{error}</span>}
     </div>
   )
 }

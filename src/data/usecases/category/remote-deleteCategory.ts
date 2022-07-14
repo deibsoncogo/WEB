@@ -1,4 +1,5 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
+import { ConflitctEntitiesError } from '../../../domain/errors/conflict-entities-error'
 import {
   DeleteCategoryParams,
   IDeleteCategory,
@@ -17,6 +18,8 @@ export class RemoteDeleteCategory implements IDeleteCategory {
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body
+      case HttpStatusCode.conflict:
+        throw new ConflitctEntitiesError(['Existem produtos vinculados a essa categoria.'])
       case HttpStatusCode.badRequest:
         throw new InvalidParamsError(['Categoria não encontrada'])
       default:

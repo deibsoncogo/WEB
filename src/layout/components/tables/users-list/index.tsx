@@ -10,7 +10,6 @@ import { MakeUserRow } from '../../../../application/factories/components/delete
 import { KTSVG } from '../../../../helpers'
 import { debounce } from '../../../../helpers/debounce'
 import { cpfMask } from '../../../formatters/cpfFormatter'
-import { FullLoading } from '../../FullLoading/FullLoading'
 import { dateMask } from '../../../formatters/dateFormatter'
 import { addressMask } from '../../../formatters/addressFormatter'
 import { getCurrentDate } from '../../../../helpers/getCurrentDate'
@@ -192,7 +191,6 @@ export function UsersTable({
   return (
     <>
       <div className='card mb-5 mb-xl-8'>
-        {loading && <FullLoading />}
         <div className='card-header border-0 pt-5'>
           <h3 className='card-title align-items-start flex-column'>
             <Search onChangeText={onSearchTextChanged} />
@@ -249,20 +247,19 @@ export function UsersTable({
                   </thead>
 
                   <tbody>
-                    {!loading &&
-                      users.map((item) => (
-                        <MakeUserRow
-                          key={item.id}
-                          id={item.id}
-                          name={item.name}
-                          email={item.email}
-                          birthDate={dateMask(item.birthDate)}
-                          cpf={cpfMask(item.cpf)}
-                          address={addressMask(item.address[0])}
-                          deleteUser={deleteUser}
-                          openResetUserPasswordModal={handleOpenResetPasswordModal}
-                        />
-                      ))}
+                    {users.map((item) => (
+                      <MakeUserRow
+                        key={item.id}
+                        id={item.id}
+                        name={item.name}
+                        email={item.email}
+                        birthDate={dateMask(item.birthDate)}
+                        cpf={cpfMask(item.cpf)}
+                        address={addressMask(item.address[0])}
+                        deleteUser={deleteUser}
+                        openResetUserPasswordModal={handleOpenResetPasswordModal}
+                      />
+                    ))}
                   </tbody>
                 </table>
               </div>

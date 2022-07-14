@@ -7,14 +7,13 @@ import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
 import { Input } from '../inputs'
-import { api } from '../../../application/services/api'
 
-import { IAuthResponse } from '../../../interfaces/api-response/authResponse'
 import jwtDecode from 'jwt-decode'
 import { IToken } from '../../../interfaces/application/token'
 import { toast } from 'react-toastify'
 import { IUserSignIn } from '../../../domain/usecases/interfaces/user/userSignIn'
 import { UserSignIn } from '../../../domain/models/userSignIn'
+import { Button } from '../buttons/CustomButton'
 
 type Props = {
   userLogin: IUserSignIn
@@ -23,15 +22,15 @@ export function FormLogin(props: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
+  const [loading, setLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [message, setMessage] = useState('')
 
-  const onChangeError = () =>{
-        if(formRef.current){
-          formRef.current.setErrors({})
-        }
+  const onChangeError = () => {
+    if (formRef.current) {
+      formRef.current.setErrors({})
+    }
   }
-
 
   async function handleFormSubmit(data: IFormLogin) {
     if (!formRef.current) throw new Error()
@@ -59,19 +58,22 @@ export function FormLogin(props: Props) {
 
   async function handleSignIn(data: IFormLogin) {
     setHasError(false)
+    setLoading(true)
     try {
-      const response = await props.userLogin.signIn(new UserSignIn(data.email, data.password));
+      const response = await props.userLogin.signIn(new UserSignIn(data.email, data.password))
       localStorage.setItem('name', response.name)
       localStorage.setItem('email', response.email)
       localStorage.setItem('access_token', response.accessToken)
-      localStorage.setItem('expiration', jwtDecode<IToken>(response.accessToken).exp)      
+      localStorage.setItem('expiration', jwtDecode<IToken>(response.accessToken).exp)
       router.push('/dashboard')
-      toast.success("Login efetuado com sucesso")
-    } catch (err: any) {     
+      toast.success('Login efetuado com sucesso')
+    } catch (err: any) {
       setHasError(true)
-      setMessage(err.message)      
+      setMessage(err.message)
+    } finally {
+      setLoading(false)
     }
-}
+  }
   return (
     <Form className='form w-100' ref={formRef} onSubmit={handleFormSubmit}>
       {hasError && (
@@ -80,7 +82,7 @@ export function FormLogin(props: Props) {
         </div>
       )}
 
-      <Input name='email' label='E-mail' placeholder='E-mail' onChange={onChangeError}/>
+      <Input name='email' label='E-mail' placeholder='E-mail' onChange={onChangeError} />
       <Input name='password' label='Senha' placeholder='Senha' type='password' />
 
       <div className='mb-10 d-flex justify-content-between '>
@@ -94,9 +96,12 @@ export function FormLogin(props: Props) {
         <Link href='/password'>Esqueceu a senha?</Link>
       </div>
 
-      <button type='submit' className='btn btn-lg btn-primary w-100 mb-5'>
-        Entrar
-      </button>
+      <Button
+        title='Entrar'
+        type='submit'
+        loading={loading}
+        customClasses={['btn-primary', 'mb-5', 'w-100']}
+      />
     </Form>
   )
 }

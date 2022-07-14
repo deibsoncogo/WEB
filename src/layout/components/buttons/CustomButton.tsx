@@ -3,25 +3,43 @@ import { Spinner } from 'react-bootstrap'
 
 interface CustomButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   title: string
+  size?: 'sm' | 'lg' | 'icon'
   loading?: boolean
   customClasses: string[]
 }
-function CustomButton({ title, loading = false, customClasses = [], ...props }: CustomButtonProps) {
+
+function Button({
+  title,
+  size = 'lg',
+  loading = false,
+  customClasses = [],
+  ...props
+}: CustomButtonProps) {
   const buttonClasses = [
-    'btn btn-lg',
-    'mb-5',
+    'btn',
+    `btn-${size === 'icon' ? 'icon' : 'lg'}`,
+    `button-size-${size}`,
+    'd-flex',
     'align-items-center',
     'justify-content-center',
-    'd-flex ',
   ]
 
   buttonClasses.push(...customClasses)
 
   return (
-    <button className={buttonClasses.join(' ')} disabled={loading} {...props}>
-      {loading ? <Spinner animation='border' /> : title}
-    </button>
+    <div className='d-flex'>
+      <button className={buttonClasses.join(' ')} disabled={loading} {...props}>
+        {loading ? (
+          // span element prevent button bootstrap classes afect sppiner classes
+          <span>
+            <Spinner animation='border' className='spinner-border-custom'/>
+          </span>
+        ) : (
+          title
+        )}
+      </button>
+    </div>
   )
 }
 
-export default CustomButton
+export { Button }

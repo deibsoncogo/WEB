@@ -5,4 +5,4 @@ import { IGetAllAttachmentByCourseId } from './../../../../domain/usecases/inter
 
 
 export const makeRemoteGetAllAttachmentByCourseId = (): IGetAllAttachmentByCourseId =>
-  new RemoteGetAllAttachmentCourseByCourseId(makeApiUrl('/courseAttachment/getAllAttachment'), makeAxiosHttpClient());
+  new RemoteGetAllAttachmentCourseByCourseId(makeApiUrl('courseAttachment/getAllAttachment'), makeAxiosHttpClient());

@@ -88,7 +88,7 @@ export function Row(props: IRow) {
             setModalUpdate={setIsModalUpdateOpen}
           />
         </td>
-        <td className='text-end d-flex justify-content-end px-4'>
+        <td className='text-end d-flex justify-content-start px-4'>
           <Tooltip content={'Editar'} rounded color = "primary">
             <Link href={`/courses/edit/${props.id}`}>
               <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
@@ -101,7 +101,7 @@ export function Row(props: IRow) {
               onClick={() => {
                 setIsModalDeleteOpen(true)
               }}
-              className='btn btn-icon btn-bg-light btn-active-color-danger btn-sm'
+              className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
             >
               <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
             </button>

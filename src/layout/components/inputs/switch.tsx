@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction} from 'react'
+
 
 interface ISwitch {
   active: boolean
@@ -7,17 +8,20 @@ interface ISwitch {
 
 export function Switch({ active, setModalUpdate }: ISwitch) {
   return (
-    <div className='d-block'>
-      <div className='form-check form-switch form-switch-sm form-check-custom'>
-        <input
-          onClick={() => {
-            setModalUpdate(true)
-          }}
-          className='form-check-input'
-          type='checkbox'
-          checked={active}
-        />
-      </div>
-    </div>
+    <>
+      <div className='d-block'>
+        <div className='form-check form-switch form-switch-sm form-check-custom'>
+          <input
+            onClick={() => {
+              setModalUpdate(true)
+            }}
+            className='form-check-input'
+            type='checkbox'
+            checked={active}
+            readOnly
+          />
+        </div>
+      </div>    
+    </>
   )
 }

@@ -3,4 +3,4 @@ import { IToggleTrainingStatus } from '../../../../domain/usecases/interfaces/tr
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteToggleTrainingStatus = (): IToggleTrainingStatus =>
-  new RemoteToggleTrainingStatus(makeApiUrl('/training'), makeAxiosHttpClient())
+  new RemoteToggleTrainingStatus(makeApiUrl('/training/toggleStatus'), makeAxiosHttpClient())

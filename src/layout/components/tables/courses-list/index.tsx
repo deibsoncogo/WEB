@@ -1,25 +1,23 @@
+import { FormHandles } from '@unform/core'
 import Link from 'next/link'
-import { KTSVG } from '../../../../helpers'
-import { Search } from '../../search/Search'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
+import { usePagination } from '../../../../application/hooks/usePagination'
+import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
 import {
   GetCoursesParams,
   IGetAllCourses,
 } from '../../../../domain/usecases/interfaces/course/getAllCourses'
-import { IPartialCourseResponse } from '../../../../interfaces/api-response/coursePartialResponse'
-import { currenceMask } from '../../../formatters/currenceFormatter'
-import { toast } from 'react-toastify'
-import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
-import { Row } from './row'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
-import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
-import { Course } from '../../../../interfaces/model/Course'
+import { KTSVG } from '../../../../helpers'
 import { debounce } from '../../../../helpers/debounce'
-import { FormHandles } from '@unform/core'
-import { usePagination } from '../../../../application/hooks/usePagination'
-import { Pagination } from '../../pagination/Pagination'
+import { IPartialCourseResponse } from '../../../../interfaces/api-response/coursePartialResponse'
+import { maskedToMoney } from '../../../formatters/currenceFormatter'
 import { Loading } from '../../loading/loading'
+import { Pagination } from '../../pagination/Pagination'
 import { ItemNotFound } from '../../search/ItemNotFound'
+import { Search } from '../../search/Search'
+import { Row } from './row'
 
 type Props = {
   getAllCourses: IGetAllCourses
@@ -67,12 +65,8 @@ export default function CoursesTable(props: Props) {
         setCourses(data.data)
         setTotalPage(data.total)
       })
-      .catch((error) => toast.error('Não foi possível listar os cursos.'))
-      .finally(() =>
-        setTimeout(() => {
-          setLoading(false)
-        }, 500)
-      )
+      .catch(() => toast.error('Não foi possível listar os cursos.'))
+      .finally(() => setLoading(false))
   }, [refresher, pagination.take, pagination.currentPage, pagination.order, courseName])
 
   return (
@@ -135,7 +129,7 @@ export default function CoursesTable(props: Props) {
                       >
                         Ativo
                       </th>
-                      <th className='text-dark min-w-50px text-center rounded-end'>Ação</th>
+                      <th className='text-dark min-w-50px text-start rounded-end'>Ação</th>
                     </tr>
                   </thead>
 
@@ -147,8 +141,8 @@ export default function CoursesTable(props: Props) {
                           id={item.id}
                           name={item.name}
                           description={item.description}
-                          price={currenceMask(item.price)}
-                          discount={currenceMask(item.discount)}
+                          price={maskedToMoney(item.price)}
+                          discount={maskedToMoney(item.discount)}
                           teacher={item.teacherName}
                           active={item.isActive}
                           deleteCourse={props.deleteCourse}

@@ -3,4 +3,4 @@ import { IGetZoomUsers } from '../../../../domain/usecases/interfaces/zoom/getZo
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteGetZoomUsers = (): IGetZoomUsers =>
-  new RemoteGetZoomUsers(makeApiUrl('/zoom'), makeAxiosHttpClient())
+  new RemoteGetZoomUsers(makeApiUrl('zoom'), makeAxiosHttpClient())
