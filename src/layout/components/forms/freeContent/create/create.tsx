@@ -57,8 +57,7 @@ export function CreateFreeContentForm({createFreeContent}: CreateFreeContentProp
         contentType: Yup.string().required('Tipo do conteúdo é necessário'),
         link: Yup.string().when('contentType', {
             is: (value: string) => value && value === "video",
-            then: Yup.string().matches(
-                /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+            then: Yup.string().matches(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/,
                 'Insira um link válido'
             ).required('Link é necessário'),
         }),
@@ -98,9 +97,9 @@ export function CreateFreeContentForm({createFreeContent}: CreateFreeContentProp
     setRegisterFreeContent(true)
     createFreeContent
        .create(dataToSubmit)
-       .then(() => {
-         toast.success('Conteúdo criado com sucesso!')
+       .then(() => {         
          router.push(appRoutes.CONTENTS)
+         toast.success('Conteúdo criado com sucesso!')
        })
        .catch(() => toast.error('Não foi possível criar o conteúdo!'))
        .finally(() => setRegisterFreeContent(false))
