@@ -72,7 +72,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
-        price: Yup.string().required('Preço é necessário'),
+        price: Yup.number().required('Preço é necessário').min(0.1, 'Preço deve ser maior que zero'),
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
@@ -82,7 +82,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
       })
 
       const hasError = await verifyErrorStreamingRoom(data)
-      await schema.validate(data, { abortEarly: false })
+      await schema.validate({...data, price: onlyNums(data.price)}, { abortEarly: false })
       hasError ? setHasErrorRoom(hasError) : handleCreateRoom(data)
     } catch (err) {
       const validationErrors = {}
