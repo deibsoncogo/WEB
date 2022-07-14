@@ -1,4 +1,4 @@
-import { Input, TextArea } from "../../../../inputs"
+import { Input, TextArea } from "../../../inputs"
 
 export function VideoFreeContentForm() {
 

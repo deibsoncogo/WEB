@@ -1,4 +1,4 @@
-import { CreateFreeContentForm } from "../../../../layout/components/forms/freeContent/create/create";
+import { CreateFreeContentForm } from "../../../../layout/components/forms/freeContent/create";
 import { makeRemoteCreateFreeContent } from "../../usecases/freeContent/remote-createFreeContent-factory";
 
 

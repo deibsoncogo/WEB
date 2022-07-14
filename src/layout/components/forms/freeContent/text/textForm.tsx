@@ -1,6 +1,6 @@
 import { Editor } from '@tinymce/tinymce-react'
-import { Input, TextArea } from '../../../../inputs'
-import { InputSingleImage } from '../../../../inputs/input-single-image'
+import { Input, TextArea } from '../../../inputs'
+import { InputSingleImage } from '../../../inputs/input-single-image'
 
 type stateEditor = {
     content: string;

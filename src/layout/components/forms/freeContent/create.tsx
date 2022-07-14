@@ -2,12 +2,12 @@ import { FormHandles } from "@unform/core"
 import { Form } from "@unform/web"
 import { useRouter } from "next/router"
 import { useRef, useState } from "react"
-import { appRoutes } from "../../../../../application/routing/routes"
-import { Button } from "../../../buttons/CustomButton"
-import { InputRadio } from "../../../inputs/input-radio"
+import { appRoutes } from "../../../../application/routing/routes"
+import { Button } from "../../buttons/CustomButton"
+import { InputRadio } from "../../inputs/input-radio"
 import { VideoFreeContentForm } from "./video/videoForm"
 import * as Yup from 'yup'
-import { ICreateFreeContent } from "../../../../../domain/usecases/interfaces/freeContent/createFreeContent"
+import { ICreateFreeContent } from "../../../../domain/usecases/interfaces/freeContent/createFreeContent"
 import { toast } from "react-toastify"
 import { TextFreeContentForm } from "./text/textForm"
 
@@ -71,7 +71,7 @@ export function CreateFreeContentForm({createFreeContent}: CreateFreeContentProp
         }),
         content: Yup.string().when('contentType', {
             is: (value: string) => value && value === "text",
-            then: Yup.string().required('O conteúdo do artigo é obrigatório'),
+            then: Yup.string().required('O conteúdo do artigo é necessário'),
         }),
      
       })

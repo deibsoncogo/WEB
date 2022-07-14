@@ -2,16 +2,16 @@ import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
-import { appRoutes } from '../../../../../application/routing/routes'
-import { Button } from '../../../buttons/CustomButton'
-import { InputRadio } from '../../../inputs/input-radio'
+import { appRoutes } from '../../../../application/routing/routes'
+import { Button } from '../../buttons/CustomButton'
+import { InputRadio } from '../../inputs/input-radio'
 import * as Yup from 'yup'
 import { toast } from 'react-toastify'
-import { VideoFreeContentForm } from '../create/video/videoForm'
-import { TextFreeContentForm } from '../create/text/textForm'
-import { IGetFreeContent } from '../../../../../domain/usecases/interfaces/freeContent/getFreeContent'
-import { FullLoading } from '../../../FullLoading/FullLoading'
-import { IUpdateFreeContent } from '../../../../../domain/usecases/interfaces/freeContent/updateFreeContent'
+import { VideoFreeContentForm } from './video/videoForm'
+import { TextFreeContentForm } from './text/textForm'
+import { IGetFreeContent } from '../../../../domain/usecases/interfaces/freeContent/getFreeContent'
+import { FullLoading } from '../../FullLoading/FullLoading'
+import { IUpdateFreeContent } from '../../../../domain/usecases/interfaces/freeContent/updateFreeContent'
 
 type UpdateFreeContentProps = {
   id: string
@@ -83,7 +83,7 @@ export function UpdateFreeContentForm({
         }),
         content: Yup.string().when('contentType', {
           is: (value: string) => value && value === 'text',
-          then: Yup.string().required('O conteúdo do artigo é obrigatório'),
+          then: Yup.string().required('O conteúdo do artigo é necessário'),
         }),
       })
 

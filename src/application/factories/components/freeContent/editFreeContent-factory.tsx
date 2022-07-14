@@ -1,4 +1,4 @@
-import { UpdateFreeContentForm } from "../../../../layout/components/forms/freeContent/edit/edit";
+import { UpdateFreeContentForm } from "../../../../layout/components/forms/freeContent/edit";
 import { makeRemoteGetFreeContent } from "../../usecases/freeContent/remote-getFreeContent-factory";
 import { makeRemoteUpdateFreeContent } from "../../usecases/freeContent/remote-updateFreeContent-factory";
 
