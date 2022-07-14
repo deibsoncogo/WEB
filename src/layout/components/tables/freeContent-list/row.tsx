@@ -33,6 +33,12 @@ export function Row({
 
   const [loading, setLoading] = useState(false)
 
+  function formatText(articleContent?: string){
+    const textLimit = 100  
+    const textLimited = articleContent? articleContent.substring(0, articleContent.length >= textLimit? textLimit: articleContent.length): ''  
+    return textLimited.length >= textLimit? textLimited + ' ...': textLimited
+  }
+  
   async function handleDeleteFreeContent() {
     try {
       setLoading(true)
@@ -69,12 +75,12 @@ export function Row({
         </td>
 
         <td>
-          <span className='text-dark fw-bold d-block fs-7'>{articleContent}</span>
+          <span className='text-dark fw-bold d-block fs-7' dangerouslySetInnerHTML={{__html: formatText(articleContent)}}></span>
         </td>
       
         <td className='text-end d-flex justify-content-start px-4'>
           <Tooltip content={'Editar'} rounded color='primary'>
-            <Link href={`/rooms/edit/${id}`}>
+            <Link href={`/freeContent/edit/${id}`}>
               <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
                 <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
               </button>
@@ -100,7 +106,7 @@ export function Row({
             setIsModalDeleteOpen(false)
           }}
           onConfimation={handleDeleteFreeContent}
-          content='Você tem ceterza que deseja excluir este conteúdo?'
+          content='Você tem certeza que deseja excluir este conteúdo?'
           title='Deletar'
         />      
       </tr>

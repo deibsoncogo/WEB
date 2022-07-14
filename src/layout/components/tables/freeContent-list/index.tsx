@@ -73,7 +73,7 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
             <Search onChangeText={handleSearchFreeContent} />
           </h3>
           <div className='card-toolbar'>
-            <Link href='/rooms/create'>
+            <Link href='/freeContent/create'>
               <a className='btn btn-sm btn-light-primary'>
                 <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
                 Novo Conteúdo

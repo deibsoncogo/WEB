@@ -4,7 +4,7 @@ export const appRoutes = {
   RESET_PASSWORD: '/reset-password',
   DASHBOARD: '/dashboard',
   CATEGORIES: '/categories',
-  CONTENTS: '/contents',
+  CONTENTS: '/freeContent',
   BANNERS: '/banners',
   ALERTS: '/alerts',
   PLANS: '/plans',
