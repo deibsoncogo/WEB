@@ -35,7 +35,7 @@ export function ProductsTable({ grantedProducts, setGrantedProducts }: Props) {
             grantedProducts?.map((item) => (
               <Row
                 key={item.productId}
-                id={item.productId}
+                id={item.id!}
                 name={item.product.name}
                 expireDate={item.expireDate}
                 setGrantedProducts={setGrantedProducts}

@@ -5,7 +5,6 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import { KTSVG } from '../../../helpers'
 import { DatePicker, Select } from '../inputs'
-import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 import { toast } from 'react-toastify'
 import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { GrantedProduct } from '../../../domain/models/grantedProduct'
@@ -21,12 +20,6 @@ type NewTransactionModalProps = {
   getProducts: IGetAllProducts
 }
 
-type SelectedProduct = {
-  productId: string
-  expireDate: Date
-  product: Product
-}
-
 export function ProductsModal({
   isOpen,
   modalTitle,
@@ -37,12 +30,12 @@ export function ProductsModal({
 }: NewTransactionModalProps) {
   const formRef = useRef<FormHandles>(null)
   const [defaultValue, setDefaultValue] = useState({})
-  const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([])
+  const [selectedProducts, setSelectedProducts] = useState<GrantedProduct[]>([])
 
-  const [courses, setCourses] = useState<IPartialProductResponse[]>()
-  const [plans, setPlans] = useState<IPartialProductResponse[]>()
-  const [trainings, setTrainings] = useState<IPartialProductResponse[]>()
-  const [products, setProducts] = useState<IPartialProductResponse[]>()
+  const [courses, setCourses] = useState<Product[]>()
+  const [plans, setPlans] = useState<Product[]>()
+  const [trainings, setTrainings] = useState<Product[]>()
+  const [products, setProducts] = useState<Product[]>()
 
   function handleIncreaseProduct(fieldName: string, fieldExpireDate: string) {
     const name = formRef.current?.getFieldValue(fieldName)
@@ -64,7 +57,7 @@ export function ProductsModal({
     }
 
     const id = getProductId(name)
-    const product = products?.find(prod => prod.id === id)
+    const product = products?.find(prod => prod.id === id)!
     
     const newGrantedProduct = new GrantedProduct(
       id,
