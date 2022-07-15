@@ -317,7 +317,6 @@ export function FormCreateUser({
           title='Cancelar'
           type='button'
           customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
-          loading={registerUser}
           onClick={() => {
             router.push('/users')
           }}
@@ -327,6 +326,7 @@ export function FormCreateUser({
           type='submit'
           title='Salvar'
           customClasses={['px-20', 'btn-primary']}
+          loading={registerUser}
           disabled={registerUser}
         />
       </div>

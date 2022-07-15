@@ -256,6 +256,7 @@ export function UsersTable({
                         birthDate={dateMask(item.birthDate)}
                         cpf={cpfMask(item.cpf)}
                         address={addressMask(item.address[0])}
+                        loading={loadingUserDeletion}
                         deleteUser={deleteUser}
                         openResetUserPasswordModal={handleOpenResetPasswordModal}
                       />
