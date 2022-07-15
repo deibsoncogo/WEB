@@ -1,86 +1,134 @@
-import Modal from 'react-modal'
+import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import { FormHandles, SubmitHandler } from '@unform/core'
-import { Dispatch, SetStateAction, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import Modal from 'react-modal'
 
+import { toast } from 'react-toastify'
+import { GrantedProduct } from '../../../domain/models/grantedProduct'
+import { Product } from '../../../domain/models/product'
+import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { KTSVG } from '../../../helpers'
 import { DatePicker, Select } from '../inputs'
-import { IPartialProductResponse } from '../../../interfaces/api-response/productsPartialResponse'
 
 type NewTransactionModalProps = {
   isOpen: boolean
   modalTitle: string
   action: () => Promise<void>
   onRequestClose: () => void
-  onAddProduct: Dispatch<SetStateAction<IPartialProductResponse[]>>
+  grantedProducts: GrantedProduct[]
+  onAddProduct: Dispatch<SetStateAction<GrantedProduct[]>>
+  getProducts: IGetAllProducts
 }
 
 export function ProductsModal({
   isOpen,
   modalTitle,
-  action,
   onRequestClose,
+  grantedProducts,
   onAddProduct,
+  getProducts,
 }: NewTransactionModalProps) {
   const formRef = useRef<FormHandles>(null)
   const [defaultValue, setDefaultValue] = useState({})
-  const [selectedProducts, setSelectedProducts] = useState([{}])
+  const [selectedProducts, setSelectedProducts] = useState<GrantedProduct[]>([])
 
-  const [numberOfCourses, setNumberOfCourses] = useState([0])
-  const [numberOfTrainings, setNumberOfTrainings] = useState([0])
-  const [numberOfPlans, setNumberOfPlans] = useState([0])
+  const [courses, setCourses] = useState<Product[]>()
+  const [plans, setPlans] = useState<Product[]>()
+  const [trainings, setTrainings] = useState<Product[]>()
+  const [products, setProducts] = useState<Product[]>()
 
-  const [availableProducts, setAvailableProducts] = useState([
-    {
-      id: '1',
-      name: 'Day Trade - Do básico ao avançado',
-      expireDate: '26/10/2022',
-      type: 'Cursos',
-    },
-    {
-      id: '2',
-      name: 'Análises de Criptomoedas',
-      expireDate: '26/10/2022',
-      type: 'Cursos',
-    },
-    {
-      id: '3',
-      name: 'Segue o gráfico - Mensal',
-      expireDate: '26/10/2022',
-      type: 'Cursos',
-    },
-  ])
-
-  async function handleIncreaseProduct(fieldName: string, fieldExpireDate: string) {
+  function handleIncreaseProduct(fieldName: string, fieldExpireDate: string) {
     const name = formRef.current?.getFieldValue(fieldName)
     const expireDate = formRef.current?.getFieldValue(fieldExpireDate)
 
-    const newProduct = {
-      name,
-      label:
-        fieldName === 'course' ? 'Cursos' : fieldName === 'training' ? 'Treinamentos' : 'Planos',
-      expireDate: expireDate,
+    if (!name) {
+      toast.error('Selecione um produto!')
+      return
     }
 
-    setSelectedProducts((prevProducts) => [...prevProducts, newProduct])
-    
+    if (!expireDate) {
+      toast.error('Selecione uma data de expiração!')
+      return
+    }
+
+    if (selectedProducts.some((selected) => selected.product.name === name)) {
+      toast.error('Esse produto já foi selecionado!')
+      return
+    }
+
+    const id = getProductId(name)
+    const product = products?.find((prod) => prod.id === id)!
+
+    const newGrantedProduct = new GrantedProduct(id, expireDate, product)
+
+    setSelectedProducts((prevProducts) => [...prevProducts, newGrantedProduct])
   }
 
-  function handleIncreaseCourse() {
-    const length = numberOfCourses.length
-    const newNumber = numberOfCourses[length - 1]
-    setNumberOfCourses([...numberOfCourses, newNumber + 1])
+  function getProductId(name: string) {
+    return products?.find((prod) => prod.name === name)?.id!
   }
 
-  function handleDecreaseCourse(index: number) {
-    const temp = numberOfCourses.slice()
-    temp.splice(index, 1)
-    setNumberOfCourses(temp)
+  function setProductLabel(type: string) {
+    return type === 'course' ? 'Cursos' : type === 'training' ? 'Treinamentos' : 'Planos'
   }
 
-  function handleAddProducts(data: SubmitHandler) {
-   
+  function handleDecreaseProduct(id: string) {
+    const filteredSelectedProducts = selectedProducts.filter((product) => product.productId !== id)
+
+    setSelectedProducts(filteredSelectedProducts)
+
   }
+
+  function checkIfAProductIsGranted() {
+    let productName
+    const isAProductGranted = grantedProducts.some((chosen) =>
+      selectedProducts.some((selected) => {
+        productName = selected.product.name
+        return selected.productId === chosen.productId
+      })
+    )
+
+    if (isAProductGranted) {
+      toast.error(`O produto ${productName} já foi concedido!`)
+      return true
+    }
+  }
+
+  function handleAddProducts() {
+    if (checkIfAProductIsGranted()) return
+
+    if (selectedProducts.length === 0) {
+      toast.error('Nenhum produto foi selecionado!')
+      return
+    }
+
+    onAddProduct((prevState) => [...prevState, ...selectedProducts])
+    setSelectedProducts([])
+    onRequestClose()
+    toast.success('Produtos concedidos com sucesso!')
+  }
+
+  function findProducts(type: string) {
+    return products?.filter((prod) => prod.type === type)
+  }
+
+  useEffect(() => {
+    getProducts
+      .getAll({ name: '', order: 'asc', page: 1, take: 5 })
+      .then((res) => setProducts(res.data as any))
+  }, [])
+
+  useEffect(() => {
+    setCourses(findProducts('course'))
+    setPlans(findProducts('plan'))
+    setTrainings(findProducts('training'))
+  }, [products])
+
+  useEffect(() => {
+    selectedProducts.forEach((product) => {
+      formRef.current?.setFieldValue(`${product.product.name}-expireDate`, product.expireDate)
+    })
+  }, [selectedProducts])
 
   return (
     <Modal
@@ -103,49 +151,73 @@ export function ProductsModal({
             </button>
           </div>
 
-          <Form
-            className='form w-100'
-            ref={formRef}
-            initialData={defaultValue}
-            onSubmit={handleAddProducts}
-          >
+          <Form className='form w-100' ref={formRef} initialData={defaultValue} onSubmit={() => {}}>
             <div className='modal-body'>
-              <div className='container gap-20 row mh-175px overflow-auto'>
-                <div className='col w-50'>
-                  {numberOfCourses.map((number, index) => (
-                    <div key={number} className='d-flex align-items-center gap-5'>
-                      <div className='w-75'>
-                        <Select name='course' label='Cursos'>
-                          {availableProducts.map((product) => (
-                            <option key={product.id} value={product.name}>
-                              {product.name}
-                            </option>
-                          ))}
-                        </Select>
+              {selectedProducts.length > 0 && (
+                <>
+                  {selectedProducts.map((selectedProduct) => (
+                    <div
+                      key={selectedProduct.productId}
+                      className='container gap-20 row mh-175px overflow-auto'
+                    >
+                      <div className='col w-50'>
+                        <div className='d-flex align-items-center gap-5'>
+                          <div className='w-75'>
+                            <Select
+                              name={selectedProduct.product.name}
+                              label={setProductLabel(selectedProduct.product.type)}
+                              value={selectedProduct.product.name}
+                            >
+                              <option value={selectedProduct.product.name}>
+                                {selectedProduct.product.name}
+                              </option>
+                            </Select>
+                          </div>
+                          <DatePicker
+                            name={`${selectedProduct.product.name}-expireDate`}
+                            label='Data de expiração'
+                          />
+                        </div>
                       </div>
-
-                      <DatePicker name='courseExpireDate' label='Data de expiração' />
-                      {number >= 1 && (
+                      <div className='col align-self-end w-50 h-100 mb-8'>
                         <button
                           type='button'
                           title='Remover'
                           onClick={() => {
-                            handleDecreaseCourse(index)
+                            handleDecreaseProduct(selectedProduct.productId)
                           }}
                           className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
                         >
                           x
                         </button>
-                      )}
+                      </div>
                     </div>
                   ))}
+                </>
+              )}
+
+              <div className='container gap-20 row mh-175px overflow-auto'>
+                <div className='col w-50'>
+                  <div className='d-flex align-items-center gap-5'>
+                    <div className='w-75'>
+                      <Select name='course' label='Cursos'>
+                        {courses?.map((course) => (
+                          <option key={course.id} value={course.name}>
+                            {course.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+
+                    <DatePicker name='courseExpireDate' label='Data de expiração' />
+                  </div>
                 </div>
 
                 <div className='col align-self-end w-50 h-100 mb-8'>
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseCourse()}
+                    onClick={() => handleIncreaseProduct('course', 'courseExpireDate')}
                   >
                     + Adicionar outro curso
                   </button>
@@ -154,95 +226,73 @@ export function ProductsModal({
 
               <div className='container gap-20 row mh-175px overflow-auto'>
                 <div className='col w-50'>
-                  {numberOfTrainings.map((number) => (
-                    <div key={number} className='d-flex align-items-center gap-5'>
-                      <div className='w-75'>
-                        <Select name='training' label='Treinamentos'>
-                          {availableProducts.map((product) => (
-                            <option key={product.id} value={product.name}>
-                              {product.name}
-                            </option>
-                          ))}
-                        </Select>
-                      </div>
-
-                      <DatePicker name='trainingExpireDate' label='Data de expiração' />
-                      {number > 1 && (
-                        <button
-                          type='button'
-                          title='Remover'
-                          onClick={() => {
-                            handleDecreaseCourse(number)
-                          }}
-                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
-                        >
-                          x
-                        </button>
-                      )}
+                  <div className='d-flex align-items-center gap-5'>
+                    <div className='w-75'>
+                      <Select name='training' label='Treinamentos'>
+                        {trainings?.map((training) => (
+                          <option key={training.id} value={training.name}>
+                            {training.name}
+                          </option>
+                        ))}
+                      </Select>
                     </div>
-                  ))}
+
+                    <DatePicker name='trainingExpireDate' label='Data de expiração' />
+                  </div>
                 </div>
 
                 <div className='col align-self-end w-50 h-100 mb-8'>
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseCourse()}
+                    onClick={() => handleIncreaseProduct('training', 'trainingExpireDate')}
                   >
-                    + Adicionar outro curso
+                    + Adicionar outro treinamento
                   </button>
                 </div>
               </div>
 
               <div className='container gap-20 row mh-175px overflow-auto'>
                 <div className='col w-50'>
-                  {numberOfPlans.map((number) => (
-                    <div key={number} className='d-flex align-items-center gap-5'>
-                      <div className='w-75'>
-                        <Select name='plan' label='Planos'>
-                          {availableProducts.map((product) => (
-                            <option key={product.id} value={product.name}>
-                              {product.name}
-                            </option>
-                          ))}
-                        </Select>
-                      </div>
-
-                      <DatePicker name='planExpireDate' label='Data de expiração' />
-                      {number > 1 && (
-                        <button
-                          type='button'
-                          title='Remover'
-                          onClick={() => {
-                            handleDecreaseCourse(number)
-                          }}
-                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
-                        >
-                          x
-                        </button>
-                      )}
+                  <div className='d-flex align-items-center gap-5'>
+                    <div className='w-75'>
+                      <Select name='plan' label='Planos'>
+                        {plans?.map((plan) => (
+                          <option key={plan.id} value={plan.name}>
+                            {plan.name}
+                          </option>
+                        ))}
+                      </Select>
                     </div>
-                  ))}
+
+                    <DatePicker name='planExpireDate' label='Data de expiração' />
+                  </div>
                 </div>
 
                 <div className='col align-self-end w-50 h-100 mb-8'>
                   <button
                     type='button'
                     className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseCourse()}
+                    onClick={() => handleIncreaseProduct('plan', 'planExpireDate')}
                   >
-                    + Adicionar outro curso
+                    + Adicionar outro plano
                   </button>
                 </div>
               </div>
             </div>
 
             <div className='modal-footer'>
-              <button type='button' className='btn btn-light px-10' onClick={onRequestClose}>
+              <button
+                type='button'
+                className='btn btn-light'
+                onClick={() => {
+                  setSelectedProducts([])
+                  onRequestClose()
+                }}
+              >
                 Cancelar
               </button>
-
-              <button type='submit' className='btn btn-primary px-10'>
+              <button type='button' className='btn btn-primary' onClick={handleAddProducts}>
                 Confirmar
               </button>
             </div>

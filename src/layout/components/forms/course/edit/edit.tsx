@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 import { IUpdateCourse } from '../../../../../domain/usecases/interfaces/course/upDateCourse'
 import { IGetCourse } from '../../../../../domain/usecases/interfaces/course/getCourse'
 import { ICourseResponse } from '../../../../../interfaces/api-response/courseResponse'
-import { currenceMaskOnlyValue, maskedToMoney, onlyNums } from '../../../../formatters/currenceFormatter'
+import { maskedToMoney, onlyNums } from '../../../../formatters/currenceFormatter'
 import { UpdateCourse } from '../../../../../domain/models/updateCourse'
 import { Editor } from '@tinymce/tinymce-react'
 import { IGetAllAttachmentByCourseId } from '../../../../../domain/usecases/interfaces/courseAttachment/getAllAttachmentByCourseId'
@@ -64,9 +64,9 @@ export function FormUpdateCourse(props: Props) {
     setStateEditor({ content: event })
   }
 
+
  async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
-
     try {
       formRef.current.setErrors({})
       data.price = onlyNums(data.price)   
@@ -93,7 +93,6 @@ export function FormUpdateCourse(props: Props) {
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
-     
       data.content = stateEditor.content
       await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
@@ -121,8 +120,8 @@ export function FormUpdateCourse(props: Props) {
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
-    const price = data.price.replace('.', '').replace(',', '.')
-    const discount = data.discount.replace('.', '').replace(',', '.')
+    const price = onlyNums(data.price)
+    const discount = onlyNums(data.discount)
 
     courseClass.forEach((item, index) => (item.displayOrder = index + 1))
 

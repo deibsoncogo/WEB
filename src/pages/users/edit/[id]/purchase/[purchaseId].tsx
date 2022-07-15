@@ -2,31 +2,31 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { MakeFormUpdateUser } from '../../../application/factories/components/updateUser-factory'
-import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
-import { HeaderWrapper } from '../../../layout/components/header/HeaderWrapper'
+import { MakePurchaseView } from '../../../../../application/factories/components/getPurchase-factory'
+import { AsideDefault } from '../../../../../layout/components/aside/AsideDefault'
+import { HeaderWrapper } from '../../../../../layout/components/header/HeaderWrapper'
 
-const EditUser: NextPage = () => {
+const Purchase: NextPage = () => {
   const router = useRouter()
-  const { id } = router.query
+  const { id, purchaseId } = router.query
 
-  useEffect(() => {}, [id])
+  useEffect(() => {}, [purchaseId])
 
   return (
     <>
       <Head>
-        <title>Editar Usuário</title>
+        <title>Detalhes do pedido</title>
       </Head>
 
       <div className='page d-flex flex-row flex-column-fluid'>
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Editar Usuário' />
+          <HeaderWrapper title='Detalhes do Pedido' />
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <MakeFormUpdateUser id={id as string} />
+              <MakePurchaseView userId={id as string} transactionId={purchaseId as string} />
             </div>
           </div>
         </div>
@@ -35,4 +35,4 @@ const EditUser: NextPage = () => {
   )
 }
 
-export default EditUser
+export default Purchase

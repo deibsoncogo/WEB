@@ -1,3 +1,4 @@
+import { GrantedProduct } from '../../domain/models/grantedProduct'
 import { IAddressResponse } from './addressResponse'
 
 export interface IUserResponse {
@@ -10,4 +11,5 @@ export interface IUserResponse {
   address: IAddressResponse[]
   level: string
   role: string
+  grantedProduct: GrantedProduct[]
 }

@@ -1,5 +1,5 @@
 import { Address } from './address'
-
+import { GrantedProduct } from './grantedProduct'
 
 export class UserSignUp {
   name: string
@@ -10,8 +10,9 @@ export class UserSignUp {
   birthDate?: string
   phoneNumber?: string
   role: string
-  level?: string
-  address?: Address[]
+  level: string
+  address: Address[]
+  grantedProduct: GrantedProduct[]
 
   constructor(
     name: string,
@@ -23,20 +24,21 @@ export class UserSignUp {
     phoneNumber: string,
     role: string,
     level: string,
-    address: Address
+    address: Address,
+    grantedProduct: GrantedProduct[]
   ) {
     this.name = name
     this.email = email
     this.password = password
     this.passwordConfirm = passwordConfirmation
-    this.cpf = cpf? cpf: undefined
-    this.birthDate = birthDate? birthDate.toISOString().split('T')[0]: undefined
-    this.phoneNumber = phoneNumber? phoneNumber: undefined
+    this.cpf = cpf ? cpf : undefined
+    this.birthDate = birthDate ? birthDate.toISOString().split('T')[0] : undefined
+    this.phoneNumber = phoneNumber ? phoneNumber : undefined
     this.role = role
-    this.level = level? level: undefined
+    this.level = level
     this.address = new Array()
-    if(!address.hasUndefinedProperty())
-        this.address.push(address)
-    
+    this.address.push(address)
+    this.grantedProduct = grantedProduct
+    if (!address.hasUndefinedProperty()) this.address.push(address)
   }
 }
