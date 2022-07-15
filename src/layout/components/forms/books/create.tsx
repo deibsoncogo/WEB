@@ -105,7 +105,7 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
         discount: Yup.number().test(
           {name: 'validation',
           message: 'Desconto deve ser menor que preço',
-          test: (value) => value?  parseFloat(data.discount+'') <= parseFloat(data.price+'') : true}),      
+          test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),      
         description: Yup.string().required('Descrição é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         installments: Yup.number()

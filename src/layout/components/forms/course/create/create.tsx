@@ -65,6 +65,8 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
 
     try {
       formRef.current.setErrors({})
+      data.price = onlyNums(data.price)   
+      data.discount = onlyNums(data?.discount) 
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
@@ -76,6 +78,10 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
         price: Yup.number()
           .required('Preço é necessário')
           .min(0.01, 'Preço deve ser maior que zero'),
+        discount: Yup.number().test(
+            {name: 'validation',
+            message: 'Desconto deve ser menor que preço',
+            test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
@@ -99,8 +105,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
     }
   }
   async function handleCreateCourse(data: IFormCourse) {
-    const price = onlyNums(data.price)
-    const discount = onlyNums(data.discount)
+ 
     courseClass.forEach((item, index) => (item.displayOrder = index + 1))
 
     const course = new CreateCourse(
@@ -108,10 +113,10 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
       data.description,
       data.content,
       data.categoryId,
-      discount,
+      data.discount,
       data.installments,
       false,
-      price,
+      data.price,
       data.accessTime,
       data.userId,
       courseClass

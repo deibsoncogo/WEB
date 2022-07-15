@@ -19,7 +19,6 @@ import {
   IZoomUser,
 } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { onlyNums } from '../../../../formatters/currenceFormatter'
-import { currencyInputFormmater } from '../../../../formatters/currencyInputFormatter'
 import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { Button } from '../../../buttons/CustomButton'
@@ -68,13 +67,19 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
     if (!formRef.current) throw new Error()
     try {
       formRef.current.setErrors({})
+      data.price = onlyNums(data.price)   
+      data.discount = onlyNums(data?.discount)
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         price: Yup.number().required('Preço é necessário').min(0.1, 'Preço deve ser maior que zero'),
+        discount: Yup.number().test(
+          {name: 'validation',
+          message: 'Desconto deve ser menor que preço',
+          test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),
         installments: Yup.number()
-          .min(1, 'Quantidade de parcelas deve ser maior maior que zero')
+          .min(1, 'Quantidade de parcelas deve ser maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário'),
         description: Yup.string().required('Descriçao é necessária'),
@@ -99,12 +104,12 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
     const room = new CreateRoom(
       data.name,
       data.description,
-      onlyNums(data.discount),
+      data.discount,
       data.installments,
       false,
       data.itemChat,
       data.itemRoom,
-      onlyNums(data.price),
+      data.price,
       data.userId,
       data.categoryId,
       data.itemRoom ? data.zoomUserId : undefined,

@@ -63,7 +63,7 @@ export function ProductsModal({
     }
 
     setSelectedProducts((prevProducts) => [...prevProducts, newProduct])
-    console.log(selectedProducts)
+    
   }
 
   function handleIncreaseCourse() {
@@ -79,7 +79,7 @@ export function ProductsModal({
   }
 
   function handleAddProducts(data: SubmitHandler) {
-    console.log(data)
+   
   }
 
   return (

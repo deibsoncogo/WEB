@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 import { IUpdateCourse } from '../../../../../domain/usecases/interfaces/course/upDateCourse'
 import { IGetCourse } from '../../../../../domain/usecases/interfaces/course/getCourse'
 import { ICourseResponse } from '../../../../../interfaces/api-response/courseResponse'
-import { currenceMaskOnlyValue, onlyNums } from '../../../../formatters/currenceFormatter'
+import { currenceMaskOnlyValue, maskedToMoney, onlyNums } from '../../../../formatters/currenceFormatter'
 import { UpdateCourse } from '../../../../../domain/models/updateCourse'
 import { Editor } from '@tinymce/tinymce-react'
 import { IGetAllAttachmentByCourseId } from '../../../../../domain/usecases/interfaces/courseAttachment/getAllAttachmentByCourseId'
@@ -64,25 +64,13 @@ export function FormUpdateCourse(props: Props) {
     setStateEditor({ content: event })
   }
 
-  const currencyFormatter = (name: string) => {
-    var value = formRef.current?.getFieldValue(name)
-    value = value + ''
-    value = parseInt(value.replace(/[\D]+/g, ''))
-    value = value + ''
-    value = value.replace(/([0-9]{2})$/g, ',$1')
-
-    if (value.length > 6) {
-      value = value.replace(/([0-9]{3}),([0-9]{2}$)/g, '.$1,$2')
-    }
-    formRef.current?.setFieldValue(name, value)
-    if (value == 'NaN') formRef.current?.setFieldValue(name, '')
-  }
-
-  async function handleFormSubmit(data: IFormCourse) {
+ async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
 
     try {
       formRef.current.setErrors({})
+      data.price = onlyNums(data.price)   
+      data.discount = onlyNums(data?.discount) 
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
@@ -93,7 +81,11 @@ export function FormUpdateCourse(props: Props) {
           .required('Tempo de acesso é necessário'),
         price: Yup.number()
           .required('Preço é necessário')
-          .min(0.01, 'Preço deve ser maior que zero'),
+          .min(0.01, 'Preço deve ser maior que zero'),  
+        discount: Yup.number().test(
+            {name: 'validation',
+            message: 'Desconto deve ser menor que preço',
+            test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),     
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
@@ -101,7 +93,7 @@ export function FormUpdateCourse(props: Props) {
         description: Yup.string().required('Descriçao é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
-      console.log(data.price, typeof data.price)
+     
       data.content = stateEditor.content
       await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
@@ -192,6 +184,8 @@ export function FormUpdateCourse(props: Props) {
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)
         formRef.current?.setFieldValue('installments', data.installments)
         formRef.current?.setFieldValue('accessTime', data?.accessTime)
+        formRef.current?.setFieldValue('price', maskedToMoney(data.price))
+        formRef.current?.setFieldValue('discount', maskedToMoney(data.discount))
         setDefaultValue(data)
         setStateEditor({ content: data.content })
         setAttachment(await props.getAttachments.getAllByCourseId(props.id))
@@ -229,14 +223,7 @@ export function FormUpdateCourse(props: Props) {
             />
             <InputNumber name='accessTime' label='Tempo de acesso ao curso (em meses)' />
             <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
-            <Input
-              name='discount'
-              defaultValue={currenceMaskOnlyValue(defaultValue?.discount)}
-              label='Desconto'
-              type='text'
-              placeholderText='R$'
-              onChange={() => currencyFormatter('discount')}
-            />
+            <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
           </div>
           <div className='w-50'>
             <TextArea
