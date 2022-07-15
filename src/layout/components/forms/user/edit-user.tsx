@@ -243,9 +243,14 @@ export function FormEditUser({
           <div className='w-100'>
             <h3 className='mb-5'>Dados Pessoais</h3>
 
-            <Input name='name' label='Nome' />
-            <Input name='email' label='Email' type='email' disabled={true} />
-            <DatePicker name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
+            <Input classes='h-75px' name='name' label='Nome' />
+            <Input classes='h-75px' name='email' label='Email' type='email' disabled={true} />
+            <DatePicker
+              classes='h-75px'
+              name='birthDate'
+              label='Data de Nascimento'
+              maxDate={new Date()}
+            />
             <InputMasked
               classes='h-75px'
               name='cpf'
@@ -255,9 +260,14 @@ export function FormEditUser({
               disabled={!!cpf}
               onChange={handleInputCPF}
             />
-            <InputMasked name='phoneNumber' label='Telefone' mask='(99) 9 9999-9999' />
+            <InputMasked
+              classes='h-75px'
+              name='phoneNumber'
+              label='Telefone'
+              mask='(99) 9 9999-9999'
+            />
 
-            <Select name='level' label='Nível de Conhecimento'>
+            <Select classes='h-75px' name='level' label='Nível de Conhecimento'>
               <option value='' disabled selected>
                 Selecione
               </option>
@@ -268,7 +278,7 @@ export function FormEditUser({
               ))}
             </Select>
 
-            <Select name='role' label='Permissão'>
+            <Select classes='h-75px' name='role' label='Permissão'>
               <option value='' disabled selected>
                 Selecione
               </option>
@@ -289,12 +299,19 @@ export function FormEditUser({
               mask='99999-999'
               onChange={handleInputZipCode}
             />
-            <Input name='street' label='Logradouro' />
-            <Input name='number' label='Número' type='number' />
-            <Input name='complement' label='Complemento' />
-            <Input name='neighborhood' label='Bairro' />
-            <Input name='city' label='Cidade' />
-            <Input name='state' label='Estado' />
+            <Input classes='h-75px' name='street' label='Logradouro' />
+            <Input classes='h-75px' name='number' label='Número' type='number' />
+            <Input classes='h-75px' name='complement' label='Complemento' />
+            <Input classes='h-75px' name='neighborhood' label='Bairro' />
+            <Input classes='h-75px' name='city' label='Cidade' />
+            <Select classes='h-75px' name='state' label='Estado'>
+              <option value=''>Selecione</option>
+              {stateOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
           </div>
         </div>
 
