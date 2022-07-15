@@ -157,7 +157,10 @@ export function FormEditUser({
 
   async function handleUpdateUser(data: any) {
     setUpdateUser(true)
-    const hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)
+    let hasAlreadyCPF = false
+    if (data.cpf) {
+      hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)
+    }
 
     if (cpf || !hasAlreadyCPF) {
       updateUserRequest(data)
