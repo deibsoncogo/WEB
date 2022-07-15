@@ -200,6 +200,9 @@ export function ProductsModal({
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75'>
                       <Select name='course' label='Cursos'>
+                        <option value='' disabled selected>
+                          Selecione um curso
+                        </option>
                         {courses?.map((course) => (
                           <option key={course.id} value={course.name}>
                             {course.name}
@@ -228,6 +231,9 @@ export function ProductsModal({
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75'>
                       <Select name='training' label='Treinamentos'>
+                        <option value='' disabled selected>
+                          Selecione um treinamento
+                        </option>
                         {trainings?.map((training) => (
                           <option key={training.id} value={training.name}>
                             {training.name}
@@ -256,6 +262,9 @@ export function ProductsModal({
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75'>
                       <Select name='plan' label='Planos'>
+                        <option value='' disabled selected>
+                          Selecione um plano
+                        </option>
                         {plans?.map((plan) => (
                           <option key={plan.id} value={plan.name}>
                             {plan.name}
