@@ -55,9 +55,10 @@ function CreateTrainingPageTemplate({
   } = useRequest<IZoomUser[]>(remoteGetZoomUsers.get)
 
   async function handleFormSubmit(data: ITraining) {
-    const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, {
+    data.price = onlyNums(data.price)
+    data.discount = onlyNums(data?.discount)
+    const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema(data), {
       ...data,
-      price: onlyNums(data.price),
     })
 
     if (error || streamList.length === 0) {

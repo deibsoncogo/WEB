@@ -76,6 +76,7 @@ export function ProductsModal({
     const filteredSelectedProducts = selectedProducts.filter((product) => product.productId !== id)
 
     setSelectedProducts(filteredSelectedProducts)
+
   }
 
   function checkIfAProductIsGranted() {

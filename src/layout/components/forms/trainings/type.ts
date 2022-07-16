@@ -1,10 +1,15 @@
+import { ITraining } from './../../../../domain/models/training';
 import * as Yup from 'yup'
 
-export const trainingFormSchema = Yup.object().shape({
+export const trainingFormSchema = (data: ITraining) => Yup.object().shape({
   name: Yup.string().required('Nome é necessário'),
   teacherId: Yup.string().required('Professor é necessário'),
   zoomUserId: Yup.string().required('Usuário zoom é necessário'),
   price: Yup.number().required('Preço é necessário').min(0.1, 'Preço deve ser maior que zero'),
+  discount: Yup.number().test(
+    {name: 'validation',
+    message: 'Desconto deve ser menor que preço',
+    test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),  
   description: Yup.string().required('Descriçao é necessária'),
   imagePreview: Yup.string().required('Imagem é necessária'),
   installments: Yup.number()
