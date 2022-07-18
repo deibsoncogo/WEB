@@ -21,7 +21,6 @@ import { IUpdateRoom } from '../../../../../domain/usecases/interfaces/room/upda
 import { IGetZoomUsers } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { startStreamingRoomHelper } from '../../../../../helpers/startStreamingRoomHelper'
 import { maskedToMoney, onlyNums } from '../../../../formatters/currenceFormatter'
-import { currencyInputFormmater } from '../../../../formatters/currencyInputFormatter'
 import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { Button } from '../../../buttons/CustomButton'
@@ -95,11 +94,17 @@ export function FormUpdateRoom({
     if (!formRef.current) throw new Error()
     try {
       formRef.current.setErrors({})
+      data.price = onlyNums(data.price)   
+      data.discount = onlyNums(data?.discount)
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário'),
         userId: Yup.string().required('Selecione um professor'),
         price: Yup.number().required('Preço é necessário').min(0.1, 'Preço deve ser maior que zero'),
+        discount: Yup.number().test(
+          {name: 'validation',
+          message: 'Desconto deve ser menor que preço',
+          test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),
         installments: Yup.number()
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário')
@@ -127,12 +132,12 @@ export function FormUpdateRoom({
       typeof id === 'string' ? id : undefined,
       data.name,
       data.description,
-      onlyNums(data.discount),
+      data.discount,
       data.installments,
       data.isActive,
       data.itemChat,
       data.itemRoom,
-      onlyNums(data.price),
+      data.price,
       data.userId,
       data.categoryId,
       data.zoomUserId,

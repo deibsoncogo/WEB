@@ -73,11 +73,13 @@ function EditTrainingPageTemplate({
   } = useRequest<IZoomUser[]>(remoteGetZoomUsers.get)
 
   async function handleFormSubmit(data: ITraining) {
-    const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema, {
+    data.price = onlyNums(data.price)
+    data.discount = onlyNums(data?.discount)
+    const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema(data), {
       ...data,
-      price: onlyNums(data.price),
     })
 
+   
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)
       dataFormatted.append('id', String(trainingId))
