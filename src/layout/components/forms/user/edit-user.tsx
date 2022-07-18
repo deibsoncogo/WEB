@@ -46,6 +46,7 @@ export function FormEditUser({
   const formRef = useRef<FormHandles>(null)
 
   const [updateUser, setUpdateUser] = useState(false)
+  const [defaultValue, setDefaultValue] = useState<ZipCodeProps>()
 
   const [cpf, setCPF] = useState()
 
@@ -106,7 +107,7 @@ export function FormEditUser({
 
   function formatDataToSend(data: any) {
     const matchesCPF = data.cpf.match(/\d*/g)
-    const cpf = matchesCPF?.join('')
+    const validatedCpf = matchesCPF?.join('')
 
     const matchesPhone = data.phoneNumber.match(/\d*/g)
     const phoneNumber = matchesPhone?.join('')
@@ -118,7 +119,7 @@ export function FormEditUser({
       id,
       name: data.name,
       email: data.email,
-      cpf: cpf || null,
+      cpf: validatedCpf || null,
       birthDate: data?.birthDate
         ? formatDateToUTC(data.birthDate).toISOString().split('T')[0]
         : null,
@@ -170,13 +171,6 @@ export function FormEditUser({
     }
   }
 
-  function setKeys(obj: any) {
-    Object.keys(obj).forEach((key) => {
-      formRef.current?.setFieldValue(key, obj[key])
-    })
-    formRef.current?.setErrors({})
-  }
-
   useEffect(() => {
     if (!formRef.current) return
 
@@ -201,33 +195,43 @@ export function FormEditUser({
         }
 
         setGrantedProducts(res.grantedProduct)
-
         setCPF(newData.cpf)
-        setKeys(newData)
+
+        formRef.current?.setFieldValue('name', newData.name)
+        formRef.current?.setFieldValue('email', newData.email)
+        formRef.current?.setFieldValue('birthDate', newData.birthDate)
+        formRef.current?.setFieldValue('cpf', newData.cpf)
+        formRef.current?.setFieldValue('phoneNumber', newData.phoneNumber)
+        formRef.current?.setFieldValue('level', newData.level)
+        formRef.current?.setFieldValue('role', newData.role)
+        formRef.current?.setFieldValue('zipCode', newData.zipCode)
+        formRef.current?.setFieldValue('street', newData.street)
+        formRef.current?.setFieldValue('neighborhood', newData.neighborhood)
+        formRef.current?.setFieldValue('city', newData.city)
+        formRef.current?.setFieldValue('number', newData.number)
+        formRef.current?.setFieldValue('complement', newData.complement)
+        formRef.current?.setFieldValue('state', newData.state)
       })
       .catch((err) => toast.error(err.messages))
   }, [])
 
-  const stateName = async (result: ZipCodeProps | undefined) => {
-    let state = ''
-    stateOptions.forEach((element) => {
-      if (element.value === result?.state) {
-        state = element.label
-      }
-    })
-    return state
-  }
   async function handleInputZipCode() {
     const zipCode = formRef.current?.getData().zipCode
     const result = await findCEP(zipCode)
+    setDefaultValue(result)
+
+    if (!result?.city) {
+      formRef.current?.clearField('city')
+      return
+    }
+
     formRef.current?.setFieldValue('city', result?.city)
-    formRef.current?.setFieldValue('state', await stateName(result))
   }
 
   function handleInputCPF() {
     if (!formRef.current) return
-    const cpf = formRef.current?.getData().cpf
-    const matches = cpf?.match(/\d*/g)
+    const inputCpf = formRef.current?.getData().cpf
+    const matches = inputCpf?.match(/\d*/g)
     const number = matches?.join('')
 
     if (number?.length !== 11) return
@@ -238,14 +242,19 @@ export function FormEditUser({
 
   return (
     <>
-      <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
+      <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
         <div className='d-flex flex-row gap-5 w-100'>
           <div className='w-100'>
             <h3 className='mb-5'>Dados Pessoais</h3>
 
-            <Input name='name' label='Nome' />
-            <Input name='email' label='Email' type='email' disabled={true} />
-            <DatePicker name='birthDate' label='Data de Nascimento' maxDate={new Date()} />
+            <Input classes='h-75px' name='name' label='Nome' />
+            <Input classes='h-75px' name='email' label='Email' type='email' disabled={true} />
+            <DatePicker
+              classes='h-75px'
+              name='birthDate'
+              label='Data de Nascimento'
+              maxDate={new Date()}
+            />
             <InputMasked
               classes='h-75px'
               name='cpf'
@@ -255,9 +264,14 @@ export function FormEditUser({
               disabled={!!cpf}
               onChange={handleInputCPF}
             />
-            <InputMasked name='phoneNumber' label='Telefone' mask='(99) 9 9999-9999' />
+            <InputMasked
+              classes='h-75px'
+              name='phoneNumber'
+              label='Telefone'
+              mask='(99) 9 9999-9999'
+            />
 
-            <Select name='level' label='Nível de Conhecimento'>
+            <Select classes='h-75px' name='level' label='Nível de Conhecimento'>
               <option value='' disabled selected>
                 Selecione
               </option>
@@ -268,7 +282,7 @@ export function FormEditUser({
               ))}
             </Select>
 
-            <Select name='role' label='Permissão'>
+            <Select classes='h-75px' name='role' label='Permissão'>
               <option value='' disabled selected>
                 Selecione
               </option>
@@ -289,12 +303,26 @@ export function FormEditUser({
               mask='99999-999'
               onChange={handleInputZipCode}
             />
-            <Input name='street' label='Logradouro' />
-            <Input name='number' label='Número' type='number' />
-            <Input name='complement' label='Complemento' />
-            <Input name='neighborhood' label='Bairro' />
-            <Input name='city' label='Cidade' />
-            <Input name='state' label='Estado' />
+            <Input classes='h-75px' name='street' label='Logradouro' />
+            <Input classes='h-75px' name='number' label='Número' type='number' />
+            <Input classes='h-75px' name='complement' label='Complemento' />
+            <Input classes='h-75px' name='neighborhood' label='Bairro' />
+            <Input classes='h-75px' name='city' label='Cidade' />
+
+            <Select classes='h-75px' name='state' label='Estado'>
+              <option value='' selected={!!defaultValue?.state}>
+                Selecione
+              </option>
+              {stateOptions.map((option) => (
+                <option
+                  key={option.value}
+                  value={option.value}
+                  selected={defaultValue?.state === option.value}
+                >
+                  {option.label}
+                </option>
+              ))}
+            </Select>
           </div>
         </div>
 

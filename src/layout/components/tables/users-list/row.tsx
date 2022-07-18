@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { IDeleteUserParams } from '../../../../domain/usecases/interfaces/user/deleteUser'
 import { KTSVG } from '../../../../helpers'
-import { ActionModal } from '../../modals/action'
+import ConfirmationModal from '../../modal/ConfirmationModal'
 
 interface IRow {
   id: string
@@ -12,6 +12,7 @@ interface IRow {
   birthDate: string
   cpf: string
   address: string
+  loading: boolean
   deleteUser: (params: IDeleteUserParams) => void
   openResetUserPasswordModal: (userId: string) => void
 }
@@ -23,6 +24,7 @@ export function Row({
   birthDate,
   cpf,
   address,
+  loading,
   deleteUser,
   openResetUserPasswordModal,
 }: IRow) {
@@ -84,14 +86,15 @@ export function Row({
         </Tooltip>
       </td>
 
-      <ActionModal
+      <ConfirmationModal
         isOpen={isModalOpen}
-        modalTitle='Deletar'
-        message='Você tem certeza que deseja excluir esse usuário?'
-        action={handleDeleteUser}
+        loading={loading}
         onRequestClose={() => {
           setIsModalOpen(false)
         }}
+        onConfimation={handleDeleteUser}
+        content='Você tem certeza que deseja excluir este usuário?'
+        title='Deletar'
       />
     </tr>
   )

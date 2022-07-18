@@ -137,16 +137,7 @@ export function FormCreateUser({
       address,
       grantedProduct
     )
-
-    userRegister
-      .signUp(user)
-      .then(() => {
-        router.push('/users')
-        toast.success('Usuário cadastrado com sucesso!')
-      })
-      .catch((error: any) => {
-        toast.error(error.messages[0])
-      })
+    
     return user
   }
 
@@ -317,7 +308,6 @@ export function FormCreateUser({
           title='Cancelar'
           type='button'
           customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
-          loading={registerUser}
           onClick={() => {
             router.push('/users')
           }}
@@ -327,6 +317,7 @@ export function FormCreateUser({
           type='submit'
           title='Salvar'
           customClasses={['px-20', 'btn-primary']}
+          loading={registerUser}
           disabled={registerUser}
         />
       </div>
