@@ -79,7 +79,6 @@ function EditTrainingPageTemplate({
       ...data,
     })
 
-   
     if (success && streamList.length > 0) {
       const dataFormatted = formatTrainingToSubmit(data, streamList)
       dataFormatted.append('id', String(trainingId))
@@ -164,7 +163,7 @@ function EditTrainingPageTemplate({
         imageUrl,
         installments,
         zoomUserId,
-        active,
+        isActive,
       } = trainingData
       const formattedStreamings = formatStreamingList(streamings)
 
@@ -181,7 +180,7 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDate))
       formRef.current?.setFieldValue('imagePreview', imageUrl)
       formRef.current?.setFieldValue('zoomUserId', zoomUserId)
-      formRef.current?.setFieldValue('active', active)
+      formRef.current?.setFieldValue('active', isActive)
       setStreamList(formattedStreamings)
 
       setLoadingPageData(false)
