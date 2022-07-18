@@ -137,16 +137,7 @@ export function FormCreateUser({
       address,
       grantedProduct
     )
-
-    userRegister
-      .signUp(user)
-      .then(() => {
-        router.push('/users')
-        toast.success('Usuário cadastrado com sucesso!')
-      })
-      .catch((error: any) => {
-        toast.error(error.messages[0])
-      })
+    
     return user
   }
 
