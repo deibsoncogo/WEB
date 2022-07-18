@@ -13,13 +13,15 @@ import { ItemNotFound } from "../../search/ItemNotFound"
 import { Search } from "../../search/Search"
 import { Row } from "./row"
 import { dateMask } from "../../../formatters/dateFormatter"
+import { IToggleNotificationStatus } from "../../../../domain/usecases/interfaces/notification/toggleNotificationStatus"
 
 type NotificationTableProps = {
   getAllNotification: IGetAllNotification
+  toggleStatus: IToggleNotificationStatus
   deleteNotification: IDeleteNotification
 }
 
-export function NotificationTable({ getAllNotification, deleteNotification }: NotificationTableProps) {
+export function NotificationTable({ getAllNotification, toggleStatus, deleteNotification }: NotificationTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
@@ -132,7 +134,9 @@ export function NotificationTable({ getAllNotification, deleteNotification }: No
                         tag={item.tag}
                         text={item.text}
                         date={dateMask(item.date)}
-                        notificationType={item.notificatonType}                       
+                        notificationType={item.notificatonType}  
+                        isActive={item.isActive}
+                        toggleStatus={toggleStatus}                     
                         deleteNotification={deleteNotification} 
                         handleRefresher={handleRefresher}                       
                       />

@@ -3,7 +3,9 @@ import Link from "next/link"
 import { useState } from "react"
 import { toast } from "react-toastify"
 import { IDeleteNotification } from "../../../../domain/usecases/interfaces/notification/deleteNotification"
+import { IToggleNotificationStatus } from "../../../../domain/usecases/interfaces/notification/toggleNotificationStatus"
 import { KTSVG } from "../../../../helpers"
+import { Switch } from "../../inputs"
 import ConfirmationModal from "../../modal/ConfirmationModal"
 
 interface IRow {
@@ -12,6 +14,8 @@ interface IRow {
   text: string
   date: string
   notificationType: string
+  isActive: boolean
+  toggleStatus: IToggleNotificationStatus 
   deleteNotification: IDeleteNotification
   handleRefresher: () => void;
 
@@ -23,12 +27,14 @@ export function Row({
   text,
   date,
   notificationType,
+  isActive,
+  toggleStatus,
   deleteNotification,
   handleRefresher
  
 }: IRow) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
-
+  const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
   function formatText(articleContent?: string){
@@ -46,6 +52,21 @@ export function Row({
       handleRefresher()    
     } catch {
       toast.error('Não foi possível deletar a notificação.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  
+  async function handleUpdateNotification() {
+    try {
+      setLoading(true)
+      await toggleStatus.toggle({ id })
+      setIsModalUpdateOpen(false)
+      toast.success('Notificação atualizada com sucesso.')
+      handleRefresher()
+    } catch (err) {
+      toast.error('Não foi possível atualizar a notificação.')
     } finally {
       setLoading(false)
     }
@@ -78,6 +99,10 @@ export function Row({
             </Link>
           </Tooltip>
 
+        <td>
+          <Switch active={isActive} setModalUpdate={setIsModalUpdateOpen} />
+        </td>
+
           <Tooltip content={'Deletar'} rounded color='primary'>
             <button
               onClick={() => {
@@ -99,7 +124,19 @@ export function Row({
           onConfimation={handleDeleteNotification}
           content='Você tem certeza que deseja excluir esta notificação?'
           title='Deletar'
-        />      
+        />    
+
+        <ConfirmationModal
+          isOpen={isModalUpdateOpen}
+          loading={loading}
+          onRequestClose={() => {
+            setIsModalUpdateOpen(false)
+          }}
+          onConfimation={handleUpdateNotification}
+          content='Você tem certeza que deseja alterar o status desta notificação?'
+          title='Confirmação'
+        />
+
       </tr>
     </>
   )
