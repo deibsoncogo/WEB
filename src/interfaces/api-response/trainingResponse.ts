@@ -9,7 +9,7 @@ export interface ITrainingResponse {
   teacherId: string
   trainingEndDate: Date
   deactiveChatDate: Date
-  active: boolean
+  isActive: boolean
   installments: number
   zoomUserId: string
 }
