@@ -12,7 +12,6 @@ import { Pagination } from "../../pagination/Pagination"
 import { ItemNotFound } from "../../search/ItemNotFound"
 import { Search } from "../../search/Search"
 import { Row } from "./row"
-import { dateMask } from "../../../formatters/dateFormatter"
 import { IToggleNotificationStatus } from "../../../../domain/usecases/interfaces/notification/toggleNotificationStatus"
 import { ICreateNotification } from "../../../../domain/usecases/interfaces/notification/createNotification"
 import { FormHandles } from "@unform/core"
@@ -211,12 +210,7 @@ export function NotificationTable({ createNotification, getAllNotification, togg
                     notification?.map((item) => (
                       <Row
                         key={item.id}
-                        id={item.id}
-                        tag={item.tag}
-                        text={item.text}
-                        date={dateMask(item.date)}
-                        notificationType={item.notificationType}  
-                        isActive={item.isActive}
+                        notification={item}                    
                         toggleStatus={toggleStatus}                     
                         deleteNotification={deleteNotification} 
                         handleRefresher={handleRefresher}                       
