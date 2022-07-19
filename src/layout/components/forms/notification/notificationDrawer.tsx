@@ -13,7 +13,7 @@ type Props = {
   handleFormSubmit: (data: IFormNotification) => void
 }
 
-const CreateNotificationDrawer = React.forwardRef<FormHandles, Props>((props, ref) => {
+const NotificationDrawer = React.forwardRef<FormHandles, Props>((props, ref) => {
   const { close, handleFormSubmit, loading, visible } = props
   return (
     <DrawerRight title='Nova Notificação' visible={visible} close={close}>
@@ -72,6 +72,6 @@ const CreateNotificationDrawer = React.forwardRef<FormHandles, Props>((props, re
     </DrawerRight>
   )
 })
-CreateNotificationDrawer.displayName = 'CreateNotificationDrawer'
+NotificationDrawer.displayName = 'NotificationDrawer'
 
-export { CreateNotificationDrawer }
+export { NotificationDrawer }

@@ -16,7 +16,7 @@ import { dateMask } from "../../../formatters/dateFormatter"
 import { IToggleNotificationStatus } from "../../../../domain/usecases/interfaces/notification/toggleNotificationStatus"
 import { ICreateNotification } from "../../../../domain/usecases/interfaces/notification/createNotification"
 import { FormHandles } from "@unform/core"
-import { CreateNotificationDrawer } from "../../forms/notification/create"
+import { NotificationDrawer } from "../../forms/notification/notificationDrawer"
 import * as Yup from 'yup'
 import router from "next/router"
 import { appRoutes } from "../../../../application/routing/routes"
@@ -39,7 +39,7 @@ export function NotificationTable({ createNotification, getAllNotification, togg
   const [notification, setNotification] = useState<INotificationResponse[]>([])
   const [notificationQuery, setNotificationQuery] = useState('')
 
-  const [isDrawerCreateNotificationOpen, setIsDrawerCreateNotificationOpen] = useState(false)
+  const [isDrawerNotificationOpen, setIsDrawerNotificationOpen] = useState(false)
   const notificationFormRef = useRef<FormHandles>(null)
   const [loadingAction, setLoadingAction] = useState(false)
 
@@ -79,14 +79,14 @@ export function NotificationTable({ createNotification, getAllNotification, togg
     setNotificationQuery(text)
   })
 
-  const handleOpenModalCreateNotification = () => {
-    setIsDrawerCreateNotificationOpen(true)
+  const handleOpenModalNotification = () => {
+    setIsDrawerNotificationOpen(true)
   }
 
-  const handleCloseModalCreateNotification = () => {
+  const handleCloseModalNotification = () => {
     notificationFormRef.current?.reset()
     notificationFormRef.current?.setErrors({})
-    setIsDrawerCreateNotificationOpen(false)
+    setIsDrawerNotificationOpen(false)
   }
 
   async function createNotificationRequest(data: IFormNotification) {    
@@ -102,7 +102,7 @@ export function NotificationTable({ createNotification, getAllNotification, togg
        .finally(() => 
        {
         setLoadingAction(false)        
-        handleCloseModalCreateNotification()
+        handleCloseModalNotification()
         handleRefresher()
        })
   }
@@ -142,9 +142,9 @@ export function NotificationTable({ createNotification, getAllNotification, togg
   return (
     <>
 
-     <CreateNotificationDrawer
-        visible={isDrawerCreateNotificationOpen}
-        close={handleCloseModalCreateNotification}
+     <NotificationDrawer
+        visible={isDrawerNotificationOpen}
+        close={handleCloseModalNotification}
         handleFormSubmit={handleFormSubmit}
         loading={loadingAction}
         ref={notificationFormRef}
@@ -155,7 +155,7 @@ export function NotificationTable({ createNotification, getAllNotification, togg
           <h3 className='card-title align-items-start flex-column'>
             <Search onChangeText={handleSearchNotification} />
           </h3>
-          <div className='card-toolbar' onClick={handleOpenModalCreateNotification}>           
+          <div className='card-toolbar' onClick={handleOpenModalNotification}>           
               <button className='btn btn-sm btn-light-primary'>
                 <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
                 Nova notificação
