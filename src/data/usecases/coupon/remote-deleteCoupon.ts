@@ -1,12 +1,12 @@
 import { HttpClient, HttpStatusCode } from '../../protocols'
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
 import { ConflitctEntitiesError } from '../../../domain/errors/conflict-entities-error'
-import { DeleteCouponParams, IDeleteCoupon } from '../../../domain/usecases/interfaces/coupon'
+import { IDeleteCouponParams, IDeleteCoupon } from '../../../domain/usecases/interfaces/coupon'
 
 export class RemoteDeleteCoupon implements IDeleteCoupon {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<string>) {}
 
-  delete = async (params: DeleteCouponParams) => {
+  delete = async (params: IDeleteCouponParams) => {
     const httpResponse = await this.httpClient.request({
       url: `${this.url}/${params.id}`,
       method: 'delete',

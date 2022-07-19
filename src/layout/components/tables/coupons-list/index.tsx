@@ -10,6 +10,7 @@ type PlansTableProps = {
   coupons: ICoupon[]
   paginationHook: usePaginationType
   toggleCouponStatus: (id: string) => void
+  deleteCoupon: (id: string) => void
 }
 
 type HandleClassesParam = {
@@ -17,7 +18,12 @@ type HandleClassesParam = {
   extraClasses?: string
 }
 
-export function CouponsTable({ coupons, paginationHook, toggleCouponStatus }: PlansTableProps) {
+export function CouponsTable({
+  coupons,
+  paginationHook,
+  toggleCouponStatus,
+  deleteCoupon,
+}: PlansTableProps) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
   const getColumnHeaderClasses = ({ title, extraClasses = '' }: HandleClassesParam) => {
@@ -98,7 +104,12 @@ export function CouponsTable({ coupons, paginationHook, toggleCouponStatus }: Pl
 
                 <tbody className='w-100'>
                   {coupons?.map((coupon) => (
-                    <Row key={coupon.id} coupon={coupon} toggleCouponStatus={toggleCouponStatus} />
+                    <Row
+                      key={coupon.id}
+                      coupon={coupon}
+                      toggleCouponStatus={toggleCouponStatus}
+                      deleteCoupon={deleteCoupon}
+                    />
                   ))}
                 </tbody>
               </table>

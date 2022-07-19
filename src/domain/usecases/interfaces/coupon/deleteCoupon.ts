@@ -1,7 +1,7 @@
-export interface DeleteCouponParams {
+export interface IDeleteCouponParams {
   id: string
 }
 
 export interface IDeleteCoupon {
-  delete: (params: DeleteCouponParams) => Promise<string>
+  delete: (params: IDeleteCouponParams) => Promise<string>
 }
