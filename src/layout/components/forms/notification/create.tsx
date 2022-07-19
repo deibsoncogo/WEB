@@ -64,6 +64,7 @@ const CreateNotificationDrawer = React.forwardRef<FormHandles, Props>((props, re
             form='create-notification-form'
             customClasses={['px-20', 'btn-primary']}
             title='Salvar'
+            disabled={loading}
             loading={loading}
           />
         </div>

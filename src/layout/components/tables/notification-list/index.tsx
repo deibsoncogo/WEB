@@ -4,7 +4,7 @@ import { toast } from "react-toastify"
 import { usePagination } from "../../../../application/hooks/usePagination"
 import { IDeleteNotification } from "../../../../domain/usecases/interfaces/notification/deleteNotification"
 import { GetNotificationParams, IGetAllNotification } from "../../../../domain/usecases/interfaces/notification/getAllNotification"
-import { KTSVG } from "../../../../helpers"
+import { formatDate, KTSVG } from "../../../../helpers"
 import { debounce } from "../../../../helpers/debounce"
 import { INotificationResponse} from "../../../../interfaces/api-response/notificationResponse"
 import { Loading } from "../../loading/loading"
@@ -18,6 +18,8 @@ import { ICreateNotification } from "../../../../domain/usecases/interfaces/noti
 import { FormHandles } from "@unform/core"
 import { CreateNotificationDrawer } from "../../forms/notification/create"
 import * as Yup from 'yup'
+import router from "next/router"
+import { appRoutes } from "../../../../application/routing/routes"
 
 type NotificationTableProps = {
   createNotification: ICreateNotification
@@ -39,7 +41,7 @@ export function NotificationTable({ createNotification, getAllNotification, togg
 
   const [isDrawerCreateNotificationOpen, setIsDrawerCreateNotificationOpen] = useState(false)
   const notificationFormRef = useRef<FormHandles>(null)
-  const [loadingNotificationCreation, setLoadingNotificationCreation] = useState(false)
+  const [loadingAction, setLoadingAction] = useState(false)
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
     return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
@@ -87,12 +89,30 @@ export function NotificationTable({ createNotification, getAllNotification, togg
     setIsDrawerCreateNotificationOpen(false)
   }
 
+  async function createNotificationRequest(data: IFormNotification) {    
+
+    setLoadingAction(true) 
+    createNotification
+       .create({...data, date: formatDate(new Date(data.date), 'YYYY-MM-DD'), isActive: false})
+       .then(() => {         
+         router.push(appRoutes.ALERTS)
+         toast.success('Notificação criada com sucesso!')
+       })
+       .catch(() => toast.error('Não foi possível criar a notificação!'))
+       .finally(() => 
+       {
+        setLoadingAction(false)        
+        handleCloseModalCreateNotification()
+        handleRefresher()
+       })
+  }
 
 
   async function handleFormSubmit(data: IFormNotification) {    
   
     if (!notificationFormRef.current) throw new Error()
     try {
+      
       notificationFormRef.current.setErrors({})
       const schema = Yup.object().shape({      
         tag: Yup.string().required('Tag é necessária'),
@@ -103,7 +123,7 @@ export function NotificationTable({ createNotification, getAllNotification, togg
       })
 
       await schema.validate(data, { abortEarly: false })      
-      //createFreeContentRequest(data)
+      createNotificationRequest(data)
 
     } catch (err) {   
       const validationErrors = {}
@@ -126,7 +146,7 @@ export function NotificationTable({ createNotification, getAllNotification, togg
         visible={isDrawerCreateNotificationOpen}
         close={handleCloseModalCreateNotification}
         handleFormSubmit={handleFormSubmit}
-        loading={loadingNotificationCreation}
+        loading={loadingAction}
         ref={notificationFormRef}
       />
 
