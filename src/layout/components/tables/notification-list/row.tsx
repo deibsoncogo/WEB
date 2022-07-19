@@ -2,6 +2,7 @@ import { Tooltip } from "@nextui-org/react"
 import Link from "next/link"
 import { useState } from "react"
 import { toast } from "react-toastify"
+import { INotification } from "../../../../domain/models/notification"
 import { IDeleteNotification } from "../../../../domain/usecases/interfaces/notification/deleteNotification"
 import { IToggleNotificationStatus } from "../../../../domain/usecases/interfaces/notification/toggleNotificationStatus"
 import { KTSVG } from "../../../../helpers"
@@ -14,12 +15,14 @@ interface IRow {
   notification: INotificationResponse
   toggleStatus: IToggleNotificationStatus 
   deleteNotification: IDeleteNotification
+  openModalToUpdate: (data: INotification) => void
   handleRefresher: () => void
 }
 
 export function Row({
   notification,
   toggleStatus,
+  openModalToUpdate,
   deleteNotification,
   handleRefresher
  
@@ -88,12 +91,10 @@ export function Row({
         </td>
               
         <td className='text-end d-flex justify-content-start px-4'>
-          <Tooltip content={'Editar'} rounded color='primary'>
-            <Link href={`/notification/edit/${notification.id}`}>
-              <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+          <Tooltip content={'Editar'} rounded color='primary'>           
+              <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1' onClick={() => openModalToUpdate({...notification})}>
                 <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-              </button>
-            </Link>
+              </button>            
           </Tooltip>
 
           <Tooltip content={'Deletar'} rounded color='primary'>

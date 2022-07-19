@@ -4,7 +4,7 @@ import { toast } from "react-toastify"
 import { usePagination } from "../../../../application/hooks/usePagination"
 import { IDeleteNotification } from "../../../../domain/usecases/interfaces/notification/deleteNotification"
 import { GetNotificationParams, IGetAllNotification } from "../../../../domain/usecases/interfaces/notification/getAllNotification"
-import { formatDate, KTSVG } from "../../../../helpers"
+import { formatDate, formatDateToUTC, KTSVG } from "../../../../helpers"
 import { debounce } from "../../../../helpers/debounce"
 import { INotificationResponse} from "../../../../interfaces/api-response/notificationResponse"
 import { Loading } from "../../loading/loading"
@@ -19,6 +19,7 @@ import { NotificationDrawer } from "../../forms/notification/notificationDrawer"
 import * as Yup from 'yup'
 import router from "next/router"
 import { appRoutes } from "../../../../application/routing/routes"
+import { INotification } from "../../../../domain/models/notification"
 
 type NotificationTableProps = {
   createNotification: ICreateNotification
@@ -36,6 +37,7 @@ export function NotificationTable({ createNotification, getAllNotification, togg
   const [refresher, setRefresher] = useState(true)
 
   const [notification, setNotification] = useState<INotificationResponse[]>([])
+  const [notificationId, setNotificationId] = useState<string>('')
   const [notificationQuery, setNotificationQuery] = useState('')
 
   const [isDrawerNotificationOpen, setIsDrawerNotificationOpen] = useState(false)
@@ -78,7 +80,14 @@ export function NotificationTable({ createNotification, getAllNotification, togg
     setNotificationQuery(text)
   })
 
-  const handleOpenModalNotification = () => {
+  const handleOpenModalNotification = (data?: INotification) => {
+    if(data && data?.id){
+      setNotificationId(data.id)
+      notificationFormRef.current?.setFieldValue('tag', data.tag)
+      notificationFormRef.current?.setFieldValue('text', data.text)
+      notificationFormRef.current?.setFieldValue('date', new Date(formatDateToUTC(data.date)) )
+      notificationFormRef.current?.setFieldValue('notificationType', data.notificationType)
+    }
     setIsDrawerNotificationOpen(true)
   }
 
@@ -154,7 +163,7 @@ export function NotificationTable({ createNotification, getAllNotification, togg
           <h3 className='card-title align-items-start flex-column'>
             <Search onChangeText={handleSearchNotification} />
           </h3>
-          <div className='card-toolbar' onClick={handleOpenModalNotification}>           
+          <div className='card-toolbar' onClick={() => handleOpenModalNotification()}>           
               <button className='btn btn-sm btn-light-primary'>
                 <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
                 Nova notificação
@@ -211,7 +220,8 @@ export function NotificationTable({ createNotification, getAllNotification, togg
                       <Row
                         key={item.id}
                         notification={item}                    
-                        toggleStatus={toggleStatus}                     
+                        toggleStatus={toggleStatus}  
+                        openModalToUpdate={handleOpenModalNotification}                   
                         deleteNotification={deleteNotification} 
                         handleRefresher={handleRefresher}                       
                       />
