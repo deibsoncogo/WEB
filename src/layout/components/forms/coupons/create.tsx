@@ -9,6 +9,7 @@ import { DatePicker, Input, InputCurrence, InputNumber, Radio, SelectMulti } fro
 import { ICoupon } from '../../../../domain/models/coupon'
 import { IDiscountType } from '../../../templates/coupons/type'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
+import { InputPercentage } from '../../inputs/input-percentage'
 
 type Props = {
   visible: boolean
@@ -50,7 +51,7 @@ const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref)
           />
 
           {discountType === 'percentage' ? (
-            <InputNumber name='value' label='Porcentagem' />
+            <InputPercentage name='value' label='Porcentagem' />
           ) : (
             <InputCurrence name='value' label='Valor' />
           )}

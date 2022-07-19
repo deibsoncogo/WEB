@@ -33,9 +33,13 @@ const CreateCoupon = ({ remoteCreateCoupon, remoteGetAllProducts, visible, close
   } = useRequest<void, CreateCouponParams>(remoteCreateCoupon.create)
 
   async function handleFormSubmit(data: ICoupon) {
+    console.log(data)
     const { error, success } = await applyYupValidation<ICoupon>(couponFormSchema, {
       ...data,
-      value: currentTypeSelected === 'value' ? Number(onlyNums(data.value)) : data.value,
+      value:
+        currentTypeSelected === 'value'
+          ? Number(onlyNums(data.value))
+          : Number(String(data.value).replace('%', '')),
     })
 
     if (!!error) {
