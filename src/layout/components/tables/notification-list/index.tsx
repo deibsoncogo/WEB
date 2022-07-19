@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { useEffect, useState } from "react"
+
+import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import { usePagination } from "../../../../application/hooks/usePagination"
 import { IDeleteNotification } from "../../../../domain/usecases/interfaces/notification/deleteNotification"
@@ -14,14 +14,19 @@ import { Search } from "../../search/Search"
 import { Row } from "./row"
 import { dateMask } from "../../../formatters/dateFormatter"
 import { IToggleNotificationStatus } from "../../../../domain/usecases/interfaces/notification/toggleNotificationStatus"
+import { ICreateNotification } from "../../../../domain/usecases/interfaces/notification/createNotification"
+import { FormHandles } from "@unform/core"
+import { CreateNotificationDrawer } from "../../forms/notification/create"
+import * as Yup from 'yup'
 
 type NotificationTableProps = {
+  createNotification: ICreateNotification
   getAllNotification: IGetAllNotification
   toggleStatus: IToggleNotificationStatus
   deleteNotification: IDeleteNotification
 }
 
-export function NotificationTable({ getAllNotification, toggleStatus, deleteNotification }: NotificationTableProps) {
+export function NotificationTable({ createNotification, getAllNotification, toggleStatus, deleteNotification }: NotificationTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
@@ -31,6 +36,10 @@ export function NotificationTable({ getAllNotification, toggleStatus, deleteNoti
 
   const [notification, setNotification] = useState<INotificationResponse[]>([])
   const [notificationQuery, setNotificationQuery] = useState('')
+
+  const [isDrawerCreateNotificationOpen, setIsDrawerCreateNotificationOpen] = useState(false)
+  const notificationFormRef = useRef<FormHandles>(null)
+  const [loadingNotificationCreation, setLoadingNotificationCreation] = useState(false)
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
     return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
@@ -64,24 +73,74 @@ export function NotificationTable({ getAllNotification, toggleStatus, deleteNoti
     setRefresher(!refresher)
   }
 
-  const handleSearchnotification = debounce((text: string) => {
+  const handleSearchNotification = debounce((text: string) => {
     setNotificationQuery(text)
   })
 
+  const handleOpenModalCreateNotification = () => {
+    setIsDrawerCreateNotificationOpen(true)
+  }
+
+  const handleCloseModalCreateNotification = () => {
+    notificationFormRef.current?.reset()
+    notificationFormRef.current?.setErrors({})
+    setIsDrawerCreateNotificationOpen(false)
+  }
+
+
+
+  async function handleFormSubmit(data: IFormNotification) {    
+  
+    if (!notificationFormRef.current) throw new Error()
+    try {
+      notificationFormRef.current.setErrors({})
+      const schema = Yup.object().shape({      
+        tag: Yup.string().required('Tag é necessária'),
+        text: Yup.string().required('Texto é necessário'),
+        date: Yup.string().required('Data é necessária'),
+        notificationType: Yup.string().required('Tipo é necessário'),
+          
+      })
+
+      await schema.validate(data, { abortEarly: false })      
+      //createFreeContentRequest(data)
+
+    } catch (err) {   
+      const validationErrors = {}
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          // @ts-ignore
+          validationErrors[error.path] = error.message
+        })
+        notificationFormRef.current.setErrors(validationErrors)
+       
+      }
+    }
+  }
+
+
   return (
     <>
+
+     <CreateNotificationDrawer
+        visible={isDrawerCreateNotificationOpen}
+        close={handleCloseModalCreateNotification}
+        handleFormSubmit={handleFormSubmit}
+        loading={loadingNotificationCreation}
+        ref={notificationFormRef}
+      />
+
       <div className='card mb-5 mb-xl-8'>
         <div className='card-header border-0 pt-5'>
           <h3 className='card-title align-items-start flex-column'>
-            <Search onChangeText={handleSearchnotification} />
+            <Search onChangeText={handleSearchNotification} />
           </h3>
-          <div className='card-toolbar'>
-            <Link href='/notification/create'>
-              <a className='btn btn-sm btn-light-primary'>
+          <div className='card-toolbar' onClick={handleOpenModalCreateNotification}>           
+              <button className='btn btn-sm btn-light-primary'>
                 <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
                 Nova notificação
-              </a>
-            </Link>
+              </button>
+            
           </div>
         </div>
 

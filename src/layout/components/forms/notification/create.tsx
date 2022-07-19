@@ -10,20 +10,20 @@ type Props = {
   visible: boolean
   close: () => void
   loading: boolean
-  handleCreateNotification: () => void
+  handleFormSubmit: (data: IFormNotification) => void
 }
 
 const CreateNotificationDrawer = React.forwardRef<FormHandles, Props>((props, ref) => {
-  const { close, handleCreateNotification, loading, visible } = props
+  const { close, handleFormSubmit, loading, visible } = props
   return (
     <DrawerRight title='Nova Notificação' visible={visible} close={close}>
       <div className='mt-6 d-flex flex-column justify-content-between h-100'>
-        <Form className='form' ref={ref} onSubmit={handleCreateNotification} id='create-notification-form'>
+        <Form className='form' ref={ref} onSubmit={handleFormSubmit} id='create-notification-form'>
           <Input name='tag' label='Tag' type='text' />
           <TextArea
               name='text'
               label='Texto'
-              style={{ minHeight: '150px', margin: 0 }}
+              style={{ minHeight: '30px', margin: 0 }}
             />
              <DatePicker
               name='date'
@@ -61,7 +61,7 @@ const CreateNotificationDrawer = React.forwardRef<FormHandles, Props>((props, re
 
           <Button
             type='submit'
-            form='create-category-form'
+            form='create-notification-form'
             customClasses={['px-20', 'btn-primary']}
             title='Salvar'
             loading={loading}
