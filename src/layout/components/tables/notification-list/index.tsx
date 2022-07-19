@@ -20,9 +20,11 @@ import * as Yup from 'yup'
 import router from "next/router"
 import { appRoutes } from "../../../../application/routing/routes"
 import { INotification } from "../../../../domain/models/notification"
+import { IUpdateNotification } from "../../../../domain/usecases/interfaces/notification/updateNotification"
 
 type NotificationTableProps = {
   createNotification: ICreateNotification
+  updateNotification: IUpdateNotification
   getAllNotification: IGetAllNotification
   toggleStatus: IToggleNotificationStatus
   deleteNotification: IDeleteNotification
