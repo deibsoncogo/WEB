@@ -22,10 +22,8 @@ const CreateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) =
           <Input name='name' label='Nome' placeholder='Nome da categoria' type='text' />
         </Form>
 
-
         <div className='d-flex mb-15'>
           <Button
-
             title='Cancelar'
             type='button'
             onClick={close}
