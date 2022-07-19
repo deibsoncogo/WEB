@@ -10,6 +10,6 @@ export interface INotification {
   tag: string
   text: string
   date: string
-  isActive: boolean
+  isActive?: boolean
   notificationType: string  
 }

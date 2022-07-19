@@ -30,7 +30,7 @@ type NotificationTableProps = {
   deleteNotification: IDeleteNotification
 }
 
-export function NotificationTable({ createNotification, getAllNotification, toggleStatus, deleteNotification }: NotificationTableProps) {
+export function NotificationTable({ createNotification, updateNotification, getAllNotification, toggleStatus, deleteNotification }: NotificationTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
@@ -39,7 +39,7 @@ export function NotificationTable({ createNotification, getAllNotification, togg
   const [refresher, setRefresher] = useState(true)
 
   const [notification, setNotification] = useState<INotificationResponse[]>([])
-  const [notificationId, setNotificationId] = useState<string>('')
+  const [notificationToUpdate, setNotificationToUpdate] = useState<INotification>()
   const [notificationQuery, setNotificationQuery] = useState('')
 
   const [isDrawerNotificationOpen, setIsDrawerNotificationOpen] = useState(false)
@@ -83,8 +83,8 @@ export function NotificationTable({ createNotification, getAllNotification, togg
   })
 
   const handleOpenModalNotification = (data?: INotification) => {
-    if(data && data?.id){
-      setNotificationId(data.id)
+    if(data){
+      setNotificationToUpdate(data)
       notificationFormRef.current?.setFieldValue('tag', data.tag)
       notificationFormRef.current?.setFieldValue('text', data.text)
       notificationFormRef.current?.setFieldValue('date', new Date(formatDateToUTC(data.date)) )
@@ -117,6 +117,25 @@ export function NotificationTable({ createNotification, getAllNotification, togg
        })
   }
 
+  async function updateNotificationRequest(data: IFormNotification) {    
+
+    setLoadingAction(true) 
+    updateNotification
+       .update({...data, id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive, date: formatDate(new Date(data.date), 'YYYY-MM-DD')})
+       .then(() => {         
+         router.push(appRoutes.ALERTS)
+         toast.success('Notificação atualizada com sucesso!')
+       })
+       .catch(() => toast.error('Não foi possível atualizar a notificação!'))
+       .finally(() => 
+       {
+        setLoadingAction(false)        
+        handleCloseModalNotification()
+        handleRefresher()
+       })
+  }
+
+
 
   async function handleFormSubmit(data: IFormNotification) {    
   
@@ -132,8 +151,8 @@ export function NotificationTable({ createNotification, getAllNotification, togg
           
       })
 
-      await schema.validate(data, { abortEarly: false })      
-      createNotificationRequest(data)
+      await schema.validate(data, { abortEarly: false }) 
+      notificationToUpdate? updateNotificationRequest(data): createNotificationRequest(data)
 
     } catch (err) {   
       const validationErrors = {}
