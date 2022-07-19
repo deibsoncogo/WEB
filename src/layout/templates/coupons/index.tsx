@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
 import { FormHandles } from '@unform/core'
+import { useEffect, useRef, useState } from 'react'
 
+import { usePagination } from '../../../application/hooks/usePagination'
+import { useRequest } from '../../../application/hooks/useRequest'
 import { KTSVG } from '../../../helpers'
 import { debounce } from '../../../helpers/debounce'
-import { useRequest } from '../../../application/hooks/useRequest'
-import { usePagination } from '../../../application/hooks/usePagination'
 
 import { Search } from '../../components/search/Search'
 import { CouponsTable } from '../../components/tables/coupons-list'
-import { CreateCouponDrawer } from '../../components/forms/coupons/create'
 
+import { ICoupon } from '../../../domain/models/coupon'
+import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
 import {
   ICreateCoupon,
   IDeleteCoupon,
@@ -17,8 +18,7 @@ import {
   IGetCouponsParams,
   IUpdateCoupon,
 } from '../../../domain/usecases/interfaces/coupon'
-import { ICoupon } from '../../../domain/models/coupon'
-import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
+import { CreateCoupon } from './createCoupon'
 
 type CouponsTemplateProps = {
   remoteGetCoupons: IGetCoupons
@@ -69,8 +69,15 @@ export function CouponsTemplate({
   }
 
   useEffect(() => {
-    getCoupons()
-  }, [])
+    getCoupons(paginationParams)
+  }, [
+    pagination.take,
+    pagination.totalPages,
+    pagination.order,
+    pagination.orderBy,
+    currentPage,
+    isModalCreateOpen,
+  ])
 
   useEffect(() => {
     if (paginatedCoupons) {
@@ -98,7 +105,7 @@ export function CouponsTemplate({
         <CouponsTable coupons={coupons} paginationHook={paginationHook} />
       </div>
 
-      <CreateCouponDrawer
+      <CreateCoupon
         visible={isModalCreateOpen}
         close={handleCloseModalCreateCoupon}
         remoteCreateCoupon={remoteCreateCoupon}

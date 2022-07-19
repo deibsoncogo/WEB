@@ -1,16 +1,20 @@
 import { ICoupon } from '../../../domain/models/coupon'
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { IGetCoupons } from '../../../domain/usecases/interfaces/coupon/getCoupons'
+import {
+  IGetCoupons,
+  IGetCouponsParams,
+} from '../../../domain/usecases/interfaces/coupon/getCoupons'
 
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteGetCoupons implements IGetCoupons {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<ICoupon[]>) {}
 
-  get = async () => {
+  get = async (params: IGetCouponsParams) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',
+      params: params,
     })
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:

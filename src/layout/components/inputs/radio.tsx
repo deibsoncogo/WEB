@@ -44,11 +44,15 @@ export function Radio({ name, label, options, ...rest }: IRadioProps) {
             name={name}
             defaultChecked={defaultValue.includes(option.id)}
             value={option.value}
-            className='form-check-input me-2'
+            className='form-check-input me-2 cursor-pointer'
             {...rest}
           />
 
-          <label htmlFor={option.id} key={option.id} className='form-check-label text-dark fs-6'>
+          <label
+            htmlFor={option.id}
+            key={option.id}
+            className='form-check-label text-dark fs-6 cursor-pointer'
+          >
             {option.label}
           </label>
         </span>

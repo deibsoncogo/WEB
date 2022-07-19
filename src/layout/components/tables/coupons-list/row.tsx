@@ -5,6 +5,7 @@ import { maskedToMoney } from '../../../formatters/currenceFormatter'
 
 import { Switch } from '../../inputs'
 import { ICoupon } from '../../../../domain/models/coupon'
+import { getIsoDateToBRL } from '../../../../utils/getIsoDateToBRL'
 
 type CouponTableRowProps = {
   coupon: ICoupon
@@ -37,7 +38,7 @@ const Row = ({ coupon }: CouponTableRowProps) => {
       </td>
 
       <td className='ps-4' scope='row'>
-        <span className='fw-bold d-block fs-7'>{coupon.expirationDate}</span>
+        <span className='fw-bold d-block fs-7'>{getIsoDateToBRL(coupon.expirationDate)}</span>
       </td>
 
       <td>
