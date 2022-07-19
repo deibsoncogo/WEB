@@ -14,12 +14,12 @@ import { IEditPlan } from '../../../domain/usecases/interfaces/plan/updatePlan'
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
+import { extractSelectOptionsFromArr } from '../../../utils/extractSelectOptionsFromArr'
+import { getOptionsFromSearchRequest } from '../../../utils/getOptionsFromSearchRequest'
 import { FormEditPlan } from '../../components/forms/plans/edit'
 import { planFormSchema } from '../../components/forms/plans/planSchema'
 import { maskedToMoney } from '../../formatters/currenceFormatter'
-import { extractSelectOptionsFromArr } from './utils/extractSelectOptionsFromArr'
 import { formatPlanToSubmit } from './utils/formatPlanToSubmit'
-import { getOptionsFromSearchRequest } from './utils/getOptionsFromSearchRequest'
 
 type Props = {
   remoteGetPlan: IGetPlan

@@ -3,11 +3,15 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { ICoupon } from '../../../domain/models/coupon'
+import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { CreateCouponParams, IUpdateCoupon } from '../../../domain/usecases/interfaces/coupon'
+import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { formatDate } from '../../../helpers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
+import { extractSelectOptionsFromArr } from '../../../utils/extractSelectOptionsFromArr'
+import { getOptionsFromSearchRequest } from '../../../utils/getOptionsFromSearchRequest'
 import { EditCouponDrawerForm } from '../../components/forms/coupons/edit'
-import { onlyNums } from '../../formatters/currenceFormatter'
+import { maskedToMoney, onlyNums } from '../../formatters/currenceFormatter'
 import { couponFormSchema, IDiscountType } from './type'
 
 type Props = {
@@ -15,9 +19,16 @@ type Props = {
   visible: boolean
   close: () => void
   remoteUpdateCoupon: IUpdateCoupon
+  remoteGetAllProducts: IGetAllProducts
 }
 
-const EditCoupon = ({ remoteUpdateCoupon, visible, coupon, close }: Props) => {
+const EditCoupon = ({
+  remoteUpdateCoupon,
+  visible,
+  coupon,
+  close,
+  remoteGetAllProducts,
+}: Props) => {
   const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('value')
   const formRef = useRef<FormHandles>(null)
 
@@ -59,6 +70,13 @@ const EditCoupon = ({ remoteUpdateCoupon, visible, coupon, close }: Props) => {
     close()
   }
 
+  async function handleGetProductOptions(searchValue: string): Promise<ISelectOption[]> {
+    return getOptionsFromSearchRequest(remoteGetAllProducts.getAll, {
+      name: searchValue || '',
+      allRecords: true,
+    })
+  }
+
   useEffect(() => {
     formRef.current?.setFieldValue('type', currentTypeSelected)
   }, [visible])
@@ -83,23 +101,29 @@ const EditCoupon = ({ remoteUpdateCoupon, visible, coupon, close }: Props) => {
       const expirationDate = new Date(coupon.expirationDate)
       expirationDate.setDate(expirationDate.getDay() + 1)
 
+      formRef.current?.setFieldValue('value', coupon.value)
+      if (coupon.type === 'value') {
+        formRef.current?.setFieldValue('value', maskedToMoney(coupon.value))
+      }
       formRef.current?.setFieldValue('name', coupon.name)
       formRef.current?.setFieldValue('type', coupon.type)
-      formRef.current?.setFieldValue('value', coupon.value)
       formRef.current?.setFieldValue('quantity', coupon.quantity)
       formRef.current?.setFieldValue('expirationDate', expirationDate)
+
+      formRef.current?.setFieldValue('productsId', extractSelectOptionsFromArr(coupon.products))
     }
   }, [coupon])
 
   return (
     <EditCouponDrawerForm
-      visible={visible}
       ref={formRef}
-      onSubmit={handleFormSubmit}
-      changeDiscountType={changeDiscountType}
+      visible={visible}
       discountType={currentTypeSelected}
       loading={loadingCouponCreation}
       close={closeDrawer}
+      onSubmit={handleFormSubmit}
+      changeDiscountType={changeDiscountType}
+      loadProductsOptions={handleGetProductOptions}
     />
   )
 }

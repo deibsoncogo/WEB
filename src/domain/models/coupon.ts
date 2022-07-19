@@ -1,3 +1,5 @@
+import { Product } from './product'
+
 export type CouponType = 'percentage' | 'value'
 
 export interface ICoupon {
@@ -9,4 +11,5 @@ export interface ICoupon {
   isActive: boolean
   expirationDate: string
   productsId?: string[]
+  products: Product[]
 }

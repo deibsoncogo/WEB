@@ -4,22 +4,32 @@ import React from 'react'
 
 import { Button } from '../../buttons/CustomButton'
 import { DrawerRight } from '../../drawerRight/DrawerRight'
-import { DatePicker, Input, InputCurrence, InputNumber, Radio } from '../../inputs'
+import { DatePicker, Input, InputCurrence, InputNumber, Radio, SelectMulti } from '../../inputs'
 
 import { ICoupon } from '../../../../domain/models/coupon'
 import { IDiscountType } from '../../../templates/coupons/type'
+import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 
 type Props = {
   visible: boolean
   loading: boolean
+  discountType: IDiscountType
   close: () => void
   changeDiscountType: () => void
   onSubmit: (data: ICoupon) => void
-  discountType: IDiscountType
+  loadProductsOptions: (searchValue: string) => Promise<ISelectOption[]>
 }
 
 const EditCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) => {
-  const { close, onSubmit, visible, changeDiscountType, discountType, loading } = props
+  const {
+    close,
+    onSubmit,
+    changeDiscountType,
+    loadProductsOptions,
+    visible,
+    discountType,
+    loading,
+  } = props
 
   const radioOptions = [
     { id: 'percentage', value: 'percentage', label: 'Porcentagem', checked: true },
@@ -46,7 +56,10 @@ const EditCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) =
           )}
 
           <InputNumber name='quantity' label='Quantidade' />
+
           <DatePicker name='expirationDate' label='Data de Expiração' minDate={new Date()} />
+
+          <SelectMulti loadOptions={loadProductsOptions} name='productsId' label='Produtos' />
         </Form>
 
         <div className='d-flex mb-15'>
