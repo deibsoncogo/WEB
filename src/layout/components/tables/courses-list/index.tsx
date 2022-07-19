@@ -145,6 +145,7 @@ export default function CoursesTable(props: Props) {
                           discount={maskedToMoney(item.discount)}
                           teacher={item.teacherName}
                           active={item.isActive}
+                          belongsToPlans={item.belongsToPlans}
                           deleteCourse={props.deleteCourse}
                           updateCourse={props.updateCourse}
                           handleRefresher={handleRefresher}

@@ -19,6 +19,7 @@ interface IRow {
   discount: string
   teacher: string
   active: boolean
+  belongsToPlans: boolean
   deleteCourse: IDeleteCourse
   updateCourse: IUpdateCourse
   handleRefresher: () => void; 
@@ -96,9 +97,9 @@ export function Row(props: IRow) {
               </button>
             </Link>
           </Tooltip>
-          <Tooltip content={'Deletar'} rounded color = "primary">
+          <Tooltip content={props.belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'} rounded color = "primary">
             <button
-              onClick={() => {
+              onClick={props.belongsToPlans ? undefined : () => {
                 setIsModalDeleteOpen(true)
               }}
               className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
