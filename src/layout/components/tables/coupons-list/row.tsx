@@ -3,16 +3,21 @@ import { Tooltip } from '@nextui-org/react'
 import { KTSVG } from '../../../../helpers'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 
-import { Switch } from '../../inputs'
+import { useEffect } from 'react'
 import { ICoupon } from '../../../../domain/models/coupon'
 import { getIsoDateToBRL } from '../../../../utils/getIsoDateToBRL'
+import { Switch } from '../../inputs'
 
 type CouponTableRowProps = {
   coupon: ICoupon
+  toggleCouponStatus: (id: string) => void
 }
-const Row = ({ coupon }: CouponTableRowProps) => {
-  function handleCouponStatusChange() {}
+const Row = ({ coupon, toggleCouponStatus }: CouponTableRowProps) => {
+  function handleCouponStatusChange() {
+    toggleCouponStatus(coupon.id)
+  }
 
+  console.log(coupon)
   function handleDeleteCoupon() {}
 
   return (

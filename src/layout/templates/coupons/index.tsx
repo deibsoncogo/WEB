@@ -19,12 +19,19 @@ import {
   IUpdateCoupon,
 } from '../../../domain/usecases/interfaces/coupon'
 import { CreateCoupon } from './createCoupon'
+import { toast } from 'react-toastify'
+import {
+  IToggleCouponStatus,
+  IToggleCouponStatusParams,
+} from '../../../domain/usecases/interfaces/coupon/toggleCouponStatus'
+import ConfirmationModal from '../../components/modal/ConfirmationModal'
 
 type CouponsTemplateProps = {
   remoteGetCoupons: IGetCoupons
   remoteCreateCoupon: ICreateCoupon
   remoteUpdateCoupon: IUpdateCoupon
   remoteDeleteCoupon: IDeleteCoupon
+  remoteToggleCouponStatus: IToggleCouponStatus
 }
 
 export function CouponsTemplate({
@@ -32,6 +39,7 @@ export function CouponsTemplate({
   remoteCreateCoupon,
   remoteUpdateCoupon,
   remoteDeleteCoupon,
+  remoteToggleCouponStatus,
 }: CouponsTemplateProps) {
   const paginationHook = usePagination()
 
@@ -42,12 +50,14 @@ export function CouponsTemplate({
 
   const [coupons, setCoupons] = useState<ICoupon[]>([])
   const [couponName, setCouponName] = useState('')
+  const [couponToTggleStatus, setCouponToToggleStatus] = useState<string | null>(null)
 
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false)
   const paginationParams: IGetCouponsParams = {
     page: currentPage,
     take,
     name: couponName,
+    orderBy: pagination.orderBy,
     order,
   }
 
@@ -56,6 +66,14 @@ export function CouponsTemplate({
     error: getCouponsError,
     data: paginatedCoupons,
   } = useRequest<OutputPagination<ICoupon>, IGetCouponsParams>(remoteGetCoupons.get)
+
+  const {
+    makeRequest: toggleCouponStatus,
+    data: toggleCouponStatusSuccessful,
+    loading: toggleStatusLoading,
+    cleanUp: cleanUpToggleCouponStatus,
+    error: toggleStatusError,
+  } = useRequest<IToggleCouponStatusParams>(remoteToggleCouponStatus.toggle)
 
   const handleSearchCoupon = debounce((text: string) => {
     setCouponName(text)
@@ -68,6 +86,20 @@ export function CouponsTemplate({
     setIsModalCreateOpen(false)
   }
 
+  const handleToggleCouponStatus = (id: string) => {
+    setCouponToToggleStatus(id)
+  }
+
+  const handleConfirmationToggleStatus = () => {
+    if (couponToTggleStatus) {
+      toggleCouponStatus({ id: couponToTggleStatus })
+    }
+  }
+
+  const handleCloseModalToToggleStatus = () => {
+    setCouponToToggleStatus(null)
+  }
+
   useEffect(() => {
     getCoupons(paginationParams)
   }, [
@@ -77,6 +109,7 @@ export function CouponsTemplate({
     pagination.orderBy,
     currentPage,
     isModalCreateOpen,
+    toggleCouponStatusSuccessful,
   ])
 
   useEffect(() => {
@@ -84,8 +117,27 @@ export function CouponsTemplate({
       const { data, total } = paginatedCoupons
       setTotalPage(total)
       setCoupons(data)
+      return
     }
-  }, [paginatedCoupons])
+
+    if (toggleCouponStatusSuccessful) {
+      toast.success('Status do cupom alterado com sucesso')
+      handleCloseModalToToggleStatus()
+      cleanUpToggleCouponStatus()
+    }
+  }, [toggleCouponStatusSuccessful, paginatedCoupons])
+
+  useEffect(() => {
+    if (getCouponsError) {
+      toast.error(getCouponsError)
+      return
+    }
+
+    if (toggleStatusError) {
+      toast.error(toggleStatusError)
+      cleanUpToggleCouponStatus()
+    }
+  }, [getCouponsError, toggleStatusError])
 
   return (
     <>
@@ -102,13 +154,26 @@ export function CouponsTemplate({
           </div>
         </div>
 
-        <CouponsTable coupons={coupons} paginationHook={paginationHook} />
+        <CouponsTable
+          coupons={coupons}
+          paginationHook={paginationHook}
+          toggleCouponStatus={handleToggleCouponStatus}
+        />
       </div>
 
       <CreateCoupon
         visible={isModalCreateOpen}
         close={handleCloseModalCreateCoupon}
         remoteCreateCoupon={remoteCreateCoupon}
+      />
+
+      <ConfirmationModal
+        isOpen={!!couponToTggleStatus}
+        content='Deseja realmente alterar os status do cupom ?'
+        loading={toggleStatusLoading}
+        onRequestClose={handleCloseModalToToggleStatus}
+        onConfimation={handleConfirmationToggleStatus}
+        title='Atenção'
       />
     </>
   )

@@ -1,7 +1,7 @@
 import { Row } from './row'
 
-import { Pagination } from '../../pagination/Pagination'
 import { usePaginationType } from '../../../../application/hooks/usePagination'
+import { Pagination } from '../../pagination/Pagination'
 
 import { ICoupon } from '../../../../domain/models/coupon'
 import { ItemNotFound } from '../../search/ItemNotFound'
@@ -9,6 +9,7 @@ import { ItemNotFound } from '../../search/ItemNotFound'
 type PlansTableProps = {
   coupons: ICoupon[]
   paginationHook: usePaginationType
+  toggleCouponStatus: (id: string) => void
 }
 
 type HandleClassesParam = {
@@ -16,7 +17,7 @@ type HandleClassesParam = {
   extraClasses?: string
 }
 
-export function CouponsTable({ coupons, paginationHook }: PlansTableProps) {
+export function CouponsTable({ coupons, paginationHook, toggleCouponStatus }: PlansTableProps) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
   const getColumnHeaderClasses = ({ title, extraClasses = '' }: HandleClassesParam) => {
@@ -24,6 +25,8 @@ export function CouponsTable({ coupons, paginationHook }: PlansTableProps) {
       title
     )}`
   }
+
+  console.log(coupons)
 
   return (
     <>
@@ -62,19 +65,19 @@ export function CouponsTable({ coupons, paginationHook }: PlansTableProps) {
                       role='columnheader'
                       scope='col'
                       className={getColumnHeaderClasses({
-                        title: 'intervalPaymentMonths',
+                        title: 'quantity',
                       })}
                       style={{ maxWidth: '130px' }}
-                      onClick={() => handleOrdenation('intervalPaymentMonths')}
+                      onClick={() => handleOrdenation('quantity')}
                     >
                       Quantidade
                     </th>
                     <th
                       role='columnheader'
                       scope='col'
-                      className={getColumnHeaderClasses({ title: 'intervalAccessMonths' })}
+                      className={getColumnHeaderClasses({ title: 'expirationDate' })}
                       style={{ maxWidth: '130px' }}
-                      onClick={() => handleOrdenation('intervalAccessMonths')}
+                      onClick={() => handleOrdenation('expirationDate')}
                     >
                       Data de expiração
                     </th>
@@ -95,7 +98,7 @@ export function CouponsTable({ coupons, paginationHook }: PlansTableProps) {
 
                 <tbody className='w-100'>
                   {coupons?.map((coupon) => (
-                    <Row key={coupon.id} coupon={coupon} />
+                    <Row key={coupon.id} coupon={coupon} toggleCouponStatus={toggleCouponStatus} />
                   ))}
                 </tbody>
               </table>

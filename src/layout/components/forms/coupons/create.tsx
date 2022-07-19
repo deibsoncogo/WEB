@@ -48,7 +48,6 @@ const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref)
             label='Tipo de Desconto'
             options={radioOptions}
             onClick={changeDiscountType}
-            defaultValue={discountType}
           />
 
           {discountType === 'percentage' ? (
