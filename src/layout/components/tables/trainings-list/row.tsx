@@ -17,6 +17,7 @@ interface IRow {
   price: string | number
   teacherName: string
   active: boolean
+  belongsToPlans: boolean
   deleteTraining: IDeleteTraining
   getTrainings(): Promise<void>
   handleToggleStatusConfirmation: (trainingId: string) => void
@@ -29,6 +30,7 @@ export function Row({
   price,
   teacherName,
   active,
+  belongsToPlans,
   deleteTraining,
   getTrainings,
   handleToggleStatusConfirmation,
@@ -108,12 +110,16 @@ export function Row({
         </Tooltip>
 
         <Tooltip
-          content='Deletar'
+          content={belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'}
           rounded
           color='primary'
-          onClick={() => {
-            setIsDeleteCategoryModalOpen(true)
-          }}
+          onClick={
+            belongsToPlans
+              ? undefined
+              : () => {
+                  setIsDeleteCategoryModalOpen(true)
+                }
+          }
           className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
         >
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>

@@ -78,6 +78,7 @@ export function TrainingsTable({
                       price={item.price}
                       teacher={item.teacher}
                       active={item.active}
+                      belongsToPlans={item.belongsToPlans}
                       getTrainings={getTrainings}
                       handleToggleStatusConfirmation={openToggleStatusConfirmationModal}
                     />

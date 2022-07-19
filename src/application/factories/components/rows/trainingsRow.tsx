@@ -7,6 +7,7 @@ type IMakeTrainingsRow = {
   id: string
   name: string
   active: boolean
+  belongsToPlans: boolean
   description: string
   price: string | number
   teacher: { name: string }
@@ -21,6 +22,7 @@ export function MakeTrainingsRow({
   price,
   teacher,
   active,
+  belongsToPlans,
   getTrainings,
   handleToggleStatusConfirmation,
 }: IMakeTrainingsRow) {
@@ -32,6 +34,7 @@ export function MakeTrainingsRow({
       price={price}
       teacherName={teacher.name}
       active={active}
+      belongsToPlans={belongsToPlans}
       deleteTraining={makeRemoteDeleteTrainings(id)}
       getTrainings={getTrainings}
       handleToggleStatusConfirmation={handleToggleStatusConfirmation}
