@@ -11,14 +11,24 @@ type CouponTableRowProps = {
   coupon: ICoupon
   toggleCouponStatus: (id: string) => void
   deleteCoupon: (id: string) => void
+  selectCouponToBeEdited: (coupon: ICoupon) => void
 }
-const Row = ({ coupon, toggleCouponStatus, deleteCoupon }: CouponTableRowProps) => {
+const Row = ({
+  coupon,
+  toggleCouponStatus,
+  deleteCoupon,
+  selectCouponToBeEdited,
+}: CouponTableRowProps) => {
   function handleCouponStatusChange() {
     toggleCouponStatus(coupon.id)
   }
 
   function handleDeleteCoupon() {
     deleteCoupon(coupon.id)
+  }
+
+  function handleSelectCouponToBeEdited() {
+    selectCouponToBeEdited(coupon)
   }
 
   return (
@@ -55,7 +65,10 @@ const Row = ({ coupon, toggleCouponStatus, deleteCoupon }: CouponTableRowProps) 
 
       <td className='d-flex' style={{ minWidth: '150px' }}>
         <Tooltip content={'Editar'} rounded color='primary'>
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+          <button
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+            onClick={handleSelectCouponToBeEdited}
+          >
             <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
           </button>
         </Tooltip>

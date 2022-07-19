@@ -11,6 +11,7 @@ type PlansTableProps = {
   paginationHook: usePaginationType
   toggleCouponStatus: (id: string) => void
   deleteCoupon: (id: string) => void
+  selectCouponToBeEdited: (coupon: ICoupon) => void
 }
 
 type HandleClassesParam = {
@@ -23,6 +24,7 @@ export function CouponsTable({
   paginationHook,
   toggleCouponStatus,
   deleteCoupon,
+  selectCouponToBeEdited,
 }: PlansTableProps) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
@@ -31,8 +33,6 @@ export function CouponsTable({
       title
     )}`
   }
-
-  console.log(coupons)
 
   return (
     <>
@@ -109,6 +109,7 @@ export function CouponsTable({
                       coupon={coupon}
                       toggleCouponStatus={toggleCouponStatus}
                       deleteCoupon={deleteCoupon}
+                      selectCouponToBeEdited={selectCouponToBeEdited}
                     />
                   ))}
                 </tbody>

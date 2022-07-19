@@ -2,7 +2,6 @@ import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import React from 'react'
 
-import { formatDate } from '../../../../helpers'
 import { Button } from '../../buttons/CustomButton'
 import { DrawerRight } from '../../drawerRight/DrawerRight'
 import { DatePicker, Input, InputCurrence, InputNumber, Radio } from '../../inputs'
@@ -19,7 +18,7 @@ type Props = {
   discountType: IDiscountType
 }
 
-const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) => {
+const EditCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) => {
   const { close, onSubmit, visible, changeDiscountType, discountType, loading } = props
 
   const radioOptions = [
@@ -28,9 +27,9 @@ const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref)
   ]
 
   return (
-    <DrawerRight title='Novo Cupom' visible={visible} close={close}>
+    <DrawerRight title='Editar Cupom' visible={visible} close={close}>
       <div className='mt-6 d-flex flex-column justify-content-between h-100'>
-        <Form className='form' ref={ref} onSubmit={onSubmit} id='create-coupon-form'>
+        <Form className='form' ref={ref} onSubmit={onSubmit} id='edit-coupon-form'>
           <Input name='name' label='Código' type='text' />
 
           <Radio
@@ -60,7 +59,7 @@ const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref)
 
           <Button
             type='submit'
-            form='create-coupon-form'
+            form='edit-coupon-form'
             customClasses={['px-20', 'btn-primary']}
             title='Salvar'
             loading={loading}
@@ -70,6 +69,6 @@ const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref)
     </DrawerRight>
   )
 })
-CreateCouponDrawerForm.displayName = 'CreateCouponDrawerForm'
+EditCouponDrawerForm.displayName = 'EditCouponDrawerForm'
 
-export { CreateCouponDrawerForm }
+export { EditCouponDrawerForm }

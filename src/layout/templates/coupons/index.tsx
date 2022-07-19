@@ -26,6 +26,7 @@ import {
   IToggleCouponStatusParams,
 } from '../../../domain/usecases/interfaces/coupon/toggleCouponStatus'
 import ConfirmationModal from '../../components/modal/ConfirmationModal'
+import { EditCoupon } from './editCoupon'
 
 type CouponsTemplateProps = {
   remoteGetCoupons: IGetCoupons
@@ -50,6 +51,7 @@ export function CouponsTemplate({
   const { take, currentPage, order } = pagination
 
   const [coupons, setCoupons] = useState<ICoupon[]>([])
+  const [selectedCoupon, setSelectedCoupon] = useState<ICoupon | null>(null)
   const [couponName, setCouponName] = useState('')
   const [couponToToggleStatus, setCouponToToggleStatus] = useState<string | null>(null)
   const [couponTobeDeleted, setCouponTobeDeleted] = useState<string | null>(null)
@@ -125,6 +127,14 @@ export function CouponsTemplate({
     setCouponTobeDeleted(null)
   }
 
+  const handleSelectCouponToBeEdited = (coupon: ICoupon) => {
+    setSelectedCoupon(coupon)
+  }
+
+  const handleRemoveSelectedCouponToBeEdited = () => {
+    setSelectedCoupon(null)
+  }
+
   useEffect(() => {
     getCoupons(paginationParams)
   }, [
@@ -136,6 +146,7 @@ export function CouponsTemplate({
     isModalCreateOpen,
     toggleCouponStatusSuccessful,
     couponDeleteSuccessful,
+    selectedCoupon,
   ])
 
   useEffect(() => {
@@ -197,6 +208,7 @@ export function CouponsTemplate({
           paginationHook={paginationHook}
           toggleCouponStatus={handleToggleCouponStatus}
           deleteCoupon={handleCouponToBeDeleted}
+          selectCouponToBeEdited={handleSelectCouponToBeEdited}
         />
       </div>
 
@@ -204,6 +216,13 @@ export function CouponsTemplate({
         visible={isModalCreateOpen}
         close={handleCloseModalCreateCoupon}
         remoteCreateCoupon={remoteCreateCoupon}
+      />
+
+      <EditCoupon
+        coupon={selectedCoupon}
+        visible={!!selectedCoupon}
+        close={handleRemoveSelectedCouponToBeEdited}
+        remoteUpdateCoupon={remoteUpdateCoupon}
       />
 
       <ConfirmationModal
