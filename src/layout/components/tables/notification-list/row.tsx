@@ -17,7 +17,7 @@ interface IRow {
   isActive: boolean
   toggleStatus: IToggleNotificationStatus 
   deleteNotification: IDeleteNotification
-  handleRefresher: () => void;
+  handleRefresher: () => void
 
 }
 
@@ -89,7 +89,12 @@ export function Row({
         </td>
         <td>
           <span className='text-dark fw-bold d-block fs-7'>{notificationType}</span>
-        </td>              
+        </td>      
+
+        <td>
+          <Switch active={isActive} setModalUpdate={setIsModalUpdateOpen} />
+        </td>
+              
         <td className='text-end d-flex justify-content-start px-4'>
           <Tooltip content={'Editar'} rounded color='primary'>
             <Link href={`/notification/edit/${id}`}>
@@ -98,10 +103,6 @@ export function Row({
               </button>
             </Link>
           </Tooltip>
-
-        <td>
-          <Switch active={isActive} setModalUpdate={setIsModalUpdateOpen} />
-        </td>
 
           <Tooltip content={'Deletar'} rounded color='primary'>
             <button

@@ -48,9 +48,9 @@ export function NotificationTable({ getAllNotification, toggleStatus, deleteNoti
      }
      getAllNotification
        .getAll(paginationParams)
-       .then((data) => {
+       .then((data) => {          
          setNotification(data.data)
-         setTotalPage(data.total)
+         setTotalPage(data.total)        
        })
        .catch(() => toast.error('Não foi possível listar as notificações.'))
        .finally(() =>
@@ -79,7 +79,7 @@ export function NotificationTable({ getAllNotification, toggleStatus, deleteNoti
             <Link href='/notification/create'>
               <a className='btn btn-sm btn-light-primary'>
                 <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-                Novo Conteúdo
+                Nova notificação
               </a>
             </Link>
           </div>
@@ -92,40 +92,42 @@ export function NotificationTable({ getAllNotification, toggleStatus, deleteNoti
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th
-                      className={getColumnHeaderClasses('title')}
-                      onClick={() => handleOrdenation('title')}
+                      className={getColumnHeaderClasses('tag')}
+                      onClick={() => handleOrdenation('tag')}
                     >
-                      Título
+                      Tag
                     </th>
                     <th
-                      className={getColumnHeaderClasses('description', 'min-w-150px')}
-                      onClick={() => handleOrdenation('description')}
+                      className={getColumnHeaderClasses('text', 'min-w-150px')}
+                      onClick={() => handleOrdenation('text')}
                     >
-                      Descrição
+                      Texto
                     </th>
                     <th
-                      className={getColumnHeaderClasses('contentType')}
-                      onClick={() => handleOrdenation('contentType')}
+                      className={getColumnHeaderClasses('date')}
+                      onClick={() => handleOrdenation('date')}
+                    >
+                      Data
+                    </th>
+
+                    <th
+                      className={getColumnHeaderClasses('notificationType')}
+                      onClick={() => handleOrdenation('notificationType')}
                     >
                       Tipo
                     </th>
+                                   
                     <th
-                      className={getColumnHeaderClasses('link')}
-                      onClick={() => handleOrdenation('link')}
+                      className={getColumnHeaderClasses('isActive', 'min-w-150px')}
+                      onClick={() => handleOrdenation('isActive')}
                     >
-                      Link
-                    </th>                
-                    <th
-                      className={getColumnHeaderClasses('articleContent', 'min-w-150px')}
-                      onClick={() => handleOrdenation('articleContent')}
-                    >
-                      Texto
+                      Ativo
                     </th>
                     <th className='text-dark min-w-80px text-start rounded-end'>Ação</th>
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody>              
                   {!loading &&
                     notification?.map((item) => (
                       <Row
@@ -134,7 +136,7 @@ export function NotificationTable({ getAllNotification, toggleStatus, deleteNoti
                         tag={item.tag}
                         text={item.text}
                         date={dateMask(item.date)}
-                        notificationType={item.notificatonType}  
+                        notificationType={item.notificationType}  
                         isActive={item.isActive}
                         toggleStatus={toggleStatus}                     
                         deleteNotification={deleteNotification} 

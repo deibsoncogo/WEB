@@ -17,7 +17,6 @@ export class RemoteGetAllNotification implements IGetAllNotification{
       method: 'get',
       params: query,
     })
-
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body
