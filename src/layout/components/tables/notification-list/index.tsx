@@ -132,6 +132,7 @@ export function NotificationTable({ createNotification, updateNotification, getA
         setLoadingAction(false)        
         handleCloseModalNotification()
         handleRefresher()
+        setNotificationToUpdate(undefined)
        })
   }
 
