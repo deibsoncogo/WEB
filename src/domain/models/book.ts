@@ -9,6 +9,7 @@ export interface IBook {
   discount: number
   stock: number
   isActive: boolean
+  belongsToPlans: boolean
   installments: number
   categoryId: string
 

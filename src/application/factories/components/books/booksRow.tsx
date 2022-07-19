@@ -10,6 +10,7 @@ type IMakeBooksRow = {
   author: string
   stock: number
   active: boolean
+  belongsToPlans: boolean
   getBooks(): Promise<void>
   handleRefresher: () => void
 }
@@ -22,6 +23,7 @@ export function MakeBooksRow({
   author,
   stock,
   active,
+  belongsToPlans,
   getBooks,
   handleRefresher,
 }: IMakeBooksRow) {
@@ -34,6 +36,7 @@ export function MakeBooksRow({
       authorName={author}
       stock={stock}
       active={active}
+      belongsToPlans={belongsToPlans}
       deleteBook={makeRemoteDeleteBooks(id)}
       toggleBookStatus={makeRemoteToggleBookStatus()}
       getBooks={getBooks}
