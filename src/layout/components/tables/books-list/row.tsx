@@ -108,6 +108,9 @@ export function Row({
             content={belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'}
             rounded
             color='primary'
+            onClick={belongsToPlans ? undefined : () => {
+              setIsDeleteCategoryModalOpen(true)
+            }}
             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
           >
             <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm' disabled={belongsToPlans}>
