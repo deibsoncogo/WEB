@@ -71,10 +71,10 @@ export function FormCreateUser({
           test: (value) => (value ? validateIfCPFIsValid(value) : true),
         }),
         password: Yup.string()
-          .min(8, 'No mínimo 8 caracteres')
+          .min(8)
           .matches(
             isStrongPassword,
-            'A senha deve conter um caractere maiúsculo e um caractere especial ou dígito'
+            'A senha deve conter no mínimo 8 caracteres, um caractere maiúsculo e um caractere especial ou dígito'
           ),
         role: Yup.string().required('Permissão é necessária'),
       })
