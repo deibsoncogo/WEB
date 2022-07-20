@@ -21,6 +21,7 @@ import { Button } from '../../buttons/CustomButton'
 import { DatePicker, Input, InputMasked, Select } from '../../inputs'
 import { ProductsModal } from '../../modals/products'
 import { ProductsTable } from '../../tables/products-list'
+import { isStrongPassword } from '../../../../domain/shared/reggexPatterns/isPasswordStrong'
 
 type Props = {
   userRegister: IUserSignUp
@@ -72,7 +73,7 @@ export function FormCreateUser({
         password: Yup.string()
           .min(8, 'No mínimo 8 caracteres')
           .matches(
-            /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+            isStrongPassword,
             'A senha deve conter um caractere maiúsculo e um caractere especial ou dígito'
           ),
         role: Yup.string().required('Permissão é necessária'),
