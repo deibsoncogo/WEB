@@ -32,8 +32,8 @@ const SelectMulti = ({
       setValue: (ref, newValue) => {
         ref.current.setValue(newValue)
       },
-      clearValue: (ref) => {
-        ref.current.value = ''
+      clearValue: (ref: any) => {
+        ref.current?.setValue([])
       },
     })
   }, [fieldName, registerField])

@@ -1,7 +1,6 @@
-import React, { InputHTMLAttributes, useEffect, useRef, useState } from 'react'
 import { useField } from '@unform/core'
+import React, { InputHTMLAttributes, useEffect, useRef } from 'react'
 
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
 import { maskedToMoney } from '../../formatters/currenceFormatter'
 
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -12,14 +11,7 @@ interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   onChange?: (value?: any) => void
 }
 
-export function InputCurrence({
-  name,
-  label,
-  placeholderText,
-  classes,
-  onChange,
-  ...rest
-}: IInputProps) {
+export function InputCurrence({ name, label, placeholderText, classes, ...rest }: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const { fieldName, registerField, error, clearError } = useField(name)
 

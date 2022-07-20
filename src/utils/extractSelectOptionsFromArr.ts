@@ -1,4 +1,4 @@
-import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
+import { ISelectOption } from '../domain/shared/interface/SelectOption'
 
 export function extractSelectOptionsFromArr(
   arr: Array<{ name: string; id?: string }>

@@ -3,16 +3,33 @@ import { Tooltip } from '@nextui-org/react'
 import { KTSVG } from '../../../../helpers'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 
-import { Switch } from '../../inputs'
 import { ICoupon } from '../../../../domain/models/coupon'
+import { getIsoDateToBRL } from '../../../../utils/getIsoDateToBRL'
+import { Switch } from '../../inputs'
 
 type CouponTableRowProps = {
   coupon: ICoupon
+  toggleCouponStatus: (id: string) => void
+  deleteCoupon: (id: string) => void
+  selectCouponToBeEdited: (coupon: ICoupon) => void
 }
-const Row = ({ coupon }: CouponTableRowProps) => {
-  function handleCouponStatusChange() {}
+const Row = ({
+  coupon,
+  toggleCouponStatus,
+  deleteCoupon,
+  selectCouponToBeEdited,
+}: CouponTableRowProps) => {
+  function handleCouponStatusChange() {
+    toggleCouponStatus(coupon.id)
+  }
 
-  function handleDeleteCoupon() {}
+  function handleDeleteCoupon() {
+    deleteCoupon(coupon.id)
+  }
+
+  function handleSelectCouponToBeEdited() {
+    selectCouponToBeEdited(coupon)
+  }
 
   return (
     <tr>
@@ -22,14 +39,18 @@ const Row = ({ coupon }: CouponTableRowProps) => {
 
       <td className='ps-4' scope='row'>
         {coupon.type === 'percentage' ? (
-          <span className='w-bold d-block fs-7'>{coupon.value}</span>
-        ) : null}
+          <span className='w-bold d-block fs-7'>{coupon.value}%</span>
+        ) : (
+          '-'
+        )}
       </td>
 
       <td className='ps-4' scope='row'>
         {coupon.type === 'value' ? (
           <span className='w-bold d-block fs-7'>{maskedToMoney(coupon.value)}</span>
-        ) : null}
+        ) : (
+          '-'
+        )}
       </td>
 
       <td className='ps-4' scope='row'>
@@ -37,7 +58,7 @@ const Row = ({ coupon }: CouponTableRowProps) => {
       </td>
 
       <td className='ps-4' scope='row'>
-        <span className='fw-bold d-block fs-7'>{coupon.expirationDate}</span>
+        <span className='fw-bold d-block fs-7'>{getIsoDateToBRL(coupon.expirationDate)}</span>
       </td>
 
       <td>
@@ -48,7 +69,10 @@ const Row = ({ coupon }: CouponTableRowProps) => {
 
       <td className='d-flex' style={{ minWidth: '150px' }}>
         <Tooltip content={'Editar'} rounded color='primary'>
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
+          <button
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+            onClick={handleSelectCouponToBeEdited}
+          >
             <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
           </button>
         </Tooltip>
