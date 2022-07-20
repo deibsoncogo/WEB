@@ -6,7 +6,7 @@ export const appRoutes = {
   CATEGORIES: '/categories',
   CONTENTS: '/freeContent',
   BANNERS: '/banners',
-  ALERTS: '/alerts',
+  ALERTS: '/notification',
   PLANS: '/plans',
   COURSES: '/courses',
   BOOKS: '/books',
