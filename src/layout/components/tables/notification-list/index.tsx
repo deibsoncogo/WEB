@@ -97,6 +97,7 @@ export function NotificationTable({ createNotification, updateNotification, getA
     notificationFormRef.current?.reset()
     notificationFormRef.current?.setErrors({})
     setIsDrawerNotificationOpen(false)
+    setNotificationToUpdate(undefined)
   }
 
   async function createNotificationRequest(data: IFormNotification) {    
