@@ -38,7 +38,7 @@ export function Radio({ name, label, options, ...rest }: IRadioProps) {
           <input
             type='radio'
             ref={(ref) => {
-              inputRefs.current[index] = ref
+              inputRefs.current[index] = ref as never
             }}
             id={option.id}
             name={name}
