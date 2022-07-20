@@ -173,6 +173,7 @@ export function NotificationTable({ createNotification, updateNotification, getA
     <>
 
      <NotificationDrawer
+        isUpdate={Boolean(notificationToUpdate)}
         visible={isDrawerNotificationOpen}
         close={handleCloseModalNotification}
         handleFormSubmit={handleFormSubmit}

@@ -7,6 +7,7 @@ import { DatePicker, Input, Select, TextArea } from '../../inputs'
 import { notificationTypeOptions } from './notificationTypeOptions'
 
 type Props = {
+  isUpdate: boolean
   visible: boolean
   close: () => void
   loading: boolean
@@ -14,9 +15,9 @@ type Props = {
 }
 
 const NotificationDrawer = React.forwardRef<FormHandles, Props>((props, ref) => {
-  const { close, handleFormSubmit, loading, visible } = props
+  const { close, handleFormSubmit, loading, visible, isUpdate } = props
   return (
-    <DrawerRight title='Nova Notificação' visible={visible} close={close}>
+    <DrawerRight title={isUpdate? 'Editar Notificação':'Nova Notificação'} visible={visible} close={close}>
       <div className='mt-3 d-flex flex-column justify-content-between h-100'>
         <Form className='form' ref={ref} onSubmit={handleFormSubmit} id='create-notification-form'>
           <Input name='tag' label='Tag' type='text' />
