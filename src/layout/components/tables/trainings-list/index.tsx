@@ -72,13 +72,13 @@ export function TrainingsTable({
                   {trainings?.map((item) => (
                     <MakeTrainingsRow
                       key={item.id}
-                      id={item.id as string}
+                      id={String(item.id)}
                       name={item.name}
                       description={item.description}
                       price={item.price}
                       teacher={item.teacher}
-                      active={item.active}
                       belongsToPlans={item.belongsToPlans}
+                      isActive={item.isActive}
                       getTrainings={getTrainings}
                       handleToggleStatusConfirmation={openToggleStatusConfirmationModal}
                     />

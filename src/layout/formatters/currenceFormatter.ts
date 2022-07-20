@@ -27,4 +27,16 @@ const maskedToMoney = (value: any) => {
     .join('')}`
 }
 
-export { maskedToMoney }
+const maskedToPercentege = (value: any) => {
+  const number = onlyNums(`${value}`)
+
+  const [first, second, third] = number.split('')
+
+  if (number.lenth < 2) {
+    return `${second | 0}${first | 0}%`
+  }
+
+  return `${second | 0}${third | 0}%`
+}
+
+export { maskedToMoney, maskedToPercentege }

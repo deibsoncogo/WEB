@@ -16,8 +16,8 @@ interface IRow {
   description: string
   price: string | number
   teacherName: string
-  active: boolean
   belongsToPlans: boolean
+  isActive: boolean
   deleteTraining: IDeleteTraining
   getTrainings(): Promise<void>
   handleToggleStatusConfirmation: (trainingId: string) => void
@@ -29,8 +29,8 @@ export function Row({
   description,
   price,
   teacherName,
-  active,
   belongsToPlans,
+  isActive,
   deleteTraining,
   getTrainings,
   handleToggleStatusConfirmation,
@@ -83,7 +83,7 @@ export function Row({
       <td>
         <Tooltip content='Chat' rounded color='primary'>
           <Link href={`/trainings/chat/${id}`}>
-            {active ? (
+            {isActive ? (
               <button className='btn btn-icon  btn-active-color-primary btn-sm me-1'>
                 <KTSVG path='/icons/com003.svg' className='svg-icon-3 svg-icon-primary' />
               </button>
@@ -97,7 +97,7 @@ export function Row({
       </td>
 
       <td>
-        <Switch active={active} setModalUpdate={handleUpdateStatusOfTraining} />
+        <Switch active={isActive} setModalUpdate={handleUpdateStatusOfTraining} />
       </td>
 
       <td className='text-end d-flex justify-content-start px-4'>

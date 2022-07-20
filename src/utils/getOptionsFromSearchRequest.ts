@@ -1,7 +1,6 @@
 import { toast } from 'react-toastify'
-import { InputPagination } from '../../../../domain/shared/interface/InputPagination'
-import { OutputPagination } from '../../../../domain/shared/interface/OutputPagination'
-import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
+import { OutputPagination } from '../domain/shared/interface/OutputPagination'
+import { ISelectOption } from '../domain/shared/interface/SelectOption'
 import { extractSelectOptionsFromArr } from './extractSelectOptionsFromArr'
 
 export async function getOptionsFromSearchRequest(

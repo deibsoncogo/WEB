@@ -8,7 +8,7 @@ export function rangeInt(start: number, end: number): number[] {
   return arrNumbers
 }
 
-export function formatDate(date: Date, format: string): string {
+export function formatDate(date: Date | string, format: string): string {
   const newDate = moment(date).format(format)
   return newDate
 }
@@ -18,7 +18,7 @@ export function formatTime(time: Date, format: string): string {
   return newDate
 }
 
-export function formatDateToUTC(date: string) {  
+export function formatDateToUTC(date: string) {
   const formattedDate = new Date(date)
   const day = formattedDate.getUTCDate()
   const month = formattedDate.getUTCMonth()

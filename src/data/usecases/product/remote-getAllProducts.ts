@@ -1,5 +1,8 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { GetProductsParams, IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
+import {
+  GetProductsParams,
+  IGetAllProducts,
+} from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { apiPaginationResponse } from '../../../interfaces/api-response/apiPaginationResponse'
 import { IRoomPartialResponse } from '../../../interfaces/api-response/roomPartialResponse'
 import { HttpClient, HttpStatusCode } from '../../protocols'
@@ -10,13 +13,13 @@ export class RemoteGetAllProducts implements IGetAllProducts {
     private readonly httpClient: HttpClient<apiPaginationResponse<IRoomPartialResponse>>
   ) {}
 
-  async getAll(query: GetProductsParams) {    
+  getAll = async (query: GetProductsParams) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',
-      params: query
+      params: query,
     })
-   
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body

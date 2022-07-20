@@ -72,7 +72,7 @@ export function Row(props: IRow) {
           <span className='text-dark fw-bold d-block fs-7'>{props.name}</span>
         </td>
         <td>
-          <span className='text-dark fw-bold d-block fs-7'>{props.description}</span>
+          <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom' title={props.description}>{props.description}</span>
         </td>
         <td>
           <span className='text-dark fw-bold d-block fs-7'>{props.price}</span>

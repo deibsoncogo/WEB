@@ -1,13 +1,12 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import * as Yup from 'yup'
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import { Modal } from 'react-bootstrap'
 import { Button } from '../buttons/CustomButton'
 import { Input } from '../inputs'
 import { isStrongPassword } from '../../../domain/shared/reggexPatterns/isPasswordStrong'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
-import { toast } from 'react-toastify'
 
 export type IResetPassowrdForm = {
   password: string
@@ -42,8 +41,7 @@ function ResetPasswordModal({
   const resetUserPasswordForm = useRef<FormHandles>(null)
 
   const handleResetPasswordFormSubmit = async (data: IResetPassowrdForm) => {
-    const { error, success } = await applyYupValidation<IResetPassowrdForm>(schema, data)
-    toast.error('Erro ao resetar senha.')
+    const { error, success } = await applyYupValidation<IResetPassowrdForm>(schema, data)    
 
     if (success) {
       resetPassword(data)
@@ -68,7 +66,7 @@ function ResetPasswordModal({
           id='reset-password-form'
         >
           <Input name='password' label='Nova Senha' type='password' />
-          <Input name='confirmPassword' label='Corfirmar Senha' type='password' />
+          <Input name='confirmPassword' label='Confirmar Senha' type='password' />
         </Form>
       </Modal.Body>
 

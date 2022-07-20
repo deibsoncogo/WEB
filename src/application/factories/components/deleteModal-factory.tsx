@@ -8,6 +8,7 @@ type IMakeUserRow = {
   cpf: string
   birthDate: string
   address: string
+  loading: boolean
   deleteUser: (params: IDeleteUserParams) => void
   openResetUserPasswordModal: (userId: string) => void
 }
@@ -19,6 +20,7 @@ export function MakeUserRow({
   birthDate,
   cpf,
   address,
+  loading,
   deleteUser,
   openResetUserPasswordModal,
 }: IMakeUserRow) {
@@ -30,6 +32,7 @@ export function MakeUserRow({
       birthDate={birthDate}
       cpf={cpf}
       address={address}
+      loading={loading}
       deleteUser={deleteUser}
       openResetUserPasswordModal={openResetUserPasswordModal}
     />

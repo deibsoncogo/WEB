@@ -1,13 +1,11 @@
 import { Row } from '../../../../layout/components/tables/trainings-list/row'
 import { makeRemoteDeleteTrainings } from '../../usecases/trainings/remote-deleteTrainings-factory'
-import { makeRemoteToggleTrainingStatus } from '../../usecases/trainings/remote-toggleTrainingStatus-factory'
-import { makeRemoteUpdateTraining } from '../../usecases/trainings/remote-updateTrainings'
 
 type IMakeTrainingsRow = {
   id: string
   name: string
-  active: boolean
   belongsToPlans: boolean
+  isActive: boolean
   description: string
   price: string | number
   teacher: { name: string }
@@ -21,8 +19,8 @@ export function MakeTrainingsRow({
   description,
   price,
   teacher,
-  active,
   belongsToPlans,
+  isActive,
   getTrainings,
   handleToggleStatusConfirmation,
 }: IMakeTrainingsRow) {
@@ -33,8 +31,8 @@ export function MakeTrainingsRow({
       description={description}
       price={price}
       teacherName={teacher.name}
-      active={active}
       belongsToPlans={belongsToPlans}
+      isActive={isActive}
       deleteTraining={makeRemoteDeleteTrainings(id)}
       getTrainings={getTrainings}
       handleToggleStatusConfirmation={handleToggleStatusConfirmation}

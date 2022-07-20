@@ -12,10 +12,10 @@ import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
+import { getOptionsFromSearchRequest } from '../../../utils/getOptionsFromSearchRequest'
 import { FormCreatePlan } from '../../components/forms/plans/create'
 import { planFormSchema } from '../../components/forms/plans/planSchema'
 import { formatPlanToSubmit } from './utils/formatPlanToSubmit'
-import { getOptionsFromSearchRequest } from './utils/getOptionsFromSearchRequest'
 
 type Props = {
   remoteCreatePlan: ICreatePlan
@@ -72,19 +72,31 @@ const CreatePlanPageTemplate = ({
   }
 
   async function handleGetCoursesOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetCourses.getAll, { name: searchValue || '', allRecords: true })
+    return getOptionsFromSearchRequest(remoteGetCourses.getAll, {
+      name: searchValue || '',
+      allRecords: true,
+    })
   }
 
   async function handleGetTrainingsOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetTrainings.getAll, { name: searchValue || '', allRecords: true })
+    return getOptionsFromSearchRequest(remoteGetTrainings.getAll, {
+      name: searchValue || '',
+      allRecords: true,
+    })
   }
 
   async function handleGetBooksOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetBooks.getAll, { name: searchValue || '', allRecords: true })
+    return getOptionsFromSearchRequest(remoteGetBooks.getAll, {
+      name: searchValue || '',
+      allRecords: true,
+    })
   }
 
   async function handleGetRoomsOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetRooms.getAll, { name: searchValue || '', allRecords: true })
+    return getOptionsFromSearchRequest(remoteGetRooms.getAll, {
+      name: searchValue || '',
+      allRecords: true,
+    })
   }
 
   const handleClickCancel = () => {

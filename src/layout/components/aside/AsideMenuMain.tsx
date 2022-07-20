@@ -94,7 +94,7 @@ export function AsideMenuMain() {
         icon={<RiPagesLine size={20} className='svg-icon-2 mh-50px' />}
       />}
       <AsideMenuItem
-        to='/alerts'
+        to='/notifications'
         title='Avisos'
         icon={<BsMegaphoneFill size={16} className='svg-icon-2 mh-50px' />}
       />
