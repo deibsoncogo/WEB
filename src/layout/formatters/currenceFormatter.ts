@@ -30,7 +30,11 @@ const maskedToMoney = (value: any) => {
 const maskedToPercentege = (value: any) => {
   const number = onlyNums(`${value}`)
 
-  const [_, second, third] = number.split('')
+  const [first, second, third] = number.split('')
+
+  if (number.lenth < 2) {
+    return `${second | 0}${first | 0}%`
+  }
 
   return `${second | 0}${third | 0}%`
 }

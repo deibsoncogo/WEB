@@ -9,8 +9,8 @@ interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   classes?: string
 }
 
-export function InputPercentage({ name, label, placeholderText, classes, ...rest }: IInputProps) {
-  const { fieldName, registerField, defaultValue = '', error, clearError } = useField(name)
+export function InputPercentage({ name, label, classes, ...rest }: IInputProps) {
+  const { fieldName, registerField, defaultValue = '00%', error, clearError } = useField(name)
 
   const [inputValue, setInputValue] = useState(defaultValue)
 
@@ -48,9 +48,10 @@ export function InputPercentage({ name, label, placeholderText, classes, ...rest
           className='form-control form-control-lg form-control-solid border-transparent bg-secondary input-number-no-arrow'
           name={name}
           value={inputValue}
-          placeholder={placeholderText}
+          placeholder='00%'
           ref={inputRef}
           onChange={handleChange}
+          defaultValue={defaultValue}
           {...rest}
         />
       </div>

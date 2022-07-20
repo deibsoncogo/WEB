@@ -242,7 +242,7 @@ export function CouponsTemplate({
 
       <ConfirmationModal
         isOpen={!!couponTobeDeleted}
-        content='Deseja realmente excluir este cupom ?'
+        content='Você tem certeja que deseja excluir este cupom?'
         loading={toggleStatusLoading}
         onRequestClose={handleCloseModalToConfirmDeletion}
         onConfimation={handleDeleteCoupon}
