@@ -21,7 +21,7 @@ const PlanTableRow = ({ plan, togglePlanStatus }: PlanTableRowProps) => {
       </td>
 
       <td className='ps-4' scope='row'>
-        <span className='w-bold d-block fs-7'>{plan.description}</span>
+        <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>{plan.description}</span>
       </td>
 
       <td className='ps-4' scope='row'>
