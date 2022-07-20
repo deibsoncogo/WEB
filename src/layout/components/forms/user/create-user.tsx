@@ -69,7 +69,12 @@ export function FormCreateUser({
           message: 'CPF inválido',
           test: (value) => (value ? validateIfCPFIsValid(value) : true),
         }),
-        password: Yup.string().min(6, 'No mínimo 6 caracteres'),
+        password: Yup.string()
+          .min(8, 'No mínimo 8 caracteres')
+          .matches(
+            /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+            'A senha deve conter um caractere maiúsculo e um caractere especial ou dígito'
+          ),
         role: Yup.string().required('Permissão é necessária'),
       })
 
@@ -137,7 +142,7 @@ export function FormCreateUser({
       address,
       grantedProduct
     )
-    
+
     return user
   }
 
