@@ -1,5 +1,6 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
+import moment from 'moment'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import Modal from 'react-modal'
 
@@ -212,7 +213,7 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <DatePicker name='courseExpireDate' label='Data de expiração' />
+                    <DatePicker name='courseExpireDate' label='Data de expiração' minDate={moment().toDate()} />
                   </div>
                 </div>
 
@@ -243,7 +244,7 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <DatePicker name='trainingExpireDate' label='Data de expiração' />
+                    <DatePicker name='trainingExpireDate' label='Data de expiração' minDate={moment().toDate()} />
                   </div>
                 </div>
 
@@ -274,7 +275,7 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <DatePicker name='planExpireDate' label='Data de expiração' />
+                    <DatePicker name='planExpireDate' label='Data de expiração' minDate={moment().toDate()} />
                   </div>
                 </div>
 
