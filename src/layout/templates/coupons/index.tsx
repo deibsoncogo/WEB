@@ -145,6 +145,7 @@ export function CouponsTemplate({
     pagination.totalPages,
     pagination.order,
     pagination.orderBy,
+    couponName,
     currentPage,
     isModalCreateOpen,
     toggleCouponStatusSuccessful,
@@ -232,11 +233,11 @@ export function CouponsTemplate({
 
       <ConfirmationModal
         isOpen={!!couponToToggleStatus}
-        content='Deseja realmente alterar os status do cupom ?'
+        content='Você tem certeza que deseja alterar o status deste cupom?'
         loading={deleteCouponStatus}
         onRequestClose={handleCloseModalToToggleStatus}
         onConfimation={handleConfirmationToggleStatus}
-        title='Atenção'
+        title='Confirmação'
       />
 
       <ConfirmationModal

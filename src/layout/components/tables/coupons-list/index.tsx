@@ -62,8 +62,8 @@ export function CouponsTable({
                     <th
                       role='columnheader'
                       scope='col'
-                      className={getColumnHeaderClasses({ title: 'price' })}
-                      onClick={() => handleOrdenation('price')}
+                      className={getColumnHeaderClasses({ title: 'value' })}
+                      onClick={() => handleOrdenation('value')}
                     >
                       Valor
                     </th>

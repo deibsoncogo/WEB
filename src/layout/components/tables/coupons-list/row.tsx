@@ -39,7 +39,7 @@ const Row = ({
 
       <td className='ps-4' scope='row'>
         {coupon.type === 'percentage' ? (
-          <span className='w-bold d-block fs-7'>{coupon.value}</span>
+          <span className='w-bold d-block fs-7'>{coupon.value}%</span>
         ) : (
           '-'
         )}
