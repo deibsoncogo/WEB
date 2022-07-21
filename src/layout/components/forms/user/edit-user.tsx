@@ -125,6 +125,7 @@ export function FormEditUser({
         : null,
       phoneNumber: phoneNumber || null,
       role: data.role,
+      level: data.level,
       address: [
         {
           zipCode: zipCode || null,
@@ -253,7 +254,7 @@ export function FormEditUser({
               classes='h-75px'
               name='birthDate'
               label='Data de Nascimento'
-              maxDate={new Date()}
+              maxDate={new Date('01/01/2003')}
             />
             <InputMasked
               classes='h-75px'
