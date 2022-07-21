@@ -21,6 +21,7 @@ import { Button } from '../../buttons/CustomButton'
 import { DatePicker, Input, InputMasked, Select } from '../../inputs'
 import { ProductsModal } from '../../modals/products'
 import { ProductsTable } from '../../tables/products-list'
+import { isStrongPassword } from '../../../../domain/shared/reggexPatterns/isPasswordStrong'
 
 type Props = {
   userRegister: IUserSignUp
@@ -69,7 +70,12 @@ export function FormCreateUser({
           message: 'CPF inválido',
           test: (value) => (value ? validateIfCPFIsValid(value) : true),
         }),
-        password: Yup.string().min(6, 'No mínimo 6 caracteres'),
+        password: Yup.string()
+          .min(8)
+          .matches(
+            isStrongPassword,
+            'A senha deve conter no mínimo 8 caracteres, um caractere maiúsculo e um caractere especial ou dígito'
+          ),
         role: Yup.string().required('Permissão é necessária'),
       })
 
@@ -137,7 +143,7 @@ export function FormCreateUser({
       address,
       grantedProduct
     )
-    
+
     return user
   }
 
