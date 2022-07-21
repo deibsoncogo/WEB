@@ -16,6 +16,7 @@ interface IRow {
   price: string | number
   teacher: string
   isActive: boolean
+  belongsToPlans: boolean
   isChatActive: boolean
   toggleStatus: IToggleRoomStatus
   deleteRoom: IDeleteRoom
@@ -29,6 +30,7 @@ export function Row({
   price,
   teacher,
   isActive,
+  belongsToPlans,
   isChatActive,
   toggleStatus,
   deleteRoom,
@@ -110,11 +112,21 @@ export function Row({
             </Link>
           </Tooltip>
 
-          <Tooltip content={'Deletar'} rounded color='primary'>
+          <Tooltip
+            content={
+              belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'
+            }
+            rounded
+            color='primary'
+          >
             <button
-              onClick={() => {
-                setIsModalDeleteOpen(true)
-              }}
+              onClick={
+                belongsToPlans
+                  ? undefined
+                  : () => {
+                      setIsModalDeleteOpen(true)
+                    }
+              }
               className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
             >
               <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />

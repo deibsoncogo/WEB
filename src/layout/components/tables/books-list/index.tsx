@@ -84,6 +84,7 @@ export function BooksTable({
                       author={item.author}
                       stock={item.stock}
                       active={item.isActive}
+                      belongsToPlans={item.belongsToPlans}
                       getBooks={getBooks}
                       handleRefresher={handleRefresher}
                     />

@@ -4,6 +4,7 @@ import { makeRemoteDeleteTrainings } from '../../usecases/trainings/remote-delet
 type IMakeTrainingsRow = {
   id: string
   name: string
+  belongsToPlans: boolean
   isActive: boolean
   description: string
   price: string | number
@@ -18,6 +19,7 @@ export function MakeTrainingsRow({
   description,
   price,
   teacher,
+  belongsToPlans,
   isActive,
   getTrainings,
   handleToggleStatusConfirmation,
@@ -29,6 +31,7 @@ export function MakeTrainingsRow({
       description={description}
       price={price}
       teacherName={teacher.name}
+      belongsToPlans={belongsToPlans}
       isActive={isActive}
       deleteTraining={makeRemoteDeleteTrainings(id)}
       getTrainings={getTrainings}

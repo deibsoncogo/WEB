@@ -16,6 +16,7 @@ export interface ITraining {
     id: string
     name: string
   }
+  belongsToPlans: boolean
   isActive: boolean
   price: number
   discount: number

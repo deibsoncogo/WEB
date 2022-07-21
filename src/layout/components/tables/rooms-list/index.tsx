@@ -141,6 +141,7 @@ export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
                         price={maskedToMoney(item.price)}
                         teacher={item.teacherName}
                         isActive={item.isActive}
+                        belongsToPlans={item.belongsToPlans}
                         toggleStatus={toggleStatus}
                         deleteRoom={deleteRoom}
                         isChatActive={item.isChatActive}
