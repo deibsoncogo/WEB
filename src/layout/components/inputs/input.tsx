@@ -45,48 +45,48 @@ export function Input({ name, label, placeholderText, classes, onChange, ...rest
   }
 
   return (
-    <div className={`${classes} fv-row mb-7`}>
-      {label && (
-        <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
-          {label}
-        </label>
-      )}
+    <div className={error ? 'mb-2' : 'mb-7'}>
+      <div className={`${classes} fv-row`}>
+        {label && (
+          <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
+            {label}
+          </label>
+        )}
 
-      {name != 'content' ? (
-        <div className='form-control d-flex align-items-center form-control-lg bg-secondary p-0 m-0 border-0'>
+        {name != 'content' ? (
+          <div className='form-control d-flex align-items-center form-control-lg bg-secondary p-0 m-0 border-0'>
+            <input
+              className='form-control form-control-lg form-control-solid border-transparent bg-secondary no-spinner'
+              type='text'
+              name={name}
+              placeholder={placeholderText}
+              ref={inputRef}
+              defaultValue={defaultValue}
+              onChange={onChange}
+              onChangeCapture={clearError}
+              {...rest}
+            />
+
+            {rest.type === 'password' && isEyeVisible && (
+              <AiFillEye size={24} className='me-2' onClick={switchType} />
+            )}
+            {rest.type === 'password' && !isEyeVisible && (
+              <AiFillEyeInvisible size={24} className='me-2' onClick={switchType} />
+            )}
+          </div>
+        ) : (
           <input
-            className='form-control form-control-lg form-control-solid border-transparent bg-secondary no-spinner'
             type='text'
+            onChangeCapture={clearError}
+            hidden={true}
             name={name}
-            placeholder={placeholderText}
             ref={inputRef}
             defaultValue={defaultValue}
-            onChange={onChange}
-            onChangeCapture={clearError}
             {...rest}
           />
-         
-
-          {rest.type === 'password' && isEyeVisible && (
-            <AiFillEye size={24} className='me-2' onClick={switchType} />
-          )}
-          {rest.type === 'password' && !isEyeVisible && (
-            <AiFillEyeInvisible size={24} className='me-2' onClick={switchType} />
-          )}
-        </div>
-      ) : (
-        <input
-          type='text'
-          onChangeCapture={clearError}
-          hidden={true}
-          name={name}
-          ref={inputRef}
-          defaultValue={defaultValue}
-          {...rest}
-        />
-      )}
+        )}
+      </div>
       {error && <span className='text-danger'>{error}</span>}
     </div>
-     
   )
 }
