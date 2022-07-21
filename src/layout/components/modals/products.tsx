@@ -63,6 +63,8 @@ export function ProductsModal({
     const newGrantedProduct = new GrantedProduct(id, expireDate, product)
 
     setSelectedProducts((prevProducts) => [...prevProducts, newGrantedProduct])
+    formRef.current?.clearField(fieldName)
+    formRef.current?.clearField(fieldExpireDate)
   }
 
   function getProductId(name: string) {
@@ -77,7 +79,6 @@ export function ProductsModal({
     const filteredSelectedProducts = selectedProducts.filter((product) => product.productId !== id)
 
     setSelectedProducts(filteredSelectedProducts)
-
   }
 
   function checkIfAProductIsGranted() {
@@ -213,7 +214,11 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <DatePicker name='courseExpireDate' label='Data de expiração' minDate={moment().toDate()} />
+                    <DatePicker
+                      name='courseExpireDate'
+                      label='Data de expiração'
+                      minDate={moment().toDate()}
+                    />
                   </div>
                 </div>
 
@@ -244,7 +249,11 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <DatePicker name='trainingExpireDate' label='Data de expiração' minDate={moment().toDate()} />
+                    <DatePicker
+                      name='trainingExpireDate'
+                      label='Data de expiração'
+                      minDate={moment().toDate()}
+                    />
                   </div>
                 </div>
 
@@ -275,7 +284,11 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <DatePicker name='planExpireDate' label='Data de expiração' minDate={moment().toDate()} />
+                    <DatePicker
+                      name='planExpireDate'
+                      label='Data de expiração'
+                      minDate={moment().toDate()}
+                    />
                   </div>
                 </div>
 
