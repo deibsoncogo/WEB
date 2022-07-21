@@ -16,6 +16,7 @@ interface IRow {
   authorName: string
   stock: number
   active: boolean
+  belongsToPlans: boolean
   deleteBook: IDeleteBook
   toggleBookStatus: IToggleBookStatus
   getBooks(): Promise<void>
@@ -30,6 +31,7 @@ export function Row({
   authorName,
   stock,
   active,
+  belongsToPlans,
   deleteBook,
   toggleBookStatus,
   getBooks,
@@ -102,19 +104,19 @@ export function Row({
           </Link>
         </Tooltip>
 
-        <Tooltip
-          content='Deletar'
-          rounded
-          color='primary'
-          onClick={() => {
-            setIsDeleteCategoryModalOpen(true)
-          }}
-          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-        >
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
-            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-          </button>
-        </Tooltip>
+          <Tooltip
+            content={belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'}
+            rounded
+            color='primary'
+            onClick={belongsToPlans ? undefined : () => {
+              setIsDeleteCategoryModalOpen(true)
+            }}
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+          >
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm' disabled={belongsToPlans}>
+              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+            </button>
+          </Tooltip>
       </td>
 
       <ConfirmationModal

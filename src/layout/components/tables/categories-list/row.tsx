@@ -37,10 +37,14 @@ export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryD
         </Tooltip>
 
         <Tooltip
-          content={'Deletar'}
+          content={
+            category.belongsToProducts
+              ? 'Não é possível deletar, pois está vinculada a um produto'
+              : 'Deletar'
+          }
           rounded
           color='primary'
-          onClick={handleOpenDeleteCategoryModal}
+          onClick={category.belongsToProducts ? undefined : handleOpenDeleteCategoryModal}
         >
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
