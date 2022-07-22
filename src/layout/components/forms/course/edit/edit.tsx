@@ -90,7 +90,7 @@ export function FormUpdateCourse(props: Props) {
           .min(1, 'Quantidade de parcelas deve ser maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário'),
-        description: Yup.string().required('Descriçao é necessária'),
+        description: Yup.string().required('Descriçao é necessária').max(65535, 'Descrição muito longa'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
       data.content = stateEditor.content
