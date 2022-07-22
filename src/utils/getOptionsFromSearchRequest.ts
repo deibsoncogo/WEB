@@ -1,12 +1,20 @@
 import { toast } from 'react-toastify'
+import { InputPagination } from '../domain/shared/interface/InputPagination'
 import { OutputPagination } from '../domain/shared/interface/OutputPagination'
 import { ISelectOption } from '../domain/shared/interface/SelectOption'
 import { extractSelectOptionsFromArr } from './extractSelectOptionsFromArr'
 
-export async function getOptionsFromSearchRequest(
-  request: (params: any) => Promise<OutputPagination<any>>,
-  search: object
-): Promise<ISelectOption[]> {
+type Params = {
+  request: (params: any) => Promise<OutputPagination<any>>
+  search: Partial<InputPagination>
+  hasType?: boolean
+}
+
+export async function getOptionsFromSearchRequest({
+  request,
+  search,
+  hasType,
+}: Params): Promise<ISelectOption[]> {
   try {
     const { data } = await request({
       ...search,
@@ -14,7 +22,7 @@ export async function getOptionsFromSearchRequest(
       take: 5,
       order: 'asc',
     })
-    const options: ISelectOption[] = extractSelectOptionsFromArr(data)
+    const options: ISelectOption[] = extractSelectOptionsFromArr(data, hasType)
 
     return options
   } catch (e: any) {

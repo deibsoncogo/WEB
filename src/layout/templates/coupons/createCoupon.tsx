@@ -12,6 +12,7 @@ import { getOptionsFromSearchRequest } from '../../../utils/getOptionsFromSearch
 import { CreateCouponDrawerForm } from '../../components/forms/coupons/create'
 import { onlyNums } from '../../formatters/currenceFormatter'
 import { couponFormSchema, IDiscountType } from './type'
+import { extractFormattedProductOptions } from './utils/extractFormattedOptions'
 
 type Props = {
   visible: boolean
@@ -21,7 +22,7 @@ type Props = {
 }
 
 const CreateCoupon = ({ remoteCreateCoupon, remoteGetAllProducts, visible, close }: Props) => {
-  const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('value')
+  const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('percentage')
   const formRef = useRef<FormHandles>(null)
 
   const {
@@ -66,10 +67,16 @@ const CreateCoupon = ({ remoteCreateCoupon, remoteGetAllProducts, visible, close
   }
 
   async function handleGetProductOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetAllProducts.getAll, {
-      name: searchValue || '',
-      allRecords: true,
+    const productOptionHasType = true
+    const options = await getOptionsFromSearchRequest({
+      request: remoteGetAllProducts.getAll,
+      search: {
+        name: searchValue || '',
+        allRecords: true,
+      },
+      hasType: productOptionHasType,
     })
+    return extractFormattedProductOptions(options)
   }
 
   useEffect(() => {

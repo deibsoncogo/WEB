@@ -66,6 +66,7 @@ export function CouponsTemplate({
     name: couponName,
     orderBy: pagination.orderBy,
     order,
+    allRecords: true,
   }
 
   const {

@@ -13,6 +13,7 @@ import { getOptionsFromSearchRequest } from '../../../utils/getOptionsFromSearch
 import { EditCouponDrawerForm } from '../../components/forms/coupons/edit'
 import { maskedToMoney, onlyNums } from '../../formatters/currenceFormatter'
 import { couponFormSchema, IDiscountType } from './type'
+import { extractFormattedProductOptions } from './utils/extractFormattedOptions'
 
 type Props = {
   coupon: ICoupon | null
@@ -29,7 +30,7 @@ const EditCoupon = ({
   close,
   remoteGetAllProducts,
 }: Props) => {
-  const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('value')
+  const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('percentage')
   const formRef = useRef<FormHandles>(null)
 
   const {
@@ -71,10 +72,16 @@ const EditCoupon = ({
   }
 
   async function handleGetProductOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetAllProducts.getAll, {
-      name: searchValue || '',
-      allRecords: true,
+    const productOptionHasType = true
+    const options = await getOptionsFromSearchRequest({
+      request: remoteGetAllProducts.getAll,
+      search: {
+        name: searchValue || '',
+        allRecords: true,
+      },
+      hasType: productOptionHasType,
     })
+    return extractFormattedProductOptions(options)
   }
 
   useEffect(() => {
@@ -101,7 +108,7 @@ const EditCoupon = ({
       const expirationDate = new Date(coupon.expirationDate)
       expirationDate.setDate(expirationDate.getDay() + 1)
 
-      formRef.current?.setFieldValue('value', coupon.value)
+      formRef.current?.setFieldValue('value', `${coupon.value}%`)
       if (coupon.type === 'value') {
         formRef.current?.setFieldValue('value', maskedToMoney(coupon.value))
       }
@@ -110,7 +117,11 @@ const EditCoupon = ({
       formRef.current?.setFieldValue('quantity', coupon.quantity)
       formRef.current?.setFieldValue('expirationDate', expirationDate)
 
-      formRef.current?.setFieldValue('productsId', extractSelectOptionsFromArr(coupon.products))
+      const hasProductType = true
+      formRef.current?.setFieldValue(
+        'productsId',
+        extractSelectOptionsFromArr(coupon.products, hasProductType)
+      )
     }
   }, [coupon])
 
