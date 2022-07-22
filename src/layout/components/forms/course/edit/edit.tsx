@@ -73,7 +73,7 @@ export function FormUpdateCourse(props: Props) {
       data.discount = onlyNums(data?.discount) 
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
-        name: Yup.string().required('Nome é necessário'),
+        name: Yup.string().required('Nome é necessário').max(50, 'No máximo 50 caracteres'),
         userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number()
           .min(1, 'Tempo de acesso deve ser maior que zero')
