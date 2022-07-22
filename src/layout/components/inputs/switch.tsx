@@ -1,5 +1,4 @@
-import { Dispatch, SetStateAction} from 'react'
-
+import { Dispatch, SetStateAction } from 'react'
 
 interface ISwitch {
   active: boolean
@@ -21,7 +20,7 @@ export function Switch({ active, setModalUpdate }: ISwitch) {
             readOnly
           />
         </div>
-      </div>    
+      </div>
     </>
   )
 }

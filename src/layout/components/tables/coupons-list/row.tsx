@@ -5,7 +5,7 @@ import { maskedToMoney } from '../../../formatters/currenceFormatter'
 
 import { ICoupon } from '../../../../domain/models/coupon'
 import { getIsoDateToBRL } from '../../../../utils/getIsoDateToBRL'
-import { Switch } from '../../inputs'
+import { Switch } from '../../inputs/switch'
 
 type CouponTableRowProps = {
   coupon: ICoupon
@@ -62,9 +62,7 @@ const Row = ({
       </td>
 
       <td>
-        <div className='form-check form-switch form-check-custom form-check-solid'>
-          <Switch active={coupon.isActive} setModalUpdate={handleCouponStatusChange} />
-        </div>
+        <Switch active={coupon.isActive} setModalUpdate={handleCouponStatusChange} />
       </td>
 
       <td className='d-flex' style={{ minWidth: '150px' }}>
