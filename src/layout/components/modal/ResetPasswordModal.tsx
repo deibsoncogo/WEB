@@ -22,10 +22,10 @@ type ResetPasswordModalProps = {
 
 const schema = Yup.object().shape({
   password: Yup.string()
-    .required('Senha é obrigatório')
+    .min(8)
     .matches(
       isStrongPassword,
-      'Senha deve conter no minímo 8 digitos, um caractere especial e uma letra maiúscula'
+      'A senha deve conter no mínimo 8 caracteres, um caractere maiúsculo e um caractere especial ou dígito'
     ),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password'), null], 'Senhas não correspondem')

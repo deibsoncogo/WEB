@@ -26,6 +26,7 @@ import { Button } from '../../buttons/CustomButton'
 import { ProductsModal } from '../../modals/products'
 import { ProductsTable } from '../../tables/products-list'
 import { PurchasesTable } from '../../tables/purchashes-list'
+import { isStrongPassword } from '../../../../domain/shared/reggexPatterns/isPasswordStrong'
 
 type IFormEditUser = {
   id: string
@@ -86,7 +87,6 @@ export function FormEditUser({
           message: 'CPF inválido',
           test: (value) => (value ? validateIfCPFIsValid(value) : true),
         }),
-        password: Yup.string().min(6, 'No mínimo 6 caracteres'),
         role: Yup.string().required('Permissão é necessária'),
       })
       await schema.validate(data, { abortEarly: false })
@@ -125,6 +125,7 @@ export function FormEditUser({
         : null,
       phoneNumber: phoneNumber || null,
       role: data.role,
+      level: data.level,
       address: [
         {
           zipCode: zipCode || null,
@@ -253,7 +254,7 @@ export function FormEditUser({
               classes='h-75px'
               name='birthDate'
               label='Data de Nascimento'
-              maxDate={new Date()}
+              maxDate={new Date('01/01/2003')}
             />
             <InputMasked
               classes='h-75px'
