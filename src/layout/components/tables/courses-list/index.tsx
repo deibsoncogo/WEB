@@ -1,8 +1,10 @@
 import { FormHandles } from '@unform/core'
+import jwtDecode from 'jwt-decode'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { usePagination } from '../../../../application/hooks/usePagination'
+import { roles } from '../../../../application/wrappers/authWrapper'
 import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
 import {
   GetCoursesParams,
@@ -11,7 +13,9 @@ import {
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
 import { KTSVG } from '../../../../helpers'
 import { debounce } from '../../../../helpers/debounce'
+import { keys } from '../../../../helpers/KeyConstants'
 import { IPartialCourseResponse } from '../../../../interfaces/api-response/coursePartialResponse'
+import { IToken } from '../../../../interfaces/application/token'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 import { Loading } from '../../loading/loading'
 import { Pagination } from '../../pagination/Pagination'
@@ -26,6 +30,7 @@ type Props = {
 }
 
 export default function CoursesTable(props: Props) {
+  const [isAdmin, setIsAdmin] = useState(false)
   const [courses, setCourses] = useState<IPartialCourseResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [refresher, setRefresher] = useState(true)
@@ -52,6 +57,14 @@ export default function CoursesTable(props: Props) {
   }
 
   useEffect(() => {
+    const token = localStorage.getItem(keys.TOKEN)
+    if (token) {
+      const values = jwtDecode<IToken>(token)
+      setIsAdmin(values.role === roles.ADMIN)
+    }
+  }, [])
+
+  useEffect(() => {
     const paginationParams: GetCoursesParams = {
       take: pagination.take,
       order: pagination.order,
@@ -76,14 +89,16 @@ export default function CoursesTable(props: Props) {
           <h3 className='card-title align-items-start flex-column'>
             <Search ref={searchCourseFormRef} onChangeText={handleSearchCourse} />
           </h3>
-          <div className='card-toolbar'>
-            <Link href='/courses/create'>
-              <a className='btn btn-sm btn-light-primary'>
-                <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-                Novo Curso
-              </a>
-            </Link>
-          </div>
+          {isAdmin && (
+            <div className='card-toolbar'>
+              <Link href='/courses/create'>
+                <a className='btn btn-sm btn-light-primary'>
+                  <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+                  Novo Curso
+                </a>
+              </Link>
+            </div>
+          )}
         </div>
 
         {courses.length > 0 && (
@@ -149,6 +164,7 @@ export default function CoursesTable(props: Props) {
                           deleteCourse={props.deleteCourse}
                           updateCourse={props.updateCourse}
                           handleRefresher={handleRefresher}
+                          isAdmin={isAdmin}
                         />
                       ))}
                   </tbody>
