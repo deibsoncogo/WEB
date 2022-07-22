@@ -21,6 +21,7 @@ interface IRow {
   deleteTraining: IDeleteTraining
   getTrainings(): Promise<void>
   handleToggleStatusConfirmation: (trainingId: string) => void
+  isAdmin: boolean
 }
 
 export function Row({
@@ -34,6 +35,7 @@ export function Row({
   deleteTraining,
   getTrainings,
   handleToggleStatusConfirmation,
+  isAdmin,
 }: IRow) {
   const [loading, setLoading] = useState(false)
   const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false)
@@ -109,23 +111,27 @@ export function Row({
           </Link>
         </Tooltip>
 
-        <Tooltip
-          content={belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'}
-          rounded
-          color='primary'
-          onClick={
-            belongsToPlans
-              ? undefined
-              : () => {
-                  setIsDeleteCategoryModalOpen(true)
-                }
-          }
-          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-        >
-          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
-            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-          </button>
-        </Tooltip>
+        {isAdmin && (
+          <Tooltip
+            content={
+              belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'
+            }
+            rounded
+            color='primary'
+            onClick={
+              belongsToPlans
+                ? undefined
+                : () => {
+                    setIsDeleteCategoryModalOpen(true)
+                  }
+            }
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+          >
+            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
+              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+            </button>
+          </Tooltip>
+        )}
       </td>
 
       <ConfirmationModal

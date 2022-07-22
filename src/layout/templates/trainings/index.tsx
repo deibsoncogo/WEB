@@ -1,8 +1,10 @@
+import jwtDecode from 'jwt-decode'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { usePagination } from '../../../application/hooks/usePagination'
 import { useRequest } from '../../../application/hooks/useRequest'
+import { roles } from '../../../application/wrappers/authWrapper'
 import { ITraining } from '../../../domain/models/training'
 import {
   IGetAllTrainings,
@@ -14,6 +16,8 @@ import {
 } from '../../../domain/usecases/interfaces/trainings/toggleTrainingStatus'
 import { KTSVG } from '../../../helpers'
 import { debounce } from '../../../helpers/debounce'
+import { keys } from '../../../helpers/KeyConstants'
+import { IToken } from '../../../interfaces/application/token'
 import ConfirmationModal from '../../components/modal/ConfirmationModal'
 import { Search } from '../../components/search/Search'
 import { TrainingsTable } from '../../components/tables/trainings-list'
@@ -27,6 +31,7 @@ export function TrainingsTemplate({
   remoteGetAllTrainings,
   remoteToggleTrainingStatus,
 }: ITrainingsTemplate) {
+  const [isAdmin, setIsAdmin] = useState(false)
   const [refresher, setRefresher] = useState(true)
   const [trainings, setTrainings] = useState<ITraining[]>([] as ITraining[])
   const [trainingName, setTrainingName] = useState('')
@@ -87,6 +92,14 @@ export function TrainingsTemplate({
   }
 
   useEffect(() => {
+    const token = localStorage.getItem(keys.TOKEN)
+    if (token) {
+      const values = jwtDecode<IToken>(token)
+      setIsAdmin(values.role === roles.ADMIN)
+    }
+  }, [])
+
+  useEffect(() => {
     getTrainings()
   }, [
     pagination.take,
@@ -121,14 +134,16 @@ export function TrainingsTemplate({
             <Search onChangeText={handleSearch} />
           </h3>
 
-          <div className='card-toolbar'>
-            <Link href='/trainings/create'>
-              <a className='btn btn-sm btn-light-primary'>
-                <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-                Novo Treinamento
-              </a>
-            </Link>
-          </div>
+          {isAdmin && (
+            <div className='card-toolbar'>
+              <Link href='/trainings/create'>
+                <a className='btn btn-sm btn-light-primary'>
+                  <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+                  Novo Treinamento
+                </a>
+              </Link>
+            </div>
+          )}
         </div>
 
         <TrainingsTable
@@ -136,6 +151,7 @@ export function TrainingsTemplate({
           paginationHook={paginationHook}
           getTrainings={getTrainings}
           openToggleStatusConfirmationModal={handleOpenToggleStatusConfirmationModal}
+          isAdmin={isAdmin}
         />
       </div>
 
