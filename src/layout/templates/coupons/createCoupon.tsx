@@ -8,7 +8,6 @@ import { CreateCouponParams, ICreateCoupon } from '../../../domain/usecases/inte
 import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { formatDate } from '../../../helpers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
-import { productTypes } from '../../../utils/extractSelectOptionsFromArr'
 import { getOptionsFromSearchRequest } from '../../../utils/getOptionsFromSearchRequest'
 import { CreateCouponDrawerForm } from '../../components/forms/coupons/create'
 import { onlyNums } from '../../formatters/currenceFormatter'
@@ -23,7 +22,7 @@ type Props = {
 }
 
 const CreateCoupon = ({ remoteCreateCoupon, remoteGetAllProducts, visible, close }: Props) => {
-  const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('value')
+  const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('percentage')
   const formRef = useRef<FormHandles>(null)
 
   const {

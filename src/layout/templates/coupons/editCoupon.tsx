@@ -30,7 +30,7 @@ const EditCoupon = ({
   close,
   remoteGetAllProducts,
 }: Props) => {
-  const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('value')
+  const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('percentage')
   const formRef = useRef<FormHandles>(null)
 
   const {
@@ -108,7 +108,7 @@ const EditCoupon = ({
       const expirationDate = new Date(coupon.expirationDate)
       expirationDate.setDate(expirationDate.getDay() + 1)
 
-      formRef.current?.setFieldValue('value', coupon.value)
+      formRef.current?.setFieldValue('value', `${coupon.value}%`)
       if (coupon.type === 'value') {
         formRef.current?.setFieldValue('value', maskedToMoney(coupon.value))
       }
@@ -117,7 +117,11 @@ const EditCoupon = ({
       formRef.current?.setFieldValue('quantity', coupon.quantity)
       formRef.current?.setFieldValue('expirationDate', expirationDate)
 
-      formRef.current?.setFieldValue('productsId', extractSelectOptionsFromArr(coupon.products))
+      const hasProductType = true
+      formRef.current?.setFieldValue(
+        'productsId',
+        extractSelectOptionsFromArr(coupon.products, hasProductType)
+      )
     }
   }, [coupon])
 
