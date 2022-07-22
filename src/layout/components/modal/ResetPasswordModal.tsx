@@ -25,7 +25,7 @@ const schema = Yup.object().shape({
     .min(8)
     .matches(
       isStrongPassword,
-      'A senha deve conter no mínimo 8 caracteres, um caractere maiúsculo e um caractere especial ou dígito'
+      'A senha deve ter no mínimo 8 caracteres e conter no mínimo 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial'
     ),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password'), null], 'Senhas não correspondem')
