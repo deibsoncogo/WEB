@@ -20,6 +20,7 @@ interface IRow {
   toggleStatus: IToggleRoomStatus
   deleteRoom: IDeleteRoom
   handleRefresher: () => void
+  isAdmin: boolean
 }
 
 export function Row({
@@ -34,6 +35,7 @@ export function Row({
   toggleStatus,
   deleteRoom,
   handleRefresher,
+  isAdmin,
 }: IRow) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
   const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false)
@@ -111,26 +113,28 @@ export function Row({
             </Link>
           </Tooltip>
 
-          <Tooltip
-            content={
-              belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'
-            }
-            rounded
-            color='primary'
-          >
-            <button
-              onClick={
-                belongsToPlans
-                  ? undefined
-                  : () => {
-                      setIsModalDeleteOpen(true)
-                    }
+          {isAdmin && (
+            <Tooltip
+              content={
+                belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'
               }
-              className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+              rounded
+              color='primary'
             >
-              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-            </button>
-          </Tooltip>
+              <button
+                onClick={
+                  belongsToPlans
+                    ? undefined
+                    : () => {
+                        setIsModalDeleteOpen(true)
+                      }
+                }
+                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+              >
+                <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+              </button>
+            </Tooltip>
+          )}
         </td>
 
         <ConfirmationModal

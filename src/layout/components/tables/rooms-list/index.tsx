@@ -18,6 +18,10 @@ import { IRoomPartialResponse } from '../../../../interfaces/api-response/roomPa
 import { currenceMask, maskedToMoney } from '../../../formatters/currenceFormatter'
 import { Loading } from '../../loading/loading'
 import { ItemNotFound } from '../../search/ItemNotFound'
+import { keys } from '../../../../helpers/KeyConstants'
+import jwtDecode from 'jwt-decode'
+import { IToken } from '../../../../interfaces/application/token'
+import { roles } from '../../../../application/wrappers/authWrapper'
 
 type Props = {
   getAllRooms: IGetAllRooms
@@ -26,6 +30,7 @@ type Props = {
 }
 
 export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
+  const [isAdmin, setIsAdmin] = useState(false)
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
@@ -41,6 +46,14 @@ export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
       name
     )}`
   }
+
+  useEffect(() => {
+    const token = localStorage.getItem(keys.TOKEN)
+    if (token) {
+      const values = jwtDecode<IToken>(token)
+      setIsAdmin(values.role === roles.ADMIN)
+    }
+  }, [])
 
   useEffect(() => {
     const paginationParams: GetRoomParams = {
@@ -79,14 +92,16 @@ export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
           <h3 className='card-title align-items-start flex-column'>
             <Search onChangeText={handleSearchRoom} />
           </h3>
-          <div className='card-toolbar'>
-            <Link href='/rooms/create'>
-              <a className='btn btn-sm btn-light-primary'>
-                <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-                Nova Sala
-              </a>
-            </Link>
-          </div>
+          {isAdmin && (
+            <div className='card-toolbar'>
+              <Link href='/rooms/create'>
+                <a className='btn btn-sm btn-light-primary'>
+                  <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+                  Nova Sala
+                </a>
+              </Link>
+            </div>
+          )}
         </div>
 
         {rooms.length > 0 && (
@@ -146,6 +161,7 @@ export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
                         deleteRoom={deleteRoom}
                         isChatActive={item.isChatActive}
                         handleRefresher={handleRefresher}
+                        isAdmin={isAdmin}
                       />
                     ))}
                 </tbody>
