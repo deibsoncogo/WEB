@@ -89,21 +89,43 @@ const EditPlanPageTemplate = ({
   }
 
   async function handleGetCoursesOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetCourses.getAll, {
-      filters: { name: searchValue || '' },
+    return getOptionsFromSearchRequest({
+      request: remoteGetCourses.getAll,
+      search: {
+        name: searchValue || '',
+        allRecords: true,
+      },
     })
   }
 
   async function handleGetTrainingsOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetTrainings.getAll, { name: searchValue || '' })
+    return getOptionsFromSearchRequest({
+      request: remoteGetTrainings.getAll,
+      search: {
+        name: searchValue || '',
+        allRecords: true,
+      },
+    })
   }
 
   async function handleGetBooksOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetBooks.getAll, { name: searchValue || '' })
+    return getOptionsFromSearchRequest({
+      request: remoteGetBooks.getAll,
+      search: {
+        name: searchValue || '',
+        allRecords: true,
+      },
+    })
   }
 
   async function handleGetRoomsOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetRooms.getAll, { name: searchValue || '' })
+    return getOptionsFromSearchRequest({
+      request: remoteGetRooms.getAll,
+      search: {
+        name: searchValue || '',
+        allRecords: true,
+      },
+    })
   }
 
   const handleClickCancel = () => {

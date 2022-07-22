@@ -72,30 +72,42 @@ const CreatePlanPageTemplate = ({
   }
 
   async function handleGetCoursesOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetCourses.getAll, {
-      name: searchValue || '',
-      allRecords: true,
+    return getOptionsFromSearchRequest({
+      request: remoteGetCourses.getAll,
+      search: {
+        name: searchValue || '',
+        allRecords: true,
+      },
     })
   }
 
   async function handleGetTrainingsOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetTrainings.getAll, {
-      name: searchValue || '',
-      allRecords: true,
+    return getOptionsFromSearchRequest({
+      request: remoteGetTrainings.getAll,
+      search: {
+        name: searchValue || '',
+        allRecords: true,
+      },
     })
   }
 
   async function handleGetBooksOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetBooks.getAll, {
-      name: searchValue || '',
-      allRecords: true,
+    return getOptionsFromSearchRequest({
+      request: remoteGetBooks.getAll,
+      search: {
+        name: searchValue || '',
+        allRecords: true,
+      },
     })
   }
 
   async function handleGetRoomsOptions(searchValue: string): Promise<ISelectOption[]> {
-    return getOptionsFromSearchRequest(remoteGetRooms.getAll, {
-      name: searchValue || '',
-      allRecords: true,
+    return getOptionsFromSearchRequest({
+      request: remoteGetRooms.getAll,
+      search: {
+        name: searchValue || '',
+        allRecords: true,
+      },
     })
   }
 
