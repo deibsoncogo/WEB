@@ -31,6 +31,7 @@ type Props = {
 
 export default function CoursesTable(props: Props) {
   const [isAdmin, setIsAdmin] = useState(false)
+  const [userId, setUserId] = useState('')
   const [courses, setCourses] = useState<IPartialCourseResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [refresher, setRefresher] = useState(true)
@@ -60,6 +61,7 @@ export default function CoursesTable(props: Props) {
     const token = localStorage.getItem(keys.TOKEN)
     if (token) {
       const values = jwtDecode<IToken>(token)
+      setUserId(values.id)
       setIsAdmin(values.role === roles.ADMIN)
     }
   }, [])
@@ -75,12 +77,17 @@ export default function CoursesTable(props: Props) {
     props.getAllCourses
       .getAll(paginationParams)
       .then((data) => {
-        setCourses(data.data)
+        if (!isAdmin) {
+          const teacherCourses = data.data.filter(course => course.userId === userId)
+          setCourses(teacherCourses)
+        } else {
+          setCourses(data.data)
+        }
         setTotalPage(data.total)
       })
       .catch(() => toast.error('Não foi possível listar os cursos.'))
       .finally(() => setLoading(false))
-  }, [refresher, pagination.take, pagination.currentPage, pagination.order, courseName])
+  }, [refresher, pagination.take, pagination.currentPage, pagination.order, courseName, isAdmin, userId])
 
   return (
     <>
