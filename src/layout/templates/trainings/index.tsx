@@ -32,6 +32,7 @@ export function TrainingsTemplate({
   remoteToggleTrainingStatus,
 }: ITrainingsTemplate) {
   const [isAdmin, setIsAdmin] = useState(false)
+  const [userId, setUserId] = useState('')
   const [refresher, setRefresher] = useState(true)
   const [trainings, setTrainings] = useState<ITraining[]>([] as ITraining[])
   const [trainingName, setTrainingName] = useState('')
@@ -76,8 +77,13 @@ export function TrainingsTemplate({
   async function getTrainings() {
     try {
       const { total, data } = await remoteGetAllTrainings.getAll(paginationParams)
+      if (!isAdmin) {
+        const teacherTrainings = data.filter(training => training.teacher.id === userId)
+        setTrainings(teacherTrainings)
+      } else {
+        setTrainings(data)
+      }
       setTotalPage(total)
-      setTrainings(data)
     } catch (err) {
       toast.error('Erro ao buscar treinamentos.')
     }
@@ -95,6 +101,7 @@ export function TrainingsTemplate({
     const token = localStorage.getItem(keys.TOKEN)
     if (token) {
       const values = jwtDecode<IToken>(token)
+      setUserId(values.id)
       setIsAdmin(values.role === roles.ADMIN)
     }
   }, [])
@@ -109,6 +116,8 @@ export function TrainingsTemplate({
     currentPage,
     trainingName,
     selectedTraining,
+    isAdmin,
+    userId
   ])
 
   useEffect(() => {
