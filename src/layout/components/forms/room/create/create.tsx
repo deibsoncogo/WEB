@@ -67,27 +67,33 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
     if (!formRef.current) throw new Error()
     try {
       formRef.current.setErrors({})
-      data.price = onlyNums(data.price)   
+      data.price = onlyNums(data.price)
       data.discount = onlyNums(data?.discount)
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
-        name: Yup.string().required('Nome é necessário'),
+        name: Yup.string().required('Nome é necessário').max(50, 'No máximo 50 caracteres'),
         userId: Yup.string().required('Selecione um professor'),
-        price: Yup.number().required('Preço é necessário').min(0.1, 'Preço deve ser maior que zero'),
-        discount: Yup.number().test(
-          {name: 'validation',
+        price: Yup.number()
+          .required('Preço é necessário')
+          .min(0.1, 'Preço deve ser maior que zero'),
+        discount: Yup.number().test({
+          name: 'validation',
           message: 'Desconto deve ser menor que preço',
-          test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),
+          test: (value) =>
+            value ? parseFloat(data.discount + '') < parseFloat(data.price + '') : true,
+        }),
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário'),
-        description: Yup.string().required('Descriçao é necessária'),
+        description: Yup.string()
+          .required('Descriçao é necessária')
+          .max(65535, 'Descrição muito longa'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
 
       const hasError = await verifyErrorStreamingRoom(data)
-      await schema.validate({...data, price: onlyNums(data.price)}, { abortEarly: false })
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       hasError ? setHasErrorRoom(hasError) : handleCreateRoom(data)
     } catch (err) {
       const validationErrors = {}
