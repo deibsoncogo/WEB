@@ -1,4 +1,4 @@
-import {createPopper, VirtualElement} from '@popperjs/core'
+import { createPopper, VirtualElement } from '@popperjs/core'
 import {
   getElementChild,
   getElementParents,
@@ -925,7 +925,6 @@ class MenuComponent {
           const item = menuItems[i] as HTMLElement
           const menuObj = MenuComponent.getInstance(item) as MenuComponent
           if (menuObj && menuObj.getItemSubType(item) === 'dropdown') {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const menu = menuObj.getElement()
             const sub = menuObj.getItemSubElement(item) as HTMLElement
             if (item === e.target || item.contains(e.target as HTMLElement)) {
@@ -1053,4 +1052,4 @@ class MenuComponent {
   }
 }
 
-export {MenuComponent, defaultMenuOptions}
+export { MenuComponent, defaultMenuOptions }
