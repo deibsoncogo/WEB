@@ -18,6 +18,7 @@ import { IRoomPartialResponse } from '../../../../interfaces/api-response/roomPa
 import { currenceMask, maskedToMoney } from '../../../formatters/currenceFormatter'
 import { Loading } from '../../loading/loading'
 import { ItemNotFound } from '../../search/ItemNotFound'
+import { IGetAllTeacherRooms } from '../../../../domain/usecases/interfaces/room/getAllTeacherRooms'
 import { keys } from '../../../../helpers/KeyConstants'
 import jwtDecode from 'jwt-decode'
 import { IToken } from '../../../../interfaces/application/token'
@@ -25,11 +26,17 @@ import { roles } from '../../../../application/wrappers/authWrapper'
 
 type Props = {
   getAllRooms: IGetAllRooms
+  getAllTeacherRooms: IGetAllTeacherRooms
   toggleStatus: IToggleRoomStatus
   deleteRoom: IDeleteRoom
 }
 
-export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
+export function RoomsTable({
+  getAllRooms,
+  getAllTeacherRooms,
+  toggleStatus,
+  deleteRoom,
+}: Props) {
   const [isAdmin, setIsAdmin] = useState(false)
   const [userId, setUserId] = useState('')
   const paginationHook = usePagination()
@@ -46,6 +53,26 @@ export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
     return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
       name
     )}`
+  }
+
+  async function getRooms(paginationParams: GetRoomParams) {
+    try {
+      if (!isAdmin && userId) {
+        const { total, data } = await getAllTeacherRooms.getAll(paginationParams, userId)
+        setRooms(data)
+        setTotalPage(total)
+      } else {
+        const { total, data } = await getAllRooms.getAll(paginationParams)
+        setRooms(data)
+        setTotalPage(total)
+      }
+
+      setTimeout(() => {
+        setLoading(false)
+      }, 500)
+    } catch (err) {
+      toast.error('Erro ao buscar treinamentos.')
+    }
   }
 
   useEffect(() => {
@@ -65,24 +92,17 @@ export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
       page: pagination.currentPage,
       name: roomName,
     }
-    getAllRooms
-      .getAll(paginationParams)
-      .then((data) => {
-        if (!isAdmin) {
-          const teacherRooms = data.data.filter(room => room.userId === userId)
-          setRooms(teacherRooms)
-        } else {
-          setRooms(data.data)
-        }
-        setTotalPage(data.total)
-      })
-      .catch(() => toast.error('Não foi possível listar as salas.'))
-      .finally(() =>
-        setTimeout(() => {
-          setLoading(false)
-        }, 500)
-      )
-  }, [refresher, pagination.take, pagination.currentPage, pagination.order, roomName, isAdmin, userId])
+
+    getRooms(paginationParams)
+  }, [
+    refresher,
+    pagination.take,
+    pagination.currentPage,
+    pagination.order,
+    roomName,
+    isAdmin,
+    userId,
+  ])
 
   function handleRefresher() {
     setRefresher(!refresher)
