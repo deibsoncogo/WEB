@@ -31,6 +31,7 @@ type Props = {
 
 export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
   const [isAdmin, setIsAdmin] = useState(false)
+  const [userId, setUserId] = useState('')
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
@@ -51,6 +52,7 @@ export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
     const token = localStorage.getItem(keys.TOKEN)
     if (token) {
       const values = jwtDecode<IToken>(token)
+      setUserId(values.id)
       setIsAdmin(values.role === roles.ADMIN)
     }
   }, [])
@@ -66,7 +68,12 @@ export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
     getAllRooms
       .getAll(paginationParams)
       .then((data) => {
-        setRooms(data.data)
+        if (!isAdmin) {
+          const teacherRooms = data.data.filter(room => room.userId === userId)
+          setRooms(teacherRooms)
+        } else {
+          setRooms(data.data)
+        }
         setTotalPage(data.total)
       })
       .catch(() => toast.error('Não foi possível listar as salas.'))
@@ -75,7 +82,7 @@ export function RoomsTable({ getAllRooms, toggleStatus, deleteRoom }: Props) {
           setLoading(false)
         }, 500)
       )
-  }, [refresher, pagination.take, pagination.currentPage, pagination.order, roomName])
+  }, [refresher, pagination.take, pagination.currentPage, pagination.order, roomName, isAdmin, userId])
 
   function handleRefresher() {
     setRefresher(!refresher)
