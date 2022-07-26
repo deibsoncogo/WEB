@@ -77,7 +77,7 @@ export function TrainingsTemplate({
     }
   }
 
-  async function getTrainings(paginationParams: IGetAllTrainingsParams) {
+  async function getTrainings() {
     try {
       if (!isAdmin && userId) {
         const { total, data } = await remoteGetAllTeacherTrainings.getAll(paginationParams, userId)
@@ -114,8 +114,9 @@ export function TrainingsTemplate({
   }, [])
 
   useEffect(() => {
-    getTrainings(paginationParams)
+    getTrainings()
   }, [
+    refresher,
     pagination.take,
     pagination.totalPages,
     pagination.order,
@@ -165,7 +166,7 @@ export function TrainingsTemplate({
         <TrainingsTable
           trainings={trainings}
           paginationHook={paginationHook}
-          getTrainings={getTrainings}
+          handleRefresher={handleRefresher}
           openToggleStatusConfirmationModal={handleOpenToggleStatusConfirmationModal}
           isAdmin={isAdmin}
         />

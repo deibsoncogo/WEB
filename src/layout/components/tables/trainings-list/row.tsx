@@ -19,7 +19,7 @@ interface IRow {
   belongsToPlans: boolean
   isActive: boolean
   deleteTraining: IDeleteTraining
-  getTrainings(): Promise<void>
+  handleRefresher: () => void
   handleToggleStatusConfirmation: (trainingId: string) => void
   isAdmin: boolean
 }
@@ -33,7 +33,7 @@ export function Row({
   belongsToPlans,
   isActive,
   deleteTraining,
-  getTrainings,
+  handleRefresher,
   handleToggleStatusConfirmation,
   isAdmin,
 }: IRow) {
@@ -46,7 +46,7 @@ export function Row({
     try {
       setLoading(true)
       await deleteTraining.deleteTraining()
-      getTrainings()
+      handleRefresher()
       toast.success('Treinamento excluído com sucesso')
     } catch (err) {
       if (err instanceof ConflitctEntitiesError) {
