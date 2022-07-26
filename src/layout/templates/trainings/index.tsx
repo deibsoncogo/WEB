@@ -6,6 +6,7 @@ import { usePagination } from '../../../application/hooks/usePagination'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { roles } from '../../../application/wrappers/authWrapper'
 import { ITraining } from '../../../domain/models/training'
+import { IGetAllTeacherTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTeacherTrainings'
 import {
   IGetAllTrainings,
   IGetAllTrainingsParams,
@@ -24,11 +25,13 @@ import { TrainingsTable } from '../../components/tables/trainings-list'
 
 type ITrainingsTemplate = {
   remoteGetAllTrainings: IGetAllTrainings
+  remoteGetAllTeacherTrainings: IGetAllTeacherTrainings
   remoteToggleTrainingStatus: IToggleTrainingStatus
 }
 
 export function TrainingsTemplate({
   remoteGetAllTrainings,
+  remoteGetAllTeacherTrainings,
   remoteToggleTrainingStatus,
 }: ITrainingsTemplate) {
   const [isAdmin, setIsAdmin] = useState(false)
@@ -74,16 +77,17 @@ export function TrainingsTemplate({
     }
   }
 
-  async function getTrainings() {
+  async function getTrainings(paginationParams: IGetAllTrainingsParams) {
     try {
-      const { total, data } = await remoteGetAllTrainings.getAll(paginationParams)
-      if (!isAdmin) {
-        const teacherTrainings = data.filter(training => training.teacher.id === userId)
-        setTrainings(teacherTrainings)
-      } else {
+      if (!isAdmin && userId) {
+        const { total, data } = await remoteGetAllTeacherTrainings.getAll(paginationParams, userId)
         setTrainings(data)
+        setTotalPage(total)
+      } else {
+        const { total, data } = await remoteGetAllTrainings.getAll(paginationParams)
+        setTrainings(data)
+        setTotalPage(total)
       }
-      setTotalPage(total)
     } catch (err) {
       toast.error('Erro ao buscar treinamentos.')
     }
@@ -107,7 +111,7 @@ export function TrainingsTemplate({
   }, [])
 
   useEffect(() => {
-    getTrainings()
+    getTrainings(paginationParams)
   }, [
     pagination.take,
     pagination.totalPages,
