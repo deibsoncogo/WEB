@@ -10,6 +10,7 @@ import {
   GetCoursesParams,
   IGetAllCourses,
 } from '../../../../domain/usecases/interfaces/course/getAllCourses'
+import { IGetAllTeacherCourses } from '../../../../domain/usecases/interfaces/course/getAllTeacherCourses'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
 import { KTSVG } from '../../../../helpers'
 import { debounce } from '../../../../helpers/debounce'
@@ -25,6 +26,7 @@ import { Row } from './row'
 
 type Props = {
   getAllCourses: IGetAllCourses
+  getAllTeacherCourses: IGetAllTeacherCourses
   deleteCourse: IDeleteCourse
   updateCourse: IUpdateCourse
 }
@@ -57,6 +59,26 @@ export default function CoursesTable(props: Props) {
     )}`
   }
 
+  async function getCourses(paginationParams: GetCoursesParams) {
+    try {
+      if (!isAdmin && userId) {
+        const { total, data } = await props.getAllTeacherCourses.getAll(paginationParams, userId)
+        setCourses(data)
+        setTotalPage(total)
+      } else {
+        const { total, data } = await props.getAllCourses.getAll(paginationParams)
+        setCourses(data)
+        setTotalPage(total)
+      }
+
+      setTimeout(() => {
+        setLoading(false)
+      }, 500)
+    } catch (err) {
+      toast.error('Erro ao buscar cursos.')
+    }
+  }
+
   useEffect(() => {
     const token = localStorage.getItem(keys.TOKEN)
     if (token) {
@@ -74,20 +96,16 @@ export default function CoursesTable(props: Props) {
       page: pagination.currentPage,
       name: courseName,
     }
-    props.getAllCourses
-      .getAll(paginationParams)
-      .then((data) => {
-        if (!isAdmin) {
-          const teacherCourses = data.data.filter(course => course.userId === userId)
-          setCourses(teacherCourses)
-        } else {
-          setCourses(data.data)
-        }
-        setTotalPage(data.total)
-      })
-      .catch(() => toast.error('Não foi possível listar os cursos.'))
-      .finally(() => setLoading(false))
-  }, [refresher, pagination.take, pagination.currentPage, pagination.order, courseName, isAdmin, userId])
+    getCourses(paginationParams)
+  }, [
+    refresher,
+    pagination.take,
+    pagination.currentPage,
+    pagination.order,
+    courseName,
+    isAdmin,
+    userId,
+  ])
 
   return (
     <>
