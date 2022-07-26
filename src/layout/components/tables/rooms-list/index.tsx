@@ -61,17 +61,22 @@ export function RoomsTable({
         const { total, data } = await getAllTeacherRooms.getAll(paginationParams, userId)
         setRooms(data)
         setTotalPage(total)
-      } else {
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
+        return;
+      } 
+      
+      if (isAdmin && userId) {
         const { total, data } = await getAllRooms.getAll(paginationParams)
         setRooms(data)
         setTotalPage(total)
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
       }
-
-      setTimeout(() => {
-        setLoading(false)
-      }, 500)
     } catch (err) {
-      toast.error('Erro ao buscar treinamentos.')
+      toast.error('Erro ao buscar salas.')
     }
   }
 

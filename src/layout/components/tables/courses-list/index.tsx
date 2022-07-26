@@ -65,15 +65,20 @@ export default function CoursesTable(props: Props) {
         const { total, data } = await props.getAllTeacherCourses.getAll(paginationParams, userId)
         setCourses(data)
         setTotalPage(total)
-      } else {
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
+        return
+      }
+
+      if (isAdmin && userId) {
         const { total, data } = await props.getAllCourses.getAll(paginationParams)
         setCourses(data)
         setTotalPage(total)
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
       }
-
-      setTimeout(() => {
-        setLoading(false)
-      }, 500)
     } catch (err) {
       toast.error('Erro ao buscar cursos.')
     }

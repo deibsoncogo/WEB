@@ -83,7 +83,10 @@ export function TrainingsTemplate({
         const { total, data } = await remoteGetAllTeacherTrainings.getAll(paginationParams, userId)
         setTrainings(data)
         setTotalPage(total)
-      } else {
+        return;
+      } 
+      
+      if (isAdmin && userId) {
         const { total, data } = await remoteGetAllTrainings.getAll(paginationParams)
         setTrainings(data)
         setTotalPage(total)
