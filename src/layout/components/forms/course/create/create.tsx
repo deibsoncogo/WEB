@@ -65,11 +65,11 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
 
     try {
       formRef.current.setErrors({})
-      data.price = onlyNums(data.price)   
-      data.discount = onlyNums(data?.discount) 
+      data.price = onlyNums(data.price)
+      data.discount = onlyNums(data?.discount)
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
-        name: Yup.string().required('Nome é necessário'),
+        name: Yup.string().required('Nome é necessário').max(50, 'No máximo 50 caracteres'),
         userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number()
           .min(1, 'Tempo de acesso deve ser maior que zero')
@@ -78,20 +78,24 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
         price: Yup.number()
           .required('Preço é necessário')
           .min(0.01, 'Preço deve ser maior que zero'),
-        discount: Yup.number().test(
-            {name: 'validation',
-            message: 'Desconto deve ser menor que preço',
-            test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),
+        discount: Yup.number().test({
+          name: 'validation',
+          message: 'Desconto deve ser menor que preço',
+          test: (value) =>
+            value ? parseFloat(data.discount + '') < parseFloat(data.price + '') : true,
+        }),
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário'),
-        description: Yup.string().required('Descriçao é necessária'),
+        description: Yup.string()
+          .required('Descriçao é necessária')
+          .max(65535, 'Descrição muito longa'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
 
       data.content = stateEditor.content
-      await schema.validate({...data, price: onlyNums(data.price)}, { abortEarly: false })
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
     } catch (err) {
       const validationErrors = {}
@@ -105,7 +109,6 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
     }
   }
   async function handleCreateCourse(data: IFormCourse) {
- 
     courseClass.forEach((item, index) => (item.displayOrder = index + 1))
 
     const course = new CreateCourse(

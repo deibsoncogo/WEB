@@ -11,6 +11,7 @@ import {
   IGetAllCourses,
 } from '../../../../domain/usecases/interfaces/course/getAllCourses'
 import { IGetAllTeacherCourses } from '../../../../domain/usecases/interfaces/course/getAllTeacherCourses'
+import { IToggleCourseStatus } from '../../../../domain/usecases/interfaces/course/toggleCourseStatus'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
 import { KTSVG } from '../../../../helpers'
 import { debounce } from '../../../../helpers/debounce'
@@ -28,7 +29,7 @@ type Props = {
   getAllCourses: IGetAllCourses
   getAllTeacherCourses: IGetAllTeacherCourses
   deleteCourse: IDeleteCourse
-  updateCourse: IUpdateCourse
+  toggleCourseStatus: IToggleCourseStatus
 }
 
 export default function CoursesTable(props: Props) {
@@ -192,7 +193,7 @@ export default function CoursesTable(props: Props) {
                           active={item.isActive}
                           belongsToPlans={item.belongsToPlans}
                           deleteCourse={props.deleteCourse}
-                          updateCourse={props.updateCourse}
+                          toggleCourseStatus={props.toggleCourseStatus}
                           handleRefresher={handleRefresher}
                           isAdmin={isAdmin}
                         />

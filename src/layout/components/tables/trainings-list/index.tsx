@@ -61,8 +61,8 @@ export function TrainingsTable({
                     </th>
                     <th className='text-dark min-w-100px'>Chat</th>
                     <th
-                      className={getColumnHeaderClasses('active')}
-                      onClick={() => handleOrdenation('active')}
+                      className={getColumnHeaderClasses('isActive')}
+                      onClick={() => handleOrdenation('isActive')}
                     >
                       Ativo
                     </th>

@@ -73,7 +73,7 @@ export function FormUpdateCourse(props: Props) {
       data.discount = onlyNums(data?.discount) 
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
-        name: Yup.string().required('Nome é necessário'),
+        name: Yup.string().required('Nome é necessário').max(50, 'No máximo 50 caracteres'),
         userId: Yup.string().required('Selecione um professor'),
         accessTime: Yup.number()
           .min(1, 'Tempo de acesso deve ser maior que zero')
@@ -90,7 +90,7 @@ export function FormUpdateCourse(props: Props) {
           .min(1, 'Quantidade de parcelas deve ser maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário'),
-        description: Yup.string().required('Descriçao é necessária'),
+        description: Yup.string().required('Descriçao é necessária').max(65535, 'Descrição muito longa'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
       data.content = stateEditor.content

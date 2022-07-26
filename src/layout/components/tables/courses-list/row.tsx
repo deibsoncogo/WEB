@@ -1,14 +1,11 @@
-import { useState } from 'react'
+import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
+import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
+import { IToggleCourseStatus } from '../../../../domain/usecases/interfaces/course/toggleCourseStatus'
 import { KTSVG } from '../../../../helpers'
 import { Switch } from '../../inputs/switch'
-import { ActionModal } from '../../modals/action'
-import { IGetCourse } from '../../../../domain/usecases/interfaces/course/getCourse'
-import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
-import { Tooltip } from '@nextui-org/react'
-import { UpdateCourse } from '../../../../domain/models/updateCourse'
 import ConfirmationModal from '../../modal/ConfirmationModal'
 
 interface IRow {
@@ -21,9 +18,9 @@ interface IRow {
   active: boolean
   belongsToPlans: boolean
   deleteCourse: IDeleteCourse
-  updateCourse: IUpdateCourse
-  handleRefresher: () => void
   isAdmin: boolean
+  toggleCourseStatus: IToggleCourseStatus
+  handleRefresher: () => void
 }
 
 export function Row(props: IRow) {
@@ -48,10 +45,8 @@ export function Row(props: IRow) {
 
   async function handleUpdateCourse() {
     try {
-      const form = new FormData()
-      form.append('course', JSON.stringify({ id: props.id, isActive: !isActive }))
       setLoading(true)
-      await props.updateCourse.update(form)
+      await props.toggleCourseStatus.toggle({ id: props.id })
       setIsModalUpdateOpen(false)
       setIsActive(!isActive)
       toast.success('Curso atualizado com sucesso.')
@@ -96,30 +91,26 @@ export function Row(props: IRow) {
               </button>
             </Link>
           </Tooltip>
-          {props.isAdmin && (
-            <Tooltip
-              content={
+          <Tooltip
+            content={
+              props.belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'
+            }
+            rounded
+            color='primary'
+          >
+            <button
+              onClick={
                 props.belongsToPlans
-                  ? 'Não é possível deletar, pois pertence a um plano'
-                  : 'Deletar'
+                  ? undefined
+                  : () => {
+                      setIsModalDeleteOpen(true)
+                    }
               }
-              rounded
-              color='primary'
+              className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
             >
-              <button
-                onClick={
-                  props.belongsToPlans
-                    ? undefined
-                    : () => {
-                        setIsModalDeleteOpen(true)
-                      }
-                }
-                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
-              >
-                <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-              </button>
-            </Tooltip>
-          )}
+              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+            </button>
+          </Tooltip>
         </td>
 
         <ConfirmationModal

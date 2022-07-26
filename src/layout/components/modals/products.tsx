@@ -116,7 +116,7 @@ export function ProductsModal({
 
   useEffect(() => {
     getProducts
-      .getAll({ name: '', order: 'asc', page: 1, take: 5 })
+      .getAll({ name: '', order: 'asc', page: 1, allRecords: true })
       .then((res) => setProducts(res.data as any))
   }, [])
 

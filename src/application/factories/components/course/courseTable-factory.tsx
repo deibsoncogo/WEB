@@ -4,6 +4,7 @@ import { makeRemoteGetAllCourses } from '../../usecases/course/remote-getAllCour
 import { makeRemoteGetAllTeacherCourses } from '../../usecases/course/remote-getAllTeacherCourses-factory'
 import { makeRemoteGetCourse } from '../../usecases/course/remote-getCourse-factory'
 import { makeRemoteUpdateCourse } from '../../usecases/course/remote-updateCourse-factory'
+import { makeRemoteToggleCourseStatus } from '../../usecases/course/remote-toggleCourseStatus-factory'
 
 export const MakeCourseTable = () => {
   return (
@@ -11,7 +12,7 @@ export const MakeCourseTable = () => {
       getAllCourses={makeRemoteGetAllCourses()}
       getAllTeacherCourses={makeRemoteGetAllTeacherCourses()}
       deleteCourse={makeRemoteDeleteCourse()}
-      updateCourse={makeRemoteUpdateCourse()}
+      toggleCourseStatus={makeRemoteToggleCourseStatus()}
     />
   )
 }

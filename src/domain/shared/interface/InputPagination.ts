@@ -1,5 +1,5 @@
 export interface InputPagination {
-  take: number
+  take?: number
   page: number
   order: 'asc' | 'desc' | undefined
   orderBy?: string
