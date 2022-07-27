@@ -43,17 +43,17 @@ export function ProductsModal({
     const expireDate = formRef.current?.getFieldValue(fieldExpireDate)
 
     if (!name) {
-      toast.error('Selecione um produto!')
+      formRef.current?.setFieldError(fieldName, 'Selecione um produto!')
       return
     }
 
     if (!expireDate) {
-      toast.error('Selecione uma data de expiração!')
+      formRef.current?.setFieldError(fieldExpireDate, 'Selecione uma data de expiração!')
       return
     }
 
     if (selectedProducts.some((selected) => selected.product.name === name)) {
-      toast.error('Esse produto já foi selecionado!')
+      formRef.current?.setFieldError(fieldName, 'Esse produto já foi selecionado!')
       return
     }
 
@@ -155,10 +155,10 @@ export function ProductsModal({
 
           <Form className='form w-100' ref={formRef} initialData={defaultValue} onSubmit={() => {}}>
             <div className='modal-body'>
-              <div className='container gap-20 row mh-175px overflow-auto'>
-                <div className='col w-50'>
+              <div className='container gap-20 row mh-150px overflow-auto'>
+                <div className='w-50'>
                   <div className='d-flex align-items-center gap-5'>
-                    <div className='w-75'>
+                    <div className='w-75 h-95px'>
                       <Select name='course' label='Cursos'>
                         <option value='' disabled selected>
                           Selecione um curso
@@ -171,18 +171,20 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <DatePicker
-                      name='courseExpireDate'
-                      label='Data de expiração'
-                      minDate={moment().toDate()}
-                    />
+                    <div className='w-75 h-95px'>
+                      <DatePicker
+                        name='courseExpireDate'
+                        label='Data de expiração'
+                        minDate={moment().toDate()}
+                      />
+                    </div>
                   </div>
                 </div>
 
                 <div className='col align-self-end w-50 h-100 mb-8'>
                   <button
                     type='button'
-                    className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
+                    className='btn btn-outline-primary btn-sm border border-primary w-300px h-25  '
                     onClick={() => handleIncreaseProduct('course', 'courseExpireDate')}
                   >
                     + Adicionar outro curso
@@ -190,10 +192,10 @@ export function ProductsModal({
                 </div>
               </div>
 
-              <div className='container gap-20 row mh-175px overflow-auto'>
-                <div className='col w-50'>
+              <div className='container gap-20 row mh-150px overflow-auto'>
+                <div className='w-50'>
                   <div className='d-flex align-items-center gap-5'>
-                    <div className='w-75'>
+                    <div className='w-75 h-95px'>
                       <Select name='training' label='Treinamentos'>
                         <option value='' disabled selected>
                           Selecione um treinamento
@@ -206,18 +208,20 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <DatePicker
-                      name='trainingExpireDate'
-                      label='Data de expiração'
-                      minDate={moment().toDate()}
-                    />
+                    <div className='w-75 h-95px'>
+                      <DatePicker
+                        name='trainingExpireDate'
+                        label='Data de expiração'
+                        minDate={moment().toDate()}
+                      />
+                    </div>
                   </div>
                 </div>
 
                 <div className='col align-self-end w-50 h-100 mb-8'>
                   <button
                     type='button'
-                    className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
+                    className='btn btn-outline-primary btn-sm border border-primary w-300px h-25  '
                     onClick={() => handleIncreaseProduct('training', 'trainingExpireDate')}
                   >
                     + Adicionar outro treinamento
@@ -225,10 +229,10 @@ export function ProductsModal({
                 </div>
               </div>
 
-              <div className='container gap-20 row mh-175px overflow-auto'>
-                <div className='col w-50'>
+              <div className='container gap-20 row mh-150px overflow-auto'>
+                <div className='w-50'>
                   <div className='d-flex align-items-center gap-5'>
-                    <div className='w-75'>
+                    <div className='w-75 h-95px'>
                       <Select name='plan' label='Planos'>
                         <option value='' disabled selected>
                           Selecione um plano
@@ -241,18 +245,20 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <DatePicker
-                      name='planExpireDate'
-                      label='Data de expiração'
-                      minDate={moment().toDate()}
-                    />
+                    <div className='w-75 h-95px'>
+                      <DatePicker
+                        name='planExpireDate'
+                        label='Data de expiração'
+                        minDate={moment().toDate()}
+                      />
+                    </div>
                   </div>
                 </div>
 
                 <div className='col align-self-end w-50 h-100 mb-8'>
                   <button
                     type='button'
-                    className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
+                    className='btn btn-outline-primary btn-sm border border-primary w-300px h-25  '
                     onClick={() => handleIncreaseProduct('plan', 'planExpireDate')}
                   >
                     + Adicionar outro plano
@@ -265,11 +271,11 @@ export function ProductsModal({
                   {selectedProducts.map((selectedProduct) => (
                     <div
                       key={selectedProduct.productId}
-                      className='container gap-20 row mh-175px overflow-auto'
+                      className='container gap-20 row mh-150px overflow-auto'
                     >
-                      <div className='col w-50'>
+                      <div className='w-50'>
                         <div className='d-flex align-items-center gap-5'>
-                          <div className='w-75'>
+                          <div className='w-75 h-95px'>
                             <Select
                               name={selectedProduct.product.name}
                               label={setProductLabel(selectedProduct.product.type)}
@@ -280,10 +286,12 @@ export function ProductsModal({
                               </option>
                             </Select>
                           </div>
-                          <DatePicker
-                            name={`${selectedProduct.product.name}-expireDate`}
-                            label='Data de expiração'
-                          />
+                          <div className='w-75 h-95px'>
+                            <DatePicker
+                              name={`${selectedProduct.product.name}-expireDate`}
+                              label='Data de expiração'
+                            />
+                          </div>
                         </div>
                       </div>
                       <div className='col align-self-end w-50 h-100 mb-8'>
