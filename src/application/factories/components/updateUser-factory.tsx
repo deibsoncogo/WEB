@@ -1,5 +1,5 @@
 import { FormEditUser } from '../../../layout/components/forms/user/edit-user'
-import { makeRemoteGetAllProducts } from '../usecases/remote-getAllProducts-factory'
+import { makeRemoteGetAllProducts } from '../usecases/product/remote-getAllProducts-factory'
 import { makeRemoteGetUser } from '../usecases/remote-getUser-factory'
 import { makeRemoteVerifyCPF } from '../usecases/remote-getVerifyUserCPF'
 import { makeRemoteUpdateUser } from '../usecases/remote-updateUser-factory'

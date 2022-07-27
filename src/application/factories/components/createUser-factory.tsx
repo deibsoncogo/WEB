@@ -1,9 +1,8 @@
 import { FormCreateUser } from '../../../layout/components/forms/user/create-user'
-
-import { makeRemoteSignUp } from '../usecases/remote-signUp-factory'
-import { makeRemoteVerifyEmail } from '../usecases/remote-getVerifyUserEmail'
+import { makeRemoteGetAllProducts } from '../usecases/product/remote-getAllProducts-factory'
 import { makeRemoteVerifyCPF } from '../usecases/remote-getVerifyUserCPF'
-import { makeRemoteGetAllProducts } from '../usecases/remote-getAllProducts-factory'
+import { makeRemoteVerifyEmail } from '../usecases/remote-getVerifyUserEmail'
+import { makeRemoteSignUp } from '../usecases/remote-signUp-factory'
 
 export const MakeFormCreateUser = () => {
   return (

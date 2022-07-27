@@ -28,6 +28,7 @@ import {
 import ConfirmationModal from '../../components/modal/ConfirmationModal'
 import { EditCoupon } from './editCoupon'
 import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
+import { IGetAllAvailableProducts } from '../../../domain/usecases/interfaces/product/getAllAvailableProducts'
 
 type CouponsTemplateProps = {
   remoteGetCoupons: IGetCoupons
@@ -35,7 +36,7 @@ type CouponsTemplateProps = {
   remoteUpdateCoupon: IUpdateCoupon
   remoteDeleteCoupon: IDeleteCoupon
   remoteToggleCouponStatus: IToggleCouponStatus
-  remoteGetAllProducts: IGetAllProducts
+  remoteGetAllAvailableProducts: IGetAllAvailableProducts
 }
 
 export function CouponsTemplate({
@@ -44,7 +45,7 @@ export function CouponsTemplate({
   remoteUpdateCoupon,
   remoteDeleteCoupon,
   remoteToggleCouponStatus,
-  remoteGetAllProducts,
+  remoteGetAllAvailableProducts,
 }: CouponsTemplateProps) {
   const paginationHook = usePagination()
 
@@ -221,7 +222,7 @@ export function CouponsTemplate({
         visible={isModalCreateOpen}
         close={handleCloseModalCreateCoupon}
         remoteCreateCoupon={remoteCreateCoupon}
-        remoteGetAllProducts={remoteGetAllProducts}
+        remoteGetAllAvailableProducts={remoteGetAllAvailableProducts}
       />
 
       <EditCoupon
@@ -229,7 +230,7 @@ export function CouponsTemplate({
         visible={!!selectedCoupon}
         close={handleRemoveSelectedCouponToBeEdited}
         remoteUpdateCoupon={remoteUpdateCoupon}
-        remoteGetAllProducts={remoteGetAllProducts}
+        remoteGetAllAvailableProducts={remoteGetAllAvailableProducts}
       />
 
       <ConfirmationModal
