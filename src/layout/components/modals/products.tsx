@@ -81,24 +81,12 @@ export function ProductsModal({
     setSelectedProducts(filteredSelectedProducts)
   }
 
-  function checkIfAProductIsGranted() {
-    let productName
-    const isAProductGranted = grantedProducts.some((chosen) =>
-      selectedProducts.some((selected) => {
-        productName = selected.product.name
-        return selected.productId === chosen.productId
-      })
-    )
-
-    if (isAProductGranted) {
-      toast.error(`O produto ${productName} já foi concedido!`)
-      return true
-    }
+  function checkIfAProductIsGranted(name: string) {
+    const productId = getProductId(name)
+    return grantedProducts.some((chosen) => chosen.productId === productId)
   }
 
   function handleAddProducts() {
-    if (checkIfAProductIsGranted()) return
-
     if (selectedProducts.length === 0) {
       toast.error('Nenhum produto foi selecionado!')
       return
@@ -111,7 +99,13 @@ export function ProductsModal({
   }
 
   function findProducts(type: string) {
-    return products?.filter((prod) => prod.type === type)
+    const selectedProductsIds = selectedProducts.map((selectedProd) => selectedProd.productId)
+    return products?.filter(
+      (prod) =>
+        prod.type === type &&
+        !selectedProductsIds.includes(prod.id!) &&
+        !checkIfAProductIsGranted(prod.name)
+    )
   }
 
   useEffect(() => {
@@ -124,7 +118,7 @@ export function ProductsModal({
     setCourses(findProducts('course'))
     setPlans(findProducts('plan'))
     setTrainings(findProducts('training'))
-  }, [products])
+  }, [products, selectedProducts, grantedProducts])
 
   useEffect(() => {
     selectedProducts.forEach((product) => {
