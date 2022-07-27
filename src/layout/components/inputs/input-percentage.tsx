@@ -51,7 +51,6 @@ export function InputPercentage({ name, label, classes, ...rest }: IInputProps) 
           placeholder='00%'
           ref={inputRef}
           onChange={handleChange}
-          defaultValue={defaultValue}
           {...rest}
         />
       </div>

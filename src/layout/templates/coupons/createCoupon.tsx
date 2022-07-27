@@ -5,7 +5,7 @@ import { useRequest } from '../../../application/hooks/useRequest'
 import { ICoupon } from '../../../domain/models/coupon'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { CreateCouponParams, ICreateCoupon } from '../../../domain/usecases/interfaces/coupon'
-import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
+import { IGetAllAvailableProducts } from '../../../domain/usecases/interfaces/product/getAllAvailableProducts'
 import { formatDate } from '../../../helpers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { getOptionsFromSearchRequest } from '../../../utils/getOptionsFromSearchRequest'
@@ -18,10 +18,15 @@ type Props = {
   visible: boolean
   close: () => void
   remoteCreateCoupon: ICreateCoupon
-  remoteGetAllProducts: IGetAllProducts
+  remoteGetAllAvailableProducts: IGetAllAvailableProducts
 }
 
-const CreateCoupon = ({ remoteCreateCoupon, remoteGetAllProducts, visible, close }: Props) => {
+const CreateCoupon = ({
+  remoteCreateCoupon,
+  remoteGetAllAvailableProducts,
+  visible,
+  close,
+}: Props) => {
   const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('percentage')
   const formRef = useRef<FormHandles>(null)
 
@@ -69,7 +74,7 @@ const CreateCoupon = ({ remoteCreateCoupon, remoteGetAllProducts, visible, close
   async function handleGetProductOptions(searchValue: string): Promise<ISelectOption[]> {
     const productOptionHasType = true
     const options = await getOptionsFromSearchRequest({
-      request: remoteGetAllProducts.getAll,
+      request: remoteGetAllAvailableProducts.getAll,
       search: {
         name: searchValue || '',
         allRecords: true,
