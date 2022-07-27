@@ -16,7 +16,7 @@ export function Row({ id, name, expireDate, setGrantedProducts }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   async function handleRemoveProduct() {
-    setGrantedProducts((prevState) => prevState.filter(product => product.id !== id))
+    setGrantedProducts((prevState) => prevState.filter(product => product.productId !== id))
     toast.success('Produto removido com sucesso')
   }
 
