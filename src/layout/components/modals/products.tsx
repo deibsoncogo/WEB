@@ -155,49 +155,6 @@ export function ProductsModal({
 
           <Form className='form w-100' ref={formRef} initialData={defaultValue} onSubmit={() => {}}>
             <div className='modal-body'>
-              {selectedProducts.length > 0 && (
-                <>
-                  {selectedProducts.map((selectedProduct) => (
-                    <div
-                      key={selectedProduct.productId}
-                      className='container gap-20 row mh-175px overflow-auto'
-                    >
-                      <div className='col w-50'>
-                        <div className='d-flex align-items-center gap-5'>
-                          <div className='w-75'>
-                            <Select
-                              name={selectedProduct.product.name}
-                              label={setProductLabel(selectedProduct.product.type)}
-                              value={selectedProduct.product.name}
-                            >
-                              <option value={selectedProduct.product.name}>
-                                {selectedProduct.product.name}
-                              </option>
-                            </Select>
-                          </div>
-                          <DatePicker
-                            name={`${selectedProduct.product.name}-expireDate`}
-                            label='Data de expiração'
-                          />
-                        </div>
-                      </div>
-                      <div className='col align-self-end w-50 h-100 mb-8'>
-                        <button
-                          type='button'
-                          title='Remover'
-                          onClick={() => {
-                            handleDecreaseProduct(selectedProduct.productId)
-                          }}
-                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
-                        >
-                          x
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </>
-              )}
-
               <div className='container gap-20 row mh-175px overflow-auto'>
                 <div className='col w-50'>
                   <div className='d-flex align-items-center gap-5'>
@@ -302,6 +259,49 @@ export function ProductsModal({
                   </button>
                 </div>
               </div>
+
+              {selectedProducts.length > 0 && (
+                <>
+                  {selectedProducts.map((selectedProduct) => (
+                    <div
+                      key={selectedProduct.productId}
+                      className='container gap-20 row mh-175px overflow-auto'
+                    >
+                      <div className='col w-50'>
+                        <div className='d-flex align-items-center gap-5'>
+                          <div className='w-75'>
+                            <Select
+                              name={selectedProduct.product.name}
+                              label={setProductLabel(selectedProduct.product.type)}
+                              value={selectedProduct.product.name}
+                            >
+                              <option value={selectedProduct.product.name}>
+                                {selectedProduct.product.name}
+                              </option>
+                            </Select>
+                          </div>
+                          <DatePicker
+                            name={`${selectedProduct.product.name}-expireDate`}
+                            label='Data de expiração'
+                          />
+                        </div>
+                      </div>
+                      <div className='col align-self-end w-50 h-100 mb-8'>
+                        <button
+                          type='button'
+                          title='Remover'
+                          onClick={() => {
+                            handleDecreaseProduct(selectedProduct.productId)
+                          }}
+                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
+                        >
+                          x
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
 
             <div className='modal-footer'>
