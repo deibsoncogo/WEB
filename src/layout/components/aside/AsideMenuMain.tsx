@@ -95,7 +95,7 @@ export function AsideMenuMain() {
       />}
       <AsideMenuItem
         to='/notifications'
-        title='Avisos'
+        title='Notificações'
         icon={<BsMegaphoneFill size={16} className='svg-icon-2 mh-50px' />}
       />
 
