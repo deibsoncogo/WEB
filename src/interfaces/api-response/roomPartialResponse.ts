@@ -8,4 +8,5 @@ export interface IRoomPartialResponse {
   belongsToPlans: boolean
   isChatActive: boolean
   teacherName: string
+  userId: string
 }

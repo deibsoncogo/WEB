@@ -1,9 +1,12 @@
+import jwtDecode from 'jwt-decode'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { usePagination } from '../../../application/hooks/usePagination'
 import { useRequest } from '../../../application/hooks/useRequest'
+import { roles } from '../../../application/wrappers/authWrapper'
 import { ITraining } from '../../../domain/models/training'
+import { IGetAllTeacherTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTeacherTrainings'
 import {
   IGetAllTrainings,
   IGetAllTrainingsParams,
@@ -14,19 +17,25 @@ import {
 } from '../../../domain/usecases/interfaces/trainings/toggleTrainingStatus'
 import { KTSVG } from '../../../helpers'
 import { debounce } from '../../../helpers/debounce'
+import { keys } from '../../../helpers/KeyConstants'
+import { IToken } from '../../../interfaces/application/token'
 import ConfirmationModal from '../../components/modal/ConfirmationModal'
 import { Search } from '../../components/search/Search'
 import { TrainingsTable } from '../../components/tables/trainings-list'
 
 type ITrainingsTemplate = {
   remoteGetAllTrainings: IGetAllTrainings
+  remoteGetAllTeacherTrainings: IGetAllTeacherTrainings
   remoteToggleTrainingStatus: IToggleTrainingStatus
 }
 
 export function TrainingsTemplate({
   remoteGetAllTrainings,
+  remoteGetAllTeacherTrainings,
   remoteToggleTrainingStatus,
 }: ITrainingsTemplate) {
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [userId, setUserId] = useState('')
   const [refresher, setRefresher] = useState(true)
   const [trainings, setTrainings] = useState<ITraining[]>([] as ITraining[])
   const [trainingName, setTrainingName] = useState('')
@@ -70,9 +79,18 @@ export function TrainingsTemplate({
 
   async function getTrainings() {
     try {
-      const { total, data } = await remoteGetAllTrainings.getAll(paginationParams)
-      setTotalPage(total)
-      setTrainings(data)
+      if (!isAdmin && userId) {
+        const { total, data } = await remoteGetAllTeacherTrainings.getAll(paginationParams, userId)
+        setTrainings(data)
+        setTotalPage(total)
+        return;
+      } 
+      
+      if (isAdmin && userId) {
+        const { total, data } = await remoteGetAllTrainings.getAll(paginationParams)
+        setTrainings(data)
+        setTotalPage(total)
+      }
     } catch (err) {
       toast.error('Erro ao buscar treinamentos.')
     }
@@ -87,8 +105,18 @@ export function TrainingsTemplate({
   }
 
   useEffect(() => {
+    const token = localStorage.getItem(keys.TOKEN)
+    if (token) {
+      const values = jwtDecode<IToken>(token)
+      setUserId(values.id)
+      setIsAdmin(values.role === roles.ADMIN)
+    }
+  }, [])
+
+  useEffect(() => {
     getTrainings()
   }, [
+    refresher,
     pagination.take,
     pagination.totalPages,
     pagination.order,
@@ -96,6 +124,8 @@ export function TrainingsTemplate({
     currentPage,
     trainingName,
     selectedTraining,
+    isAdmin,
+    userId
   ])
 
   useEffect(() => {
@@ -121,21 +151,24 @@ export function TrainingsTemplate({
             <Search onChangeText={handleSearch} />
           </h3>
 
-          <div className='card-toolbar'>
-            <Link href='/trainings/create'>
-              <a className='btn btn-sm btn-light-primary'>
-                <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-                Novo Treinamento
-              </a>
-            </Link>
-          </div>
+          {isAdmin && (
+            <div className='card-toolbar'>
+              <Link href='/trainings/create'>
+                <a className='btn btn-sm btn-light-primary'>
+                  <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+                  Novo Treinamento
+                </a>
+              </Link>
+            </div>
+          )}
         </div>
 
         <TrainingsTable
           trainings={trainings}
           paginationHook={paginationHook}
-          getTrainings={getTrainings}
+          handleRefresher={handleRefresher}
           openToggleStatusConfirmationModal={handleOpenToggleStatusConfirmationModal}
+          isAdmin={isAdmin}
         />
       </div>
 

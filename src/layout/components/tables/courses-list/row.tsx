@@ -18,6 +18,7 @@ interface IRow {
   active: boolean
   belongsToPlans: boolean
   deleteCourse: IDeleteCourse
+  isAdmin: boolean
   toggleCourseStatus: IToggleCourseStatus
   handleRefresher: () => void
 }

@@ -1,18 +1,23 @@
 import { FormHandles } from '@unform/core'
+import jwtDecode from 'jwt-decode'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { usePagination } from '../../../../application/hooks/usePagination'
+import { roles } from '../../../../application/wrappers/authWrapper'
 import { IDeleteCourse } from '../../../../domain/usecases/interfaces/course/deleteCourse'
 import {
   GetCoursesParams,
   IGetAllCourses,
 } from '../../../../domain/usecases/interfaces/course/getAllCourses'
+import { IGetAllTeacherCourses } from '../../../../domain/usecases/interfaces/course/getAllTeacherCourses'
 import { IToggleCourseStatus } from '../../../../domain/usecases/interfaces/course/toggleCourseStatus'
 import { IUpdateCourse } from '../../../../domain/usecases/interfaces/course/upDateCourse'
 import { KTSVG } from '../../../../helpers'
 import { debounce } from '../../../../helpers/debounce'
+import { keys } from '../../../../helpers/KeyConstants'
 import { IPartialCourseResponse } from '../../../../interfaces/api-response/coursePartialResponse'
+import { IToken } from '../../../../interfaces/application/token'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 import { Loading } from '../../loading/loading'
 import { Pagination } from '../../pagination/Pagination'
@@ -22,11 +27,14 @@ import { Row } from './row'
 
 type Props = {
   getAllCourses: IGetAllCourses
+  getAllTeacherCourses: IGetAllTeacherCourses
   deleteCourse: IDeleteCourse
   toggleCourseStatus: IToggleCourseStatus
 }
 
 export default function CoursesTable(props: Props) {
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [userId, setUserId] = useState('')
   const [courses, setCourses] = useState<IPartialCourseResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [refresher, setRefresher] = useState(true)
@@ -52,6 +60,40 @@ export default function CoursesTable(props: Props) {
     )}`
   }
 
+  async function getCourses(paginationParams: GetCoursesParams) {
+    try {
+      if (!isAdmin && userId) {
+        const { total, data } = await props.getAllTeacherCourses.getAll(paginationParams, userId)
+        setCourses(data)
+        setTotalPage(total)
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
+        return
+      }
+
+      if (isAdmin && userId) {
+        const { total, data } = await props.getAllCourses.getAll(paginationParams)
+        setCourses(data)
+        setTotalPage(total)
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
+      }
+    } catch (err) {
+      toast.error('Erro ao buscar cursos.')
+    }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem(keys.TOKEN)
+    if (token) {
+      const values = jwtDecode<IToken>(token)
+      setUserId(values.id)
+      setIsAdmin(values.role === roles.ADMIN)
+    }
+  }, [])
+
   useEffect(() => {
     const paginationParams: GetCoursesParams = {
       take: pagination.take,
@@ -60,15 +102,16 @@ export default function CoursesTable(props: Props) {
       page: pagination.currentPage,
       name: courseName,
     }
-    props.getAllCourses
-      .getAll(paginationParams)
-      .then((data) => {
-        setCourses(data.data)
-        setTotalPage(data.total)
-      })
-      .catch(() => toast.error('Não foi possível listar os cursos.'))
-      .finally(() => setLoading(false))
-  }, [refresher, pagination.take, pagination.currentPage, pagination.order, courseName])
+    getCourses(paginationParams)
+  }, [
+    refresher,
+    pagination.take,
+    pagination.currentPage,
+    pagination.order,
+    courseName,
+    isAdmin,
+    userId,
+  ])
 
   return (
     <>
@@ -77,14 +120,16 @@ export default function CoursesTable(props: Props) {
           <h3 className='card-title align-items-start flex-column'>
             <Search ref={searchCourseFormRef} onChangeText={handleSearchCourse} />
           </h3>
-          <div className='card-toolbar'>
-            <Link href='/courses/create'>
-              <a className='btn btn-sm btn-light-primary'>
-                <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-                Novo Curso
-              </a>
-            </Link>
-          </div>
+          {isAdmin && (
+            <div className='card-toolbar'>
+              <Link href='/courses/create'>
+                <a className='btn btn-sm btn-light-primary'>
+                  <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+                  Novo Curso
+                </a>
+              </Link>
+            </div>
+          )}
         </div>
 
         {courses.length > 0 && (
@@ -150,6 +195,7 @@ export default function CoursesTable(props: Props) {
                           deleteCourse={props.deleteCourse}
                           toggleCourseStatus={props.toggleCourseStatus}
                           handleRefresher={handleRefresher}
+                          isAdmin={isAdmin}
                         />
                       ))}
                   </tbody>

@@ -8,4 +8,5 @@ export interface IPartialCourseResponse {
   belongsToPlans: boolean
   categoryId: string
   teacherName: string
+  userId: string
 }

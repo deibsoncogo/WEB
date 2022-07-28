@@ -6,15 +6,17 @@ import { Pagination } from '../../pagination/Pagination'
 type ITrainingsTable = {
   trainings: ITraining[]
   paginationHook: usePaginationType
-  getTrainings(): Promise<void>
+  handleRefresher: () => void
   openToggleStatusConfirmationModal: (trainingId: string) => void
+  isAdmin: boolean
 }
 
 export function TrainingsTable({
   trainings,
   paginationHook,
-  getTrainings,
+  handleRefresher,
   openToggleStatusConfirmationModal,
+  isAdmin
 }: ITrainingsTable) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
@@ -79,8 +81,9 @@ export function TrainingsTable({
                       teacher={item.teacher}
                       belongsToPlans={item.belongsToPlans}
                       isActive={item.isActive}
-                      getTrainings={getTrainings}
+                      handleRefresher={handleRefresher}
                       handleToggleStatusConfirmation={openToggleStatusConfirmationModal}
+                      isAdmin={isAdmin}
                     />
                   ))}
                 </tbody>

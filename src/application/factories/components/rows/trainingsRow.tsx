@@ -9,8 +9,9 @@ type IMakeTrainingsRow = {
   description: string
   price: string | number
   teacher: { name: string }
-  getTrainings(): Promise<void>
+  handleRefresher: () => void
   handleToggleStatusConfirmation: (trainingId: string) => void
+  isAdmin: boolean
 }
 
 export function MakeTrainingsRow({
@@ -21,8 +22,9 @@ export function MakeTrainingsRow({
   teacher,
   belongsToPlans,
   isActive,
-  getTrainings,
+  handleRefresher,
   handleToggleStatusConfirmation,
+  isAdmin
 }: IMakeTrainingsRow) {
   return (
     <Row
@@ -34,8 +36,9 @@ export function MakeTrainingsRow({
       belongsToPlans={belongsToPlans}
       isActive={isActive}
       deleteTraining={makeRemoteDeleteTrainings(id)}
-      getTrainings={getTrainings}
+      handleRefresher={handleRefresher}
       handleToggleStatusConfirmation={handleToggleStatusConfirmation}
+      isAdmin={isAdmin}
     />
   )
 }
