@@ -16,6 +16,15 @@ export class RemoteCreateCoupon implements ICreateCoupon {
       case HttpStatusCode.created:
         return httpResponse.body
       case HttpStatusCode.badRequest:
+        const isValueProductError = String(httpResponse.body.message).includes(
+          'has a value less than the discount'
+        )
+
+        if (isValueProductError) {
+          throw new InvalidParamsError([
+            `O produto "${httpResponse.body.extraInfo}" tem o valor menor que o valor do desconto`,
+          ])
+        }
         throw new InvalidParamsError(['Cupom já cadastrado'])
       default:
         throw new UnexpectedError()

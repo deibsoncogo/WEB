@@ -1,12 +1,11 @@
 import { FormHandles } from '@unform/core'
-import { useEffect, useRef, useState } from 'react'
+import { BaseSyntheticEvent, SyntheticEvent, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { ICoupon } from '../../../domain/models/coupon'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { CreateCouponParams, IUpdateCoupon } from '../../../domain/usecases/interfaces/coupon'
 import { IGetAllAvailableProducts } from '../../../domain/usecases/interfaces/product/getAllAvailableProducts'
-import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { formatDate } from '../../../helpers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { extractSelectOptionsFromArr } from '../../../utils/extractSelectOptionsFromArr'
@@ -24,6 +23,7 @@ type Props = {
   remoteGetAllAvailableProducts: IGetAllAvailableProducts
 }
 
+let isFirstLoad = true
 const EditCoupon = ({
   remoteUpdateCoupon,
   visible,
@@ -45,7 +45,10 @@ const EditCoupon = ({
   async function handleFormSubmit(data: ICoupon) {
     const { error, success } = await applyYupValidation<ICoupon>(couponFormSchema, {
       ...data,
-      value: currentTypeSelected === 'value' ? Number(onlyNums(data.value)) : data.value,
+      value:
+        currentTypeSelected === 'value'
+          ? Number(onlyNums(data.value))
+          : Number(String(data.value).replace('%', '')),
       expirationDate: formatDate(new Date(data.expirationDate), 'YYYY-MM-DD'),
     })
 
@@ -60,15 +63,15 @@ const EditCoupon = ({
     }
   }
 
-  function changeDiscountType() {
-    const updatedType = currentTypeSelected === 'percentage' ? 'value' : 'percentage'
-    setCurrentTypeSelected(updatedType)
-    formRef.current?.setFieldValue('type', updatedType)
+  function changeDiscountType(e: BaseSyntheticEvent) {
+    setCurrentTypeSelected(e.target.id)
+    formRef.current?.setFieldValue('type', e.target.id)
   }
 
   function closeDrawer() {
     formRef.current?.reset()
     formRef.current?.setErrors({})
+    isFirstLoad = true
     close()
   }
 
@@ -109,10 +112,14 @@ const EditCoupon = ({
       const expirationDate = new Date(coupon.expirationDate)
       expirationDate.setDate(expirationDate.getDay() + 1)
 
-      formRef.current?.setFieldValue('value', `${coupon.value}%`)
       if (coupon.type === 'value') {
-        formRef.current?.setFieldValue('value', maskedToMoney(coupon.value))
+        setCurrentTypeSelected('value')
       }
+
+      if (coupon.type === 'percentage') {
+        setCurrentTypeSelected('percentage')
+      }
+
       formRef.current?.setFieldValue('name', coupon.name)
       formRef.current?.setFieldValue('type', coupon.type)
       formRef.current?.setFieldValue('quantity', coupon.quantity)
@@ -125,6 +132,20 @@ const EditCoupon = ({
       )
     }
   }, [coupon])
+
+  useEffect(() => {
+    if (isFirstLoad && coupon) {
+      if (coupon.type === 'value') {
+        formRef.current?.setFieldValue('value', maskedToMoney(coupon.value))
+      }
+
+      if (coupon.type === 'percentage') {
+        formRef.current?.setFieldValue('value', `${coupon.value}%`)
+      }
+
+      isFirstLoad = false
+    }
+  }, [coupon, currentTypeSelected])
 
   return (
     <EditCouponDrawerForm

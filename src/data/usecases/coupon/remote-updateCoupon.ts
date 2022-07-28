@@ -16,7 +16,16 @@ export class RemoteUpdateCoupon implements IUpdateCoupon {
       case HttpStatusCode.ok:
         return httpResponse.body
       case HttpStatusCode.badRequest:
-        throw new InvalidParamsError(['Cupom já cadastrada'])
+        const isValueProductError = String(httpResponse.body.message).includes(
+          'has a value less than the discount'
+        )
+
+        if (isValueProductError) {
+          throw new InvalidParamsError([
+            `O produto "${httpResponse.body.extraInfo}" tem o valor menor que o valor do desconto`,
+          ])
+        }
+        throw new InvalidParamsError(['Cupom já cadastrado'])
       default:
         throw new UnexpectedError()
     }

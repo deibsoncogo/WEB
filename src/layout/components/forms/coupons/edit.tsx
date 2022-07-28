@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import React from 'react'
+import React, { SyntheticEvent } from 'react'
 
 import { Button } from '../../buttons/CustomButton'
 import { DrawerRight } from '../../drawerRight/DrawerRight'
@@ -16,7 +16,7 @@ type Props = {
   loading: boolean
   discountType: IDiscountType
   close: () => void
-  changeDiscountType: () => void
+  changeDiscountType: (event: SyntheticEvent) => void
   onSubmit: (data: ICoupon) => void
   loadProductsOptions: (searchValue: string) => Promise<ISelectOption[]>
 }

@@ -39,7 +39,6 @@ const CreateCoupon = ({
   } = useRequest<void, CreateCouponParams>(remoteCreateCoupon.create)
 
   async function handleFormSubmit(data: ICoupon) {
-    console.log(data)
     const { error, success } = await applyYupValidation<ICoupon>(couponFormSchema, {
       ...data,
       value:
