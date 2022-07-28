@@ -43,17 +43,17 @@ export function ProductsModal({
     const expireDate = formRef.current?.getFieldValue(fieldExpireDate)
 
     if (!name) {
-      toast.error('Selecione um produto!')
+      formRef.current?.setFieldError(fieldName, 'Selecione um produto!')
       return
     }
 
     if (!expireDate) {
-      toast.error('Selecione uma data de expiração!')
+      formRef.current?.setFieldError(fieldExpireDate, 'Selecione uma data de expiração!')
       return
     }
 
     if (selectedProducts.some((selected) => selected.product.name === name)) {
-      toast.error('Esse produto já foi selecionado!')
+      formRef.current?.setFieldError(fieldName, 'Esse produto já foi selecionado!')
       return
     }
 
@@ -81,24 +81,12 @@ export function ProductsModal({
     setSelectedProducts(filteredSelectedProducts)
   }
 
-  function checkIfAProductIsGranted() {
-    let productName
-    const isAProductGranted = grantedProducts.some((chosen) =>
-      selectedProducts.some((selected) => {
-        productName = selected.product.name
-        return selected.productId === chosen.productId
-      })
-    )
-
-    if (isAProductGranted) {
-      toast.error(`O produto ${productName} já foi concedido!`)
-      return true
-    }
+  function checkIfAProductIsGranted(name: string) {
+    const productId = getProductId(name)
+    return grantedProducts.some((chosen) => chosen.productId === productId)
   }
 
   function handleAddProducts() {
-    if (checkIfAProductIsGranted()) return
-
     if (selectedProducts.length === 0) {
       toast.error('Nenhum produto foi selecionado!')
       return
@@ -111,7 +99,13 @@ export function ProductsModal({
   }
 
   function findProducts(type: string) {
-    return products?.filter((prod) => prod.type === type)
+    const selectedProductsIds = selectedProducts.map((selectedProd) => selectedProd.productId)
+    return products?.filter(
+      (prod) =>
+        prod.type === type &&
+        !selectedProductsIds.includes(prod.id!) &&
+        !checkIfAProductIsGranted(prod.name)
+    )
   }
 
   useEffect(() => {
@@ -124,7 +118,7 @@ export function ProductsModal({
     setCourses(findProducts('course'))
     setPlans(findProducts('plan'))
     setTrainings(findProducts('training'))
-  }, [products])
+  }, [products, selectedProducts, grantedProducts])
 
   useEffect(() => {
     selectedProducts.forEach((product) => {
@@ -155,16 +149,127 @@ export function ProductsModal({
 
           <Form className='form w-100' ref={formRef} initialData={defaultValue} onSubmit={() => {}}>
             <div className='modal-body'>
+              <div className='container gap-20 row mh-150px overflow-auto'>
+                <div className='w-50'>
+                  <div className='d-flex align-items-center gap-5'>
+                    <div className='w-75 h-95px'>
+                      <Select name='course' label='Cursos'>
+                        <option value='' disabled selected>
+                          Selecione um curso
+                        </option>
+                        {courses?.map((course) => (
+                          <option key={course.id} value={course.name}>
+                            {course.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+
+                    <div className='w-75 h-95px'>
+                      <DatePicker
+                        name='courseExpireDate'
+                        label='Data de expiração'
+                        minDate={moment().toDate()}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className='col align-self-end w-50 h-100 mb-8'>
+                  <button
+                    type='button'
+                    className='btn btn-outline-primary btn-sm border border-primary w-300px h-25  '
+                    onClick={() => handleIncreaseProduct('course', 'courseExpireDate')}
+                  >
+                    + Adicionar outro curso
+                  </button>
+                </div>
+              </div>
+
+              <div className='container gap-20 row mh-150px overflow-auto'>
+                <div className='w-50'>
+                  <div className='d-flex align-items-center gap-5'>
+                    <div className='w-75 h-95px'>
+                      <Select name='training' label='Treinamentos'>
+                        <option value='' disabled selected>
+                          Selecione um treinamento
+                        </option>
+                        {trainings?.map((training) => (
+                          <option key={training.id} value={training.name}>
+                            {training.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+
+                    <div className='w-75 h-95px'>
+                      <DatePicker
+                        name='trainingExpireDate'
+                        label='Data de expiração'
+                        minDate={moment().toDate()}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className='col align-self-end w-50 h-100 mb-8'>
+                  <button
+                    type='button'
+                    className='btn btn-outline-primary btn-sm border border-primary w-300px h-25  '
+                    onClick={() => handleIncreaseProduct('training', 'trainingExpireDate')}
+                  >
+                    + Adicionar outro treinamento
+                  </button>
+                </div>
+              </div>
+
+              <div className='container gap-20 row mh-150px overflow-auto'>
+                <div className='w-50'>
+                  <div className='d-flex align-items-center gap-5'>
+                    <div className='w-75 h-95px'>
+                      <Select name='plan' label='Planos'>
+                        <option value='' disabled selected>
+                          Selecione um plano
+                        </option>
+                        {plans?.map((plan) => (
+                          <option key={plan.id} value={plan.name}>
+                            {plan.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+
+                    <div className='w-75 h-95px'>
+                      <DatePicker
+                        name='planExpireDate'
+                        label='Data de expiração'
+                        minDate={moment().toDate()}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className='col align-self-end w-50 h-100 mb-8'>
+                  <button
+                    type='button'
+                    className='btn btn-outline-primary btn-sm border border-primary w-300px h-25  '
+                    onClick={() => handleIncreaseProduct('plan', 'planExpireDate')}
+                  >
+                    + Adicionar outro plano
+                  </button>
+                </div>
+              </div>
+
               {selectedProducts.length > 0 && (
-                <>
+                <div className='mh-200px overflow-scroll'>
                   {selectedProducts.map((selectedProduct) => (
                     <div
                       key={selectedProduct.productId}
-                      className='container gap-20 row mh-175px overflow-auto'
+                      className='container gap-20 row mh-150px overflow-auto'
                     >
-                      <div className='col w-50'>
+                      <div className='w-50'>
                         <div className='d-flex align-items-center gap-5'>
-                          <div className='w-75'>
+                          <div className='w-75 h-95px'>
                             <Select
                               name={selectedProduct.product.name}
                               label={setProductLabel(selectedProduct.product.type)}
@@ -175,10 +280,12 @@ export function ProductsModal({
                               </option>
                             </Select>
                           </div>
-                          <DatePicker
-                            name={`${selectedProduct.product.name}-expireDate`}
-                            label='Data de expiração'
-                          />
+                          <div className='w-75 h-95px'>
+                            <DatePicker
+                              name={`${selectedProduct.product.name}-expireDate`}
+                              label='Data de expiração'
+                            />
+                          </div>
                         </div>
                       </div>
                       <div className='col align-self-end w-50 h-100 mb-8'>
@@ -195,113 +302,8 @@ export function ProductsModal({
                       </div>
                     </div>
                   ))}
-                </>
+                </div>
               )}
-
-              <div className='container gap-20 row mh-175px overflow-auto'>
-                <div className='col w-50'>
-                  <div className='d-flex align-items-center gap-5'>
-                    <div className='w-75'>
-                      <Select name='course' label='Cursos'>
-                        <option value='' disabled selected>
-                          Selecione um curso
-                        </option>
-                        {courses?.map((course) => (
-                          <option key={course.id} value={course.name}>
-                            {course.name}
-                          </option>
-                        ))}
-                      </Select>
-                    </div>
-
-                    <DatePicker
-                      name='courseExpireDate'
-                      label='Data de expiração'
-                      minDate={moment().toDate()}
-                    />
-                  </div>
-                </div>
-
-                <div className='col align-self-end w-50 h-100 mb-8'>
-                  <button
-                    type='button'
-                    className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseProduct('course', 'courseExpireDate')}
-                  >
-                    + Adicionar outro curso
-                  </button>
-                </div>
-              </div>
-
-              <div className='container gap-20 row mh-175px overflow-auto'>
-                <div className='col w-50'>
-                  <div className='d-flex align-items-center gap-5'>
-                    <div className='w-75'>
-                      <Select name='training' label='Treinamentos'>
-                        <option value='' disabled selected>
-                          Selecione um treinamento
-                        </option>
-                        {trainings?.map((training) => (
-                          <option key={training.id} value={training.name}>
-                            {training.name}
-                          </option>
-                        ))}
-                      </Select>
-                    </div>
-
-                    <DatePicker
-                      name='trainingExpireDate'
-                      label='Data de expiração'
-                      minDate={moment().toDate()}
-                    />
-                  </div>
-                </div>
-
-                <div className='col align-self-end w-50 h-100 mb-8'>
-                  <button
-                    type='button'
-                    className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseProduct('training', 'trainingExpireDate')}
-                  >
-                    + Adicionar outro treinamento
-                  </button>
-                </div>
-              </div>
-
-              <div className='container gap-20 row mh-175px overflow-auto'>
-                <div className='col w-50'>
-                  <div className='d-flex align-items-center gap-5'>
-                    <div className='w-75'>
-                      <Select name='plan' label='Planos'>
-                        <option value='' disabled selected>
-                          Selecione um plano
-                        </option>
-                        {plans?.map((plan) => (
-                          <option key={plan.id} value={plan.name}>
-                            {plan.name}
-                          </option>
-                        ))}
-                      </Select>
-                    </div>
-
-                    <DatePicker
-                      name='planExpireDate'
-                      label='Data de expiração'
-                      minDate={moment().toDate()}
-                    />
-                  </div>
-                </div>
-
-                <div className='col align-self-end w-50 h-100 mb-8'>
-                  <button
-                    type='button'
-                    className='btn btn-outline-primary btn-sm border border-primary w-50 h-25  '
-                    onClick={() => handleIncreaseProduct('plan', 'planExpireDate')}
-                  >
-                    + Adicionar outro plano
-                  </button>
-                </div>
-              </div>
             </div>
 
             <div className='modal-footer'>
