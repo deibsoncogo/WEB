@@ -23,7 +23,6 @@ type Props = {
   remoteGetAllAvailableProducts: IGetAllAvailableProducts
 }
 
-let isFirstLoad = true
 const EditCoupon = ({
   remoteUpdateCoupon,
   visible,
@@ -32,6 +31,7 @@ const EditCoupon = ({
   remoteGetAllAvailableProducts,
 }: Props) => {
   const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('percentage')
+  const [isFirstLoad, setIsFirstLoad] = useState(false)
   const formRef = useRef<FormHandles>(null)
 
   const {
@@ -71,7 +71,7 @@ const EditCoupon = ({
   function closeDrawer() {
     formRef.current?.reset()
     formRef.current?.setErrors({})
-    isFirstLoad = true
+    setIsFirstLoad(false)
     close()
   }
 
@@ -130,6 +130,7 @@ const EditCoupon = ({
         'productsId',
         extractSelectOptionsFromArr(coupon.products, hasProductType)
       )
+      setIsFirstLoad(true)
     }
   }, [coupon])
 
@@ -143,9 +144,9 @@ const EditCoupon = ({
         formRef.current?.setFieldValue('value', `${coupon.value}%`)
       }
 
-      isFirstLoad = false
+      setIsFirstLoad(false)
     }
-  }, [coupon, currentTypeSelected])
+  }, [coupon, isFirstLoad])
 
   return (
     <EditCouponDrawerForm
