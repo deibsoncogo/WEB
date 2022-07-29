@@ -91,26 +91,30 @@ export function Row(props: IRow) {
               </button>
             </Link>
           </Tooltip>
-          <Tooltip
-            content={
-              props.belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'
-            }
-            rounded
-            color='primary'
-          >
-            <button
-              onClick={
+          {props.isAdmin && (
+            <Tooltip
+              content={
                 props.belongsToPlans
-                  ? undefined
-                  : () => {
-                      setIsModalDeleteOpen(true)
-                    }
+                  ? 'Não é possível deletar, pois pertence a um plano'
+                  : 'Deletar'
               }
-              className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+              rounded
+              color='primary'
             >
-              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-            </button>
-          </Tooltip>
+              <button
+                onClick={
+                  props.belongsToPlans
+                    ? undefined
+                    : () => {
+                        setIsModalDeleteOpen(true)
+                      }
+                }
+                className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+              >
+                <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+              </button>
+            </Tooltip>
+          )}
         </td>
 
         <ConfirmationModal
