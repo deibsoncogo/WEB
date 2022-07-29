@@ -22,7 +22,7 @@ export class RemoteUpdateCoupon implements IUpdateCoupon {
 
         if (isValueProductError) {
           throw new InvalidParamsError([
-            `O produto "${httpResponse.body.extraInfo}" tem o valor menor que o valor do desconto`,
+            `product value less than discount: (${httpResponse.body.extraInfo})`,
           ])
         }
         throw new InvalidParamsError(['Cupom já cadastrado'])

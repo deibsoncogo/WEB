@@ -13,6 +13,7 @@ import { CreateCouponDrawerForm } from '../../components/forms/coupons/create'
 import { onlyNums } from '../../formatters/currenceFormatter'
 import { couponFormSchema, IDiscountType } from './type'
 import { extractFormattedProductOptions } from './utils/extractFormattedOptions'
+import { getProductErrorMessageCoupon } from './utils/getProductErrorMessageCoupon'
 
 type Props = {
   visible: boolean
@@ -97,10 +98,23 @@ const CreateCoupon = ({
 
   useEffect(() => {
     if (createCouponError) {
+      const isValueProductError = String(createCouponError).includes(
+        'product value less than discount:'
+      )
+
+      if (isValueProductError) {
+        const productName = getProductErrorMessageCoupon(createCouponError)
+        formRef.current?.setErrors({
+          productsId: `O Produto ${productName} tem o valor menor que o valor do desconto`,
+        })
+        return
+      }
       toast.error(createCouponError)
       cleanUpCreateCoupon()
     }
   }, [createCouponError])
+
+  console.log('aaa')
 
   return (
     <CreateCouponDrawerForm

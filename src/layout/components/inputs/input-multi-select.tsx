@@ -20,7 +20,7 @@ const SelectMulti = ({
 }: SelectMultiProps) => {
   const selectRef = useRef(null)
 
-  const { fieldName, registerField, error } = useField(name)
+  const { fieldName, registerField, error, clearError } = useField(name)
 
   useEffect(() => {
     registerField({
@@ -55,6 +55,7 @@ const SelectMulti = ({
         className='basic-multi-select'
         classNamePrefix='select'
         placeholder='Selecione'
+        onFocus={clearError}
       />
       {error && <span className='text-danger'>{error}</span>}
     </div>

@@ -1,5 +1,5 @@
 import { FormHandles } from '@unform/core'
-import { BaseSyntheticEvent, SyntheticEvent, useEffect, useRef, useState } from 'react'
+import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { ICoupon } from '../../../domain/models/coupon'
@@ -14,6 +14,7 @@ import { EditCouponDrawerForm } from '../../components/forms/coupons/edit'
 import { maskedToMoney, onlyNums } from '../../formatters/currenceFormatter'
 import { couponFormSchema, IDiscountType } from './type'
 import { extractFormattedProductOptions } from './utils/extractFormattedOptions'
+import { getProductErrorMessageCoupon } from './utils/getProductErrorMessageCoupon'
 
 type Props = {
   coupon: ICoupon | null
@@ -77,6 +78,7 @@ const EditCoupon = ({
 
   async function handleGetProductOptions(searchValue: string): Promise<ISelectOption[]> {
     const productOptionHasType = true
+
     const options = await getOptionsFromSearchRequest({
       request: remoteGetAllAvailableProducts.getAll,
       search: {
@@ -102,6 +104,18 @@ const EditCoupon = ({
 
   useEffect(() => {
     if (updateCouponError) {
+      const isValueProductError = String(updateCouponError).includes(
+        'product value less than discount:'
+      )
+
+      if (isValueProductError) {
+        const productName = getProductErrorMessageCoupon(updateCouponError)
+        formRef.current?.setErrors({
+          productsId: `O Produto ${productName} tem o valor menor que o valor do desconto`,
+        })
+        return
+      }
+
       toast.error(updateCouponError)
       cleanUpEditCoupon()
     }
