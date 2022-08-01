@@ -10,7 +10,7 @@ import { GrantedProduct } from '../../../domain/models/grantedProduct'
 import { Product } from '../../../domain/models/product'
 import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { KTSVG } from '../../../helpers'
-import { DatePicker, Select } from '../inputs'
+import { DatePicker, Input, Select } from '../inputs'
 
 type NewTransactionModalProps = {
   isOpen: boolean
@@ -271,20 +271,18 @@ export function ProductsModal({
                       <div className='w-50'>
                         <div className='d-flex align-items-center gap-5'>
                           <div className='w-75 h-95px'>
-                            <Select
+                            <Input 
                               name={selectedProduct.product.name}
                               label={setProductLabel(selectedProduct.product.type)}
                               value={selectedProduct.product.name}
-                            >
-                              <option value={selectedProduct.product.name}>
-                                {selectedProduct.product.name}
-                              </option>
-                            </Select>
+                              disabled
+                            />
                           </div>
                           <div className='w-75 h-95px'>
                             <DatePicker
                               name={`${selectedProduct.product.name}-expireDate`}
                               label='Data de expiração'
+                              disabled
                             />
                           </div>
                         </div>
