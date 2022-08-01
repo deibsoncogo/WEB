@@ -1,3 +1,4 @@
+import { Tooltip } from '@nextui-org/react'
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import moment from 'moment'
@@ -289,17 +290,20 @@ export function ProductsModal({
                         </div>
                       </div>
                       <div className='col align-self-end w-50 h-100 mb-8'>
-                        <button
-                          type='button'
-                          title='Remover'
-                          onClick={() => {
-                            handleDecreaseProduct(selectedProduct.productId)
-                          }}
-                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
+                        <Tooltip
+                          content='Deletar'
+                          rounded
+                          color='primary'
+                          onClick={() => handleDecreaseProduct(selectedProduct.productId)}
+                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                         >
-                          x
-                        </button>
-                      </div>
+                          <button
+                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+                          >
+                            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+                          </button>
+                        </Tooltip>
+                      </div> 
                     </div>
                   ))}
                 </div>
