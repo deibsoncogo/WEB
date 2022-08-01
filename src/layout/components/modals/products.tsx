@@ -1,3 +1,4 @@
+import { Tooltip } from '@nextui-org/react'
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import moment from 'moment'
@@ -9,7 +10,7 @@ import { GrantedProduct } from '../../../domain/models/grantedProduct'
 import { Product } from '../../../domain/models/product'
 import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { KTSVG } from '../../../helpers'
-import { DatePicker, Select } from '../inputs'
+import { DatePicker, Input, Select } from '../inputs'
 
 type NewTransactionModalProps = {
   isOpen: boolean
@@ -270,36 +271,37 @@ export function ProductsModal({
                       <div className='w-50'>
                         <div className='d-flex align-items-center gap-5'>
                           <div className='w-75 h-95px'>
-                            <Select
+                            <Input 
                               name={selectedProduct.product.name}
                               label={setProductLabel(selectedProduct.product.type)}
                               value={selectedProduct.product.name}
-                            >
-                              <option value={selectedProduct.product.name}>
-                                {selectedProduct.product.name}
-                              </option>
-                            </Select>
+                              disabled
+                            />
                           </div>
                           <div className='w-75 h-95px'>
                             <DatePicker
                               name={`${selectedProduct.product.name}-expireDate`}
                               label='Data de expiração'
+                              disabled
                             />
                           </div>
                         </div>
                       </div>
                       <div className='col align-self-end w-50 h-100 mb-8'>
-                        <button
-                          type='button'
-                          title='Remover'
-                          onClick={() => {
-                            handleDecreaseProduct(selectedProduct.productId)
-                          }}
-                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-n14'
+                        <Tooltip
+                          content='Deletar'
+                          rounded
+                          color='primary'
+                          onClick={() => handleDecreaseProduct(selectedProduct.productId)}
+                          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                         >
-                          x
-                        </button>
-                      </div>
+                          <button
+                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+                          >
+                            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+                          </button>
+                        </Tooltip>
+                      </div> 
                     </div>
                   ))}
                 </div>
