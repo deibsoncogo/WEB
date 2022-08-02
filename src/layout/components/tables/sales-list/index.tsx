@@ -3,7 +3,8 @@ import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { usePagination } from "../../../../application/hooks/usePagination"
 import { IDeleteFreeContent } from "../../../../domain/usecases/interfaces/freeContent/deleteFreeContent"
-import { GetFreeContentParams, IGetAllFreeContent } from "../../../../domain/usecases/interfaces/freeContent/getAllFreeContent"
+import { GetFreeContentParams} from "../../../../domain/usecases/interfaces/freeContent/getAllFreeContent"
+import { IGetAllSales } from "../../../../domain/usecases/interfaces/sale/getAllSales"
 import { KTSVG } from "../../../../helpers"
 import { debounce } from "../../../../helpers/debounce"
 import { IFreeContentResponse } from "../../../../interfaces/api-response/freeContentResponse"
@@ -14,8 +15,8 @@ import { ItemNotFound } from "../../search/ItemNotFound"
 import { Search } from "../../search/Search"
 import { Row } from "./row"
 
-type FreeContentTableProps = {
-  getAllFreeContent: IGetAllFreeContent
+type SalesTableProps = {
+  getAllSales: IGetAllSales
   deleteFreeContent: IDeleteFreeContent
 }
 
@@ -34,7 +35,7 @@ const salesExample: ISalesResponse[] =  [
                        total: '1234', status: 'Cancelado'},                      
                       ]
 
-export function SalesTable({ getAllFreeContent, deleteFreeContent }: FreeContentTableProps) {
+export function SalesTable({ getAllSales, deleteFreeContent }: SalesTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
@@ -51,6 +52,7 @@ export function SalesTable({ getAllFreeContent, deleteFreeContent }: FreeContent
     )}`
   }
 
+  /*
   useEffect(() => {
      const paginationParams: GetFreeContentParams = {
        take: pagination.take,
@@ -72,7 +74,7 @@ export function SalesTable({ getAllFreeContent, deleteFreeContent }: FreeContent
          }, 500)
        )
   }, [refresher, pagination.take, pagination.currentPage, pagination.order, freeContentQuery])
-
+ */
   function handleRefresher() {
     setRefresher(!refresher)
   }
@@ -165,7 +167,7 @@ export function SalesTable({ getAllFreeContent, deleteFreeContent }: FreeContent
           </div>
         )}
 
-        {freeContent.length == 0 && !loading && <ItemNotFound message='Conteúdo não encontrado' />}
+        {freeContent.length == 0 && !loading && <ItemNotFound message='Venda não encontrada' />}
 
         {loading && <Loading/>}
 
