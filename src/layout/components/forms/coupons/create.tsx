@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import React, { SyntheticEvent } from 'react'
+import React, { ChangeEvent, SyntheticEvent } from 'react'
 
 import { Button } from '../../buttons/CustomButton'
 import { DrawerRight } from '../../drawerRight/DrawerRight'
@@ -37,11 +37,20 @@ const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref)
     { id: 'value', value: 'value', label: 'Valor' },
   ]
 
+  const handleInputNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const enteredInputValue = event.target.value
+    const notLettersChar = /[^\w]/g
+    const cleanedValue = enteredInputValue.replace(notLettersChar, '')
+    if (ref !== null) {
+      const formRef = ref as any
+      formRef.current.setFieldValue('name', cleanedValue)
+    }
+  }
   return (
     <DrawerRight title='Novo Cupom' visible={visible} close={close}>
       <div className='mt-6 d-flex flex-column justify-content-between h-100'>
         <Form className='form' ref={ref} onSubmit={onSubmit} id='create-coupon-form'>
-          <Input name='name' label='Código' type='text' />
+          <Input name='name' label='Código' type='text' onChange={handleInputNameChange} />
 
           <Radio
             name='type'

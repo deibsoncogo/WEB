@@ -114,8 +114,6 @@ const CreateCoupon = ({
     }
   }, [createCouponError])
 
-  console.log('aaa')
-
   return (
     <CreateCouponDrawerForm
       ref={formRef}
