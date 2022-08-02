@@ -1,5 +1,6 @@
+import { FormHandles } from "@unform/core"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import { usePagination } from "../../../../application/hooks/usePagination"
 import { IDeleteFreeContent } from "../../../../domain/usecases/interfaces/freeContent/deleteFreeContent"
@@ -9,6 +10,9 @@ import { KTSVG } from "../../../../helpers"
 import { debounce } from "../../../../helpers/debounce"
 import { IFreeContentResponse } from "../../../../interfaces/api-response/freeContentResponse"
 import { ISalesResponse } from "../../../../interfaces/api-response/salesResponse"
+import { maskedToMoney } from "../../../formatters/currenceFormatter"
+import { dateMask } from "../../../formatters/dateFormatter"
+import { FilterForm } from "../../filter/FilterForm"
 import { Loading } from "../../loading/loading"
 import { Pagination } from "../../pagination/Pagination"
 import { ItemNotFound } from "../../search/ItemNotFound"
@@ -22,13 +26,13 @@ type SalesTableProps = {
 const salesExample: ISalesResponse[] =  [
                       {id: '0001', 
                        customerName: 'Clara Holman', 
-                       purchaseDate: '27/04/2022', 
+                       purchaseDate: '2021-04-27', 
                        product: 'Day Trade Livro 1',
                        transactionId: '123456',
                        total: '1234', status: 'Pago'},
 
                        {id: '0002', customerName: 'Janet Havens', 
-                       purchaseDate: '22/02/2021', 
+                       purchaseDate: '2021-02-03', 
                        product: 'Livro 2',
                        transactionId: '5645',
                        total: '1234', status: 'Cancelado'},                      
@@ -45,6 +49,8 @@ export function SalesTable({ getAllSales}: SalesTableProps) {
   const [sales, setSales] = useState<ISalesResponse[]>(salesExample)
   const [salesQuery, setSalesQuery] = useState('')
 
+  const formRef = useRef<FormHandles>(null)
+  
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
     return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
       name
@@ -64,28 +70,34 @@ export function SalesTable({ getAllSales}: SalesTableProps) {
     setSalesQuery(text)
   })
 
+  const handleForm = (data: any) => {
+    
+  }
+
   return (
     <>
       <div className='card mb-5 mb-xl-8'>
         <div className='card-header border-0 pt-5'>
-          <h3 className='card-title align-items-start flex-column'>
+          <h3 className='align-items-start flex-column'>
             <Search onChangeText={handleSearchSales} />
-          </h3>        
+          </h3>          
+          <FilterForm ref={formRef} handleForm={handleForm}/>  
         </div>
+       
 
-        <div className='card-header border-0 pt-5 justify-content-end'>         
-          <div className='card-toolbar gap-5'>     
-             <a className='text-dark border border-secondary btn btn-sm button-size-sm btn-outline-secondary'>                
+         <div className='card-header border-0 justify-content-end'>
+            <div className='card-toolbar gap-5'>
+              <a className='text-dark border border-secondary btn btn-sm button-size-sm btn-outline-secondary'>
                 Limpar Filtro
-              </a> 
-                  
+              </a>
+
               <a className='btn btn-sm  button-size-sm btn-primary'>
                 <KTSVG path='/icons/filter.svg' className='svg-icon-2' />
                 Filtrar
-              </a>    
-                       
-          </div>
-        </div>
+              </a>
+            </div>
+      </div>              
+      
 
         {salesExample.length > 0 && (
           <div className='card-body py-3'>
@@ -140,10 +152,10 @@ export function SalesTable({ getAllSales}: SalesTableProps) {
                         key={item.id}
                         id={item.id}
                         customerName={item.customerName}
-                        purchaseDate={item.purchaseDate}
+                        purchaseDate={dateMask(item.purchaseDate)}
                         product={item.product}
                         transactionId={item.transactionId}
-                        total={item.total}
+                        total={maskedToMoney(item.total)}
                         status={item.status}
                         handleRefresher={handleRefresher}                       
                       />
