@@ -1,10 +1,4 @@
-import { Tooltip } from "@nextui-org/react"
 import Link from "next/link"
-import { useState } from "react"
-import { toast } from "react-toastify"
-import { IDeleteFreeContent } from "../../../../domain/usecases/interfaces/freeContent/deleteFreeContent"
-import { KTSVG } from "../../../../helpers"
-import ConfirmationModal from "../../modal/ConfirmationModal"
 
 interface IRow {
   id: string
@@ -29,10 +23,7 @@ export function Row({
   handleRefresher
  
 }: IRow) {
-  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
-
-  const [loading, setLoading] = useState(false)
-
+ 
    return (
     <>
       <tr>
@@ -56,24 +47,11 @@ export function Row({
         </td>
        
         <td className='text-end d-flex justify-content-start px-4'>
-          <Tooltip content={'Editar'} rounded color='primary'>
-            <Link href={`/freeContent/edit/${id}`}>
-              <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
-                <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
-              </button>
-            </Link>
-          </Tooltip>
-
-          <Tooltip content={'Deletar'} rounded color='primary'>
-            <button
-              onClick={() => {
-                setIsModalDeleteOpen(true)
-              }}
-              className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
-            >
-              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-            </button>
-          </Tooltip>
+          <Link href=''>
+              <a className='primary border-2 border-bottom border-secondary'>
+                    Visualizar
+              </a>
+          </Link>
         </td>     
       </tr>
     </>
