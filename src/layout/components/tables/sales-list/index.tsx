@@ -40,7 +40,7 @@ export function SalesTable({ getAllSales, deleteFreeContent }: SalesTableProps) 
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
 
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [refresher, setRefresher] = useState(true)
 
   const [freeContent, setFreeContent] = useState<IFreeContentResponse[]>([])
@@ -89,14 +89,20 @@ export function SalesTable({ getAllSales, deleteFreeContent }: SalesTableProps) 
         <div className='card-header border-0 pt-5'>
           <h3 className='card-title align-items-start flex-column'>
             <Search onChangeText={handleSearchFreeContent} />
-          </h3>
-          <div className='card-toolbar'>
-            <Link href='/freeContent/create'>
-              <a className='btn btn-sm btn-light-primary'>
+          </h3>        
+        </div>
+
+        <div className='card-header border-0 pt-5 justify-content-end'>         
+          <div className='card-toolbar gap-5'>     
+             <a className='text-dark border border-secondary btn btn-sm button-size-sm btn-outline-secondary'>                
+                Limpar Filtro
+              </a> 
+                  
+              <a className='btn btn-sm  button-size-sm btn-primary'>
                 <KTSVG path='/icons/filter.svg' className='svg-icon-2' />
                 Filtrar
-              </a>
-            </Link>
+              </a>    
+                       
           </div>
         </div>
 
@@ -167,7 +173,7 @@ export function SalesTable({ getAllSales, deleteFreeContent }: SalesTableProps) 
           </div>
         )}
 
-        {freeContent.length == 0 && !loading && <ItemNotFound message='Venda não encontrada' />}
+        {salesExample.length == 0 && !loading && <ItemNotFound message='Venda não encontrada' />}
 
         {loading && <Loading/>}
 
