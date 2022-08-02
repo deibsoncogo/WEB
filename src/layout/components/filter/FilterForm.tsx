@@ -1,14 +1,14 @@
-import { ChangeEvent, forwardRef } from 'react'
+import { forwardRef } from 'react'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-import { KTSVG } from '../../../helpers'
-import { DatePicker, InputMasked, Select } from '../inputs'
-import { StatusSaleType } from '../../../domain/models/statusSale'
+
+import {InputMasked, Select } from '../inputs'
 import { salesTypeOptions } from '../tables/sales-list/salesTypeOptions'
+import { SalesFilter } from '../../../domain/usecases/interfaces/sale/getAllSales'
 
 type FilterFormProps = {
-  handleForm: (data: any) => void
+  handleForm: (data: SalesFilter) => void
 }
 
 const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
@@ -16,49 +16,36 @@ const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
 
   return (
     <>
-      <Form
-        data-kt-search-element='form'     
-        className='w-150 position-relative mb-3 bg-light rounded ps-3' 
-        autoComplete='off'
-        ref={ref}
-        onSubmit={handleForm}
-      >
-
-      <Select
-              name='notificationType'
-              label='Status'
-              classes='h-75px'
-              defaultValue=''             
-            >
-              <option disabled value=''>
-                Selecione
+      <Form autoComplete='off' ref={ref} onSubmit={handleForm} id='filter-form'>
+        <div className='d-flex flex-row gap-2'>
+          <Select name='status' label='Status' classes='h-75px w-50' defaultValue=''>
+            <option disabled value=''>
+              Selecione
+            </option>
+            {salesTypeOptions.map(({ label, value }) => (
+              <option value={value} key={value}>
+                {label}
               </option>
-              {salesTypeOptions.map(({ label, value }) => (
-                <option value={value} key={value}>
-                  {label}
-                </option>
-              ))}
-            </Select>
-                 
-          <InputMasked
-              classes='h-75px'
-              name='phoneNumber'
-              label='Data Inicial'
-              placeholder='00/00/0000'
-              mask='99/99/9999'
-          />   
-          
-           <InputMasked
-              classes='h-75px'
-              name='phoneNumber'
-              label='Data Final'
-              placeholder='00/00/0000'
-              mask='99/99/9999'
-          />  
+            ))}
+          </Select>
 
-            
+          <InputMasked
+            classes='h-75px w-25'
+            name='initialDate'
+            label='Data Inicial'
+            placeholder='00/00/0000'
+            mask='99/99/9999'
+          />
+
+          <InputMasked
+            classes='h-75px w-25'
+            name='finalDate'
+            label='Data Final'
+            placeholder='00/00/0000'
+            mask='99/99/9999'
+          />
+        </div>
       </Form>
-     
     </>
   )
 })

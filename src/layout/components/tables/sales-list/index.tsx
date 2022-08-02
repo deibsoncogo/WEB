@@ -1,44 +1,47 @@
-import { FormHandles } from "@unform/core"
-import Link from "next/link"
-import { useEffect, useRef, useState } from "react"
-import { toast } from "react-toastify"
-import { usePagination } from "../../../../application/hooks/usePagination"
-import { IDeleteFreeContent } from "../../../../domain/usecases/interfaces/freeContent/deleteFreeContent"
-import { GetFreeContentParams} from "../../../../domain/usecases/interfaces/freeContent/getAllFreeContent"
-import { IGetAllSales } from "../../../../domain/usecases/interfaces/sale/getAllSales"
-import { KTSVG } from "../../../../helpers"
-import { debounce } from "../../../../helpers/debounce"
-import { IFreeContentResponse } from "../../../../interfaces/api-response/freeContentResponse"
-import { ISalesResponse } from "../../../../interfaces/api-response/salesResponse"
-import { maskedToMoney } from "../../../formatters/currenceFormatter"
-import { dateMask } from "../../../formatters/dateFormatter"
-import { FilterForm } from "../../filter/FilterForm"
-import { Loading } from "../../loading/loading"
-import { Pagination } from "../../pagination/Pagination"
-import { ItemNotFound } from "../../search/ItemNotFound"
-import { Search } from "../../search/Search"
-import { Row } from "./row"
+import { FormHandles } from '@unform/core'
+import { useEffect, useRef, useState } from 'react'
+import { RiFileExcel2Line } from 'react-icons/ri'
+import { usePagination } from '../../../../application/hooks/usePagination'
+import { IGetAllSales, SalesFilter } from '../../../../domain/usecases/interfaces/sale/getAllSales'
+import { debounce } from '../../../../helpers/debounce'
+import { ISalesResponse } from '../../../../interfaces/api-response/salesResponse'
+import { maskedToMoney } from '../../../formatters/currenceFormatter'
+import { dateMask } from '../../../formatters/dateFormatter'
+import { Button } from '../../buttons/CustomButton'
+import { FilterForm } from '../../filter/FilterForm'
+import { Loading } from '../../loading/loading'
+import { Pagination } from '../../pagination/Pagination'
+import { ItemNotFound } from '../../search/ItemNotFound'
+import { Search } from '../../search/Search'
+import { Row } from './row'
 
 type SalesTableProps = {
-  getAllSales: IGetAllSales  
+  getAllSales: IGetAllSales
 }
 
-const salesExample: ISalesResponse[] =  [
-                      {id: '0001', 
-                       customerName: 'Clara Holman', 
-                       purchaseDate: '2021-04-27', 
-                       product: 'Day Trade Livro 1',
-                       transactionId: '123456',
-                       total: '1234', status: 'Pago'},
+const salesExample: ISalesResponse[] = [
+  {
+    id: '0001',
+    customerName: 'Clara Holman',
+    purchaseDate: '2021-04-27',
+    product: 'Day Trade Livro 1',
+    transactionId: '123456',
+    total: '1234',
+    status: 'Pago',
+  },
 
-                       {id: '0002', customerName: 'Janet Havens', 
-                       purchaseDate: '2021-02-03', 
-                       product: 'Livro 2',
-                       transactionId: '5645',
-                       total: '1234', status: 'Cancelado'},                      
-                      ]
+  {
+    id: '0002',
+    customerName: 'Janet Havens',
+    purchaseDate: '2021-02-03',
+    product: 'Livro 2',
+    transactionId: '5645',
+    total: '1234',
+    status: 'Cancelado',
+  },
+]
 
-export function SalesTable({ getAllSales}: SalesTableProps) {
+export function SalesTable({ getAllSales }: SalesTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
@@ -50,13 +53,12 @@ export function SalesTable({ getAllSales}: SalesTableProps) {
   const [salesQuery, setSalesQuery] = useState('')
 
   const formRef = useRef<FormHandles>(null)
-  
+
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
     return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
       name
     )}`
   }
-
 
   useEffect(() => {
     // TODO
@@ -70,36 +72,44 @@ export function SalesTable({ getAllSales}: SalesTableProps) {
     setSalesQuery(text)
   })
 
-  const handleForm = (data: any) => {
-    
+  const handleForm = (data: SalesFilter) => {
+    // TODO
+  }
+
+  const handleClearFilter = () => {
+    formRef.current?.reset()
   }
 
   return (
     <>
       <div className='card mb-5 mb-xl-8'>
-        <div className='card-header border-0 pt-5'>
-          <h3 className='align-items-start flex-column'>
+        <div className='card-header border-0 pt-10'>
+          <h3 className='card-title align-items-start flex-column mt-5'>
             <Search onChangeText={handleSearchSales} />
-          </h3>          
-          <FilterForm ref={formRef} handleForm={handleForm}/>  
+          </h3>
+          <FilterForm ref={formRef} handleForm={handleForm} />
         </div>
-       
 
-         <div className='card-header border-0 justify-content-end'>
-            <div className='card-toolbar gap-5'>
-              <a className='text-dark border border-secondary btn btn-sm button-size-sm btn-outline-secondary'>
-                Limpar Filtro
-              </a>
+        <div className='card-header border-0 justify-content-end'>
+          <div className='card-toolbar gap-5'>
+            <Button
+              customClasses={[
+                ' mb-7 text-dark border border-secondary btn btn-sm button-size-sm btn-outline-secondary',
+              ]}
+              title='Limpar Filtro'
+              onClick={handleClearFilter}
+            />
 
-              <a className='btn btn-sm  button-size-sm btn-primary'>
-                <KTSVG path='/icons/filter.svg' className='svg-icon-2' />
-                Filtrar
-              </a>
-            </div>
-      </div>              
-      
-
-        {salesExample.length > 0 && (
+            <Button
+              iconPath='/icons/filter.svg'
+              type='submit'
+              customClasses={['mb-7 btn btn-sm  button-size-sm btn-primary']}
+              title='Filtrar'
+              form='filter-form'
+            />
+          </div>
+        </div>
+        {sales.length > 0 && (
           <div className='card-body py-3'>
             <div className='table-responsive'>
               <table className='table align-middle gs-0 gy-4'>
@@ -128,7 +138,7 @@ export function SalesTable({ getAllSales}: SalesTableProps) {
                       onClick={() => handleOrdenation('link')}
                     >
                       ID da Transação
-                    </th>                
+                    </th>
                     <th
                       className={getColumnHeaderClasses('articleContent', 'min-w-150px')}
                       onClick={() => handleOrdenation('articleContent')}
@@ -147,7 +157,7 @@ export function SalesTable({ getAllSales}: SalesTableProps) {
 
                 <tbody>
                   {!loading &&
-                    salesExample?.map((item) => (
+                    sales?.map((item) => (
                       <Row
                         key={item.id}
                         id={item.id}
@@ -157,7 +167,7 @@ export function SalesTable({ getAllSales}: SalesTableProps) {
                         transactionId={item.transactionId}
                         total={maskedToMoney(item.total)}
                         status={item.status}
-                        handleRefresher={handleRefresher}                       
+                        handleRefresher={handleRefresher}
                       />
                     ))}
                 </tbody>
@@ -166,12 +176,21 @@ export function SalesTable({ getAllSales}: SalesTableProps) {
           </div>
         )}
 
-        {salesExample.length == 0 && !loading && <ItemNotFound message='Venda não encontrada' />}
+        {sales.length == 0 && !loading && <ItemNotFound message='Venda não encontrada' />}
 
-        {loading && <Loading/>}
+        {loading && <Loading />}
 
         <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
-          <div />
+          <div className='d-flex justify-center align-items-center'>
+            <p className='m-0 text-gray-600 lh-1 text-center'>Download:</p>
+            <button
+              className='btn border border-gray-900 ms-5 p-1'
+              title='Exportar Excel'
+              //onClick={handleClickDownlondExcelClick}
+            >
+              <RiFileExcel2Line size={20} className='svg-icon-2 mh-50px' />
+            </button>
+          </div>
 
           <Pagination paginationHook={paginationHook} />
         </div>

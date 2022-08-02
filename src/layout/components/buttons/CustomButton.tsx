@@ -1,7 +1,9 @@
 import React from 'react'
 import { Spinner } from 'react-bootstrap'
+import { KTSVG } from '../../../helpers'
 
 interface CustomButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  iconPath?: string
   title: string
   size?: 'sm' | 'lg' | 'icon'
   loading?: boolean
@@ -9,6 +11,7 @@ interface CustomButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
 }
 
 function Button({
+  iconPath,
   title,
   size = 'lg',
   loading = false,
@@ -28,7 +31,9 @@ function Button({
 
   return (
     <div className='d-flex'>
+     
       <button className={buttonClasses.join(' ')} disabled={loading} {...props}>
+       {iconPath && <KTSVG path= {iconPath} className='svg-icon-2' />}
         {loading ? (
           // span element prevent button bootstrap classes afect sppiner classes
           <span>

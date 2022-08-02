@@ -3,15 +3,15 @@ import { ISalesResponse } from '../../../../interfaces/api-response/salesRespons
 import { InputPagination } from "../../../shared/interface/InputPagination";
 import { OutputPagination } from "../../../shared/interface/OutputPagination";
 
-export interface TypeFilter {
-  startDate: Date
-  endDate: Date
-  status: TypeFilter
+export interface SalesFilter {
+  initialDate: Date
+  finalDate: Date
+  status: string
 }
 
 export interface GetSalesParams extends InputPagination {
   name?: string 
-  filters?: string
+  filters?: SalesFilter
 }
 
 export interface IGetAllSales {
