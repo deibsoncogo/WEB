@@ -2,6 +2,7 @@ import { FormHandles } from '@unform/core'
 import { useEffect, useRef, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
 import { usePagination } from '../../../../application/hooks/usePagination'
+import { IExportAllSalesToXLSX } from '../../../../domain/usecases/interfaces/sale/exportAllSalesToXLSX'
 import { IGetAllSales, SalesFilter } from '../../../../domain/usecases/interfaces/sale/getAllSales'
 import { debounce } from '../../../../helpers/debounce'
 import { ISalesResponse } from '../../../../interfaces/api-response/salesResponse'
@@ -14,10 +15,6 @@ import { Pagination } from '../../pagination/Pagination'
 import { ItemNotFound } from '../../search/ItemNotFound'
 import { Search } from '../../search/Search'
 import { Row } from './row'
-
-type SalesTableProps = {
-  getAllSales: IGetAllSales
-}
 
 const salesExample: ISalesResponse[] = [
   {
@@ -41,7 +38,13 @@ const salesExample: ISalesResponse[] = [
   },
 ]
 
-export function SalesTable({ getAllSales }: SalesTableProps) {
+type SalesTableProps = {
+  getAllSales: IGetAllSales
+  exportSalesToXLSX: IExportAllSalesToXLSX
+}
+
+
+export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
@@ -80,6 +83,10 @@ export function SalesTable({ getAllSales }: SalesTableProps) {
     formRef.current?.reset()
   }
 
+  const handleClickDownlondExcelClick = () => {
+    //exportSalesToXLSX.export(paginationParams)
+  }
+
   return (
     <>
       <div className='card mb-5 mb-xl-8'>
@@ -116,38 +123,38 @@ export function SalesTable({ getAllSales }: SalesTableProps) {
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th
-                      className={getColumnHeaderClasses('title')}
-                      onClick={() => handleOrdenation('title')}
+                      className={getColumnHeaderClasses('cutomerName')}
+                      onClick={() => handleOrdenation('customerName')}
                     >
                       Nome do Cliente
                     </th>
                     <th
-                      className={getColumnHeaderClasses('description', 'min-w-150px')}
-                      onClick={() => handleOrdenation('description')}
+                      className={getColumnHeaderClasses('purchaseDate', 'min-w-150px')}
+                      onClick={() => handleOrdenation('purchaseDate')}
                     >
                       Data da Compra
                     </th>
                     <th
-                      className={getColumnHeaderClasses('contentType')}
-                      onClick={() => handleOrdenation('contentType')}
+                      className={getColumnHeaderClasses('product')}
+                      onClick={() => handleOrdenation('product')}
                     >
                       Produto
                     </th>
                     <th
-                      className={getColumnHeaderClasses('link')}
-                      onClick={() => handleOrdenation('link')}
+                      className={getColumnHeaderClasses('transactionId')}
+                      onClick={() => handleOrdenation('transactionId')}
                     >
                       ID da Transação
                     </th>
                     <th
-                      className={getColumnHeaderClasses('articleContent', 'min-w-150px')}
-                      onClick={() => handleOrdenation('articleContent')}
+                      className={getColumnHeaderClasses('total', 'min-w-100px')}
+                      onClick={() => handleOrdenation('total')}
                     >
                       Total
                     </th>
                     <th
-                      className={getColumnHeaderClasses('articleContent', 'min-w-150px')}
-                      onClick={() => handleOrdenation('articleContent')}
+                      className={getColumnHeaderClasses('status', 'min-w-150px')}
+                      onClick={() => handleOrdenation('status')}
                     >
                       Status
                     </th>
@@ -186,7 +193,7 @@ export function SalesTable({ getAllSales }: SalesTableProps) {
             <button
               className='btn border border-gray-900 ms-5 p-1'
               title='Exportar Excel'
-              //onClick={handleClickDownlondExcelClick}
+              onClick={handleClickDownlondExcelClick}
             >
               <RiFileExcel2Line size={20} className='svg-icon-2 mh-50px' />
             </button>
