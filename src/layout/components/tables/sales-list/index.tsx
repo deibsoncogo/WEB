@@ -16,8 +16,7 @@ import { Search } from "../../search/Search"
 import { Row } from "./row"
 
 type SalesTableProps = {
-  getAllSales: IGetAllSales
-  deleteFreeContent: IDeleteFreeContent
+  getAllSales: IGetAllSales  
 }
 
 const salesExample: ISalesResponse[] =  [
@@ -35,7 +34,7 @@ const salesExample: ISalesResponse[] =  [
                        total: '1234', status: 'Cancelado'},                      
                       ]
 
-export function SalesTable({ getAllSales, deleteFreeContent }: SalesTableProps) {
+export function SalesTable({ getAllSales}: SalesTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
     paginationHook
@@ -43,8 +42,8 @@ export function SalesTable({ getAllSales, deleteFreeContent }: SalesTableProps) 
   const [loading, setLoading] = useState(false)
   const [refresher, setRefresher] = useState(true)
 
-  const [freeContent, setFreeContent] = useState<IFreeContentResponse[]>([])
-  const [freeContentQuery, setFreeContentQuery] = useState('')
+  const [sales, setSales] = useState<ISalesResponse[]>(salesExample)
+  const [salesQuery, setSalesQuery] = useState('')
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
     return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
@@ -52,35 +51,17 @@ export function SalesTable({ getAllSales, deleteFreeContent }: SalesTableProps) 
     )}`
   }
 
-  /*
+
   useEffect(() => {
-     const paginationParams: GetFreeContentParams = {
-       take: pagination.take,
-       order: pagination.order,
-       orderBy: pagination.orderBy,
-       page: pagination.currentPage,
-       name: freeContentQuery,
-     }
-     getAllFreeContent
-       .getAll(paginationParams)
-       .then((data) => {
-         setFreeContent(data.data)
-         setTotalPage(data.total)
-       })
-       .catch(() => toast.error('Não foi possível listar os conteúdos gratuitos.'))
-       .finally(() =>
-         setTimeout(() => {
-           setLoading(false)
-         }, 500)
-       )
-  }, [refresher, pagination.take, pagination.currentPage, pagination.order, freeContentQuery])
- */
+    // TODO
+  }, [refresher, pagination.take, pagination.currentPage, pagination.order, salesQuery])
+
   function handleRefresher() {
     setRefresher(!refresher)
   }
 
-  const handleSearchFreeContent = debounce((text: string) => {
-    setFreeContentQuery(text)
+  const handleSearchSales = debounce((text: string) => {
+    setSalesQuery(text)
   })
 
   return (
@@ -88,7 +69,7 @@ export function SalesTable({ getAllSales, deleteFreeContent }: SalesTableProps) 
       <div className='card mb-5 mb-xl-8'>
         <div className='card-header border-0 pt-5'>
           <h3 className='card-title align-items-start flex-column'>
-            <Search onChangeText={handleSearchFreeContent} />
+            <Search onChangeText={handleSearchSales} />
           </h3>        
         </div>
 

@@ -5,8 +5,7 @@ import { makeRemoteGetAllSales } from "../../usecases/sales/remote-getAllSales-f
 export const MakeSalesTable = () => {
   return (
     <SalesTable
-      getAllSales={makeRemoteGetAllSales()}
-      deleteFreeContent={makeRemoteDeleteFreeContent()}    
+      getAllSales={makeRemoteGetAllSales()}  
     />
   )
 }
