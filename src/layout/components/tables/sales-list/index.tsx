@@ -91,14 +91,14 @@ export function SalesTable({ getAllFreeContent, deleteFreeContent }: FreeContent
           <div className='card-toolbar'>
             <Link href='/freeContent/create'>
               <a className='btn btn-sm btn-light-primary'>
-                <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+                <KTSVG path='/icons/filter.svg' className='svg-icon-2' />
                 Filtrar
               </a>
             </Link>
           </div>
         </div>
 
-        {freeContent.length > 0 && (
+        {salesExample.length > 0 && (
           <div className='card-body py-3'>
             <div className='table-responsive'>
               <table className='table align-middle gs-0 gy-4'>
