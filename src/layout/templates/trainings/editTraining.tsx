@@ -121,19 +121,11 @@ function EditTrainingPageTemplate({
   }
 
   const formatStreamingList = (streamings: IStreaming[]): IStreaming[] => {
-    return streamings.map((streaming) => {
-      const date = new Date(`${streaming.date}:${streaming.hour}`)
-      const dateNow = new Date()
-
-      const timeLeft = (date.getTime() - dateNow.getTime()) / 1000 / 60
-      const fourtyMinutesToStart = 40
-      const isToShowStartUrl = timeLeft < fourtyMinutesToStart
-
+    return streamings.map((streaming) => {     
       return {
         ...streaming,
         dateISO: streaming.date,
-        date: getIsoDateToBRL(streaming.date),
-        showStartLink: isToShowStartUrl,
+        date: getIsoDateToBRL(streaming.date),       
       }
     })
   }
