@@ -119,7 +119,7 @@ export default function RoomInternalTable({
                     </th>
                     <th className='text-dark min-w-200px'>Horário de Início </th>
                     <th className='text-dark min-w-150px'>Iniciar</th>
-                    <th className='text-dark min-w-50px text-end rounded-end' />
+                    <th className='text-dark min-w-80px text-start rounded-end'>Ação</th>
                   </tr>
                 </thead>
 
