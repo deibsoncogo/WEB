@@ -33,6 +33,7 @@ const EditCoupon = ({
 }: Props) => {
   const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('percentage')
   const [isFirstLoad, setIsFirstLoad] = useState(false)
+  const [defaultProductsOptions, setDefaultProductsOptions] = useState<ISelectOption[]>([])
   const formRef = useRef<FormHandles>(null)
 
   const {
@@ -78,8 +79,7 @@ const EditCoupon = ({
 
   async function handleGetProductOptions(searchValue: string): Promise<ISelectOption[]> {
     const productOptionHasType = true
-
-    const options = await getOptionsFromSearchRequest({
+    return getOptionsFromSearchRequest({
       request: remoteGetAllAvailableProducts.getAll,
       search: {
         name: searchValue || '',
@@ -87,7 +87,13 @@ const EditCoupon = ({
       },
       hasType: productOptionHasType,
     })
-    return extractFormattedProductOptions(options)
+  }
+
+  const handlePopulateSelectInputs = async () => {
+    const teacherOptions = await handleGetProductOptions('')
+    const formated = extractFormattedProductOptions(teacherOptions)
+
+    setDefaultProductsOptions(formated)
   }
 
   useEffect(() => {
@@ -162,6 +168,10 @@ const EditCoupon = ({
     }
   }, [coupon, isFirstLoad])
 
+  useEffect(() => {
+    handlePopulateSelectInputs()
+  }, [])
+
   return (
     <EditCouponDrawerForm
       ref={formRef}
@@ -172,6 +182,7 @@ const EditCoupon = ({
       onSubmit={handleFormSubmit}
       changeDiscountType={changeDiscountType}
       loadProductsOptions={handleGetProductOptions}
+      defaultProducts={defaultProductsOptions}
     />
   )
 }
