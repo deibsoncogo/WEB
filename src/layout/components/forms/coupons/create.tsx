@@ -4,7 +4,15 @@ import React, { ChangeEvent, SyntheticEvent } from 'react'
 
 import { Button } from '../../buttons/CustomButton'
 import { DrawerRight } from '../../drawerRight/DrawerRight'
-import { DatePicker, Input, InputCurrence, InputNumber, Radio, SelectMulti } from '../../inputs'
+import {
+  DatePicker,
+  Input,
+  InputCurrence,
+  InputNumber,
+  Radio,
+  SelectAsync,
+  SelectMulti,
+} from '../../inputs'
 
 import { ICoupon } from '../../../../domain/models/coupon'
 import { IDiscountType } from '../../../templates/coupons/type'
@@ -15,6 +23,7 @@ type Props = {
   visible: boolean
   loading: boolean
   discountType: IDiscountType
+  defaultProducts: ISelectOption[]
   close: () => void
   changeDiscountType: (event: SyntheticEvent) => void
   onSubmit: (data: ICoupon) => void
@@ -30,6 +39,7 @@ const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref)
     visible,
     discountType,
     loading,
+    defaultProducts,
   } = props
 
   const radioOptions = [
@@ -69,7 +79,14 @@ const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref)
 
           <DatePicker name='expirationDate' label='Data de Expiração' minDate={new Date()} />
 
-          <SelectMulti loadOptions={loadProductsOptions} name='productsId' label='Produtos' />
+          <SelectAsync
+            searchOptions={loadProductsOptions}
+            name='productsId'
+            label='Produtos'
+            classes='h-75px'
+            placeholder='Digite o nome do Produto'
+            defaultOptions={defaultProducts}
+          />
         </Form>
 
         <div className='d-flex mb-15'>
