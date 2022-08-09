@@ -1,5 +1,4 @@
 import clsx from 'clsx'
-import Link from 'next/link'
 
 import { useLayout } from '../../core'
 import { AsideMenu } from './AsideMenu'
@@ -27,7 +26,6 @@ function AsideDefault() {
       data-kt-drawer-toggle='#kt_aside_mobile_toggle'
     >
       <div className='aside-logo flex-column-auto' id='kt_aside_logo'>
-        <Link href='/dashboard'>
           <img
             alt='At Palex'
             className='h-25px logo'
@@ -38,7 +36,6 @@ function AsideDefault() {
               objectFit: 'contain'
             }}
           />
-        </Link>
 
         {aside.minimize && (
           <div
