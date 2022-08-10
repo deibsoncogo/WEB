@@ -13,7 +13,6 @@ import { CreateCouponDrawerForm } from '../../components/forms/coupons/create'
 import { onlyNums } from '../../formatters/currenceFormatter'
 import { couponFormSchema, IDiscountType } from './type'
 import { extractFormattedProductOptions } from './utils/extractFormattedOptions'
-import { getAsyncProductsToSelectInput } from './utils/getAsyncProductsToSelectInputs'
 import { getProductErrorMessageCoupon } from './utils/getProductErrorMessageCoupon'
 
 type Props = {
@@ -86,9 +85,18 @@ const CreateCoupon = ({
   }
 
   const handlePopulateSelectInputs = async () => {
-    const teacherOptions = await handleGetProductOptions('')
-    const formated = extractFormattedProductOptions(teacherOptions)
+    const productOptionHasType = true
 
+    const options = await getOptionsFromSearchRequest({
+      request: remoteGetAllAvailableProducts.getAll,
+      search: {
+        name: '',
+        allRecords: true,
+      },
+      hasType: productOptionHasType,
+    })
+
+    const formated = extractFormattedProductOptions(options)
     setDefaultProductsOptions(formated)
   }
 
@@ -135,8 +143,9 @@ const CreateCoupon = ({
       close={closeDrawer}
       onSubmit={handleFormSubmit}
       changeDiscountType={changeDiscountType}
-      loadProductsOptions={handleGetProductOptions}
-      defaultProducts={defaultProductsOptions}
+      productOptions={defaultProductsOptions}
+      defaultOptions={defaultProductsOptions}
+      loadOptions={handleGetProductOptions}
     />
   )
 }

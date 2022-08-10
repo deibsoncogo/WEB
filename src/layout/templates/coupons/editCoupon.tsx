@@ -90,9 +90,18 @@ const EditCoupon = ({
   }
 
   const handlePopulateSelectInputs = async () => {
-    const teacherOptions = await handleGetProductOptions('')
-    const formated = extractFormattedProductOptions(teacherOptions)
+    const productOptionHasType = true
 
+    const teacherOptions = await getOptionsFromSearchRequest({
+      request: remoteGetAllAvailableProducts.getAll,
+      search: {
+        name: '',
+        allRecords: true,
+      },
+      hasType: productOptionHasType,
+    })
+
+    const formated = extractFormattedProductOptions(teacherOptions)
     setDefaultProductsOptions(formated)
   }
 
@@ -144,12 +153,8 @@ const EditCoupon = ({
       formRef.current?.setFieldValue('type', coupon.type)
       formRef.current?.setFieldValue('quantity', coupon.quantity)
       formRef.current?.setFieldValue('expirationDate', expirationDate)
+      console.log(coupon)
 
-      const hasProductType = true
-      formRef.current?.setFieldValue(
-        'productsId',
-        extractSelectOptionsFromArr(coupon.products, hasProductType)
-      )
       setIsFirstLoad(true)
     }
   }, [coupon])
@@ -164,6 +169,7 @@ const EditCoupon = ({
         formRef.current?.setFieldValue('value', `${coupon.value}%`)
       }
 
+      formRef.current?.setFieldValue('productId', coupon?.product?.id)
       setIsFirstLoad(false)
     }
   }, [coupon, isFirstLoad])
@@ -181,8 +187,7 @@ const EditCoupon = ({
       close={closeDrawer}
       onSubmit={handleFormSubmit}
       changeDiscountType={changeDiscountType}
-      loadProductsOptions={handleGetProductOptions}
-      defaultProducts={defaultProductsOptions}
+      productOptions={defaultProductsOptions}
     />
   )
 }

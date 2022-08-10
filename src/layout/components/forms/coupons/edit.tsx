@@ -10,6 +10,7 @@ import {
   InputCurrence,
   InputNumber,
   Radio,
+  Select,
   SelectAsync,
   SelectMulti,
 } from '../../inputs'
@@ -23,24 +24,15 @@ type Props = {
   visible: boolean
   loading: boolean
   discountType: IDiscountType
-  defaultProducts: ISelectOption[]
   close: () => void
   changeDiscountType: (event: SyntheticEvent) => void
   onSubmit: (data: ICoupon) => void
-  loadProductsOptions: (searchValue: string) => Promise<ISelectOption[]>
+  productOptions: ISelectOption[]
 }
 
 const EditCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) => {
-  const {
-    close,
-    onSubmit,
-    changeDiscountType,
-    loadProductsOptions,
-    visible,
-    discountType,
-    loading,
-    defaultProducts,
-  } = props
+  const { close, onSubmit, changeDiscountType, visible, discountType, loading, productOptions } =
+    props
 
   const radioOptions = [
     { id: 'percentage', value: 'percentage', label: 'Porcentagem', checked: true },
@@ -80,14 +72,21 @@ const EditCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) =
 
           <DatePicker name='expirationDate' label='Data de Expiração' minDate={new Date()} />
 
-          <SelectAsync
-            searchOptions={loadProductsOptions}
-            name='productsId'
-            label='Produtos'
+          <Select
+            name='productId'
+            label='Produto'
             classes='h-75px'
             placeholder='Digite o nome do Produto'
-            defaultOptions={defaultProducts}
-          />
+          >
+            <option disabled value=''>
+              Selecione
+            </option>
+            {productOptions?.map(({ label, value }) => (
+              <option value={value} key={value}>
+                {label}
+              </option>
+            ))}
+          </Select>
         </Form>
 
         <div className='d-flex mb-15'>
