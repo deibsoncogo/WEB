@@ -13,7 +13,6 @@ import { CreateCouponDrawerForm } from '../../components/forms/coupons/create'
 import { onlyNums } from '../../formatters/currenceFormatter'
 import { couponFormSchema, IDiscountType } from './type'
 import { extractFormattedProductOptions } from './utils/extractFormattedOptions'
-import { getAsyncProductsToSelectInput } from './utils/getAsyncProductsToSelectInputs'
 import { getProductErrorMessageCoupon } from './utils/getProductErrorMessageCoupon'
 
 type Props = {
@@ -30,7 +29,6 @@ const CreateCoupon = ({
   close,
 }: Props) => {
   const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('percentage')
-  const [defaultProductsOptions, setDefaultProductsOptions] = useState<ISelectOption[]>([])
   const formRef = useRef<FormHandles>(null)
 
   const {
@@ -75,7 +73,7 @@ const CreateCoupon = ({
 
   async function handleGetProductOptions(searchValue: string): Promise<ISelectOption[]> {
     const productOptionHasType = true
-    return getOptionsFromSearchRequest({
+    const products = await getOptionsFromSearchRequest({
       request: remoteGetAllAvailableProducts.getAll,
       search: {
         name: searchValue || '',
@@ -83,13 +81,8 @@ const CreateCoupon = ({
       },
       hasType: productOptionHasType,
     })
-  }
 
-  const handlePopulateSelectInputs = async () => {
-    const teacherOptions = await handleGetProductOptions('')
-    const formated = extractFormattedProductOptions(teacherOptions)
-
-    setDefaultProductsOptions(formated)
+    return extractFormattedProductOptions(products)
   }
 
   useEffect(() => {
@@ -113,7 +106,7 @@ const CreateCoupon = ({
       if (isValueProductError) {
         const productName = getProductErrorMessageCoupon(createCouponError)
         formRef.current?.setErrors({
-          productsId: `O Produto ${productName} tem o valor menor que o valor do desconto`,
+          productId: `O Produto ${productName} tem o valor menor que o valor do desconto`,
         })
         return
       }
@@ -121,10 +114,6 @@ const CreateCoupon = ({
       cleanUpCreateCoupon()
     }
   }, [createCouponError])
-
-  useEffect(() => {
-    handlePopulateSelectInputs()
-  }, [])
 
   return (
     <CreateCouponDrawerForm
@@ -135,8 +124,7 @@ const CreateCoupon = ({
       close={closeDrawer}
       onSubmit={handleFormSubmit}
       changeDiscountType={changeDiscountType}
-      loadProductsOptions={handleGetProductOptions}
-      defaultProducts={defaultProductsOptions}
+      loadOptions={handleGetProductOptions}
     />
   )
 }

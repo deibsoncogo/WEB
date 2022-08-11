@@ -9,6 +9,7 @@ import { debounce } from '../../../helpers/debounce'
 import { Search } from '../../components/search/Search'
 import { CouponsTable } from '../../components/tables/coupons-list'
 
+import { toast } from 'react-toastify'
 import { ICoupon } from '../../../domain/models/coupon'
 import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
 import {
@@ -19,16 +20,14 @@ import {
   IGetCouponsParams,
   IUpdateCoupon,
 } from '../../../domain/usecases/interfaces/coupon'
-import { CreateCoupon } from './createCoupon'
-import { toast } from 'react-toastify'
 import {
   IToggleCouponStatus,
   IToggleCouponStatusParams,
 } from '../../../domain/usecases/interfaces/coupon/toggleCouponStatus'
-import ConfirmationModal from '../../components/modal/ConfirmationModal'
-import { EditCoupon } from './editCoupon'
-import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { IGetAllAvailableProducts } from '../../../domain/usecases/interfaces/product/getAllAvailableProducts'
+import ConfirmationModal from '../../components/modal/ConfirmationModal'
+import { CreateCoupon } from './createCoupon'
+import { EditCoupon } from './editCoupon'
 
 type CouponsTemplateProps = {
   remoteGetCoupons: IGetCoupons

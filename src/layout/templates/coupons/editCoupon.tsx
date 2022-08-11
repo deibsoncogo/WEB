@@ -33,7 +33,6 @@ const EditCoupon = ({
 }: Props) => {
   const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('percentage')
   const [isFirstLoad, setIsFirstLoad] = useState(false)
-  const [defaultProductsOptions, setDefaultProductsOptions] = useState<ISelectOption[]>([])
   const formRef = useRef<FormHandles>(null)
 
   const {
@@ -79,7 +78,7 @@ const EditCoupon = ({
 
   async function handleGetProductOptions(searchValue: string): Promise<ISelectOption[]> {
     const productOptionHasType = true
-    return getOptionsFromSearchRequest({
+    const products = await getOptionsFromSearchRequest({
       request: remoteGetAllAvailableProducts.getAll,
       search: {
         name: searchValue || '',
@@ -87,13 +86,8 @@ const EditCoupon = ({
       },
       hasType: productOptionHasType,
     })
-  }
 
-  const handlePopulateSelectInputs = async () => {
-    const teacherOptions = await handleGetProductOptions('')
-    const formated = extractFormattedProductOptions(teacherOptions)
-
-    setDefaultProductsOptions(formated)
+    return extractFormattedProductOptions(products)
   }
 
   useEffect(() => {
@@ -117,7 +111,7 @@ const EditCoupon = ({
       if (isValueProductError) {
         const productName = getProductErrorMessageCoupon(updateCouponError)
         formRef.current?.setErrors({
-          productsId: `O Produto ${productName} tem o valor menor que o valor do desconto`,
+          productId: `O Produto ${productName} tem o valor menor que o valor do desconto`,
         })
         return
       }
@@ -145,11 +139,12 @@ const EditCoupon = ({
       formRef.current?.setFieldValue('quantity', coupon.quantity)
       formRef.current?.setFieldValue('expirationDate', expirationDate)
 
-      const hasProductType = true
-      formRef.current?.setFieldValue(
-        'productsId',
-        extractSelectOptionsFromArr(coupon.products, hasProductType)
-      )
+      if (coupon?.product?.id) {
+        formRef.current?.setFieldValue(
+          'productId',
+          extractSelectOptionsFromArr([coupon.product], true)
+        )
+      }
       setIsFirstLoad(true)
     }
   }, [coupon])
@@ -163,14 +158,9 @@ const EditCoupon = ({
       if (coupon.type === 'percentage') {
         formRef.current?.setFieldValue('value', `${coupon.value}%`)
       }
-
       setIsFirstLoad(false)
     }
   }, [coupon, isFirstLoad])
-
-  useEffect(() => {
-    handlePopulateSelectInputs()
-  }, [])
 
   return (
     <EditCouponDrawerForm
@@ -181,8 +171,7 @@ const EditCoupon = ({
       close={closeDrawer}
       onSubmit={handleFormSubmit}
       changeDiscountType={changeDiscountType}
-      loadProductsOptions={handleGetProductOptions}
-      defaultProducts={defaultProductsOptions}
+      loadOptions={handleGetProductOptions}
     />
   )
 }

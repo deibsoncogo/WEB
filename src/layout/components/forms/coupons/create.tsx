@@ -23,24 +23,14 @@ type Props = {
   visible: boolean
   loading: boolean
   discountType: IDiscountType
-  defaultProducts: ISelectOption[]
   close: () => void
   changeDiscountType: (event: SyntheticEvent) => void
   onSubmit: (data: ICoupon) => void
-  loadProductsOptions: (searchValue: string) => Promise<ISelectOption[]>
+  loadOptions: (searchValue: string) => Promise<ISelectOption[]>
 }
 
 const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) => {
-  const {
-    close,
-    onSubmit,
-    changeDiscountType,
-    loadProductsOptions,
-    visible,
-    discountType,
-    loading,
-    defaultProducts,
-  } = props
+  const { close, onSubmit, changeDiscountType, visible, discountType, loading, loadOptions } = props
 
   const radioOptions = [
     { id: 'percentage', value: 'percentage', label: 'Porcentagem', checked: true },
@@ -79,13 +69,12 @@ const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref)
 
           <DatePicker name='expirationDate' label='Data de Expiração' minDate={new Date()} />
 
-          <SelectAsync
-            searchOptions={loadProductsOptions}
-            name='productsId'
-            label='Produtos'
+          <SelectMulti
+            name='productId'
+            label='Produto'
             classes='h-75px'
-            placeholder='Digite o nome do Produto'
-            defaultOptions={defaultProducts}
+            loadOptions={loadOptions}
+            numberOfItems={1}
           />
         </Form>
 
