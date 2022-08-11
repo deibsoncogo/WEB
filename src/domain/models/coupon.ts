@@ -10,6 +10,6 @@ export interface ICoupon {
   quantity: number
   isActive: boolean
   expirationDate: string
-  productsId?: string[]
+  productId?: string
   product: Product
 }

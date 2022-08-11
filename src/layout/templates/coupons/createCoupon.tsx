@@ -29,7 +29,6 @@ const CreateCoupon = ({
   close,
 }: Props) => {
   const [currentTypeSelected, setCurrentTypeSelected] = useState<IDiscountType>('percentage')
-  const [defaultProductsOptions, setDefaultProductsOptions] = useState<ISelectOption[]>([])
   const formRef = useRef<FormHandles>(null)
 
   const {
@@ -74,7 +73,7 @@ const CreateCoupon = ({
 
   async function handleGetProductOptions(searchValue: string): Promise<ISelectOption[]> {
     const productOptionHasType = true
-    return getOptionsFromSearchRequest({
+    const products = await getOptionsFromSearchRequest({
       request: remoteGetAllAvailableProducts.getAll,
       search: {
         name: searchValue || '',
@@ -82,22 +81,8 @@ const CreateCoupon = ({
       },
       hasType: productOptionHasType,
     })
-  }
 
-  const handlePopulateSelectInputs = async () => {
-    const productOptionHasType = true
-
-    const options = await getOptionsFromSearchRequest({
-      request: remoteGetAllAvailableProducts.getAll,
-      search: {
-        name: '',
-        allRecords: true,
-      },
-      hasType: productOptionHasType,
-    })
-
-    const formated = extractFormattedProductOptions(options)
-    setDefaultProductsOptions(formated)
+    return extractFormattedProductOptions(products)
   }
 
   useEffect(() => {
@@ -121,7 +106,7 @@ const CreateCoupon = ({
       if (isValueProductError) {
         const productName = getProductErrorMessageCoupon(createCouponError)
         formRef.current?.setErrors({
-          productsId: `O Produto ${productName} tem o valor menor que o valor do desconto`,
+          productId: `O Produto ${productName} tem o valor menor que o valor do desconto`,
         })
         return
       }
@@ -129,10 +114,6 @@ const CreateCoupon = ({
       cleanUpCreateCoupon()
     }
   }, [createCouponError])
-
-  useEffect(() => {
-    handlePopulateSelectInputs()
-  }, [])
 
   return (
     <CreateCouponDrawerForm
@@ -143,8 +124,6 @@ const CreateCoupon = ({
       close={closeDrawer}
       onSubmit={handleFormSubmit}
       changeDiscountType={changeDiscountType}
-      productOptions={defaultProductsOptions}
-      defaultOptions={defaultProductsOptions}
       loadOptions={handleGetProductOptions}
     />
   )

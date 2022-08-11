@@ -1,23 +1,14 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import React, { ChangeEvent, SyntheticEvent, useRef } from 'react'
+import React, { ChangeEvent, SyntheticEvent } from 'react'
 
 import { Button } from '../../buttons/CustomButton'
 import { DrawerRight } from '../../drawerRight/DrawerRight'
-import {
-  DatePicker,
-  Input,
-  InputCurrence,
-  InputNumber,
-  Radio,
-  Select,
-  SelectAsync,
-  SelectMulti,
-} from '../../inputs'
+import { DatePicker, Input, InputCurrence, InputNumber, Radio, SelectMulti } from '../../inputs'
 
 import { ICoupon } from '../../../../domain/models/coupon'
-import { IDiscountType } from '../../../templates/coupons/type'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
+import { IDiscountType } from '../../../templates/coupons/type'
 import { InputPercentage } from '../../inputs/input-percentage'
 
 type Props = {
@@ -27,12 +18,11 @@ type Props = {
   close: () => void
   changeDiscountType: (event: SyntheticEvent) => void
   onSubmit: (data: ICoupon) => void
-  productOptions: ISelectOption[]
+  loadOptions: (searchValue: string) => Promise<ISelectOption[]>
 }
 
 const EditCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) => {
-  const { close, onSubmit, changeDiscountType, visible, discountType, loading, productOptions } =
-    props
+  const { close, onSubmit, changeDiscountType, visible, discountType, loading, loadOptions } = props
 
   const radioOptions = [
     { id: 'percentage', value: 'percentage', label: 'Porcentagem', checked: true },
@@ -72,21 +62,13 @@ const EditCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) =
 
           <DatePicker name='expirationDate' label='Data de Expiração' minDate={new Date()} />
 
-          <Select
+          <SelectMulti
             name='productId'
             label='Produto'
             classes='h-75px'
-            placeholder='Digite o nome do Produto'
-          >
-            <option disabled value=''>
-              Selecione
-            </option>
-            {productOptions?.map(({ label, value }) => (
-              <option value={value} key={value}>
-                {label}
-              </option>
-            ))}
-          </Select>
+            loadOptions={loadOptions}
+            numberOfItems={1}
+          />
         </Form>
 
         <div className='d-flex mb-15'>

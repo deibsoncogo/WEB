@@ -27,21 +27,10 @@ type Props = {
   changeDiscountType: (event: SyntheticEvent) => void
   onSubmit: (data: ICoupon) => void
   loadOptions: (searchValue: string) => Promise<ISelectOption[]>
-  productOptions: ISelectOption[]
-  defaultOptions: ISelectOption[]
 }
 
 const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) => {
-  const {
-    close,
-    onSubmit,
-    changeDiscountType,
-    visible,
-    discountType,
-    loading,
-    defaultOptions,
-    loadOptions,
-  } = props
+  const { close, onSubmit, changeDiscountType, visible, discountType, loading, loadOptions } = props
 
   const radioOptions = [
     { id: 'percentage', value: 'percentage', label: 'Porcentagem', checked: true },
@@ -85,7 +74,7 @@ const CreateCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref)
             label='Produto'
             classes='h-75px'
             loadOptions={loadOptions}
-            defaultValues={defaultOptions}
+            numberOfItems={1}
           />
         </Form>
 
