@@ -80,9 +80,6 @@ export function Row({
           </span>
         </td>
         <td>
-          <span className='text-dark fw-bold d-block fs-7'>{dateMask(notification.date)}</span>
-        </td>
-        <td>
           <span className='text-dark fw-bold d-block fs-7'>{notification.notificationType}</span>
         </td>      
 
