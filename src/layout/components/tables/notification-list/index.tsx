@@ -4,7 +4,7 @@ import { toast } from "react-toastify"
 import { usePagination } from "../../../../application/hooks/usePagination"
 import { IDeleteNotification } from "../../../../domain/usecases/interfaces/notification/deleteNotification"
 import { GetNotificationParams, IGetAllNotification } from "../../../../domain/usecases/interfaces/notification/getAllNotification"
-import { formatDate, formatDateToUTC, KTSVG } from "../../../../helpers"
+import { KTSVG } from "../../../../helpers"
 import { debounce } from "../../../../helpers/debounce"
 import { INotificationResponse} from "../../../../interfaces/api-response/notificationResponse"
 import { Loading } from "../../loading/loading"
@@ -46,7 +46,7 @@ export function NotificationTable({ createNotification, updateNotification, getA
   const notificationFormRef = useRef<FormHandles>(null)
   const [loadingAction, setLoadingAction] = useState(false)
 
-  const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
+  const getColumnHeaderClasses = (name: string, minWidth = 'min-w-180px') => {
     return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
       name
     )}`
@@ -87,7 +87,6 @@ export function NotificationTable({ createNotification, updateNotification, getA
       setNotificationToUpdate(data)
       notificationFormRef.current?.setFieldValue('tag', data.tag)
       notificationFormRef.current?.setFieldValue('text', data.text)
-      notificationFormRef.current?.setFieldValue('date', new Date(formatDateToUTC(data.date)) )
       notificationFormRef.current?.setFieldValue('notificationType', data.notificationType)
     }
     setIsDrawerNotificationOpen(true)
@@ -104,7 +103,7 @@ export function NotificationTable({ createNotification, updateNotification, getA
 
     setLoadingAction(true) 
     createNotification
-       .create({...data, date: formatDate(new Date(data.date), 'YYYY-MM-DD'), isActive: false})
+       .create({...data, isActive: false})
        .then(() => {         
          router.push(appRoutes.ALERTS)
          toast.success('Notificação criada com sucesso!')
@@ -122,7 +121,7 @@ export function NotificationTable({ createNotification, updateNotification, getA
 
     setLoadingAction(true) 
     updateNotification
-       .update({...data, id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive, date: formatDate(new Date(data.date), 'YYYY-MM-DD')})
+       .update({...data, id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive})
        .then(() => {         
          router.push(appRoutes.ALERTS)
          toast.success('Notificação atualizada com sucesso!')
@@ -148,7 +147,6 @@ export function NotificationTable({ createNotification, updateNotification, getA
       const schema = Yup.object().shape({      
         tag: Yup.string().required('Tag é necessária'),
         text: Yup.string().required('Texto é necessário'),
-        date: Yup.string().required('Data é necessária'),
         notificationType: Yup.string().required('Tipo é necessário'),
           
       })
@@ -209,32 +207,25 @@ export function NotificationTable({ createNotification, updateNotification, getA
                       Tag
                     </th>
                     <th
-                      className={getColumnHeaderClasses('text', 'min-w-150px')}
+                      className={getColumnHeaderClasses('text')}
                       onClick={() => handleOrdenation('text')}
                     >
                       Texto
                     </th>
                     <th
-                      className={getColumnHeaderClasses('date')}
-                      onClick={() => handleOrdenation('date')}
-                    >
-                      Data
-                    </th>
-
-                    <th
-                      className={getColumnHeaderClasses('notificationType')}
+                      className={getColumnHeaderClasses('notificationType min-w-100px')}
                       onClick={() => handleOrdenation('notificationType')}
                     >
                       Tipo
                     </th>
                                    
                     <th
-                      className={getColumnHeaderClasses('isActive', 'min-w-150px')}
+                      className={getColumnHeaderClasses('isActive', 'min-w-100px')}
                       onClick={() => handleOrdenation('isActive')}
                     >
                       Ativo
                     </th>
-                    <th className='text-dark min-w-80px text-start rounded-end'>Ação</th>
+                    <th className='text-dark min-w-100px text-start rounded-end'>Ação</th>
                   </tr>
                 </thead>
 

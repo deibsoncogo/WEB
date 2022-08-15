@@ -3,7 +3,7 @@ import { Form } from '@unform/web'
 import React from 'react'
 import { Button } from '../../buttons/CustomButton'
 import { DrawerRight } from '../../drawerRight/DrawerRight'
-import { DatePicker, Input, Select, TextArea } from '../../inputs'
+import { Input, Select, TextArea } from '../../inputs'
 import { notificationTypeOptions } from './notificationTypeOptions'
 
 type Props = {
@@ -24,12 +24,7 @@ const NotificationDrawer = React.forwardRef<FormHandles, Props>((props, ref) => 
           <TextArea
               name='text'
               label='Texto'
-              style={{ minHeight: '30px', margin: 0 }}
-            />
-             <DatePicker
-              name='date'
-              label='Data'
-              placeholderText='00/00/0000'
+              style={{ minHeight: '100px', margin: 0 }}
             />
 
             <Select
