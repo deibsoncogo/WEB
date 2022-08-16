@@ -1,9 +1,10 @@
 import { FormHandles } from '@unform/core'
 import { useEffect, useRef, useState } from 'react'
 import { RiFileExcel2Line } from 'react-icons/ri'
+import { toast } from 'react-toastify'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { IExportAllSalesToXLSX } from '../../../../domain/usecases/interfaces/sale/exportAllSalesToXLSX'
-import { IGetAllSales, SalesFilter } from '../../../../domain/usecases/interfaces/sale/getAllSales'
+import { GetSalesParams, IGetAllSales, SalesFilter } from '../../../../domain/usecases/interfaces/sale/getAllSales'
 import { debounce } from '../../../../helpers/debounce'
 import { ISalesResponse } from '../../../../interfaces/api-response/salesResponse'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
@@ -15,28 +16,6 @@ import { Pagination } from '../../pagination/Pagination'
 import { ItemNotFound } from '../../search/ItemNotFound'
 import { Search } from '../../search/Search'
 import { Row } from './row'
-
-const salesExample: ISalesResponse[] = [
-  {
-    id: '0001',
-    customerName: 'Clara Holman',
-    purchaseDate: '2021-04-27',
-    product: 'Day Trade Livro 1',
-    transactionId: '123456',
-    total: '1234',
-    status: 'Pago',
-  },
-
-  {
-    id: '0002',
-    customerName: 'Janet Havens',
-    purchaseDate: '2021-02-03',
-    product: 'Livro 2',
-    transactionId: '5645',
-    total: '1234',
-    status: 'Cancelado',
-  },
-]
 
 type SalesTableProps = {
   getAllSales: IGetAllSales
@@ -52,7 +31,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
   const [loading, setLoading] = useState(false)
   const [refresher, setRefresher] = useState(true)
 
-  const [sales, setSales] = useState<ISalesResponse[]>(salesExample)
+  const [sales, setSales] = useState<ISalesResponse[]>([])
   const [salesQuery, setSalesQuery] = useState('')
 
   const formRef = useRef<FormHandles>(null)
@@ -64,7 +43,25 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
   }
 
   useEffect(() => {
-    // TODO
+    const paginationParams: GetSalesParams = {
+      take: pagination.take,
+      order: pagination.order,
+      orderBy: pagination.orderBy,
+      page: pagination.currentPage,
+      name: salesQuery,
+    }
+    getAllSales
+      .getAll(paginationParams)
+      .then((data) => {
+        setSales(data.data)
+        setTotalPage(data.total)
+      })
+      .catch(() => toast.error('Não foi possível listar as vendas'))
+      .finally(() =>
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
+      )
   }, [refresher, pagination.take, pagination.currentPage, pagination.order, salesQuery])
 
   function handleRefresher() {
@@ -168,11 +165,11 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                       <Row
                         key={item.id}
                         id={item.id}
-                        customerName={item.customerName}
-                        purchaseDate={dateMask(item.purchaseDate)}
-                        product={item.product}
-                        transactionId={item.transactionId}
-                        total={maskedToMoney(item.total)}
+                        customerName={item.cart.user.name}
+                        purchaseDate={dateMask(item.createdAt)}
+                        product={item.cart}
+                        transactionId={item.id}
+                        total={maskedToMoney(item.cart.total)}
                         status={item.status}
                         handleRefresher={handleRefresher}
                       />

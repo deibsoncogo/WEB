@@ -1,10 +1,9 @@
+import { ICartResponse } from './cartResponse';
   export interface ISalesResponse {
     id: string
-    customerName: string
-    purchaseDate: string
-    product: string
-    transactionId: string
-    total: string
+    type: string
     status: string
+    createdAt: string
+    cart: ICartResponse
   }
   
