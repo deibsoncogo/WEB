@@ -9,6 +9,7 @@ import { debounce } from '../../../../helpers/debounce'
 import { ISalesResponse } from '../../../../interfaces/api-response/salesResponse'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 import { dateMask } from '../../../formatters/dateFormatter'
+import { getProductNamesSingleString } from '../../../formatters/getProductNamesSingleString'
 import { Button } from '../../buttons/CustomButton'
 import { FilterForm } from '../../filter/FilterForm'
 import { Loading } from '../../loading/loading'
@@ -167,7 +168,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                         id={item.id}
                         customerName={item.cart.user.name}
                         purchaseDate={dateMask(item.createdAt)}
-                        product={item.products[0].name}
+                        product={getProductNamesSingleString(item.products)}
                         transactionId={item.id}
                         total={maskedToMoney(item.cart.total)}
                         status={item.status}
