@@ -34,6 +34,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
 
   const [sales, setSales] = useState<ISalesResponse[]>([])
   const [salesQuery, setSalesQuery] = useState('')
+  const [salesFilter, setSalesFilter] = useState<SalesFilter>()
 
   const formRef = useRef<FormHandles>(null)
 
@@ -50,6 +51,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
       orderBy: pagination.orderBy,
       page: pagination.currentPage,
       name: salesQuery,
+      filters: salesFilter      
     }
     getAllSales
       .getAll(paginationParams)
@@ -63,7 +65,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
           setLoading(false)
         }, 500)
       )
-  }, [refresher, pagination.take, pagination.currentPage, pagination.order, salesQuery])
+  }, [refresher, pagination.take, pagination.currentPage, pagination.order, salesQuery, salesFilter])
 
   function handleRefresher() {
     setRefresher(!refresher)
@@ -74,11 +76,12 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
   })
 
   const handleForm = (data: SalesFilter) => {
-    // TODO
+    setSalesFilter(data)
   }
 
   const handleClearFilter = () => {
     formRef.current?.reset()
+    setSalesFilter(undefined)
   }
 
   const handleClickDownlondExcelClick = () => {
@@ -121,14 +124,14 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th
-                      className={getColumnHeaderClasses('cutomerName')}
-                      onClick={() => handleOrdenation('customerName')}
+                      className={getColumnHeaderClasses('name')}
+                      onClick={() => handleOrdenation('name')}
                     >
                       Nome do Cliente
                     </th>
                     <th
-                      className={getColumnHeaderClasses('purchaseDate', 'min-w-150px')}
-                      onClick={() => handleOrdenation('purchaseDate')}
+                      className={getColumnHeaderClasses('createdAt', 'min-w-150px')}
+                      onClick={() => handleOrdenation('createdAt')}
                     >
                       Data da Compra
                     </th>
