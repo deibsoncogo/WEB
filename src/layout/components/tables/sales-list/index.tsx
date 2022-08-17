@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { IExportAllSalesToXLSX } from '../../../../domain/usecases/interfaces/sale/exportAllSalesToXLSX'
 import { GetSalesParams, IGetAllSales, SalesFilter } from '../../../../domain/usecases/interfaces/sale/getAllSales'
+import { formatDate, formatDateToUTC, ParseDate } from '../../../../helpers'
 import { debounce } from '../../../../helpers/debounce'
 import { getCurrentDate } from '../../../../helpers/getCurrentDate'
 import { ISalesResponse } from '../../../../interfaces/api-response/salesResponse'
@@ -76,7 +77,9 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
     setSalesQuery(text)
   })
 
-  const handleForm = (data: SalesFilter) => {
+  const handleForm = (data: SalesFilter) => { 
+    data.initialDate = ParseDate(String(data.initialDate))
+    data.finalDate = ParseDate(String(data.finalDate))
     setSalesFilter(data)
   }
 
