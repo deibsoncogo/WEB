@@ -25,3 +25,13 @@ export function formatDateToUTC(date: string) {
   const year = formattedDate.getUTCFullYear()
   return new Date(year, month, day)
 }
+
+
+export function ParseDate(input: string): Date {
+  const [day, month, year] = input.split('/')
+  const returnDate = new Date()
+  returnDate.setDate(parseInt(day))
+  returnDate.setMonth(parseInt(month) - 1)
+  returnDate.setFullYear(parseInt(year))
+  return returnDate
+}
