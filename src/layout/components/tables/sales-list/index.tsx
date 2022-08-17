@@ -167,7 +167,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                         key={item.id}
                         id={item.id}
                         customerName={item.cart.user.name}
-                        purchaseDate={dateMask(item.createdAt)}
+                        purchaseDate={dateMask(item.createdAt.split('T')[0])}
                         product={getProductNamesSingleString(item.products)}
                         transactionId={item.id}
                         total={maskedToMoney(item.cart.total)}
