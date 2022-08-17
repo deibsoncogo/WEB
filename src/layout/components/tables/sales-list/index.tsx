@@ -6,6 +6,7 @@ import { usePagination } from '../../../../application/hooks/usePagination'
 import { IExportAllSalesToXLSX } from '../../../../domain/usecases/interfaces/sale/exportAllSalesToXLSX'
 import { GetSalesParams, IGetAllSales, SalesFilter } from '../../../../domain/usecases/interfaces/sale/getAllSales'
 import { debounce } from '../../../../helpers/debounce'
+import { getCurrentDate } from '../../../../helpers/getCurrentDate'
 import { ISalesResponse } from '../../../../interfaces/api-response/salesResponse'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 import { dateMask } from '../../../formatters/dateFormatter'
@@ -85,7 +86,26 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
   }
 
   const handleClickDownlondExcelClick = () => {
-    //exportSalesToXLSX.export(paginationParams)
+    const paginationParams: GetSalesParams = {
+      take: pagination.take,
+      order: pagination.order,
+      orderBy: pagination.orderBy,
+      page: pagination.currentPage,
+      name: salesQuery,
+      filters: salesFilter      
+    }
+
+    exportSalesToXLSX.export(paginationParams)    
+    .then((result) => {
+      const { type, data } = result
+      const blob = new Blob([data], { type: type })
+      const link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      const filename = `vendas_${getCurrentDate()}.xlsx`
+      link.download = filename
+      link.click()
+    })
+    .catch(() => toast.error('Não foi exportar arquivo'))    
   }
 
   return (
