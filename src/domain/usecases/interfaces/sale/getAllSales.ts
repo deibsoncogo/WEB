@@ -4,8 +4,8 @@ import { InputPagination } from "../../../shared/interface/InputPagination";
 import { OutputPagination } from "../../../shared/interface/OutputPagination";
 
 export interface SalesFilter {
-  initialDate: Date
-  finalDate: Date
+  initialDate: string
+  finalDate: string
   status: string
 }
 

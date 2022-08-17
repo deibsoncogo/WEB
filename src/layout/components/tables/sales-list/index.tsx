@@ -78,8 +78,8 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
   })
 
   const handleForm = (data: SalesFilter) => { 
-    data.initialDate = ParseDate(String(data.initialDate))
-    data.finalDate = ParseDate(String(data.finalDate))
+    data.initialDate = formatDate(ParseDate(String(data.initialDate)), 'YYYY-MM-DD')
+    data.finalDate = formatDate(ParseDate(String(data.finalDate)), 'YYYY-MM-DD')
     setSalesFilter(data)
   }
 
