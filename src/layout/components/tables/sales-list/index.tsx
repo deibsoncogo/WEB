@@ -5,7 +5,8 @@ import { toast } from 'react-toastify'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { IExportAllSalesToXLSX } from '../../../../domain/usecases/interfaces/sale/exportAllSalesToXLSX'
 import { GetSalesParams, IGetAllSales, SalesFilter } from '../../../../domain/usecases/interfaces/sale/getAllSales'
-import { formatDate, formatDateToUTC, ParseDate } from '../../../../helpers'
+import { formatDate,  ParseDate } from '../../../../helpers'
+import { checkIsDateValid } from '../../../../helpers/dateValidationHelper'
 import { debounce } from '../../../../helpers/debounce'
 import { getCurrentDate } from '../../../../helpers/getCurrentDate'
 import { ISalesResponse } from '../../../../interfaces/api-response/salesResponse'
@@ -19,6 +20,7 @@ import { Pagination } from '../../pagination/Pagination'
 import { ItemNotFound } from '../../search/ItemNotFound'
 import { Search } from '../../search/Search'
 import { Row } from './row'
+import * as Yup from 'yup'
 
 type SalesTableProps = {
   getAllSales: IGetAllSales
@@ -73,14 +75,43 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
     setRefresher(!refresher)
   }
 
+  const handleDateValidation = (date: string | undefined) => {
+    if (date) {
+      const isValid = checkIsDateValid(date)
+      return isValid
+    }
+    return true
+  }
+
   const handleSearchSales = debounce((text: string) => {
     setSalesQuery(text)
   })
 
-  const handleForm = (data: SalesFilter) => { 
-    data.initialDate = formatDate(ParseDate(String(data.initialDate)), 'YYYY-MM-DD')
-    data.finalDate = formatDate(ParseDate(String(data.finalDate)), 'YYYY-MM-DD')
-    setSalesFilter(data)
+  const handleForm = async (data: SalesFilter) => { 
+    
+    if (!formRef.current) throw new Error()
+    try {
+      formRef.current.setErrors({})
+      const schema = Yup.object().shape({        
+          initialDate: Yup.string().optional().test('date error', 'Data inválida', handleDateValidation), 
+          finalDate: Yup.string().optional().test('date error', 'Data inválida', handleDateValidation)         
+      })
+
+      await schema.validate(data, { abortEarly: false })
+      data.initialDate = formatDate(ParseDate(String(data.initialDate)), 'YYYY-MM-DD')
+      data.finalDate = formatDate(ParseDate(String(data.finalDate)), 'YYYY-MM-DD')
+      setSalesFilter(data)
+      
+    } catch (err) {
+      const validationErrors = {}
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          // @ts-expect-error
+          validationErrors[error.path] = error.message
+        })
+        formRef.current.setErrors(validationErrors)
+      }
+    }  
   }
 
   const handleClearFilter = () => {
@@ -97,7 +128,6 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
       name: salesQuery,
       filters: salesFilter      
     }
-
     exportSalesToXLSX.export(paginationParams)    
     .then((result) => {
       const { type, data } = result
