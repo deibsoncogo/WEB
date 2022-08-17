@@ -3,16 +3,14 @@ export function getProductNamesSingleString(product: IPartialProductResponse[]) 
 
     let names = ''
     product.forEach(prod => {
-        if(prod.id === product[product.length-1].id){
-            names += prod.name            
+        if(prod === product[product.length-1]) {
+            names += prod.name
         }
         else{
-            names += prod.name + ','
-        }
-        
+            names += prod.name + ', ' 
+        }               
     })
-
-    return names;
+    return names
    
   }
   
