@@ -45,7 +45,7 @@ const SelectMulti = ({
         return ref.current?.state?.selectValue.map((value: any) => value.value)
       },
       setValue: (_, newValue) => {
-        setInputValues(newValue)
+        setInputValues(newValue as any)
       },
       clearValue: (ref: any) => {
         ref.current?.setValue([])

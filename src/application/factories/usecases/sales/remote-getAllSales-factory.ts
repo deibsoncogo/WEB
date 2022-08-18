@@ -4,4 +4,4 @@ import { IGetAllSales } from '../../../../domain/usecases/interfaces/sale/getAll
 
 
 export const makeRemoteGetAllSales = (): IGetAllSales =>
-  new RemoteGetAllSales(makeApiUrl('sale'), makeAxiosHttpClient());
+  new RemoteGetAllSales(makeApiUrl('transaction'), makeAxiosHttpClient());

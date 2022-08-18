@@ -18,7 +18,7 @@ export class RemoteGetAllSales implements IGetAllSales{
       method: 'get',
       params: query,
     })
-
+   
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body
