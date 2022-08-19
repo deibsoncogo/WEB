@@ -125,7 +125,7 @@ export function FormEditUser({
         : null,
       phoneNumber: phoneNumber || null,
       role: data.role,
-      level: data.level,
+      level: data.level || null,
       address: [
         {
           zipCode: zipCode || null,
