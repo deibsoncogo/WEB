@@ -18,7 +18,7 @@ const NotificationDrawer = React.forwardRef<FormHandles, Props>((props, ref) => 
   const { close, handleFormSubmit, loading, visible, isUpdate } = props
   return (
     <DrawerRight title={isUpdate? 'Editar Notificação':'Nova Notificação'} visible={visible} close={close}>
-      <div className='mt-3 d-flex flex-column justify-content-between h-100'>
+      <div className='mt-6 d-flex flex-column justify-content-between h-100'>
         <Form className='form' ref={ref} onSubmit={handleFormSubmit} id='create-notification-form'>
           <Input name='tag' label='Tag' type='text' />
           <TextArea
@@ -46,7 +46,7 @@ const NotificationDrawer = React.forwardRef<FormHandles, Props>((props, ref) => 
         </Form>
 
 
-        <div className='d-flex mb-20'>
+        <div className='d-flex mb-15'>
           <Button
             title='Cancelar'
             type='button'
