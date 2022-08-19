@@ -14,18 +14,17 @@ import { onlyNums } from '../../../formatters/currenceFormatter'
 import { ICreateBook } from '../../../../domain/usecases/interfaces/book/createBook'
 import { InputSingleImage } from '../../inputs/input-single-image'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
-import { getAsyncCategoiesToSelectInput } from '../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
-import { IGetCategories } from '../../../../domain/usecases/interfaces/category/getCategories'
 import { Button } from '../../buttons/CustomButton'
 import is from 'date-fns/esm/locale/is/index.js'
-import { currencyInputFormmater } from '../../../formatters/currencyInputFormatter'
+import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 
 type FormCreateBookProps = {
-  remoteGetCategories: IGetCategories
+  remoteGetCategoriesNoPagination: IGetCategoriesNoPagination
   remoteCreateBook: ICreateBook
 }
 
-export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCreateBookProps) {
+export function FormCreateBook({ remoteGetCategoriesNoPagination, remoteCreateBook }: FormCreateBookProps) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -66,13 +65,13 @@ export function FormCreateBook({ remoteGetCategories, remoteCreateBook }: FormCr
       })
   }
 
-  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesToSelectInput({ categoryName, remoteGetCategories })
+  const handleGetAsyncCategoriesToSelectInput = async () => {
+    return getAsyncCategoiesNoPaginationToSelectInput(remoteGetCategoriesNoPagination)
   }
 
   const handlePopulateSelectInput = async () => {
     try {
-      const categoryOptions = await handleGetAsyncCategoriesToSelectInput('')
+      const categoryOptions = await handleGetAsyncCategoriesToSelectInput()
 
       setDefaultCategoryOptions(categoryOptions)
     } catch (err) {

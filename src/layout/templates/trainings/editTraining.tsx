@@ -7,7 +7,7 @@ import { appRoutes } from '../../../application/routing/routes'
 import { IStreaming } from '../../../domain/models/streaming'
 import { ITraining } from '../../../domain/models/training'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
-import { IGetCategories } from '../../../domain/usecases/interfaces/category/getCategories'
+import { IGetCategoriesNoPagination } from '../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { IEditTraining } from '../../../domain/usecases/interfaces/trainings/editTraining'
 import {
   IGetTraining,
@@ -21,14 +21,14 @@ import { trainingFormSchema } from '../../components/forms/trainings/type'
 import { FullLoading } from '../../components/FullLoading/FullLoading'
 import { maskedToMoney, onlyNums } from '../../formatters/currenceFormatter'
 import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
-import { getAsyncCategoiesToSelectInput } from './utils/getAsyncCategoriesToSelectInput'
+import { getAsyncCategoiesNoPaginationToSelectInput } from './utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { getAsyncTeachersToSelectInput } from './utils/getAsyncTeachersToSelectInput'
 import { getIsoDateToBRL } from './utils/getIsoDateToBRL'
 import { getStreamingDate } from './utils/getStramingDate'
 
 type EditTrainingPageProps = {
   remoteGetTeachers: IGetAllUsers
-  remoteGetCategories: IGetCategories
+  remoteGetCategoriesNoPagination: IGetCategoriesNoPagination
   remoteEditTraining: IEditTraining
   remoteGetTraining: IGetTraining
   remoteGetZoomUsers: IGetZoomUsers
@@ -36,7 +36,7 @@ type EditTrainingPageProps = {
 
 function EditTrainingPageTemplate({
   remoteGetTeachers,
-  remoteGetCategories,
+  remoteGetCategoriesNoPagination,
   remoteEditTraining,
   remoteGetTraining,
   remoteGetZoomUsers,
@@ -108,8 +108,8 @@ function EditTrainingPageTemplate({
     setStreamList(temp)
   }
 
-  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesToSelectInput({ categoryName, remoteGetCategories })
+  const handleGetAsyncCategoriesToSelectInput = async () => {
+    return getAsyncCategoiesNoPaginationToSelectInput(remoteGetCategoriesNoPagination)
   }
 
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {

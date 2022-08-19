@@ -7,23 +7,25 @@ import { appRoutes } from '../../../application/routing/routes'
 import { IBook } from '../../../domain/models/book'
 import { IEditBook } from '../../../domain/usecases/interfaces/book/editBook'
 import { IGetBook, IGetBookParams } from '../../../domain/usecases/interfaces/book/getBook'
+import { IGetCategoriesNoPagination } from '../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { IGetCategories } from '../../../domain/usecases/interfaces/category/getCategories'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditBook } from '../../components/forms/books/edit'
 import { bookFormSchema } from '../../components/forms/books/type'
 import { FullLoading } from '../../components/FullLoading/FullLoading'
 import { maskedToMoney } from '../../formatters/currenceFormatter'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { getAsyncCategoiesToSelectInput } from '../trainings/utils/getAsyncCategoriesToSelectInput'
 import { formatBookToSubmit } from './utils/formatBookToSubmit'
 
 type EditBookPageProps = {
-  remoteGetCategories: IGetCategories
+  remoteGetCategoriesNoPagination: IGetCategoriesNoPagination
   remoteGetBook: IGetBook
   remoteEditBook: IEditBook
 }
 
 function EditBookPageTemplate({
-  remoteGetCategories,
+  remoteGetCategoriesNoPagination,
   remoteGetBook,
   remoteEditBook,
 }: EditBookPageProps) {
@@ -66,8 +68,8 @@ function EditBookPageTemplate({
     }
   }
 
-  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesToSelectInput({ categoryName, remoteGetCategories })
+  const handleGetAsyncCategoriesToSelectInput = async () => {
+    return getAsyncCategoiesNoPaginationToSelectInput(remoteGetCategoriesNoPagination)
   }
 
   const handleCancel = () => {

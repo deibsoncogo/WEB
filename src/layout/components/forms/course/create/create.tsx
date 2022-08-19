@@ -16,9 +16,7 @@ import { CourseClass } from '../../../../../domain/models/courseClass'
 import { CreateCourse } from '../../../../../domain/models/createCourse'
 import { FileUpload } from '../../../../../domain/models/fileUpload'
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
-import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
-import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 import { SelectAsync } from '../../../inputs/selectAsync'
@@ -26,10 +24,12 @@ import FilesInternalTable from '../filesUpload/filesInternalTable'
 import CoursesInternalTable from './courseInternalTable'
 import { Button } from '../../../buttons/CustomButton'
 import { onlyNums } from '../../../../formatters/currenceFormatter'
+import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 
 type Props = {
   createCourse: ICreateCourse
-  getCategories: IGetCategories
+  getCategories: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
 }
 
@@ -53,11 +53,8 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
   }
 
-  const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesToSelectInput({
-      categoryName,
-      remoteGetCategories: getCategories,
-    })
+  const searchCategories = async () => {
+    return getAsyncCategoiesNoPaginationToSelectInput(getCategories)
   }
 
   async function handleFormSubmit(data: IFormCourse) {
@@ -149,7 +146,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
   async function fetchData() {
     try {
       setDefaultTeacherOptions(await searchTeachers(''))
-      setDefaultCategoryOptions(await searchCategories(''))
+      setDefaultCategoryOptions(await searchCategories())
     } catch (error) {
       toast.error('Não foi possível carregar os dados')
     }

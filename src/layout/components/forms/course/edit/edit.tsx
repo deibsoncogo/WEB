@@ -24,14 +24,14 @@ import { Button } from '../../../buttons/CustomButton'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
-import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
-import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
+import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 
 type Props = {
   updateCourse: IUpdateCourse
-  getCategories: IGetCategories
+  getCategories: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
   getAttachments: IGetAllAttachmentByCourseId
   getCourseClass: IGetAllCourseClassByCourseId
@@ -64,13 +64,12 @@ export function FormUpdateCourse(props: Props) {
     setStateEditor({ content: event })
   }
 
-
- async function handleFormSubmit(data: IFormCourse) {
+  async function handleFormSubmit(data: IFormCourse) {
     if (!formRef.current) throw new Error()
     try {
       formRef.current.setErrors({})
-      data.price = onlyNums(data.price)   
-      data.discount = onlyNums(data?.discount) 
+      data.price = onlyNums(data.price)
+      data.discount = onlyNums(data?.discount)
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário').max(50, 'No máximo 50 caracteres'),
@@ -81,16 +80,20 @@ export function FormUpdateCourse(props: Props) {
           .required('Tempo de acesso é necessário'),
         price: Yup.number()
           .required('Preço é necessário')
-          .min(0.01, 'Preço deve ser maior que zero'),  
-        discount: Yup.number().test(
-            {name: 'validation',
-            message: 'Desconto deve ser menor que preço',
-            test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),     
+          .min(0.01, 'Preço deve ser maior que zero'),
+        discount: Yup.number().test({
+          name: 'validation',
+          message: 'Desconto deve ser menor que preço',
+          test: (value) =>
+            value ? parseFloat(data.discount + '') < parseFloat(data.price + '') : true,
+        }),
         installments: Yup.number()
           .min(1, 'Quantidade de parcelas deve ser maior que zero')
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário'),
-        description: Yup.string().required('Descriçao é necessária').max(65535, 'Descrição muito longa'),
+        description: Yup.string()
+          .required('Descriçao é necessária')
+          .max(65535, 'Descrição muito longa'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
       data.content = stateEditor.content
@@ -112,11 +115,8 @@ export function FormUpdateCourse(props: Props) {
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: props.getUsers })
   }
 
-  const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesToSelectInput({
-      categoryName,
-      remoteGetCategories: props.getCategories,
-    })
+  const searchCategories = async () => {
+    return getAsyncCategoiesNoPaginationToSelectInput(props.getCategories)
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
@@ -191,7 +191,7 @@ export function FormUpdateCourse(props: Props) {
         setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
       }
       setDefaultTeacherOptions(await searchTeachers(''))
-      setDefaultCategoryOptions(await searchCategories(''))
+      setDefaultCategoryOptions(await searchCategories())
     } catch (error) {
       toast.error('Não foi possível carregar os dados')
     } finally {

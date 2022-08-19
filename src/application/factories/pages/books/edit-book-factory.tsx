@@ -1,12 +1,12 @@
 import { EditBookPageTemplate } from '../../../../layout/templates/books/editBook'
 import { makeRemoteEditBook } from '../../usecases/book/remote-editBook-factory'
 import { makeRemoteGetBook } from '../../usecases/book/remote-getBook-factory'
-import { makeRemoteGetCategories } from '../../usecases/categories/remote-getCategories-factory'
+import { makeRemoteGetCategoriesNoPagination } from '../../usecases/categories/remote-getCategoriesNoPagination-factory'
 
 export const MakeEditBook = () => {
   return (
     <EditBookPageTemplate
-      remoteGetCategories={makeRemoteGetCategories()}
+      remoteGetCategoriesNoPagination={makeRemoteGetCategoriesNoPagination()}
       remoteGetBook={makeRemoteGetBook()}
       remoteEditBook={makeRemoteEditBook()}
     />
