@@ -11,7 +11,6 @@ import { appRoutes } from '../../../../../application/routing/routes'
 import { CreateRoom } from '../../../../../domain/models/createRoom'
 import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
-import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
 import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
 import {
@@ -19,7 +18,6 @@ import {
   IZoomUser,
 } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { onlyNums } from '../../../../formatters/currenceFormatter'
-import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { Button } from '../../../buttons/CustomButton'
 import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
@@ -29,15 +27,17 @@ import { InputNumber } from '../../../inputs/input-number'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 import { SelectAsync } from '../../../inputs/selectAsync'
 import RoomInternalTable from './roomInternalTable'
+import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 
 type Props = {
   createRoom: ICreateRoom
-  getCategories: IGetCategories
+  getCategoriesNoPagination: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
   getZoomUsers: IGetZoomUsers
 }
 
-export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUsers }: Props) {
+export function FormCreateRoom({ createRoom, getCategoriesNoPagination, getUsers, getZoomUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -142,10 +142,7 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesToSelectInput({
-      categoryName,
-      remoteGetCategories: getCategories,
-    })
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
   }
 
   async function fetchData() {

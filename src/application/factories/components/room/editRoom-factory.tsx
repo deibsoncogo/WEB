@@ -1,5 +1,5 @@
 import { FormUpdateRoom } from "../../../../layout/components/forms/room/edit/edit";
-import { makeRemoteGetCategories } from "../../usecases/categories/remote-getCategories-factory";
+import { makeRemoteGetCategoriesNoPagination } from "../../usecases/categories/remote-getCategoriesNoPagination-factory";
 import { makeRemoteGetAllUsers } from "../../usecases/remote-getAllUsers-factory";
 import { makeRemoteGetRoom } from "../../usecases/room/remote-getRoom-factory";
 import { makeRemoteUpdateRoom } from "../../usecases/room/remote-updateRoom-factory";
@@ -14,7 +14,7 @@ export const MakeFormUpdateRoom = (query: param) => {
      id = {query.id}
      getRoom = {makeRemoteGetRoom()}
      updateRoom = {makeRemoteUpdateRoom()}
-     getCategories = {makeRemoteGetCategories()}
+     getCategoriesNoPagination = {makeRemoteGetCategoriesNoPagination()}
      getUsers = {makeRemoteGetAllUsers()}
      getZoomUsers={makeRemoteGetZoomUsers()}
      /> );

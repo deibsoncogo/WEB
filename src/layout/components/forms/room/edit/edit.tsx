@@ -9,7 +9,6 @@ import * as Yup from 'yup'
 import { toast } from 'react-toastify'
 import { appRoutes } from '../../../../../application/routing/routes'
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
-import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
 import { Input, InputCurrence, TextArea } from '../../../inputs'
 import { SelectAsync } from '../../../inputs/selectAsync'
@@ -21,7 +20,6 @@ import { IUpdateRoom } from '../../../../../domain/usecases/interfaces/room/upda
 import { IGetZoomUsers } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { startStreamingRoomHelper } from '../../../../../helpers/startStreamingRoomHelper'
 import { maskedToMoney, onlyNums } from '../../../../formatters/currenceFormatter'
-import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { Button } from '../../../buttons/CustomButton'
 import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
@@ -31,12 +29,14 @@ import { InputNumber } from '../../../inputs/input-number'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 import RoomInternalTable from './roomInternalTable'
+import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 
 type Props = {
   id: string | string[] | undefined
   getRoom: IGetRoom
   updateRoom: IUpdateRoom
-  getCategories: IGetCategories
+  getCategoriesNoPagination: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
   getZoomUsers: IGetZoomUsers
 }
@@ -45,7 +45,7 @@ export function FormUpdateRoom({
   id,
   getRoom,
   updateRoom,
-  getCategories,
+  getCategoriesNoPagination,
   getUsers,
   getZoomUsers,
 }: Props) {
@@ -73,10 +73,7 @@ export function FormUpdateRoom({
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesToSelectInput({
-      categoryName,
-      remoteGetCategories: getCategories,
-    })
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
   }
 
   async function verifyErrorStreamingRoom(data: IFormRoom) {

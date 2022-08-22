@@ -16,9 +16,7 @@ import { CourseClass } from '../../../../../domain/models/courseClass'
 import { CreateCourse } from '../../../../../domain/models/createCourse'
 import { FileUpload } from '../../../../../domain/models/fileUpload'
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
-import { IGetCategories } from '../../../../../domain/usecases/interfaces/category/getCategories'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
-import { getAsyncCategoiesToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesToSelectInput'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 import { SelectAsync } from '../../../inputs/selectAsync'
@@ -26,14 +24,16 @@ import FilesInternalTable from '../filesUpload/filesInternalTable'
 import CoursesInternalTable from './courseInternalTable'
 import { Button } from '../../../buttons/CustomButton'
 import { onlyNums } from '../../../../formatters/currenceFormatter'
+import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 
 type Props = {
   createCourse: ICreateCourse
-  getCategories: IGetCategories
+  getCategoriesNoPagination: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
 }
 
-export function FormCreateCourse({ createCourse, getCategories, getUsers }: Props) {
+export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [registerCourse, setRegisterCourse] = useState(false)
@@ -54,10 +54,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesToSelectInput({
-      categoryName,
-      remoteGetCategories: getCategories,
-    })
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
   }
 
   async function handleFormSubmit(data: IFormCourse) {

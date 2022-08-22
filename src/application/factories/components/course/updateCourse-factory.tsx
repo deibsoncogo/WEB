@@ -1,5 +1,5 @@
 import { FormUpdateCourse } from '../../../../layout/components/forms/course/edit/edit'
-import { makeRemoteGetCategories } from '../../usecases/categories/remote-getCategories-factory'
+import { makeRemoteGetCategoriesNoPagination } from '../../usecases/categories/remote-getCategoriesNoPagination-factory'
 import { makeRemoteGetCourse } from '../../usecases/course/remote-getCourse-factory'
 import { makeRemoteUpdateCourse } from '../../usecases/course/remote-updateCourse-factory'
 import { makeRemoteGetAllAttachmentByCourseId } from '../../usecases/courseAttachment/remote-getAllAttachmentByCourseId-factory'
@@ -14,7 +14,7 @@ export const MakeFormUpdateCourse = (query: Iparam) => {
   return (
     <FormUpdateCourse
       updateCourse={makeRemoteUpdateCourse()}
-      getCategories={makeRemoteGetCategories()}
+      getCategoriesNoPagination={makeRemoteGetCategoriesNoPagination()}
       getUsers={makeRemoteGetAllUsers()}
       getAttachments={makeRemoteGetAllAttachmentByCourseId()}
       getCourseClass={makeRemoteGetAllCourseClassByCourseId()}
