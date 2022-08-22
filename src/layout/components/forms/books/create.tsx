@@ -65,13 +65,13 @@ export function FormCreateBook({ remoteGetCategoriesNoPagination, remoteCreateBo
       })
   }
 
-  const handleGetAsyncCategoriesToSelectInput = async () => {
-    return getAsyncCategoiesNoPaginationToSelectInput(remoteGetCategoriesNoPagination)
+  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination })
   }
 
   const handlePopulateSelectInput = async () => {
     try {
-      const categoryOptions = await handleGetAsyncCategoriesToSelectInput()
+      const categoryOptions = await handleGetAsyncCategoriesToSelectInput('')
 
       setDefaultCategoryOptions(categoryOptions)
     } catch (err) {

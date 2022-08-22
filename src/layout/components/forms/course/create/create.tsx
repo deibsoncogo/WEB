@@ -29,11 +29,11 @@ import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../template
 
 type Props = {
   createCourse: ICreateCourse
-  getCategories: IGetCategoriesNoPagination
+  getCategoriesNoPagination: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
 }
 
-export function FormCreateCourse({ createCourse, getCategories, getUsers }: Props) {
+export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [registerCourse, setRegisterCourse] = useState(false)
@@ -53,8 +53,8 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
   }
 
-  const searchCategories = async () => {
-    return getAsyncCategoiesNoPaginationToSelectInput(getCategories)
+  const searchCategories = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
   }
 
   async function handleFormSubmit(data: IFormCourse) {
@@ -146,7 +146,7 @@ export function FormCreateCourse({ createCourse, getCategories, getUsers }: Prop
   async function fetchData() {
     try {
       setDefaultTeacherOptions(await searchTeachers(''))
-      setDefaultCategoryOptions(await searchCategories())
+      setDefaultCategoryOptions(await searchCategories(''))
     } catch (error) {
       toast.error('Não foi possível carregar os dados')
     }

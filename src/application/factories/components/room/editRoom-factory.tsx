@@ -14,7 +14,7 @@ export const MakeFormUpdateRoom = (query: param) => {
      id = {query.id}
      getRoom = {makeRemoteGetRoom()}
      updateRoom = {makeRemoteUpdateRoom()}
-     getCategories = {makeRemoteGetCategoriesNoPagination()}
+     getCategoriesNoPagination = {makeRemoteGetCategoriesNoPagination()}
      getUsers = {makeRemoteGetAllUsers()}
      getZoomUsers={makeRemoteGetZoomUsers()}
      /> );

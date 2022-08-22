@@ -8,7 +8,7 @@ export const MakeFormCreateCourse = () => {
   return (
     <FormCreateCourse
       createCourse={makeRemoteCreateCourse()}
-      getCategories={makeRemoteGetCategoriesNoPagination()}
+      getCategoriesNoPagination={makeRemoteGetCategoriesNoPagination()}
       getUsers={makeRemoteGetAllUsers()}
     />
   )

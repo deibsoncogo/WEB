@@ -91,8 +91,8 @@ function CreateTrainingPageTemplate({
     setStreamList(temp)
   }
 
-  const handleGetAsyncCategoriesToSelectInput = async () => {
-    return getAsyncCategoiesNoPaginationToSelectInput(remoteGetCategoriesNoPagination)
+  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination })
   }
 
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
@@ -101,7 +101,7 @@ function CreateTrainingPageTemplate({
 
   const handlePopulateSelectInputs = async () => {
     const teacherOptions = await handleGetAsyncTeachersToSelectInput('')
-    const categoryOptions = await handleGetAsyncCategoriesToSelectInput()
+    const categoryOptions = await handleGetAsyncCategoriesToSelectInput('')
 
     setDefaultTeacherOptions(teacherOptions)
     setDefaultCategoryOptions(categoryOptions)

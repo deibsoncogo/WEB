@@ -31,7 +31,7 @@ import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../template
 
 type Props = {
   updateCourse: IUpdateCourse
-  getCategories: IGetCategoriesNoPagination
+  getCategoriesNoPagination: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
   getAttachments: IGetAllAttachmentByCourseId
   getCourseClass: IGetAllCourseClassByCourseId
@@ -115,8 +115,8 @@ export function FormUpdateCourse(props: Props) {
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: props.getUsers })
   }
 
-  const searchCategories = async () => {
-    return getAsyncCategoiesNoPaginationToSelectInput(props.getCategories)
+  const searchCategories = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: props.getCategoriesNoPagination })
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
@@ -191,7 +191,7 @@ export function FormUpdateCourse(props: Props) {
         setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
       }
       setDefaultTeacherOptions(await searchTeachers(''))
-      setDefaultCategoryOptions(await searchCategories())
+      setDefaultCategoryOptions(await searchCategories(''))
     } catch (error) {
       toast.error('Não foi possível carregar os dados')
     } finally {

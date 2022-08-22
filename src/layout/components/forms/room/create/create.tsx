@@ -32,12 +32,12 @@ import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../template
 
 type Props = {
   createRoom: ICreateRoom
-  getCategories: IGetCategoriesNoPagination
+  getCategoriesNoPagination: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
   getZoomUsers: IGetZoomUsers
 }
 
-export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUsers }: Props) {
+export function FormCreateRoom({ createRoom, getCategoriesNoPagination, getUsers, getZoomUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -141,14 +141,14 @@ export function FormCreateRoom({ createRoom, getCategories, getUsers, getZoomUse
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
   }
 
-  const searchCategories = async () => {
-    return getAsyncCategoiesNoPaginationToSelectInput(getCategories)
+  const searchCategories = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
   }
 
   async function fetchData() {
     try {
       setDefaultTeacherOptions(await searchTeachers(''))
-      setDefaultCategoryOptions(await searchCategories())
+      setDefaultCategoryOptions(await searchCategories(''))
 
       const zoomUsers: IZoomUser[] = await getZoomUsers.get()
       if (zoomUsers) {

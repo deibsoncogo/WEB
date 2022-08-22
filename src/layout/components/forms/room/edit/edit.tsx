@@ -36,7 +36,7 @@ type Props = {
   id: string | string[] | undefined
   getRoom: IGetRoom
   updateRoom: IUpdateRoom
-  getCategories: IGetCategoriesNoPagination
+  getCategoriesNoPagination: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
   getZoomUsers: IGetZoomUsers
 }
@@ -45,7 +45,7 @@ export function FormUpdateRoom({
   id,
   getRoom,
   updateRoom,
-  getCategories,
+  getCategoriesNoPagination,
   getUsers,
   getZoomUsers,
 }: Props) {
@@ -72,8 +72,8 @@ export function FormUpdateRoom({
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
   }
 
-  const searchCategories = async () => {
-    return getAsyncCategoiesNoPaginationToSelectInput(getCategories)
+  const searchCategories = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
   }
 
   async function verifyErrorStreamingRoom(data: IFormRoom) {
@@ -216,7 +216,7 @@ export function FormUpdateRoom({
       setDefaultTeacherOptions(dataTeachers)
     })
 
-    searchCategories().then((dataCategories) => {
+    searchCategories('').then((dataCategories) => {
       setDefaultCategoryOptions(dataCategories)
     })
   }, [])

@@ -14,7 +14,7 @@ export const MakeFormUpdateCourse = (query: Iparam) => {
   return (
     <FormUpdateCourse
       updateCourse={makeRemoteUpdateCourse()}
-      getCategories={makeRemoteGetCategoriesNoPagination()}
+      getCategoriesNoPagination={makeRemoteGetCategoriesNoPagination()}
       getUsers={makeRemoteGetAllUsers()}
       getAttachments={makeRemoteGetAllAttachmentByCourseId()}
       getCourseClass={makeRemoteGetAllCourseClassByCourseId()}

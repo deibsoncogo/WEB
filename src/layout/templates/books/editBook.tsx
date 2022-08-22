@@ -68,8 +68,8 @@ function EditBookPageTemplate({
     }
   }
 
-  const handleGetAsyncCategoriesToSelectInput = async () => {
-    return getAsyncCategoiesNoPaginationToSelectInput(remoteGetCategoriesNoPagination)
+  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination })
   }
 
   const handleCancel = () => {

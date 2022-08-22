@@ -8,7 +8,7 @@ import { makeRemoteGetZoomUsers } from "../../usecases/zoom/remote-getZoomUsers-
 export const MakeFormCreateRoom = () => {
     return (<FormCreateRoom
      createRoom = {makeRemoteCreateRoom()}
-     getCategories = {makeRemoteGetCategoriesNoPagination()}
+     getCategoriesNoPagination = {makeRemoteGetCategoriesNoPagination()}
      getUsers = {makeRemoteGetAllUsers()}
      getZoomUsers={makeRemoteGetZoomUsers()}/> );
   };
