@@ -2,10 +2,17 @@ import { toast } from 'react-toastify'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 
-const getAsyncCategoiesNoPaginationToSelectInput = async (
-  remoteGetCategoriesNoPagination: IGetCategoriesNoPagination): Promise<ISelectOption[]> => {
+type Params = {
+  categoryName: string
+  remoteGetCategoriesNoPagination: IGetCategoriesNoPagination
+}
+
+const getAsyncCategoiesNoPaginationToSelectInput = async ({
+  categoryName,
+  remoteGetCategoriesNoPagination,
+}: Params): Promise<ISelectOption[]> => {
   try {
-    const categories = await remoteGetCategoriesNoPagination.get()
+    const categories = await remoteGetCategoriesNoPagination.get(categoryName)
 
     const categoryOptions: ISelectOption[] = categories.map((category) => ({
       label: category.name,

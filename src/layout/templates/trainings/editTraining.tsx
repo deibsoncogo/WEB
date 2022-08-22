@@ -108,8 +108,8 @@ function EditTrainingPageTemplate({
     setStreamList(temp)
   }
 
-  const handleGetAsyncCategoriesToSelectInput = async () => {
-    return getAsyncCategoiesNoPaginationToSelectInput(remoteGetCategoriesNoPagination)
+  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination })
   }
 
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
