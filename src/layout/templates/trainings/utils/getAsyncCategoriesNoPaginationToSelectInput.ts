@@ -12,7 +12,7 @@ const getAsyncCategoiesNoPaginationToSelectInput = async ({
   remoteGetCategoriesNoPagination,
 }: Params): Promise<ISelectOption[]> => {
   try {
-    const categories = await remoteGetCategoriesNoPagination.get(categoryName)
+    const categories = await remoteGetCategoriesNoPagination.get({ name: categoryName })
 
     const categoryOptions: ISelectOption[] = categories.map((category) => ({
       label: category.name,
