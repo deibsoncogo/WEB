@@ -5,10 +5,12 @@ import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
 import { IPlan } from '../../../domain/models/plan'
+import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
 import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan'
+import { IGetPlans, IGetPlansParams } from '../../../domain/usecases/interfaces/plan/getPlans'
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
@@ -23,6 +25,7 @@ type Props = {
   remoteGetTrainings: IGetAllTrainings
   remoteGetBooks: IGetAllBooks
   remoteGetRooms: IGetAllRooms
+  remoteGetPlans: IGetPlans
 }
 
 const CreatePlanPageTemplate = ({
@@ -30,11 +33,13 @@ const CreatePlanPageTemplate = ({
   remoteGetTrainings,
   remoteGetBooks,
   remoteGetRooms,
+  remoteGetPlans,
   remoteCreatePlan,
 }: Props) => {
   const router = useRouter()
   const [hasAtLastOneProduct, setHasAtLastOneProduct] = useState(true)
   const createPlanFormRef = useRef<FormHandles>(null)
+  const [plansOptions, setPlansOptions] = useState<ISelectOption[]>([])
 
   const {
     makeRequest: createPlan,
@@ -69,6 +74,18 @@ const CreatePlanPageTemplate = ({
       dataFormatted.append('isActive', String(false))
       createPlan(dataFormatted)
     }
+  }
+
+  async function handleGetPlansOptions() {
+    const options = await getOptionsFromSearchRequest({
+      request: remoteGetPlans.get,
+      search: {
+        name: '',
+        allRecords: true
+      }
+    })
+
+    setPlansOptions(options)
   }
 
   async function handleGetCoursesOptions(searchValue: string): Promise<ISelectOption[]> {
@@ -130,6 +147,10 @@ const CreatePlanPageTemplate = ({
     }
   }, [createPlanError])
 
+  useEffect(() => {
+    handleGetPlansOptions()
+  }, [])
+
   return (
     <FormCreatePlan
       ref={createPlanFormRef}
@@ -139,6 +160,7 @@ const CreatePlanPageTemplate = ({
       loadTrainingsOptions={handleGetTrainingsOptions}
       loadBooksOptions={handleGetBooksOptions}
       loadRoomsOptions={handleGetRoomsOptions}
+      plansOptions={plansOptions}
       hasAtLastOneProduct={hasAtLastOneProduct}
       loadingFormSubmit={createPlanLoading}
     />
