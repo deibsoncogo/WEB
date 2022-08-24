@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import { ChangeEvent, forwardRef, useEffect, useState } from 'react'
+import { ChangeEvent, forwardRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { IPlan, PlanType } from '../../../../domain/models/plan'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
