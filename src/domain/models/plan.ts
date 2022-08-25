@@ -2,6 +2,7 @@ import { Course } from '../../interfaces/model/Course'
 import { ITraining } from './training'
 import { IBook } from './book'
 import { IRoom } from './room'
+import { Product } from './product'
 
 export enum PlanType {
   SINGLE_PAYMENT = 'single_payment',
@@ -21,9 +22,10 @@ export interface IPlan {
   intervalAccessMonths: number
   isActive: boolean
   planType: PlanType
-  relatedPlan?: IPlan
+  relatedPlan?: IPlan[]
   trainings?: ITraining[]
   courses?: Course[]
   books?: IBook[]
   rooms?: IRoom[]
+  product?: Product
 }
