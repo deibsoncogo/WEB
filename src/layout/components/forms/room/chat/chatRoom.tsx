@@ -1,7 +1,7 @@
 import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import io from 'socket.io-client'
 import { IChatRoom } from '../../../../../domain/models/createChatRoom'
@@ -21,6 +21,8 @@ export function ChatInner({ getAllChatRooms }: props) {
   const [messages, setMessages] = useState<IChatRoom[]>([])
   const [loading, setLoading] = useState(true)
   const [chatRoom, setChatRoom] = useState()
+
+  const inputFileRef = useRef<HTMLInputElement>(null)
 
   const router = useRouter()
   const { id } = router.query
@@ -46,7 +48,7 @@ export function ChatInner({ getAllChatRooms }: props) {
       const currentDateMessage = new Date()
       const chatRoom = {
         roomId: id,
-        message,
+        text: message,
         date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
         hour: formatTime(currentDateMessage, 'HH:mm:ss'),
       }
@@ -63,6 +65,23 @@ export function ChatInner({ getAllChatRooms }: props) {
     if (e.keyCode === 13 && e.shiftKey === false) {
       e.preventDefault()
       handleSendMessage()
+    }
+  }
+
+  const handleChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target?.files?.[0]) {
+      const currentDateMessage = new Date()
+
+      const chatRoom = {
+        roomId: id,
+        date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
+        hour: formatTime(currentDateMessage, 'HH:mm:ss'),
+        file: event.target.files[0],
+      }
+
+      socket.emit('createMessage', chatRoom, () => {
+        setMessage('')
+      })
     }
   }
 
@@ -107,7 +126,20 @@ export function ChatInner({ getAllChatRooms }: props) {
 
       <div className='card-footer pt-4 border-top border-gray-600 d-flex align-items-center'>
         <Tooltip content={'Enviar arquivo'} rounded color='primary'>
-          <button className='btn btn-sm btn-icon btn-active-light-primary' type='button'>
+          <button
+            className='btn btn-sm btn-icon btn-active-light-primary'
+            type='button'
+            onClick={() => inputFileRef.current?.click()}
+          >
+            <input
+              ref={inputFileRef}
+              type='file'
+              id='file'
+              name='file'
+              accept='image/png, image/jpeg'
+              hidden
+              onChange={handleChangeFile}
+            />
             <KTSVG path='/icons/com008.svg' className='svg-icon svg-icon-2  svg-icon-primary' />
           </button>
         </Tooltip>

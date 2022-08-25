@@ -1,7 +1,9 @@
 import clsx from 'clsx'
 import { IChatRoom } from '../../../../../../domain/models/createChatRoom'
+import { KTSVG } from '../../../../../../helpers'
 import { DateLocalFullInformationMask } from '../../../../../formatters/dateLocalFormatter'
 import { HourMask } from '../../../../../formatters/hourFormatter'
+import { Text } from '../text'
 
 type props = {
   message: IChatRoom
@@ -15,10 +17,23 @@ export function Message({
   isToShowAvatarImage,
 }: props) {
   const IsMessageWriteToday = (date: string) => {
-    var today = new Date()
-    var day = String(today.getDate()).padStart(2, '0')
-
+    const today = new Date()
+    const day = String(today.getDate()).padStart(2, '0')
     return day === date.split('-')[2]
+  }
+
+  let dateMessage = ''
+
+  if (IsMessageWriteToday(message.date) && isPreviousDateDifferentFromCurrent) {
+    dateMessage = 'Hoje'
+  }
+
+  if (isPreviousDateDifferentFromCurrent && !IsMessageWriteToday(message.date)) {
+    dateMessage = (
+      <span className='text-dark fs-7 mb-1 text-break'>
+        {DateLocalFullInformationMask(message.date)}
+      </span>
+    ) as any
   }
 
   return (
@@ -29,15 +44,7 @@ export function Message({
           'mb-5 mt-5': isPreviousDateDifferentFromCurrent,
         })}
       >
-        {!isPreviousDateDifferentFromCurrent ? (
-          ''
-        ) : IsMessageWriteToday(message.date) ? (
-          'Hoje'
-        ) : (
-          <span className='text-dark fs-7 mb-1 text-break'>
-            {DateLocalFullInformationMask(message.date)}
-          </span>
-        )}
+        {dateMessage}
       </div>
       <div className='d-flex align-items align-items-end mb-5'>
         <div
@@ -49,15 +56,7 @@ export function Message({
           </div>
         </div>
 
-        <div className='p-5 rounded bg-light-primary text-dark fw-bold w-75 text-start'>
-          <div className='ms-3'>
-            <span className='text-dark fs-7 mb-1 text-break'>{message.message}</span>
-          </div>
-
-          <div className='ms-3 text-end'>
-            <span className='text-muted fs-7 mb-1'>{HourMask(message.hour)}</span>
-          </div>
-        </div>
+        <Text hour={message.hour} text={message.text} />
       </div>
     </div>
   )
