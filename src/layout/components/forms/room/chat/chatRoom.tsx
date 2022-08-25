@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import io from 'socket.io-client'
 import { IChatRoom } from '../../../../../domain/models/createChatRoom'
+import { MessageType } from '../../../../../domain/models/messageType'
 import { IGetAllChatRooms } from '../../../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { extractAPIURL } from '../../../../../utils/extractAPIURL'
@@ -51,6 +52,7 @@ export function ChatInner({ getAllChatRooms }: props) {
         text: message,
         date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
         hour: formatTime(currentDateMessage, 'HH:mm:ss'),
+        messageType: MessageType.Text,
       }
 
       socket.emit('createMessage', chatRoom, () => {
@@ -77,6 +79,7 @@ export function ChatInner({ getAllChatRooms }: props) {
         date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
         hour: formatTime(currentDateMessage, 'HH:mm:ss'),
         file: event.target.files[0],
+        messageType: MessageType.File,
       }
 
       socket.emit('createMessage', chatRoom, () => {
@@ -109,6 +112,8 @@ export function ChatInner({ getAllChatRooms }: props) {
       socket.emit('joinChat', { roomId: id }, (room: any) => setChatRoom(room))
     }
   }, [])
+
+  console.log(messages)
 
   return (
     <>

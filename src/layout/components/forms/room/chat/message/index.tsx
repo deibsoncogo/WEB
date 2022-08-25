@@ -1,8 +1,8 @@
 import clsx from 'clsx'
 import { IChatRoom } from '../../../../../../domain/models/createChatRoom'
-import { KTSVG } from '../../../../../../helpers'
+import { MessageType } from '../../../../../../domain/models/messageType'
 import { DateLocalFullInformationMask } from '../../../../../formatters/dateLocalFormatter'
-import { HourMask } from '../../../../../formatters/hourFormatter'
+import { File } from '../file'
 import { Text } from '../text'
 
 type props = {
@@ -56,7 +56,11 @@ export function Message({
           </div>
         </div>
 
-        <Text hour={message.hour} text={message.text} />
+        {message.messageType === MessageType.Text ? (
+          <Text hour={message.hour} text={message.text} />
+        ) : (
+          <File fileURL={message.fileURL} hour={message.hour} />
+        )}
       </div>
     </div>
   )
