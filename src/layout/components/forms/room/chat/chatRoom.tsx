@@ -3,28 +3,29 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import io from 'socket.io-client'
 import { IChatRoom } from '../../../../../domain/models/createChatRoom'
-import { ICreateChatRoom } from '../../../../../domain/usecases/interfaces/chatRoom/createRoom'
 import { IGetAllChatRooms } from '../../../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
-import { KTSVG, formatTime, formatDate } from '../../../../../helpers'
+import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
+import { extractAPIURL } from '../../../../../utils/extractAPIURL'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import { Message } from './message'
+const socket = io(`${extractAPIURL(process.env.API_URL)}/room`)
 
 type props = {
   getAllChatRooms: IGetAllChatRooms
-  createChatRoom: ICreateChatRoom
 }
 
-export function ChatInner({ getAllChatRooms, createChatRoom }: props) {
+export function ChatInner({ getAllChatRooms }: props) {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<IChatRoom[]>([])
   const [loading, setLoading] = useState(true)
+  const [chatRoom, setChatRoom] = useState()
 
   const router = useRouter()
   const { id } = router.query
 
   const IsPreviousDateDifferentFromCurrent = (index: number) => {
-    
     if (messages?.length > 1 && index >= 1) {
       return messages[index - 1].date !== messages[index]?.date
     }
@@ -43,19 +44,16 @@ export function ChatInner({ getAllChatRooms, createChatRoom }: props) {
   const handleSendMessage = async () => {
     try {
       const currentDateMessage = new Date()
-
-      if (typeof id == 'string') {
-        const chatRoom = {
-          roomId: id,
-          message,
-          date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
-          hour: formatTime(currentDateMessage, 'HH:mm:ss'),
-        }
-        await createChatRoom.create(chatRoom)
-        messages.push(chatRoom)
-        setMessages(messages)
-        setMessage('')
+      const chatRoom = {
+        roomId: id,
+        message,
+        date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
+        hour: formatTime(currentDateMessage, 'HH:mm:ss'),
       }
+
+      socket.emit('createMessage', chatRoom, () => {
+        setMessage('')
+      })
     } catch {
       toast.error('Não foi possível enviar a mensagem!')
     }
@@ -79,6 +77,18 @@ export function ChatInner({ getAllChatRooms, createChatRoom }: props) {
       .finally(() => {
         setLoading(false)
       })
+  }, [])
+
+  useEffect(() => {
+    socket.on('receiveMessage', (message) => {
+      setMessages((oldState) => [...oldState, message])
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!chatRoom) {
+      socket.emit('joinChat', { roomId: id }, (room: any) => setChatRoom(room))
+    }
   }, [])
 
   return (
