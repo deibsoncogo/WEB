@@ -1,7 +1,7 @@
 import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import io from 'socket.io-client'
 import { IChatTraining } from '../../../../../domain/models/createChatTraining'
@@ -26,6 +26,8 @@ export function ChatInner({ getAllChatTraining }: props) {
   const [chatTraining, setChatTraining] = useState()
   const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
   const [loadingDeletion, setLoadingDeletion] = useState(false)
+
+  const inputFileRef = useRef<HTMLInputElement>(null)
 
   const router = useRouter()
   const { id } = router.query
@@ -63,6 +65,35 @@ export function ChatInner({ getAllChatTraining }: props) {
     } catch {
       toast.error('Não foi possível enviar a mensagem!')
     }
+  }
+
+  const handleChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target?.files?.[0]
+    if (!file) {
+      return
+    }
+    const [fileType] = file?.type.split('/')
+
+    if (fileType === 'video') {
+      toast.error('Não é permitido fazer o upload de vídeos')
+      return
+    }
+
+    const currentDateMessage = new Date()
+
+    const chatTraining = {
+      trainingId: id,
+      date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
+      hour: formatTime(currentDateMessage, 'HH:mm:ss'),
+      file,
+      fileName: file.name,
+      messageType: MessageType.File,
+      fileType,
+    }
+
+    socket.emit('createMessage', chatTraining, () => {
+      setMessage('')
+    })
   }
 
   const onEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -142,7 +173,19 @@ export function ChatInner({ getAllChatTraining }: props) {
 
       <div className='card-footer pt-4 border-top border-gray-600 d-flex align-items-center'>
         <Tooltip content={'Enviar arquivo'} rounded color='primary'>
-          <button className='btn btn-sm btn-icon btn-active-light-primary' type='button'>
+          <button
+            className='btn btn-sm btn-icon btn-active-light-primary'
+            type='button'
+            onClick={() => inputFileRef.current?.click()}
+          >
+            <input
+              ref={inputFileRef}
+              type='file'
+              id='file'
+              name='file'
+              hidden
+              onChange={handleChangeFile}
+            />
             <KTSVG path='/icons/com008.svg' className='svg-icon svg-icon-2  svg-icon-primary' />
           </button>
         </Tooltip>

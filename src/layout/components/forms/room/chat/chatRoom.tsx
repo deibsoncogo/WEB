@@ -9,9 +9,9 @@ import { MessageType } from '../../../../../domain/models/messageType'
 import { IGetAllChatRooms } from '../../../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { extractAPIURL } from '../../../../../utils/extractAPIURL'
+import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import ConfirmationModal from '../../../modal/ConfirmationModal'
-import { Message } from './message'
 const socket = io(`${extractAPIURL(process.env.API_URL)}/room`)
 
 type props = {
@@ -161,7 +161,7 @@ export function ChatInner({ getAllChatRooms }: props) {
       {loading && <FullLoading />}
       <div className='card-body position-relative overflow-auto mh-550px pb-100px'>
         {messages.map((instantMessage, index) => (
-          <Message
+          <ChatMessage
             key={index}
             message={instantMessage}
             isPreviousDateDifferentFromCurrent={IsPreviousDateDifferentFromCurrent(index)}
