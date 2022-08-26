@@ -1,13 +1,5 @@
-import { MessageType } from './messageType'
+import { IChatMessage } from './chatMessage'
 
-export interface IChatRoom {
-  id?: string
+export interface IChatRoom extends IChatMessage {
   roomId: string
-  fileURL: string
-  fileType?: string
-  fileOriginalName?: string
-  text: string
-  hour: string
-  date: string
-  messageType: MessageType
 }

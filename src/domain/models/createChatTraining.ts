@@ -1,7 +1,5 @@
-export interface IChatTraining {
-  id?: string;
-  trainingId: string;
-  message: string
-  hour: string
-  date: string
+import { IChatMessage } from './chatMessage'
+
+export interface IChatTraining extends IChatMessage {
+  trainingId: string
 }

@@ -1,18 +1,19 @@
 import clsx from 'clsx'
-import { IChatRoom } from '../../../../../../domain/models/createChatRoom'
-import { MessageType } from '../../../../../../domain/models/messageType'
-import { DateLocalFullInformationMask } from '../../../../../formatters/dateLocalFormatter'
+import { IChatMessage } from '../../../domain/models/chatMessage'
+import { MessageType } from '../../../domain/models/messageType'
+import { DateLocalFullInformationMask } from '../../formatters/dateLocalFormatter'
+
 import { File } from './file'
 import { Text } from './text'
 
 type props = {
-  message: IChatRoom
+  message: IChatMessage
   isPreviousDateDifferentFromCurrent: boolean
   isToShowAvatarImage: boolean
   setSelectedMessageToDelete: (messageId: string) => void
 }
 
-export function Message({
+export function ChatMessage({
   message,
   isPreviousDateDifferentFromCurrent,
   isToShowAvatarImage,

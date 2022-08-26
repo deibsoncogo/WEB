@@ -3,28 +3,31 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import io from 'socket.io-client'
 import { IChatTraining } from '../../../../../domain/models/createChatTraining'
-import { ICreateChatTraining } from '../../../../../domain/usecases/interfaces/chatTraining/createTraining'
+import { MessageType } from '../../../../../domain/models/messageType'
 import { IGetAllChatTraining } from '../../../../../domain/usecases/interfaces/chatTraining/getAllChatRooms'
-import { KTSVG, formatTime, formatDate } from '../../../../../helpers'
+import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
+import { extractAPIURL } from '../../../../../utils/extractAPIURL'
+import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
-import { Message } from './message'
+
+const socket = io(`${extractAPIURL(process.env.API_URL)}/training`)
 
 type props = {
   getAllChatTraining: IGetAllChatTraining
-  createChatTraining: ICreateChatTraining
 }
 
-export function ChatInner({ getAllChatTraining, createChatTraining }: props) {
+export function ChatInner({ getAllChatTraining }: props) {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<IChatTraining[]>([])
   const [loading, setLoading] = useState(true)
+  const [chatTraining, setChatTraining] = useState()
 
   const router = useRouter()
   const { id } = router.query
 
   const IsPreviousDateDifferentFromCurrent = (index: number) => {
-    
     if (messages?.length > 1 && index >= 1) {
       return messages[index - 1].date !== messages[index]?.date
     }
@@ -43,19 +46,17 @@ export function ChatInner({ getAllChatTraining, createChatTraining }: props) {
   const handleSendMessage = async () => {
     try {
       const currentDateMessage = new Date()
-
-      if (typeof id == 'string') {
-        const chatTraining = {
-          trainingId: id,
-          message,
-          date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
-          hour: formatTime(currentDateMessage, 'HH:mm:ss'),
-        }
-        await createChatTraining.create(chatTraining)
-        messages.push(chatTraining)
-        setMessages(messages)
-        setMessage('')
+      const chatMessage = {
+        trainingId: id,
+        text: message,
+        date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
+        hour: formatTime(currentDateMessage, 'HH:mm:ss'),
+        messageType: MessageType.Text,
       }
+
+      socket.emit('createMessage', chatMessage, () => {
+        setMessage('')
+      })
     } catch {
       toast.error('Não foi possível enviar a mensagem!')
     }
@@ -81,16 +82,31 @@ export function ChatInner({ getAllChatTraining, createChatTraining }: props) {
       })
   }, [])
 
+  useEffect(() => {
+    socket.on('receiveMessage', (message) => {
+      setMessages((oldState) => [...oldState, message])
+    })
+
+    socket.on('deletedMessage', (deletedMessage) => {
+      setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
+    })
+
+    if (!chatTraining) {
+      socket.emit('joinChat', { trainingId: id }, (training: any) => setChatTraining(training))
+    }
+  }, [])
+
   return (
     <>
       {loading && <FullLoading />}
       <div className='card-body position-relative overflow-auto mh-550px pb-100px'>
         {messages.map((instantMessage, index) => (
-          <Message
-            key={index}
+          <ChatMessage
+            key={instantMessage.id}
             message={instantMessage}
             isPreviousDateDifferentFromCurrent={IsPreviousDateDifferentFromCurrent(index)}
             isToShowAvatarImage={IsToShowAvatarImage(index)}
+            setSelectedMessageToDelete={() => {}}
           />
         ))}
       </div>
