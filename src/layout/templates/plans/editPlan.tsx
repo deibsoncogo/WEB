@@ -10,7 +10,6 @@ import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBoo
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
 import { IGetNotRelatedPlans } from '../../../domain/usecases/interfaces/plan/getNotRelatedPlans'
 import { IGetPlan, IGetPlanParams } from '../../../domain/usecases/interfaces/plan/getPlan'
-import { IGetPlans } from '../../../domain/usecases/interfaces/plan/getPlans'
 import { IEditPlan } from '../../../domain/usecases/interfaces/plan/updatePlan'
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
@@ -49,6 +48,8 @@ const EditPlanPageTemplate = ({
   const [plansOptions, setPlansOptions] = useState<ISelectOption[]>([])
 
   const editPlanFormRef = useRef<FormHandles>(null)
+
+  const relatedPlanId = plan?.relatedPlan?.[0]?.id
 
   const {
     makeRequest: editPlan,
@@ -93,11 +94,24 @@ const EditPlanPageTemplate = ({
     }
   }
 
-  async function handleGetPlansOptions() {
+  async function handleSetPlansOptions() {    
     const notRelatedPlans = await remoteGetNotRelatedPlans.get()
     const options = getRelatedPlanData(notRelatedPlans)
+    const filteredOptions = options.filter((option) => option.value !== plan?.id)
 
-    setPlansOptions(options)
+    if (relatedPlanId) {
+      if (!filteredOptions.some((option) => option.value === relatedPlanId)) {
+        setPlansOptions([
+          ...filteredOptions,
+          {
+            label: String(plan?.relatedPlan?.[0].product?.name),
+            value: String(plan?.relatedPlan?.[0]?.id),
+          },
+        ])
+        return
+      }
+    }
+    setPlansOptions(filteredOptions)
   }
 
   async function handleGetCoursesOptions(searchValue: string): Promise<ISelectOption[]> {
@@ -175,7 +189,6 @@ const EditPlanPageTemplate = ({
     if (planId) {
       getPlan({ id: String(planId) })
     }
-    handleGetPlansOptions()
   }, [])
 
   useEffect(() => {
@@ -213,8 +226,7 @@ const EditPlanPageTemplate = ({
         trainings = [],
         courses = [],
         books = [],
-        rooms = [],
-        relatedPlan = [],
+        rooms = []
       } = plan
 
       setFiledValue('planType', planType || defaultPlan)
@@ -228,7 +240,7 @@ const EditPlanPageTemplate = ({
       setFiledValue('books', extractSelectOptionsFromArr(books))
       setFiledValue('rooms', extractSelectOptionsFromArr(rooms))
       setFiledValue('trainings', extractSelectOptionsFromArr(trainings))
-      setFiledValue('relatedPlan', relatedPlan?.[0]?.id || '')
+      setFiledValue('relatedPlan', relatedPlanId || '')
 
       handlePlanTypeSet()
     }
@@ -241,19 +253,8 @@ const EditPlanPageTemplate = ({
   }, [planType])
 
   useEffect(() => {
-    const id = plan?.relatedPlan?.[0]?.id
-    if (plan && plansOptions.length > 0 && id) {
-      setPlansOptions((oldState) => {
-        if (!oldState.some((plan) => plan.value === id)) {
-          return [
-            ...oldState,
-            { label: String(plan.relatedPlan?.[0].product?.name), value: String(plan.relatedPlan?.[0]?.id) },
-          ]
-        }
-        return oldState
-      })
-    }
-  }, [plan, plansOptions])
+    handleSetPlansOptions()
+  }, [plan])
 
   return (
     <FormEditPlan
