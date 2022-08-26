@@ -1,7 +1,7 @@
 import { Tooltip } from '@nextui-org/react'
 import Image from 'next/image'
-import { KTSVG } from '../../../../../../helpers'
-import { HourMask } from '../../../../../formatters/hourFormatter'
+import { KTSVG } from '../../../../../../../helpers'
+import { HourMask } from '../../../../../../formatters/hourFormatter'
 import { Document } from './document'
 
 type FileProps = {

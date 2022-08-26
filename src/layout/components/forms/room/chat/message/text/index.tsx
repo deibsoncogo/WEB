@@ -1,6 +1,6 @@
 import { Tooltip } from '@nextui-org/react'
-import { KTSVG } from '../../../../../../helpers'
-import { HourMask } from '../../../../../formatters/hourFormatter'
+import { KTSVG } from '../../../../../../../helpers'
+import { HourMask } from '../../../../../../formatters/hourFormatter'
 
 type TextProps = {
   text: string
