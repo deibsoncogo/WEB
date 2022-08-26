@@ -5,12 +5,11 @@ import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
 import { IPlan } from '../../../domain/models/plan'
-import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
 import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan'
-import { IGetPlans, IGetPlansParams } from '../../../domain/usecases/interfaces/plan/getPlans'
+import { IGetNotRelatedPlans } from '../../../domain/usecases/interfaces/plan/getNotRelatedPlans'
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
@@ -25,7 +24,7 @@ type Props = {
   remoteGetTrainings: IGetAllTrainings
   remoteGetBooks: IGetAllBooks
   remoteGetRooms: IGetAllRooms
-  remoteGetPlans: IGetPlans
+  remoteGetNotRelatedPlans: IGetNotRelatedPlans
 }
 
 const CreatePlanPageTemplate = ({
@@ -33,7 +32,7 @@ const CreatePlanPageTemplate = ({
   remoteGetTrainings,
   remoteGetBooks,
   remoteGetRooms,
-  remoteGetPlans,
+  remoteGetNotRelatedPlans,
   remoteCreatePlan,
 }: Props) => {
   const router = useRouter()
@@ -76,14 +75,15 @@ const CreatePlanPageTemplate = ({
     }
   }
 
-  async function handleGetPlansOptions() {
-    const options = await getOptionsFromSearchRequest({
-      request: remoteGetPlans.get,
-      search: {
-        name: '',
-        allRecords: true
-      }
+  const getRelatedPlanData = (relatedPlan: IPlan[]): ISelectOption[] => {
+    return relatedPlan.map((item) => {
+      return { label: item.product!.name, value: String(item.id) }
     })
+  }
+
+  async function handleSetPlansOptions() {    
+    const notRelatedPlans = await remoteGetNotRelatedPlans.get()
+    const options = getRelatedPlanData(notRelatedPlans)
 
     setPlansOptions(options)
   }
@@ -148,7 +148,7 @@ const CreatePlanPageTemplate = ({
   }, [createPlanError])
 
   useEffect(() => {
-    handleGetPlansOptions()
+    handleSetPlansOptions()
   }, [])
 
   return (
