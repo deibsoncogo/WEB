@@ -9,17 +9,23 @@ type props = {
   message: IChatRoom
   isPreviousDateDifferentFromCurrent: boolean
   isToShowAvatarImage: boolean
+  setSelectedMessageToDelete: (messageId: string) => void
 }
 
 export function Message({
   message,
   isPreviousDateDifferentFromCurrent,
   isToShowAvatarImage,
+  setSelectedMessageToDelete,
 }: props) {
   const IsMessageWriteToday = (date: string) => {
     const today = new Date()
     const day = String(today.getDate()).padStart(2, '0')
     return day === date.split('-')[2]
+  }
+
+  const handleSetSelectMessageToDelete = () => {
+    setSelectedMessageToDelete(String(message.id))
   }
 
   let dateMessage = ''
@@ -57,13 +63,18 @@ export function Message({
         </div>
 
         {message.messageType === MessageType.Text ? (
-          <Text hour={message.hour} text={message.text} />
+          <Text
+            hour={message.hour}
+            text={message.text}
+            setSelectedMessageToDelete={handleSetSelectMessageToDelete}
+          />
         ) : (
           <File
             fileURL={message.fileURL}
             hour={message.hour}
             fileType={message.fileType}
             fileOriginalName={message.fileOriginalName}
+            setSelectedMessageToDelete={handleSetSelectMessageToDelete}
           />
         )}
       </div>

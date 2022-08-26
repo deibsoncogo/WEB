@@ -10,6 +10,7 @@ import { IGetAllChatRooms } from '../../../../../domain/usecases/interfaces/chat
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { extractAPIURL } from '../../../../../utils/extractAPIURL'
 import { FullLoading } from '../../../FullLoading/FullLoading'
+import ConfirmationModal from '../../../modal/ConfirmationModal'
 import { Message } from './message'
 const socket = io(`${extractAPIURL(process.env.API_URL)}/room`)
 
@@ -22,6 +23,8 @@ export function ChatInner({ getAllChatRooms }: props) {
   const [messages, setMessages] = useState<IChatRoom[]>([])
   const [loading, setLoading] = useState(true)
   const [chatRoom, setChatRoom] = useState()
+  const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
+  const [loadingDeletion, setLoadingDeletion] = useState(false)
 
   const inputFileRef = useRef<HTMLInputElement>(null)
 
@@ -99,6 +102,24 @@ export function ChatInner({ getAllChatRooms }: props) {
     })
   }
 
+  const handleDeleteMessage = () => {
+    if (selectedMessageToDelete) {
+      setLoadingDeletion(true)
+      socket.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
+        setLoadingDeletion(false)
+        setSelectedMessageToDelete(null)
+      })
+    }
+  }
+
+  const handleCloseDeleteConfirmationModal = () => {
+    setSelectedMessageToDelete(null)
+  }
+
+  const handleSelecMessageToDelete = (messageId: string) => {
+    setSelectedMessageToDelete(messageId)
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       if (typeof id == 'string') {
@@ -116,9 +137,11 @@ export function ChatInner({ getAllChatRooms }: props) {
     socket.on('receiveMessage', (message) => {
       setMessages((oldState) => [...oldState, message])
     })
-  }, [])
 
-  useEffect(() => {
+    socket.on('deletedMessage', (deletedMessage) => {
+      setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
+    })
+
     if (!chatRoom) {
       socket.emit('joinChat', { roomId: id }, (room: any) => setChatRoom(room))
     }
@@ -126,6 +149,15 @@ export function ChatInner({ getAllChatRooms }: props) {
 
   return (
     <>
+      <ConfirmationModal
+        isOpen={!!selectedMessageToDelete}
+        loading={loadingDeletion}
+        onRequestClose={handleCloseDeleteConfirmationModal}
+        onConfimation={handleDeleteMessage}
+        content='Você tem certeza que deseja excluir esta mensagem?'
+        title='Deletar'
+      />
+
       {loading && <FullLoading />}
       <div className='card-body position-relative overflow-auto mh-550px pb-100px'>
         {messages.map((instantMessage, index) => (
@@ -134,6 +166,7 @@ export function ChatInner({ getAllChatRooms }: props) {
             message={instantMessage}
             isPreviousDateDifferentFromCurrent={IsPreviousDateDifferentFromCurrent(index)}
             isToShowAvatarImage={IsToShowAvatarImage(index)}
+            setSelectedMessageToDelete={handleSelecMessageToDelete}
           />
         ))}
       </div>
