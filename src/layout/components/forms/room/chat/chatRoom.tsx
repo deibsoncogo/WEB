@@ -71,21 +71,32 @@ export function ChatInner({ getAllChatRooms }: props) {
   }
 
   const handleChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target?.files?.[0]) {
-      const currentDateMessage = new Date()
-
-      const chatRoom = {
-        roomId: id,
-        date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
-        hour: formatTime(currentDateMessage, 'HH:mm:ss'),
-        file: event.target.files[0],
-        messageType: MessageType.File,
-      }
-
-      socket.emit('createMessage', chatRoom, () => {
-        setMessage('')
-      })
+    const file = event.target?.files?.[0]
+    if (!file) {
+      return
     }
+    const [fileType] = file?.type.split('/')
+
+    if (fileType === 'video') {
+      toast.error('Não é permitido fazer o upload de vídeos')
+      return
+    }
+
+    const currentDateMessage = new Date()
+
+    const chatRoom = {
+      roomId: id,
+      date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
+      hour: formatTime(currentDateMessage, 'HH:mm:ss'),
+      file,
+      fileName: file.name,
+      messageType: MessageType.File,
+      fileType,
+    }
+
+    socket.emit('createMessage', chatRoom, () => {
+      setMessage('')
+    })
   }
 
   useEffect(() => {
@@ -113,8 +124,6 @@ export function ChatInner({ getAllChatRooms }: props) {
     }
   }, [])
 
-  console.log(messages)
-
   return (
     <>
       {loading && <FullLoading />}
@@ -141,7 +150,6 @@ export function ChatInner({ getAllChatRooms }: props) {
               type='file'
               id='file'
               name='file'
-              accept='image/png, image/jpeg'
               hidden
               onChange={handleChangeFile}
             />

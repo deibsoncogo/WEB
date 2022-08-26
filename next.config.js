@@ -4,7 +4,7 @@ const nextConfig = {
   env: {
     API_URL: process.env.API_URL,
   },
-  images: { domains: ['localhost'] },
+  images: { domains: ['localhost', process.env.API_URL.split('/')[2]] },
 }
 
 module.exports = nextConfig

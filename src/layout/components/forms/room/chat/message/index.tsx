@@ -59,7 +59,12 @@ export function Message({
         {message.messageType === MessageType.Text ? (
           <Text hour={message.hour} text={message.text} />
         ) : (
-          <File fileURL={message.fileURL} hour={message.hour} />
+          <File
+            fileURL={message.fileURL}
+            hour={message.hour}
+            fileType={message.fileType}
+            fileOriginalName={message.fileOriginalName}
+          />
         )}
       </div>
     </div>
