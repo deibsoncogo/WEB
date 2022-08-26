@@ -11,6 +11,7 @@ import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { extractAPIURL } from '../../../../../utils/extractAPIURL'
 import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
+import ConfirmationModal from '../../../modal/ConfirmationModal'
 
 const socket = io(`${extractAPIURL(process.env.API_URL)}/training`)
 
@@ -23,6 +24,8 @@ export function ChatInner({ getAllChatTraining }: props) {
   const [messages, setMessages] = useState<IChatTraining[]>([])
   const [loading, setLoading] = useState(true)
   const [chatTraining, setChatTraining] = useState()
+  const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
+  const [loadingDeletion, setLoadingDeletion] = useState(false)
 
   const router = useRouter()
   const { id } = router.query
@@ -69,6 +72,24 @@ export function ChatInner({ getAllChatTraining }: props) {
     }
   }
 
+  const handleDeleteMessage = () => {
+    if (selectedMessageToDelete) {
+      setLoadingDeletion(true)
+      socket.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
+        setLoadingDeletion(false)
+        setSelectedMessageToDelete(null)
+      })
+    }
+  }
+
+  const handleCloseDeleteConfirmationModal = () => {
+    setSelectedMessageToDelete(null)
+  }
+
+  const handleSelecMessageToDelete = (messageId: string) => {
+    setSelectedMessageToDelete(messageId)
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       if (typeof id == 'string') {
@@ -98,6 +119,14 @@ export function ChatInner({ getAllChatTraining }: props) {
 
   return (
     <>
+      <ConfirmationModal
+        isOpen={!!selectedMessageToDelete}
+        loading={loadingDeletion}
+        onRequestClose={handleCloseDeleteConfirmationModal}
+        onConfimation={handleDeleteMessage}
+        content='Você tem certeza que deseja excluir esta mensagem?'
+        title='Deletar'
+      />
       {loading && <FullLoading />}
       <div className='card-body position-relative overflow-auto mh-550px pb-100px'>
         {messages.map((instantMessage, index) => (
@@ -106,7 +135,7 @@ export function ChatInner({ getAllChatTraining }: props) {
             message={instantMessage}
             isPreviousDateDifferentFromCurrent={IsPreviousDateDifferentFromCurrent(index)}
             isToShowAvatarImage={IsToShowAvatarImage(index)}
-            setSelectedMessageToDelete={() => {}}
+            setSelectedMessageToDelete={handleSelecMessageToDelete}
           />
         ))}
       </div>
