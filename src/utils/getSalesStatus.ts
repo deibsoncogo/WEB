@@ -1,16 +1,14 @@
-let status = new Map<string, string>();
-status.set('pending','Aguardando pagamento')
-status.set('paid', 'Pago')
-status.set('canceled', 'Cancelado')
-status.set('processing', 'Em andamento')
-status.set('failed', 'Negado')
-status.set('chargedback', 'Reembolsado')
+let statusTransaction = new Map<string, string>([
+  ['pending', 'Aguardando pagamento'],
+  ['paid', 'Pago'],
+  ['canceled', 'Cancelado'],
+  ['processing', 'Em andamento'],
+  ['failed', 'Negado'],
+  ['chargedback', 'Reembolsado'],
+])
 
 export const getSalesStatus = (statusPagarMe: string) => {
+  if (!statusPagarMe) return ''
 
-  if(!statusPagarMe)
-      return ''
-  
-  return status.get(statusPagarMe) ?? ''
-
+  return statusTransaction .get(statusPagarMe) ?? ''
 }
