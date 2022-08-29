@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import { ChangeEvent, forwardRef, useState } from 'react'
+import { ChangeEvent, forwardRef } from 'react'
 import { IPlan, PlanType } from '../../../../domain/models/plan'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { onlyNums } from '../../../formatters/currenceFormatter'
@@ -19,6 +19,7 @@ type FormEditPlansProps = {
   loadTrainingsOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadBooksOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadRoomsOptions: (searchValue: string) => Promise<ISelectOption[]>
+  plansOptions: ISelectOption[]
   planTypeChange: (newPlanType: PlanType) => void
   hasAtLastOneProduct: boolean
   loadingFormSubmit: boolean
@@ -33,6 +34,7 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
     loadTrainingsOptions,
     loadBooksOptions,
     loadRoomsOptions,
+    plansOptions,
     planTypeChange,
     hasAtLastOneProduct,
     loadingFormSubmit,
@@ -65,6 +67,21 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
           <div className='col'>
             <Input name='name' label='Nome' classes='h-75px' />
             <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
+            <Select
+              name='relatedPlan'
+              label='Plano Relacionado'
+              classes='h-75px'
+              defaultValue=''
+            >
+              <option value=''>
+                Selecione
+              </option>
+              {plansOptions.map(({ label, value }) => (
+                <option value={value} key={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
             <Select
               name='planType'
               label='Tipo de Plano'

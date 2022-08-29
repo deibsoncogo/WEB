@@ -8,6 +8,7 @@ import { IPlan, PlanType } from '../../../domain/models/plan'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
+import { IGetNotRelatedPlans } from '../../../domain/usecases/interfaces/plan/getNotRelatedPlans'
 import { IGetPlan, IGetPlanParams } from '../../../domain/usecases/interfaces/plan/getPlan'
 import { IEditPlan } from '../../../domain/usecases/interfaces/plan/updatePlan'
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
@@ -26,6 +27,7 @@ type Props = {
   remoteGetTrainings: IGetAllTrainings
   remoteGetBooks: IGetAllBooks
   remoteGetRooms: IGetAllRooms
+  remoteGetNotRelatedPlans: IGetNotRelatedPlans
 }
 
 const EditPlanPageTemplate = ({
@@ -35,6 +37,7 @@ const EditPlanPageTemplate = ({
   remoteGetRooms,
   remoteGetPlan,
   remoteEditPlan,
+  remoteGetNotRelatedPlans,
 }: Props) => {
   const router = useRouter()
   const { id: planId } = router.query
@@ -42,8 +45,11 @@ const EditPlanPageTemplate = ({
   const [hasAtLastOneProduct, setHasAtLastOneProduct] = useState(true)
   const [planType, setPlanType] = useState<PlanType | null>(null)
   const [plan, setPlan] = useState<IPlan | null>(null)
+  const [plansOptions, setPlansOptions] = useState<ISelectOption[]>([])
 
   const editPlanFormRef = useRef<FormHandles>(null)
+
+  const relatedPlanId = plan?.relatedPlan?.[0]?.id
 
   const {
     makeRequest: editPlan,
@@ -86,6 +92,26 @@ const EditPlanPageTemplate = ({
       dataFormatted.append('isActive', String(plan?.isActive))
       editPlan(dataFormatted)
     }
+  }
+
+  async function handleSetPlansOptions() {    
+    const notRelatedPlans = await remoteGetNotRelatedPlans.get()
+    const options = getRelatedPlanData(notRelatedPlans)
+    const filteredOptions = options.filter((option) => option.value !== plan?.id)
+
+    if (relatedPlanId) {
+      if (!filteredOptions.some((option) => option.value === relatedPlanId)) {
+        setPlansOptions([
+          ...filteredOptions,
+          {
+            label: String(plan?.relatedPlan?.[0].product?.name),
+            value: String(plan?.relatedPlan?.[0]?.id),
+          },
+        ])
+        return
+      }
+    }
+    setPlansOptions(filteredOptions)
   }
 
   async function handleGetCoursesOptions(searchValue: string): Promise<ISelectOption[]> {
@@ -153,6 +179,12 @@ const EditPlanPageTemplate = ({
     }
   }
 
+  const getRelatedPlanData = (relatedPlan: IPlan[]): ISelectOption[] => {
+    return relatedPlan.map((item) => {
+      return { label: item.product!.name, value: String(item.id) }
+    })
+  }
+
   useEffect(() => {
     if (planId) {
       getPlan({ id: String(planId) })
@@ -194,7 +226,7 @@ const EditPlanPageTemplate = ({
         trainings = [],
         courses = [],
         books = [],
-        rooms = [],
+        rooms = []
       } = plan
 
       setFiledValue('planType', planType || defaultPlan)
@@ -208,6 +240,7 @@ const EditPlanPageTemplate = ({
       setFiledValue('books', extractSelectOptionsFromArr(books))
       setFiledValue('rooms', extractSelectOptionsFromArr(rooms))
       setFiledValue('trainings', extractSelectOptionsFromArr(trainings))
+      setFiledValue('relatedPlan', relatedPlanId || '')
 
       handlePlanTypeSet()
     }
@@ -219,6 +252,10 @@ const EditPlanPageTemplate = ({
     }
   }, [planType])
 
+  useEffect(() => {
+    handleSetPlansOptions()
+  }, [plan])
+
   return (
     <FormEditPlan
       ref={editPlanFormRef}
@@ -228,6 +265,7 @@ const EditPlanPageTemplate = ({
       loadTrainingsOptions={handleGetTrainingsOptions}
       loadBooksOptions={handleGetBooksOptions}
       loadRoomsOptions={handleGetRoomsOptions}
+      plansOptions={plansOptions}
       hasAtLastOneProduct={hasAtLastOneProduct}
       loadingFormSubmit={editPlanLoading}
       planType={planType as PlanType}
