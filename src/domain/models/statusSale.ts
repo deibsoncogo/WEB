@@ -1,8 +1,8 @@
 export enum StatusSaleType {
-    PAID = 'Pago',
-    ONGOING = 'Em andamento',
-    AWAITINGPAYMENT= 'Aguardando pagamento',
-    DENIED = 'Negado',
-    CANCELED = 'Cancelado',
-    REFUNDED = 'Reembolsado',
+    PAID = 'paid',
+    PROCESSING = 'processing',
+    PENDING = 'pending',
+    FAILED = 'failed',
+    CANCELED = 'canceled',
+    CHARGEBACK = 'chargeback',
 }

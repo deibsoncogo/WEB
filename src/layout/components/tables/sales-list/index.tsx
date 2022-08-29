@@ -21,6 +21,7 @@ import { ItemNotFound } from '../../search/ItemNotFound'
 import { Search } from '../../search/Search'
 import { Row } from './row'
 import * as Yup from 'yup'
+import { getSalesStatus } from '../../../../utils/getSalesStatus'
 
 type SalesTableProps = {
   getAllSales: IGetAllSales
@@ -75,7 +76,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
     setRefresher(!refresher)
   }
 
-  const handleDateValidation = (date: string | undefined) => {
+  const handleDateValidation = (date: string | undefined): boolean => {
     if (date) {
       const isValid = checkIsDateValid(date)
       return isValid
@@ -98,8 +99,10 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
       })
 
       await schema.validate(data, { abortEarly: false })
-      data.initialDate = formatDate(ParseDate(String(data.initialDate)), 'YYYY-MM-DD')
-      data.finalDate = formatDate(ParseDate(String(data.finalDate)), 'YYYY-MM-DD')
+      if(data.initialDate)
+        data.initialDate = formatDate(ParseDate(String(data.initialDate)), 'YYYY-MM-DD')      
+      if(data.finalDate)
+        data.finalDate = formatDate(ParseDate(String(data.finalDate)), 'YYYY-MM-DD')      
       setSalesFilter(data)
       
     } catch (err) {
@@ -227,7 +230,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                         product={getProductNamesSingleString(item.products)}
                         transactionId={item.id}
                         total={maskedToMoney(item.cart.total)}
-                        status={item.status}
+                        status={getSalesStatus(item.status)}
                         handleRefresher={handleRefresher}
                       />
                     ))}

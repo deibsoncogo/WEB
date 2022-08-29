@@ -57,7 +57,7 @@ export function FormCreateUser({
 
   async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
-
+  
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
