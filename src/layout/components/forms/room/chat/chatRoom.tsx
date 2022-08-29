@@ -27,6 +27,7 @@ export function ChatInner({ getAllChatRooms }: props) {
   const [loadingDeletion, setLoadingDeletion] = useState(false)
 
   const inputFileRef = useRef<HTMLInputElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
   const { id } = router.query
@@ -147,6 +148,12 @@ export function ChatInner({ getAllChatRooms }: props) {
     }
   }, [])
 
+  useEffect(() => {
+    const messagesContainer = messagesContainerRef.current
+    const containerHeight = messagesContainer?.scrollHeight
+    messagesContainer?.scrollTo({ top: containerHeight })
+  }, [messages])
+
   return (
     <>
       <ConfirmationModal
@@ -159,7 +166,10 @@ export function ChatInner({ getAllChatRooms }: props) {
       />
 
       {loading && <FullLoading />}
-      <div className='card-body position-relative overflow-auto mh-550px pb-100px'>
+      <div
+        className='card-body position-relative overflow-auto mh-550px pb-100px'
+        ref={messagesContainerRef}
+      >
         {messages.map((instantMessage, index) => (
           <ChatMessage
             key={index}
