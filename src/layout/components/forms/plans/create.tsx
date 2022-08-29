@@ -73,7 +73,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
               defaultValue=''
               onChange={handlePlanTypeChange}
             >
-              <option disabled value=''>
+              <option value=''>
                 Selecione
               </option>
               {plansOptions.map(({ label, value }) => (

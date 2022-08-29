@@ -73,7 +73,7 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
               classes='h-75px'
               defaultValue=''
             >
-              <option disabled value=''>
+              <option value=''>
                 Selecione
               </option>
               {plansOptions.map(({ label, value }) => (
