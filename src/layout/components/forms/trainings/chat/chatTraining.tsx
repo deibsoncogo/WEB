@@ -2,6 +2,7 @@ import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import io from 'socket.io-client'
 import { IChatTraining } from '../../../../../domain/models/createChatTraining'
@@ -31,6 +32,7 @@ export function ChatInner({ getAllChatTraining }: props) {
   const [chatTraining, setChatTraining] = useState()
   const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
   const [loadingDeletion, setLoadingDeletion] = useState(false)
+  const [loadingSendMessage, setLoadingSendMessage] = useState(false)
 
   const inputFileRef = useRef<HTMLInputElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
@@ -56,6 +58,7 @@ export function ChatInner({ getAllChatTraining }: props) {
 
   const handleSendMessage = async () => {
     try {
+      setLoadingSendMessage(true)
       const currentDateMessage = new Date()
       const chatMessage = {
         trainingId: id,
@@ -67,6 +70,7 @@ export function ChatInner({ getAllChatTraining }: props) {
 
       socket.emit('createMessage', chatMessage, () => {
         setMessage('')
+        setLoadingSendMessage(false)
       })
     } catch {
       toast.error('Não foi possível enviar a mensagem!')
@@ -84,7 +88,7 @@ export function ChatInner({ getAllChatTraining }: props) {
       toast.error('Não é permitido fazer o upload de vídeos')
       return
     }
-
+    setLoadingSendMessage(true)
     const currentDateMessage = new Date()
 
     const chatTraining = {
@@ -99,6 +103,7 @@ export function ChatInner({ getAllChatTraining }: props) {
 
     socket.emit('createMessage', chatTraining, () => {
       setMessage('')
+      setLoadingSendMessage(false)
     })
   }
 
@@ -200,19 +205,32 @@ export function ChatInner({ getAllChatTraining }: props) {
               name='file'
               hidden
               onChange={handleChangeFile}
+              disabled={loadingSendMessage}
             />
             <KTSVG path='/icons/com008.svg' className='svg-icon svg-icon-2  svg-icon-primary' />
           </button>
         </Tooltip>
-        <textarea
-          rows={1}
-          value={message}
-          placeholder='Escreva uma mensagem'
-          className='form-control form-control-lg form-control-solid border-transparent bg-secondary ms-5 me-5'
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={onEnterPress}
-          style={{ minHeight: '50px' }}
-        />
+
+        <div className='d-flex flex-1 w-100 position-relative align-items-center'>
+          <textarea
+            rows={1}
+            value={message}
+            placeholder='Escreva uma mensagem'
+            className='form-control form-control-lg form-control-solid border-transparent bg-secondary ms-5 me-5'
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={onEnterPress}
+            style={{ minHeight: '50px' }}
+            disabled={loadingSendMessage}
+          />
+          {loadingSendMessage && (
+            <Spinner
+              animation='border'
+              className='spinner-border-custom position-absolute'
+              style={{ right: 35 }}
+              variant='primary'
+            />
+          )}
+        </div>
 
         <Tooltip content={'Enviar'} rounded color='primary'>
           <button
