@@ -191,8 +191,7 @@ export function FormCreateUser({
   async function handleInputZipCode() {
     const zipCode = formRef.current?.getData().zipCode
     const result = await findCEP(zipCode)
-    setDefaultValue(result)
-    console.log(result)
+    setDefaultValue(result)   
   }
 
   return (
