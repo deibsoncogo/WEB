@@ -216,17 +216,25 @@ export function FormEditUser({
       .catch((err) => toast.error(err.messages))
   }, [])
 
+  function clearAddress() {
+    formRef.current?.clearField('street')
+    formRef.current?.clearField('city')
+    formRef.current?.clearField('state')
+    formRef.current?.clearField('neighborhood')
+  }
+
+  function inputAddress(result: ZipCodeProps) {
+    formRef.current?.setFieldValue('street', result?.street || '')
+    formRef.current?.setFieldValue('city', result?.city || '')
+    formRef.current?.setFieldValue('state', result?.state || '')
+    formRef.current?.setFieldValue('neighborhood', result?.neighborhood || '')
+  }
+
   async function handleInputZipCode() {
     const zipCode = formRef.current?.getData().zipCode
     const result = await findCEP(zipCode)
-    setDefaultValue(result)
-
-    if (!result?.city) {
-      formRef.current?.clearField('city')
-      return
-    }
-
-    formRef.current?.setFieldValue('city', result?.city)
+    if (result) inputAddress(result)
+    else clearAddress()
   }
 
   function handleInputCPF() {
@@ -355,6 +363,7 @@ export function FormEditUser({
         </div>
 
         <div className='d-flex mt-10'>
+          
           <Button
             title='Cancelar'
             type='button'
