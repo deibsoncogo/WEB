@@ -14,7 +14,6 @@ export const Document = ({ fileURL, fileOriginalName }: DocumentProps) => {
         </div>
 
         <div className={styles.legend}>
-          {/* <img src='/icons/document-download.svg' alt='download icon' /> */}
           <p>{fileOriginalName}</p>
         </div>
       </div>

@@ -156,6 +156,12 @@ export function ChatInner({ getAllChatRooms }: props) {
     if (!chatRoom) {
       socket.emit('joinChat', { roomId: id }, (room: any) => setChatRoom(room))
     }
+
+    return () => {
+      socket.removeAllListeners('receiveMessage')
+      socket.removeAllListeners('deleteMessage')
+      socket.disconnect()
+    }
   }, [])
 
   useEffect(() => {

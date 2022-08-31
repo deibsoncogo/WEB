@@ -157,6 +157,12 @@ export function ChatInner({ getAllChatTraining }: props) {
     if (!chatTraining) {
       socket.emit('joinChat', { trainingId: id }, (training: any) => setChatTraining(training))
     }
+
+    return () => {
+      socket.removeAllListeners('receiveMessage')
+      socket.removeAllListeners('deleteMessage')
+      socket.disconnect()
+    }
   }, [])
 
   useEffect(() => {
