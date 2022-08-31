@@ -4,21 +4,16 @@ import { useRouter } from 'next/router'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
-import io from 'socket.io-client'
+import { Socket } from 'socket.io-client'
 import { IChatRoom } from '../../../../../domain/models/createChatRoom'
 import { MessageType } from '../../../../../domain/models/messageType'
 import { IGetAllChatRooms } from '../../../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
-import { extractAPIURL } from '../../../../../utils/extractAPIURL'
+import { getSocketConnection } from '../../../../../utils/getSocketConnection'
 import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import ConfirmationModal from '../../../modal/ConfirmationModal'
-const socket = io(`${extractAPIURL(process.env.API_URL)}/room`, {
-  transports: ['websocket'],
-  auth: (cb) => {
-    cb({ token: localStorage.getItem('access_token') })
-  },
-})
+let socket: Socket
 
 type props = {
   getAllChatRooms: IGetAllChatRooms
@@ -34,7 +29,7 @@ export function ChatInner({ getAllChatRooms }: props) {
   const [loadingSendMessage, setLoadingSendMessage] = useState(false)
 
   const inputFileRef = useRef<HTMLInputElement>(null)
-  const messagesContainerRef = useRef<HTMLDivElement>(null)
+  const lastMessageRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
   const { id } = router.query
@@ -131,6 +126,46 @@ export function ChatInner({ getAllChatRooms }: props) {
     setSelectedMessageToDelete(messageId)
   }
 
+  const scrollToBottom = () => {
+    lastMessageRef.current?.scrollIntoView({
+      behavior: 'smooth',
+    })
+  }
+
+  const socketInitializer = () => {
+    socket = getSocketConnection('room')
+
+    socket.on('receiveMessage', (message) => {
+      setMessages((oldState) => [...oldState, message])
+    })
+
+    socket.on('deletedMessage', (deletedMessage) => {
+      setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
+    })
+
+    socket.on('connect_error', () => {
+      toast.error('Falha ao se conectar com o servidor')
+    })
+
+    if (!chatRoom) {
+      socket.emit('joinChat', { roomId: id }, (room: any) => setChatRoom(room))
+    }
+  }
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+    if (messages.length > 0) {
+      timeout = setTimeout(() => {
+        scrollToBottom()
+      }, 100)
+    }
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+    }
+  }, [messages])
+
   useEffect(() => {
     const fetchData = async () => {
       if (typeof id == 'string') {
@@ -145,33 +180,18 @@ export function ChatInner({ getAllChatRooms }: props) {
   }, [])
 
   useEffect(() => {
-    socket.on('receiveMessage', (message) => {
-      setMessages((oldState) => [...oldState, message])
-    })
-
-    socket.on('deletedMessage', (deletedMessage) => {
-      setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
-    })
-
-    if (!chatRoom) {
-      socket.emit('joinChat', { roomId: id }, (room: any) => setChatRoom(room))
-    }
-
+    socketInitializer()
     return () => {
-      socket.removeAllListeners('receiveMessage')
-      socket.removeAllListeners('deleteMessage')
-      socket.disconnect()
+      if (socket) {
+        socket.removeAllListeners('receiveMessage')
+        socket.removeAllListeners('deleteMessage')
+        socket.removeAllListeners('connect_error')
+      }
     }
   }, [])
 
-  useEffect(() => {
-    const messagesContainer = messagesContainerRef.current
-    const containerHeight = messagesContainer?.scrollHeight
-    messagesContainer?.scrollTo({ top: containerHeight })
-  }, [messages])
-
   return (
-    <>
+    <div>
       <ConfirmationModal
         isOpen={!!selectedMessageToDelete}
         loading={loadingDeletion}
@@ -182,10 +202,7 @@ export function ChatInner({ getAllChatRooms }: props) {
       />
 
       {loading && <FullLoading />}
-      <div
-        className='card-body position-relative overflow-auto mh-550px pb-100px'
-        ref={messagesContainerRef}
-      >
+      <div className='card-body position-relative overflow-auto mh-550px'>
         {messages.map((instantMessage, index) => (
           <ChatMessage
             key={index}
@@ -195,6 +212,7 @@ export function ChatInner({ getAllChatRooms }: props) {
             setSelectedMessageToDelete={handleSelecMessageToDelete}
           />
         ))}
+        <div ref={lastMessageRef} itemType='hidden' />
       </div>
 
       <div className='card-footer pt-4 border-top border-gray-600 d-flex align-items-center'>
@@ -256,6 +274,6 @@ export function ChatInner({ getAllChatRooms }: props) {
           </Link>
         </Tooltip>
       </div>
-    </>
+    </div>
   )
 }

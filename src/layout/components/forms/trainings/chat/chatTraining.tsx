@@ -4,22 +4,17 @@ import { useRouter } from 'next/router'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
-import io from 'socket.io-client'
+import { Socket } from 'socket.io-client'
 import { IChatTraining } from '../../../../../domain/models/createChatTraining'
 import { MessageType } from '../../../../../domain/models/messageType'
 import { IGetAllChatTraining } from '../../../../../domain/usecases/interfaces/chatTraining/getAllChatRooms'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
-import { extractAPIURL } from '../../../../../utils/extractAPIURL'
+import { getSocketConnection } from '../../../../../utils/getSocketConnection'
 import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import ConfirmationModal from '../../../modal/ConfirmationModal'
 
-const socket = io(`${extractAPIURL(process.env.API_URL)}/training`, {
-  transports: ['websocket'],
-  auth: (cb) => {
-    cb({ token: localStorage.getItem('access_token') })
-  },
-})
+let socket: Socket
 
 type props = {
   getAllChatTraining: IGetAllChatTraining
@@ -35,7 +30,7 @@ export function ChatInner({ getAllChatTraining }: props) {
   const [loadingSendMessage, setLoadingSendMessage] = useState(false)
 
   const inputFileRef = useRef<HTMLInputElement>(null)
-  const messagesContainerRef = useRef<HTMLDivElement>(null)
+  const lastMessageRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
   const { id } = router.query
@@ -132,6 +127,45 @@ export function ChatInner({ getAllChatTraining }: props) {
     setSelectedMessageToDelete(messageId)
   }
 
+  const scrollToBottom = () => {
+    lastMessageRef.current?.scrollIntoView({
+      behavior: 'smooth',
+    })
+  }
+
+  const socketInitializer = () => {
+    socket = getSocketConnection('training')
+    socket.on('receiveMessage', (message) => {
+      setMessages((oldState) => [...oldState, message])
+    })
+
+    socket.on('deletedMessage', (deletedMessage) => {
+      setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
+    })
+
+    if (!chatTraining) {
+      socket.emit('joinChat', { trainingId: id }, (training: any) => setChatTraining(training))
+    }
+
+    socket.on('connect_error', () => {
+      toast.error('Falha ao se conectar com o servidor')
+    })
+  }
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+    if (messages.length > 0) {
+      timeout = setTimeout(() => {
+        scrollToBottom()
+      }, 100)
+    }
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+    }
+  }, [messages])
+
   useEffect(() => {
     const fetchData = async () => {
       if (typeof id == 'string') {
@@ -146,30 +180,15 @@ export function ChatInner({ getAllChatTraining }: props) {
   }, [])
 
   useEffect(() => {
-    socket.on('receiveMessage', (message) => {
-      setMessages((oldState) => [...oldState, message])
-    })
-
-    socket.on('deletedMessage', (deletedMessage) => {
-      setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
-    })
-
-    if (!chatTraining) {
-      socket.emit('joinChat', { trainingId: id }, (training: any) => setChatTraining(training))
-    }
-
+    socketInitializer()
     return () => {
-      socket.removeAllListeners('receiveMessage')
-      socket.removeAllListeners('deleteMessage')
-      socket.disconnect()
+      if (socket) {
+        socket.removeAllListeners('receiveMessage')
+        socket.removeAllListeners('deleteMessage')
+        socket.removeAllListeners('connect_error')
+      }
     }
   }, [])
-
-  useEffect(() => {
-    const messagesContainer = messagesContainerRef.current
-    const containerHeight = messagesContainer?.scrollHeight
-    messagesContainer?.scrollTo({ top: containerHeight })
-  }, [messages])
 
   return (
     <>
@@ -182,10 +201,7 @@ export function ChatInner({ getAllChatTraining }: props) {
         title='Deletar'
       />
       {loading && <FullLoading />}
-      <div
-        className='card-body position-relative overflow-auto mh-550px pb-100px'
-        ref={messagesContainerRef}
-      >
+      <div className='card-body position-relative overflow-auto mh-550px pb-100px'>
         {messages.map((instantMessage, index) => (
           <ChatMessage
             key={instantMessage.id}
@@ -195,6 +211,7 @@ export function ChatInner({ getAllChatTraining }: props) {
             setSelectedMessageToDelete={handleSelecMessageToDelete}
           />
         ))}
+        <div ref={lastMessageRef} itemType='hidden' />
       </div>
 
       <div className='card-footer pt-4 border-top border-gray-600 d-flex align-items-center'>
