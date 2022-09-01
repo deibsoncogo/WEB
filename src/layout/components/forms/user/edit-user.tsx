@@ -216,25 +216,17 @@ export function FormEditUser({
       .catch((err) => toast.error(err.messages))
   }, [])
 
-  function clearAddress() {
-    formRef.current?.clearField('street')
-    formRef.current?.clearField('city')
-    formRef.current?.clearField('state')
-    formRef.current?.clearField('neighborhood')
-  }
-
   function inputAddress(result: ZipCodeProps) {
-    formRef.current?.setFieldValue('street', result?.street || '')
-    formRef.current?.setFieldValue('city', result?.city || '')
-    formRef.current?.setFieldValue('state', result?.state || '')
-    formRef.current?.setFieldValue('neighborhood', result?.neighborhood || '')
+    formRef.current?.setFieldValue('street', result?.street || formRef.current?.getFieldValue('street'))
+    formRef.current?.setFieldValue('city', result?.city || formRef.current?.getFieldValue('city'))
+    formRef.current?.setFieldValue('state', result?.state || formRef.current?.getFieldValue('state'))
+    formRef.current?.setFieldValue('neighborhood', result?.neighborhood || formRef.current?.getFieldValue('neighborhood'))
   }
 
   async function handleInputZipCode() {
     const zipCode = formRef.current?.getData().zipCode
     const result = await findCEP(zipCode)
-    if (result) inputAddress(result)
-    else clearAddress()
+    if (result) inputAddress(result)  
   }
 
   function handleInputCPF() {
