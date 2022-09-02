@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { useEffect, useState } from 'react'
 import { IChatMessage } from '../../../domain/models/chatMessage'
 import { MessageType } from '../../../domain/models/messageType'
 import { DateLocalFullInformationMask } from '../../formatters/dateLocalFormatter'
@@ -19,6 +20,8 @@ export function ChatMessage({
   isToShowAvatarImage,
   setSelectedMessageToDelete,
 }: props) {
+  const [dateMessage, setDateMessage] = useState('')
+
   const IsMessageWriteToday = (date: string) => {
     const today = new Date()
     const day = String(today.getDate()).padStart(2, '0')
@@ -29,20 +32,21 @@ export function ChatMessage({
     setSelectedMessageToDelete(String(message.id))
   }
 
-  let dateMessage = ''
+  useEffect(() => {
+    if (IsMessageWriteToday(message.date) && isPreviousDateDifferentFromCurrent) {
+      setDateMessage('Hoje')
+    }
 
-  if (IsMessageWriteToday(message.date) && isPreviousDateDifferentFromCurrent) {
-    dateMessage = 'Hoje'
-  }
-
-  if (isPreviousDateDifferentFromCurrent && !IsMessageWriteToday(message.date)) {
-    dateMessage = (
-      <span className='text-dark fs-7 mb-1 text-break'>
-        {DateLocalFullInformationMask(message.date)}
-      </span>
-    ) as any
-  }
-
+    if (isPreviousDateDifferentFromCurrent && !IsMessageWriteToday(message.date)) {
+      setDateMessage(
+        (
+          <span className='text-dark fs-7 mb-1 text-break'>
+            {DateLocalFullInformationMask(message.date)}
+          </span>
+        ) as any
+      )
+    }
+  }, [])
   return (
     <div className='d-flex justify-content-center flex-column'>
       <div
