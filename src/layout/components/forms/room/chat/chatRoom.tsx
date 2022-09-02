@@ -1,30 +1,40 @@
 import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
+import { Socket } from 'socket.io-client'
 import { IChatRoom } from '../../../../../domain/models/createChatRoom'
-import { ICreateChatRoom } from '../../../../../domain/usecases/interfaces/chatRoom/createRoom'
+import { MessageType } from '../../../../../domain/models/messageType'
 import { IGetAllChatRooms } from '../../../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
-import { KTSVG, formatTime, formatDate } from '../../../../../helpers'
+import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
+import { getSocketConnection } from '../../../../../utils/getSocketConnection'
+import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
-import { Message } from './message'
+import ConfirmationModal from '../../../modal/ConfirmationModal'
+let socket: Socket
 
 type props = {
   getAllChatRooms: IGetAllChatRooms
-  createChatRoom: ICreateChatRoom
 }
 
-export function ChatInner({ getAllChatRooms, createChatRoom }: props) {
+export function ChatInner({ getAllChatRooms }: props) {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<IChatRoom[]>([])
   const [loading, setLoading] = useState(true)
+  const [chatRoom, setChatRoom] = useState()
+  const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
+  const [loadingDeletion, setLoadingDeletion] = useState(false)
+  const [loadingSendMessage, setLoadingSendMessage] = useState(false)
+
+  const inputFileRef = useRef<HTMLInputElement>(null)
+  const lastMessageRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
   const { id } = router.query
 
   const IsPreviousDateDifferentFromCurrent = (index: number) => {
-    
     if (messages?.length > 1 && index >= 1) {
       return messages[index - 1].date !== messages[index]?.date
     }
@@ -42,20 +52,20 @@ export function ChatInner({ getAllChatRooms, createChatRoom }: props) {
 
   const handleSendMessage = async () => {
     try {
+      setLoadingSendMessage(true)
       const currentDateMessage = new Date()
-
-      if (typeof id == 'string') {
-        const chatRoom = {
-          roomId: id,
-          message,
-          date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
-          hour: formatTime(currentDateMessage, 'HH:mm:ss'),
-        }
-        await createChatRoom.create(chatRoom)
-        messages.push(chatRoom)
-        setMessages(messages)
-        setMessage('')
+      const chatRoom = {
+        roomId: id,
+        text: message,
+        date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
+        hour: formatTime(currentDateMessage, 'HH:mm:ss'),
+        messageType: MessageType.Text,
       }
+
+      socket.emit('createMessage', chatRoom, () => {
+        setMessage('')
+        setLoadingSendMessage(false)
+      })
     } catch {
       toast.error('Não foi possível enviar a mensagem!')
     }
@@ -67,6 +77,94 @@ export function ChatInner({ getAllChatRooms, createChatRoom }: props) {
       handleSendMessage()
     }
   }
+
+  const handleChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target?.files?.[0]
+    if (!file) {
+      return
+    }
+    const [fileType] = file?.type.split('/')
+
+    if (fileType === 'video') {
+      toast.error('Não é permitido fazer o upload de vídeos')
+      return
+    }
+    setLoadingSendMessage(true)
+    const currentDateMessage = new Date()
+
+    const chatRoom = {
+      roomId: id,
+      date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
+      hour: formatTime(currentDateMessage, 'HH:mm:ss'),
+      file,
+      fileName: file.name,
+      messageType: MessageType.File,
+      fileType,
+    }
+
+    socket.emit('createMessage', chatRoom, () => {
+      setMessage('')
+      setLoadingSendMessage(false)
+    })
+  }
+
+  const handleDeleteMessage = () => {
+    if (selectedMessageToDelete) {
+      setLoadingDeletion(true)
+      socket.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
+        setLoadingDeletion(false)
+        setSelectedMessageToDelete(null)
+      })
+    }
+  }
+
+  const handleCloseDeleteConfirmationModal = () => {
+    setSelectedMessageToDelete(null)
+  }
+
+  const handleSelecMessageToDelete = (messageId: string) => {
+    setSelectedMessageToDelete(messageId)
+  }
+
+  const scrollToBottom = () => {
+    lastMessageRef.current?.scrollIntoView({
+      behavior: 'smooth',
+    })
+  }
+
+  const socketInitializer = () => {
+    socket = getSocketConnection('room')
+
+    socket.on('receiveMessage', (message) => {
+      setMessages((oldState) => [...oldState, message])
+    })
+
+    socket.on('deletedMessage', (deletedMessage) => {
+      setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
+    })
+
+    socket.on('connect_error', () => {
+      toast.error('Falha ao se conectar com o servidor')
+    })
+
+    if (!chatRoom) {
+      socket.emit('joinChat', { roomId: id }, (room: any) => setChatRoom(room))
+    }
+  }
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+    if (messages.length > 0) {
+      timeout = setTimeout(() => {
+        scrollToBottom()
+      }, 100)
+    }
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+    }
+  }, [messages])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,36 +179,82 @@ export function ChatInner({ getAllChatRooms, createChatRoom }: props) {
       })
   }, [])
 
+  useEffect(() => {
+    socketInitializer()
+    return () => {
+      if (socket) {
+        socket.removeAllListeners('receiveMessage')
+        socket.removeAllListeners('deleteMessage')
+        socket.removeAllListeners('connect_error')
+      }
+    }
+  }, [])
+
   return (
-    <>
+    <div>
+      <ConfirmationModal
+        isOpen={!!selectedMessageToDelete}
+        loading={loadingDeletion}
+        onRequestClose={handleCloseDeleteConfirmationModal}
+        onConfimation={handleDeleteMessage}
+        content='Você tem certeza que deseja excluir esta mensagem?'
+        title='Deletar'
+      />
+
       {loading && <FullLoading />}
-      <div className='card-body position-relative overflow-auto mh-550px pb-100px'>
+      <div className='card-body position-relative overflow-auto mh-550px'>
         {messages.map((instantMessage, index) => (
-          <Message
+          <ChatMessage
             key={index}
             message={instantMessage}
             isPreviousDateDifferentFromCurrent={IsPreviousDateDifferentFromCurrent(index)}
             isToShowAvatarImage={IsToShowAvatarImage(index)}
+            setSelectedMessageToDelete={handleSelecMessageToDelete}
           />
         ))}
+        <div ref={lastMessageRef} itemType='hidden' />
       </div>
 
       <div className='card-footer pt-4 border-top border-gray-600 d-flex align-items-center'>
         <Tooltip content={'Enviar arquivo'} rounded color='primary'>
-          <button className='btn btn-sm btn-icon btn-active-light-primary' type='button'>
+          <button
+            className='btn btn-sm btn-icon btn-active-light-primary'
+            type='button'
+            onClick={() => inputFileRef.current?.click()}
+          >
+            <input
+              ref={inputFileRef}
+              type='file'
+              id='file'
+              name='file'
+              hidden
+              onChange={handleChangeFile}
+              disabled={loadingSendMessage}
+            />
             <KTSVG path='/icons/com008.svg' className='svg-icon svg-icon-2  svg-icon-primary' />
           </button>
         </Tooltip>
-        <textarea
-          rows={1}
-          value={message}
-          placeholder='Escreva uma mensagem'
-          className='form-control form-control-lg form-control-solid border-transparent bg-secondary ms-5 me-5'
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={onEnterPress}
-          style={{ minHeight: '50px' }}
-        />
 
+        <div className='d-flex flex-1 w-100 position-relative align-items-center'>
+          <textarea
+            rows={1}
+            value={message}
+            placeholder='Escreva uma mensagem'
+            className='form-control form-control-lg form-control-solid border-transparent bg-secondary ms-5 me-5'
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={onEnterPress}
+            style={{ minHeight: '50px' }}
+            disabled={loadingSendMessage}
+          />
+          {loadingSendMessage && (
+            <Spinner
+              animation='border'
+              className='spinner-border-custom position-absolute'
+              style={{ right: 35 }}
+              variant='primary'
+            />
+          )}
+        </div>
         <Tooltip content={'Enviar'} rounded color='primary'>
           <button
             type='button'
@@ -130,6 +274,6 @@ export function ChatInner({ getAllChatRooms, createChatRoom }: props) {
           </Link>
         </Tooltip>
       </div>
-    </>
+    </div>
   )
 }

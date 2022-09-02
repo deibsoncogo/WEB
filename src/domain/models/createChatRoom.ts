@@ -1,7 +1,5 @@
-export interface IChatRoom {
-  id?: string;
-  roomId: string;
-  message: string
-  hour: string
-  date: string
+import { IChatMessage } from './chatMessage'
+
+export interface IChatRoom extends IChatMessage {
+  roomId: string
 }

@@ -53,7 +53,7 @@ export function Message({ message, index, userInfos }: Message) {
                 </a>
               </div>
               <div className='symbol  symbol-35px symbol-circle '>
-                <img alt='Pic' src={`${userInfo.avatar}`} />
+                <img alt='Pic' src={`${userInfo?.avatar}`} />
               </div>
             </>
           )}
