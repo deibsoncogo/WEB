@@ -23,7 +23,6 @@ export function ChatInner({ getAllChatRooms }: props) {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<IChatRoom[]>([])
   const [loading, setLoading] = useState(true)
-  const [chatRoom, setChatRoom] = useState()
   const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
   const [loadingDeletion, setLoadingDeletion] = useState(false)
   const [loadingSendMessage, setLoadingSendMessage] = useState(false)
@@ -132,8 +131,9 @@ export function ChatInner({ getAllChatRooms }: props) {
     })
   }
 
-  const socketInitializer = () => {
-    socket = getSocketConnection('room')
+  const socketInitializer = (roomId: string) => {
+    socket = getSocketConnection('room', roomId)
+    socket.connect()
 
     socket.on('receiveMessage', (message) => {
       setMessages((oldState) => [...oldState, message])
@@ -146,10 +146,6 @@ export function ChatInner({ getAllChatRooms }: props) {
     socket.on('connect_error', () => {
       toast.error('Falha ao se conectar com o servidor')
     })
-
-    if (!chatRoom) {
-      socket.emit('joinChat', { roomId: id }, (room: any) => setChatRoom(room))
-    }
   }
 
   useEffect(() => {
@@ -180,15 +176,17 @@ export function ChatInner({ getAllChatRooms }: props) {
   }, [])
 
   useEffect(() => {
-    socketInitializer()
-    return () => {
-      if (socket) {
-        socket.removeAllListeners('receiveMessage')
-        socket.removeAllListeners('deleteMessage')
-        socket.removeAllListeners('connect_error')
-      }
+    if (id && !socket) {
+      socketInitializer(String(id))
     }
-  }, [])
+    return () => {
+      // if (socket) {
+      //   socket.removeAllListeners('receiveMessage')
+      //   socket.removeAllListeners('deleteMessage')
+      //   socket.removeAllListeners('connect_error')
+      // }
+    }
+  }, [id])
 
   return (
     <div>

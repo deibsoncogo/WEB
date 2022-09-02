@@ -24,7 +24,6 @@ export function ChatInner({ getAllChatTraining }: props) {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<IChatTraining[]>([])
   const [loading, setLoading] = useState(true)
-  const [chatTraining, setChatTraining] = useState()
   const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
   const [loadingDeletion, setLoadingDeletion] = useState(false)
   const [loadingSendMessage, setLoadingSendMessage] = useState(false)
@@ -133,8 +132,10 @@ export function ChatInner({ getAllChatTraining }: props) {
     })
   }
 
-  const socketInitializer = () => {
-    socket = getSocketConnection('training')
+  const socketInitializer = (trainingRoomId: string) => {
+    socket = getSocketConnection('training', trainingRoomId)
+    socket.connect()
+
     socket.on('receiveMessage', (message) => {
       setMessages((oldState) => [...oldState, message])
     })
@@ -142,10 +143,6 @@ export function ChatInner({ getAllChatTraining }: props) {
     socket.on('deletedMessage', (deletedMessage) => {
       setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
     })
-
-    if (!chatTraining) {
-      socket.emit('joinChat', { trainingId: id }, (training: any) => setChatTraining(training))
-    }
 
     socket.on('connect_error', () => {
       toast.error('Falha ao se conectar com o servidor')
@@ -180,7 +177,9 @@ export function ChatInner({ getAllChatTraining }: props) {
   }, [])
 
   useEffect(() => {
-    socketInitializer()
+    if (id && !socket) {
+      socketInitializer(String(id))
+    }
     return () => {
       if (socket) {
         socket.removeAllListeners('receiveMessage')
@@ -188,7 +187,7 @@ export function ChatInner({ getAllChatTraining }: props) {
         socket.removeAllListeners('connect_error')
       }
     }
-  }, [])
+  }, [id])
 
   return (
     <>
