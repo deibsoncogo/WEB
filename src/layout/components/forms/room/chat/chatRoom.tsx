@@ -5,9 +5,11 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
+import { useRequest } from '../../../../../application/hooks/useRequest'
 import { IChatRoom } from '../../../../../domain/models/createChatRoom'
 import { MessageType } from '../../../../../domain/models/messageType'
 import { IGetAllChatRooms } from '../../../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
+import { IJoinChatRoom } from '../../../../../domain/usecases/interfaces/chatRoom/joinChatRoom'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { getSocketConnection } from '../../../../../utils/getSocketConnection'
 import { ChatMessage } from '../../../chatMessage'
@@ -17,9 +19,10 @@ let socket: Socket
 
 type props = {
   getAllChatRooms: IGetAllChatRooms
+  remoteJoinChat: IJoinChatRoom
 }
 
-export function ChatInner({ getAllChatRooms }: props) {
+export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<IChatRoom[]>([])
   const [loading, setLoading] = useState(true)
@@ -32,6 +35,10 @@ export function ChatInner({ getAllChatRooms }: props) {
 
   const router = useRouter()
   const { id } = router.query
+
+  const { makeRequest: joinChatRoom, data: accessTokenChat } = useRequest<IJoinChatRoom>(
+    remoteJoinChat.getAll
+  )
 
   const IsPreviousDateDifferentFromCurrent = (index: number) => {
     if (messages?.length > 1 && index >= 1) {
@@ -131,8 +138,8 @@ export function ChatInner({ getAllChatRooms }: props) {
     })
   }
 
-  const socketInitializer = (roomId: string) => {
-    socket = getSocketConnection('room', roomId)
+  const socketInitializer = (tokenChat: string) => {
+    socket = getSocketConnection('room', tokenChat)
     socket.connect()
 
     socket.on('receiveMessage', (message) => {
@@ -143,7 +150,8 @@ export function ChatInner({ getAllChatRooms }: props) {
       setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
     })
 
-    socket.on('connect_error', () => {
+    socket.on('connect_error', (err) => {
+      console.log(err)
       toast.error('Falha ao se conectar com o servidor')
     })
   }
@@ -173,20 +181,22 @@ export function ChatInner({ getAllChatRooms }: props) {
       .finally(() => {
         setLoading(false)
       })
+
+    joinChatRoom({ roomId: id })
   }, [])
 
   useEffect(() => {
-    if (id && !socket) {
-      socketInitializer(String(id))
+    if (!socket && accessTokenChat) {
+      socketInitializer(String(accessTokenChat))
     }
     return () => {
-      // if (socket) {
-      //   socket.removeAllListeners('receiveMessage')
-      //   socket.removeAllListeners('deleteMessage')
-      //   socket.removeAllListeners('connect_error')
-      // }
+      if (socket) {
+        socket.removeAllListeners('receiveMessage')
+        socket.removeAllListeners('deleteMessage')
+        socket.removeAllListeners('connect_error')
+      }
     }
-  }, [id])
+  }, [accessTokenChat])
 
   return (
     <div>
