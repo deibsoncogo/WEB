@@ -8,6 +8,7 @@ export enum ProductType {
   Course = 'course',
   Plan = 'plan',
   Training = 'training',
+  Room = 'room',
 }
 
 export class Product {
