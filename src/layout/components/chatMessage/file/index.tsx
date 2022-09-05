@@ -4,6 +4,7 @@ import { KTSVG } from '../../../../helpers'
 import { HourMask } from '../../../formatters/hourFormatter'
 import { ImageViewer } from '../../modals/imageViewer'
 import { Document } from './document'
+import { CustomImage } from './image'
 
 type FileProps = {
   fileURL: string
@@ -32,16 +33,7 @@ export const File = ({
 
   useEffect(() => {
     if (fileType === 'image') {
-      setImage(
-        <img
-          width={250}
-          height={250}
-          src={fileURL}
-          alt='Chat message'
-          className='rounded w-100 cursor-pointer'
-          onClick={handleShowFullImage}
-        />
-      )
+      setImage(<CustomImage imageURL={fileURL} onClick={handleShowFullImage} />)
     }
   }, [])
 
