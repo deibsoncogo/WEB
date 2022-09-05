@@ -243,7 +243,7 @@ const EditPlanPageTemplate = ({
 
       handlePlanTypeSet()
     }
-  }, [plan, planType])
+  }, [plan, planType, plansOptions])
 
   useEffect(() => {
     if (plan) {
