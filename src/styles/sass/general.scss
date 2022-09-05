@@ -25,6 +25,18 @@ body {
   border-radius: 0.25rem;
 }
 
+.react-modal-image {
+  position: relative;
+  border-radius: 0.25rem;
+}
+
+.image-viewer img {
+  width: auto !important;
+  border: none !important;
+  height: auto !important;
+  cursor: auto;
+}
+
 .react-modal-close {
   position: absolute;
   top: 1.5rem;
