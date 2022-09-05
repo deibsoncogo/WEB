@@ -5,26 +5,28 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
+import { useRequest } from '../../../../../application/hooks/useRequest'
 import { IChatTraining } from '../../../../../domain/models/createChatTraining'
 import { MessageType } from '../../../../../domain/models/messageType'
 import { IGetAllChatTraining } from '../../../../../domain/usecases/interfaces/chatTraining/getAllChatRooms'
+import { IJoinTrainingChatRoom } from '../../../../../domain/usecases/interfaces/chatTraining/joinTrainingChatRoom'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { getSocketConnection } from '../../../../../utils/getSocketConnection'
 import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import ConfirmationModal from '../../../modal/ConfirmationModal'
 
-let socket: Socket
+let socket: Socket | null
 
 type props = {
   getAllChatTraining: IGetAllChatTraining
+  remoteJoinChat: IJoinTrainingChatRoom
 }
 
-export function ChatInner({ getAllChatTraining }: props) {
+export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<IChatTraining[]>([])
   const [loading, setLoading] = useState(true)
-  const [chatTraining, setChatTraining] = useState()
   const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
   const [loadingDeletion, setLoadingDeletion] = useState(false)
   const [loadingSendMessage, setLoadingSendMessage] = useState(false)
@@ -34,6 +36,10 @@ export function ChatInner({ getAllChatTraining }: props) {
 
   const router = useRouter()
   const { id } = router.query
+
+  const { makeRequest: joinChatRoom, data: accessTokenChat } = useRequest<IJoinTrainingChatRoom>(
+    remoteJoinChat.join
+  )
 
   const IsPreviousDateDifferentFromCurrent = (index: number) => {
     if (messages?.length > 1 && index >= 1) {
@@ -63,7 +69,7 @@ export function ChatInner({ getAllChatTraining }: props) {
         messageType: MessageType.Text,
       }
 
-      socket.emit('createMessage', chatMessage, () => {
+      socket?.emit('createMessage', chatMessage, () => {
         setMessage('')
         setLoadingSendMessage(false)
       })
@@ -96,7 +102,7 @@ export function ChatInner({ getAllChatTraining }: props) {
       fileType,
     }
 
-    socket.emit('createMessage', chatTraining, () => {
+    socket?.emit('createMessage', chatTraining, () => {
       setMessage('')
       setLoadingSendMessage(false)
     })
@@ -112,7 +118,7 @@ export function ChatInner({ getAllChatTraining }: props) {
   const handleDeleteMessage = () => {
     if (selectedMessageToDelete) {
       setLoadingDeletion(true)
-      socket.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
+      socket?.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
         setLoadingDeletion(false)
         setSelectedMessageToDelete(null)
       })
@@ -133,8 +139,10 @@ export function ChatInner({ getAllChatTraining }: props) {
     })
   }
 
-  const socketInitializer = () => {
-    socket = getSocketConnection('training')
+  const socketInitializer = (token: string) => {
+    socket = getSocketConnection('training', token)
+    socket.connect()
+
     socket.on('receiveMessage', (message) => {
       setMessages((oldState) => [...oldState, message])
     })
@@ -143,14 +151,25 @@ export function ChatInner({ getAllChatTraining }: props) {
       setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
     })
 
-    if (!chatTraining) {
-      socket.emit('joinChat', { trainingId: id }, (training: any) => setChatTraining(training))
-    }
-
     socket.on('connect_error', () => {
       toast.error('Falha ao se conectar com o servidor')
     })
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (typeof id == 'string') {
+        setMessages(await getAllChatTraining.getAll({ trainingId: id }))
+      }
+    }
+    fetchData()
+      .catch(() => toast.error('Não foi possível carregar as mensagens'))
+      .finally(() => {
+        setLoading(false)
+      })
+
+    joinChatRoom({ trainingId: id })
+  }, [])
 
   useEffect(() => {
     let timeout: NodeJS.Timeout
@@ -167,28 +186,18 @@ export function ChatInner({ getAllChatTraining }: props) {
   }, [messages])
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (typeof id == 'string') {
-        setMessages(await getAllChatTraining.getAll({ trainingId: id }))
-      }
+    if (!socket && accessTokenChat) {
+      socketInitializer(String(accessTokenChat))
     }
-    fetchData()
-      .catch(() => toast.error('Não foi possível carregar as mensagens'))
-      .finally(() => {
-        setLoading(false)
-      })
-  }, [])
-
-  useEffect(() => {
-    socketInitializer()
     return () => {
       if (socket) {
         socket.removeAllListeners('receiveMessage')
         socket.removeAllListeners('deleteMessage')
         socket.removeAllListeners('connect_error')
+        socket = null
       }
     }
-  }, [])
+  }, [accessTokenChat])
 
   return (
     <>

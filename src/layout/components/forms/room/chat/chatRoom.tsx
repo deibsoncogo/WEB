@@ -5,25 +5,27 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
+import { useRequest } from '../../../../../application/hooks/useRequest'
 import { IChatRoom } from '../../../../../domain/models/createChatRoom'
 import { MessageType } from '../../../../../domain/models/messageType'
 import { IGetAllChatRooms } from '../../../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
+import { IJoinChatRoom } from '../../../../../domain/usecases/interfaces/chatRoom/joinChatRoom'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { getSocketConnection } from '../../../../../utils/getSocketConnection'
 import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import ConfirmationModal from '../../../modal/ConfirmationModal'
-let socket: Socket
+let socket: Socket | null
 
 type props = {
   getAllChatRooms: IGetAllChatRooms
+  remoteJoinChat: IJoinChatRoom
 }
 
-export function ChatInner({ getAllChatRooms }: props) {
+export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<IChatRoom[]>([])
   const [loading, setLoading] = useState(true)
-  const [chatRoom, setChatRoom] = useState()
   const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
   const [loadingDeletion, setLoadingDeletion] = useState(false)
   const [loadingSendMessage, setLoadingSendMessage] = useState(false)
@@ -33,6 +35,10 @@ export function ChatInner({ getAllChatRooms }: props) {
 
   const router = useRouter()
   const { id } = router.query
+
+  const { makeRequest: joinChatRoom, data: accessTokenChat } = useRequest<IJoinChatRoom>(
+    remoteJoinChat.join
+  )
 
   const IsPreviousDateDifferentFromCurrent = (index: number) => {
     if (messages?.length > 1 && index >= 1) {
@@ -62,7 +68,7 @@ export function ChatInner({ getAllChatRooms }: props) {
         messageType: MessageType.Text,
       }
 
-      socket.emit('createMessage', chatRoom, () => {
+      socket?.emit('createMessage', chatRoom, () => {
         setMessage('')
         setLoadingSendMessage(false)
       })
@@ -102,7 +108,7 @@ export function ChatInner({ getAllChatRooms }: props) {
       fileType,
     }
 
-    socket.emit('createMessage', chatRoom, () => {
+    socket?.emit('createMessage', chatRoom, () => {
       setMessage('')
       setLoadingSendMessage(false)
     })
@@ -111,7 +117,7 @@ export function ChatInner({ getAllChatRooms }: props) {
   const handleDeleteMessage = () => {
     if (selectedMessageToDelete) {
       setLoadingDeletion(true)
-      socket.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
+      socket?.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
         setLoadingDeletion(false)
         setSelectedMessageToDelete(null)
       })
@@ -132,8 +138,9 @@ export function ChatInner({ getAllChatRooms }: props) {
     })
   }
 
-  const socketInitializer = () => {
-    socket = getSocketConnection('room')
+  const socketInitializer = (tokenChat: string) => {
+    socket = getSocketConnection('room', tokenChat)
+    socket.connect()
 
     socket.on('receiveMessage', (message) => {
       setMessages((oldState) => [...oldState, message])
@@ -143,13 +150,9 @@ export function ChatInner({ getAllChatRooms }: props) {
       setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
     })
 
-    socket.on('connect_error', () => {
+    socket.on('connect_error', (err) => {
       toast.error('Falha ao se conectar com o servidor')
     })
-
-    if (!chatRoom) {
-      socket.emit('joinChat', { roomId: id }, (room: any) => setChatRoom(room))
-    }
   }
 
   useEffect(() => {
@@ -177,18 +180,23 @@ export function ChatInner({ getAllChatRooms }: props) {
       .finally(() => {
         setLoading(false)
       })
+
+    joinChatRoom({ roomId: id })
   }, [])
 
   useEffect(() => {
-    socketInitializer()
+    if (!socket && accessTokenChat) {
+      socketInitializer(String(accessTokenChat))
+    }
     return () => {
       if (socket) {
         socket.removeAllListeners('receiveMessage')
         socket.removeAllListeners('deleteMessage')
         socket.removeAllListeners('connect_error')
+        socket = null
       }
     }
-  }, [])
+  }, [accessTokenChat])
 
   return (
     <div>

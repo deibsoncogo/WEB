@@ -235,7 +235,6 @@ const EditPlanPageTemplate = ({
       setFiledValue('price', maskedToMoney(price))
       setFiledValue('description', description)
       setFiledValue('imagePreview', imageUrl)
-
       setFiledValue('courses', extractSelectOptionsFromArr(courses))
       setFiledValue('books', extractSelectOptionsFromArr(books))
       setFiledValue('rooms', extractSelectOptionsFromArr(rooms))

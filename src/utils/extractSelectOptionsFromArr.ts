@@ -12,6 +12,7 @@ export const productTypes = {
   [ProductType.Course]: 'Curso',
   [ProductType.Plan]: 'Plano',
   [ProductType.Training]: 'Treinamento',
+  [ProductType.Room]: 'Room',
 }
 
 export function extractSelectOptionsFromArr(
