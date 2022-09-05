@@ -15,7 +15,7 @@ import { getSocketConnection } from '../../../../../utils/getSocketConnection'
 import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import ConfirmationModal from '../../../modal/ConfirmationModal'
-let socket: Socket
+let socket: Socket | null
 
 type props = {
   getAllChatRooms: IGetAllChatRooms
@@ -37,7 +37,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
   const { id } = router.query
 
   const { makeRequest: joinChatRoom, data: accessTokenChat } = useRequest<IJoinChatRoom>(
-    remoteJoinChat.getAll
+    remoteJoinChat.join
   )
 
   const IsPreviousDateDifferentFromCurrent = (index: number) => {
@@ -68,7 +68,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
         messageType: MessageType.Text,
       }
 
-      socket.emit('createMessage', chatRoom, () => {
+      socket?.emit('createMessage', chatRoom, () => {
         setMessage('')
         setLoadingSendMessage(false)
       })
@@ -108,7 +108,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
       fileType,
     }
 
-    socket.emit('createMessage', chatRoom, () => {
+    socket?.emit('createMessage', chatRoom, () => {
       setMessage('')
       setLoadingSendMessage(false)
     })
@@ -117,7 +117,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
   const handleDeleteMessage = () => {
     if (selectedMessageToDelete) {
       setLoadingDeletion(true)
-      socket.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
+      socket?.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
         setLoadingDeletion(false)
         setSelectedMessageToDelete(null)
       })
@@ -151,7 +151,6 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
     })
 
     socket.on('connect_error', (err) => {
-      console.log(err)
       toast.error('Falha ao se conectar com o servidor')
     })
   }
@@ -194,6 +193,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
         socket.removeAllListeners('receiveMessage')
         socket.removeAllListeners('deleteMessage')
         socket.removeAllListeners('connect_error')
+        socket = null
       }
     }
   }, [accessTokenChat])

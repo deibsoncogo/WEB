@@ -7,5 +7,5 @@ export interface IJoinChatRoomParams {
 }
 
 export interface IJoinChatRoom {
-  getAll: (params: IJoinChatRoomParams) => Promise<Response>
+  join: (params: IJoinChatRoomParams) => Promise<Response>
 }
