@@ -194,6 +194,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
         socket.removeAllListeners('receiveMessage')
         socket.removeAllListeners('deleteMessage')
         socket.removeAllListeners('connect_error')
+        socket = null
       }
     }
   }, [accessTokenChat])
