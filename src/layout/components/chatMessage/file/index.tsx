@@ -51,7 +51,7 @@ export const File = ({
           </Tooltip>
         </div>
 
-        {image ? image : <Document fileURL={fileURL} fileOriginalName={fileOriginalName} />}
+        {image ?? <Document fileURL={fileURL} fileOriginalName={fileOriginalName} />}
 
         <div className='ms-3 text-end position-absolute' style={{ bottom: 10, right: 20 }}>
           <span className='text-muted fs-7 fw-bold'>{HourMask(hour)}</span>
