@@ -8,6 +8,7 @@ import { FormHandles } from '@unform/core'
 import { Input } from '../inputs'
 import { api } from '../../../application/services/api'
 import { Button } from '../buttons/CustomButton'
+import { toast } from 'react-toastify'
 
 export function FormForgotPassword() {
   const router = useRouter()
@@ -46,6 +47,7 @@ export function FormForgotPassword() {
     try {
       const response = await api.post('/auth/forgotPassword', data)
       router.push('/')
+      toast.success('E-mail enviado com sucesso!')
     } catch (err: any) {
       console.log('erro: ', err)
       setHasError(true)
