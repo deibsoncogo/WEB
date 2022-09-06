@@ -12,10 +12,17 @@ interface IRow {
   handleRefresher: () => void
 }
 
-export function Row({index, liveDate, time, start, startUrl, streamingRoomArray, handleRefresher}: IRow) {
-
+export function Row({
+  index,
+  liveDate,
+  time,
+  start,
+  startUrl,
+  streamingRoomArray,
+  handleRefresher,
+}: IRow) {
   const deleteStream = (indexArray: number) => {
-    streamingRoomArray.splice(indexArray, 1) 
+    streamingRoomArray.splice(indexArray, 1)
     handleRefresher()
   }
 
@@ -31,20 +38,20 @@ export function Row({index, liveDate, time, start, startUrl, streamingRoomArray,
         </td>
 
         <td>
-        {start && (
-          <a href={startUrl} target='_blank' rel='noreferrer'>
-            <button
-              type='button'
-              className='btn btn-bg-light btn-active-color-primary btn-sm text-info border border-gray-400'
-            >
-              Começar aula ao vivo
-            </button>
-          </a>
-        )}
-      </td>
+          {start && (
+            <a href={startUrl} target='_blank' rel='noreferrer'>
+              <button
+                type='button'
+                className='btn btn-bg-light btn-active-color-primary btn-sm text-info border border-gray-400'
+              >
+                Começar aula ao vivo
+              </button>
+            </a>
+          )}
+        </td>
 
-        <td className = 'text-end'>
-          <Tooltip content={'Deletar'} rounded color='primary'>
+        <td className='text-end'>
+          <Tooltip content={'Excluir'} rounded color='primary'>
             <a
               onClick={() => {
                 deleteStream(index)

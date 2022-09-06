@@ -14,20 +14,26 @@ interface IRow {
   handleRefresher: () => void
 }
 
-export function Row({index, liveDate, time, start, startUrl, streamingRoomArray,idDeletedStreamingRoom,
-  streamRoomUpdate, handleRefresher}: IRow) {
-
+export function Row({
+  index,
+  liveDate,
+  time,
+  start,
+  startUrl,
+  streamingRoomArray,
+  idDeletedStreamingRoom,
+  streamRoomUpdate,
+  handleRefresher,
+}: IRow) {
   const deleteStream = (indexArray: number) => {
-    const elementTemp = streamingRoomArray.splice(indexArray, 1) 
-    if(elementTemp[0]?.id){
+    const elementTemp = streamingRoomArray.splice(indexArray, 1)
+    if (elementTemp[0]?.id) {
       idDeletedStreamingRoom.push(elementTemp[0]?.id)
-    }
-    else{
+    } else {
       const indexArrayTemp = streamRoomUpdate.indexOf(elementTemp[0], 0)
       if (indexArrayTemp > -1) {
         streamRoomUpdate.splice(indexArrayTemp, 1)
       }
-      
     }
     handleRefresher()
   }
@@ -44,20 +50,20 @@ export function Row({index, liveDate, time, start, startUrl, streamingRoomArray,
         </td>
 
         <td>
-        {start && (
-          <a href={startUrl} target='_blank' rel='noreferrer'>
-            <button
-              type='button'
-              className='btn btn-bg-light btn-active-color-primary btn-sm text-info border border-gray-400'
-            >
-              Começar aula ao vivo
-            </button>
-          </a>
-        )}
-      </td>
+          {start && (
+            <a href={startUrl} target='_blank' rel='noreferrer'>
+              <button
+                type='button'
+                className='btn btn-bg-light btn-active-color-primary btn-sm text-info border border-gray-400'
+              >
+                Começar aula ao vivo
+              </button>
+            </a>
+          )}
+        </td>
 
-        <td className = 'text-end'>
-          <Tooltip content={'Deletar'} rounded color='primary'>
+        <td className='text-end'>
+          <Tooltip content={'Excluir'} rounded color='primary'>
             <a
               onClick={() => {
                 deleteStream(index)
