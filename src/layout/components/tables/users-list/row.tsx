@@ -64,7 +64,7 @@ export function Row({
           </Link>
         </Tooltip>
 
-        <Tooltip content={'Deletar'} rounded color='primary'>
+        <Tooltip content={'Excluir'} rounded color='primary'>
           <button
             onClick={() => {
               setIsModalOpen(true)

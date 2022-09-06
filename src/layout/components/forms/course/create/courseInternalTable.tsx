@@ -136,7 +136,7 @@ export default function CoursesInternalTable(prop: prop) {
                       </td>
 
                       <td className='text-center'>
-                        <Tooltip content={'Deletar'} rounded color='primary'>
+                        <Tooltip content={'Excluir'} rounded color='primary'>
                           <a
                             onClick={() => {
                               deleteClass(value)

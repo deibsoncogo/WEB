@@ -1,10 +1,10 @@
-import { Tooltip } from "@nextui-org/react"
-import Link from "next/link"
-import { useState } from "react"
-import { toast } from "react-toastify"
-import { IDeleteFreeContent } from "../../../../domain/usecases/interfaces/freeContent/deleteFreeContent"
-import { KTSVG } from "../../../../helpers"
-import ConfirmationModal from "../../modal/ConfirmationModal"
+import { Tooltip } from '@nextui-org/react'
+import Link from 'next/link'
+import { useState } from 'react'
+import { toast } from 'react-toastify'
+import { IDeleteFreeContent } from '../../../../domain/usecases/interfaces/freeContent/deleteFreeContent'
+import { KTSVG } from '../../../../helpers'
+import ConfirmationModal from '../../modal/ConfirmationModal'
 
 interface IRow {
   id: string
@@ -14,8 +14,7 @@ interface IRow {
   link: string | undefined
   articleContent: string | undefined
   deleteFreeContent: IDeleteFreeContent
-  handleRefresher: () => void;
-
+  handleRefresher: () => void
 }
 
 export function Row({
@@ -26,26 +25,30 @@ export function Row({
   link,
   articleContent,
   deleteFreeContent,
-  handleRefresher
- 
+  handleRefresher,
 }: IRow) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
 
   const [loading, setLoading] = useState(false)
 
-  function formatText(articleContent?: string){
-    const textLimit = 100  
-    const textLimited = articleContent? articleContent.substring(0, articleContent.length >= textLimit? textLimit: articleContent.length): ''  
-    return textLimited.length >= textLimit? textLimited + ' ...': textLimited
+  function formatText(articleContent?: string) {
+    const textLimit = 100
+    const textLimited = articleContent
+      ? articleContent.substring(
+          0,
+          articleContent.length >= textLimit ? textLimit : articleContent.length
+        )
+      : ''
+    return textLimited.length >= textLimit ? textLimited + ' ...' : textLimited
   }
-  
+
   async function handleDeleteFreeContent() {
     try {
       setLoading(true)
       await deleteFreeContent.delete(id)
       setIsModalDeleteOpen(false)
-      toast.success('Conteúdo deletado com sucesso.')  
-      handleRefresher()    
+      toast.success('Conteúdo deletado com sucesso.')
+      handleRefresher()
     } catch {
       toast.error('Não foi possível deletar o conteúdo.')
     } finally {
@@ -75,9 +78,12 @@ export function Row({
         </td>
 
         <td>
-          <span className='text-dark fw-bold d-block fs-7' dangerouslySetInnerHTML={{__html: formatText(articleContent)}}></span>
+          <span
+            className='text-dark fw-bold d-block fs-7'
+            dangerouslySetInnerHTML={{ __html: formatText(articleContent) }}
+          ></span>
         </td>
-      
+
         <td className='text-end d-flex justify-content-start px-4'>
           <Tooltip content={'Editar'} rounded color='primary'>
             <Link href={`/freeContent/edit/${id}`}>
@@ -87,7 +93,7 @@ export function Row({
             </Link>
           </Tooltip>
 
-          <Tooltip content={'Deletar'} rounded color='primary'>
+          <Tooltip content={'Excluir'} rounded color='primary'>
             <button
               onClick={() => {
                 setIsModalDeleteOpen(true)
@@ -108,7 +114,7 @@ export function Row({
           onConfimation={handleDeleteFreeContent}
           content='Você tem certeza que deseja excluir este conteúdo?'
           title='Deletar'
-        />      
+        />
       </tr>
     </>
   )

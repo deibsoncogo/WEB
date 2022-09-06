@@ -23,11 +23,15 @@ export function FormResetPassword() {
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
-        password: Yup.string().min(6, 'No mínimo 6 caracteres').required('Senha é necessária'),
+        password: Yup.string()
+          .min(8, 'No mínimo 8 caracteres')
+          .required('Senha é necessária')
+          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%_])[0-9a-zA-Z!@#%_]{8,}$/),
         passwordConfirm: Yup.string()
-          .min(6, 'No mínimo 6 caracteres')
+          .min(8, 'No mínimo 8 caracteres')
           .oneOf([Yup.ref('password'), null], 'As senhas devem ser idênticas')
-          .required('Senha é necessária'),
+          .required('Senha é necessária')
+          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%_])[0-9a-zA-Z!@#%_]{8,}$/),
       })
       await schema.validate(data, { abortEarly: false })
 

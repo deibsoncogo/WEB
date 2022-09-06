@@ -24,7 +24,6 @@ export function UpdateFreeContentForm({
   getFreeContent,
   updateFreeContent,
 }: UpdateFreeContentProps) {
- 
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -68,7 +67,7 @@ export function UpdateFreeContentForm({
           is: (value: string) => value && value === 'video',
           then: Yup.string()
             .matches(
-              /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+              /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#_]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
               'Insira um link válido'
             )
             .required('Link é necessário'),
@@ -106,7 +105,7 @@ export function UpdateFreeContentForm({
     setUpdateContent(true)
     updateFreeContent
       .update(dataToSubmit)
-      .then(() => {       
+      .then(() => {
         router.push(appRoutes.CONTENTS)
         toast.success('Conteúdo atualizado com sucesso!')
       })
@@ -138,7 +137,6 @@ export function UpdateFreeContentForm({
 
   return (
     <>
-   
       {loading && <FullLoading />}
       <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
         <h3 className='mb-5 text-muted'>Informações do conteúdo</h3>
