@@ -47,10 +47,14 @@ export function FormForgotPassword() {
       const response = await api.post('/auth/forgotPassword', data)
       router.push('/')
     } catch (err: any) {
+      console.log('erro: ', err)
       setHasError(true)
       if (err.response.status === 500) {
         setMessage(err.message)
         return
+      }
+      if (err.response.data.statusCode === 400) {
+        setMessage('E-mail inválido')
       }
       setMessage(err.response.data.message[0])
     }
