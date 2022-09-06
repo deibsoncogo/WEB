@@ -1,8 +1,10 @@
 import { Tooltip } from '@nextui-org/react'
-import Image from 'next/image'
+import { ReactElement, useEffect, useState } from 'react'
 import { KTSVG } from '../../../../helpers'
 import { HourMask } from '../../../formatters/hourFormatter'
+import { ImageViewer } from '../../modals/imageViewer'
 import { Document } from './document'
+import { CustomImage } from './image'
 
 type FileProps = {
   fileURL: string
@@ -18,32 +20,43 @@ export const File = ({
   fileOriginalName,
   setSelectedMessageToDelete,
 }: FileProps) => {
+  const [image, setImage] = useState<ReactElement | null>(null)
+  const [isToShowImageViewer, setIsToShowImageViewr] = useState(false)
+
+  const handleShowFullImage = () => {
+    setIsToShowImageViewr(true)
+  }
+
+  const handleCloseImageViewer = () => {
+    setIsToShowImageViewr(false)
+  }
+
+  useEffect(() => {
+    if (fileType === 'image') {
+      setImage(<CustomImage imageURL={fileURL} onClick={handleShowFullImage} />)
+    }
+  }, [])
+
   return (
-    <div className='p-0 rounded bg-light-primary text-dark fw-bold  d-flex justify-content-center position-relative'>
-      <div
-        className='d-flex justify-content-end p-2 position-absolute bg-light-primary rounded'
-        style={{ right: 20, top: 10, zIndex: 999 }}
-      >
-        <Tooltip content={'Deletar'} rounded color='primary' onClick={setSelectedMessageToDelete}>
-          <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-        </Tooltip>
-      </div>
+    <>
+      <ImageViewer isOpen={!!isToShowImageViewer} close={handleCloseImageViewer} image={image} />
 
-      {fileType === 'image' ? (
-        <Image
-          width={500}
-          height={500}
-          src={fileURL}
-          alt='Chat message'
-          className='rounded w-100'
-        />
-      ) : (
-        <Document fileURL={fileURL} fileOriginalName={fileOriginalName} />
-      )}
+      <div className='p-0 rounded bg-light-primary text-dark fw-bold  d-flex justify-content-center position-relative mb-4'>
+        <div
+          className='d-flex justify-content-end p-2 position-absolute bg-light-primary rounded'
+          style={{ right: 10, top: 10, zIndex: 999 }}
+        >
+          <Tooltip content={'Deletar'} rounded color='primary' onClick={setSelectedMessageToDelete}>
+            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+          </Tooltip>
+        </div>
 
-      <div className='ms-3 text-end position-absolute' style={{ bottom: 10, right: 20 }}>
-        <span className='text-muted fs-7 fw-bold'>{HourMask(hour)}</span>
+        {image ?? <Document fileURL={fileURL} fileOriginalName={fileOriginalName} />}
+
+        <div className='ms-3 text-end position-absolute' style={{ bottom: 10, right: 20 }}>
+          <span className='text-muted fs-7 fw-bold'>{HourMask(hour)}</span>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
