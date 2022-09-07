@@ -106,6 +106,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
       fileName: file.name,
       messageType: MessageType.File,
       fileType,
+      mimeType: file.type,
     }
 
     socket?.emit('createMessage', chatRoom, () => {
