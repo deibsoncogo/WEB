@@ -49,6 +49,19 @@ const CreateCoupon = ({
     })
 
     if (!!error) {
+      if (error.quantity) {
+        error.quantity = 'Quantidade de cupom deve ser maior que zero.'
+      }
+      if (currentTypeSelected === 'value') {
+        if (error.value) {
+          error.value = 'Valor deve ser maior que zero.'
+        }
+      }
+      if (currentTypeSelected === 'percentage') {
+        if (error.value) {
+          error.value = 'Porcentagem deve ser maior que zero'
+        }
+      }
       formRef?.current?.setErrors(error)
       return
     }
