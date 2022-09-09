@@ -71,7 +71,7 @@ export default function CategoriesTable({
             <div className='table-responsive'>
               <table className='table align-middle gs-0 gy-4 datatable'>
                 <thead>
-                  <tr className='fw-bolder text-muted bg-light d-flex justify-content-between'>
+                  <tr className='fw-bolder text-muted bg-light justify-content-between'>
                     <th
                       role='columnheader'
                       className={getColumnHeaderClasses('name')}

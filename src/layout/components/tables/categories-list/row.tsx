@@ -19,7 +19,7 @@ export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryD
   }
 
   return (
-    <tr className='d-flex justify-content-between'>
+    <tr className='justify-content-between'>
       <td className='ps-4'>
         <span className='text-dark fw-bold d-block fs-7'>{name}</span>
       </td>
