@@ -39,7 +39,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
 
   return (
     <Form className='form' ref={ref} onSubmit={onSubmit}>
-      <h3 className='mb-5'>Informações do Treinamento</h3>
+      <h3 className='mb-5 text-muted'>Informações do Treinamento</h3>
       <InputSingleImage name='image' />
 
       <div className='container p-0'>
@@ -78,7 +78,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
         </div>
       </div>
 
-      <h3 className='mb-5 mt-5'>Datas do Treinamento</h3>
+      <h3 className='mb-5 mt-5 text-muted'>Datas do Treinamento</h3>
 
       <div className='container p-0'>
         <div className='row'>
