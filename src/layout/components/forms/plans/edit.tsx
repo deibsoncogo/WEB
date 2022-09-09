@@ -157,7 +157,7 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
         <CustomButton
           title='Cancelar'
           type='button'
-          customClasses={['btn-secondary', 'w-150px', 'ms-auto', 'me-10']}
+          customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
           onClick={onCancel}
         />
 
