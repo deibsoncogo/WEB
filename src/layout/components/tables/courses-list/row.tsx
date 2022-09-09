@@ -34,7 +34,7 @@ export function Row(props: IRow) {
       setLoading(true)
       await props.deleteCourse.delete(props.id)
       setIsModalDeleteOpen(false)
-      toast.success('Curso deletado com sucesso.')
+      toast.success('Curso excluído com sucesso.')
       props.handleRefresher()
     } catch {
       toast.error('Não foi possível deletar o curso.')

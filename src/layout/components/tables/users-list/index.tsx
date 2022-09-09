@@ -173,7 +173,7 @@ export function UsersTable({
     }
 
     if (userDeletedSuccessful) {
-      toast.success('Usuário deletado com sucesso')
+      toast.success('Usuário excluído com sucesso')
       cleanUpDeleteUser()
     }
 

@@ -210,7 +210,7 @@ function CategoriesTemplate({
 
   useEffect(() => {
     if (categorySuccessfullDeleted) {
-      toast.success('Categoria deletada com sucesso')
+      toast.success('Categoria excluída com sucesso')
       cleanUpDeleteCategory()
     }
 

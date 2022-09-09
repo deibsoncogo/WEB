@@ -170,7 +170,7 @@ export function CouponsTemplate({
     }
 
     if (couponDeleteSuccessful) {
-      toast.success('Cupom deletado com sucesso')
+      toast.success('Cupom excluído com sucesso')
       handleCloseModalToConfirmDeletion()
       deleteCouponcleanUp()
     }

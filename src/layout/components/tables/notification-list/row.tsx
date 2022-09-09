@@ -46,7 +46,7 @@ export function Row({
       setLoading(true)
       await deleteNotification.delete(notification.id)
       setIsModalDeleteOpen(false)
-      toast.success('Notificação deletada com sucesso.')
+      toast.success('Notificação excluída com sucesso.')
       handleRefresher()
     } catch {
       toast.error('Não foi possível deletar a notificação.')
