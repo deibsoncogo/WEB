@@ -49,7 +49,6 @@ export function FormForgotPassword() {
       router.push('/')
       toast.success('E-mail enviado com sucesso!')
     } catch (err: any) {
-      console.log('erro: ', err)
       setHasError(true)
       if (err.response.status === 500) {
         setMessage(err.message)
