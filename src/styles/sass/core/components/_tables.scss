@@ -117,7 +117,8 @@
 // Sorting
 .table-sort {
   &:after {
-    opacity: 0;
+    opacity: 1;
+    content: '↑↓';
   }
 }
 
@@ -129,9 +130,6 @@
   &:after {
     position: relative;
     display: inline-block;
-    width: 0.75rem;
-    height: 0.75rem;
-    content: ' ';
     bottom: auto;
     right: auto;
     left: auto;
@@ -142,14 +140,14 @@
 .table-sort-asc {
   &:after {
     opacity: 1;
-    @include svg-bg-icon(arrow-top, $text-muted);
+    content: '↑';
   }
 }
 
 .table-sort-desc {
   &:after {
     opacity: 1;
-    @include svg-bg-icon(arrow-bottom, $text-muted);
+    content: '↓';
   }
 }
 
