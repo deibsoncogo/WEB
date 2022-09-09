@@ -97,8 +97,8 @@ export function FormUpdateCourse(props: Props) {
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
       data.content = stateEditor.content
-      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
