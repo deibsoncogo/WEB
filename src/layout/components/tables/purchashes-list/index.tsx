@@ -8,7 +8,6 @@ type Props = {
 }
 
 export function PurchasesTable({ userId, purchases }: Props) {
-
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
 
@@ -21,7 +20,7 @@ export function PurchasesTable({ userId, purchases }: Props) {
             <th className={`text-dark min-w-100px cursor-pointer`}>Id da transação</th>
             <th className={`text-dark min-w-100px cursor-pointer`}>Total</th>
             <th className={`text-dark min-w-100px cursor-pointer`}>Status</th>
-            <th className={`text-dark cursor-pointer`}>Ação</th>
+            <th className={`text-dark rounded-end cursor-pointer`}>Ação</th>
           </tr>
         </thead>
 

@@ -16,14 +16,12 @@ export function TrainingsTable({
   paginationHook,
   handleRefresher,
   openToggleStatusConfirmationModal,
-  isAdmin
+  isAdmin,
 }: ITrainingsTable) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
   const getColumnHeaderClasses = (name: string) => {
-    return `text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-      name
-    )}`
+    return `text-dark ps-4 min-w-100px cursor-pointer ${getClassToCurrentOrderColumn(name)}`
   }
 
   return (
@@ -36,7 +34,7 @@ export function TrainingsTable({
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th
-                      className={getColumnHeaderClasses('name')}
+                      className={getColumnHeaderClasses('name') + ' rounded-start'}
                       onClick={() => handleOrdenation('name')}
                     >
                       Nome

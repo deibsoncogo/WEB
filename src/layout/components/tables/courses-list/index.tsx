@@ -55,9 +55,7 @@ export default function CoursesTable(props: Props) {
   })
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
-    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-      name
-    )}`
+    return `text-dark ps-4 ${minWidth} cursor-pointer ${getClassToCurrentOrderColumn(name)}`
   }
 
   async function getCourses(paginationParams: GetCoursesParams) {
@@ -140,7 +138,7 @@ export default function CoursesTable(props: Props) {
                   <thead>
                     <tr className='fw-bolder text-muted bg-light'>
                       <th
-                        className={getColumnHeaderClasses('name')}
+                        className={getColumnHeaderClasses('name') + ' rounded-start'}
                         onClick={() => handleOrdenation('name')}
                       >
                         Nome

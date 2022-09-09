@@ -10,18 +10,11 @@ type IBooksTable = {
   handleRefresher: () => void
 }
 
-export function BooksTable({
-  books,
-  paginationHook,
-  getBooks,
-  handleRefresher,
-}: IBooksTable) {
+export function BooksTable({ books, paginationHook, getBooks, handleRefresher }: IBooksTable) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
   const getColumnHeaderClasses = (name: string) => {
-    return `text-dark ps-4 min-w-100px rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-      name
-    )}`
+    return `text-dark ps-4 min-w-100px cursor-pointer ${getClassToCurrentOrderColumn(name)}`
   }
 
   return (
@@ -34,7 +27,7 @@ export function BooksTable({
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th
-                      className={getColumnHeaderClasses('name')}
+                      className={getColumnHeaderClasses('name') + ' rounded-start'}
                       onClick={() => handleOrdenation('name')}
                     >
                       Título
@@ -74,7 +67,7 @@ export function BooksTable({
                 </thead>
 
                 <tbody>
-                  {books?.map((item) => (                    
+                  {books?.map((item) => (
                     <MakeBooksRow
                       key={item.id}
                       id={item.id}
