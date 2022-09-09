@@ -57,14 +57,14 @@ export function FormCreateUser({
 
   async function handleFormSubmit(data: IFormCreateUser) {
     if (!formRef.current) throw new Error()
-  
+
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
         name: Yup.string()
           .test('no number', 'O campo não deve conter números', validateStringWithNumber)
           .required('Nome é necessário'),
-        email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
+        email: Yup.string().email('Insira um e-mail válido.').required('E-mail é necessário'),
         cpf: Yup.string().test({
           name: 'is valid',
           message: 'CPF inválido',
@@ -191,7 +191,7 @@ export function FormCreateUser({
   async function handleInputZipCode() {
     const zipCode = formRef.current?.getData().zipCode
     const result = await findCEP(zipCode)
-    setDefaultValue(result)   
+    setDefaultValue(result)
   }
 
   return (
@@ -201,7 +201,7 @@ export function FormCreateUser({
           <h3 className='mb-5'>Dados Pessoais</h3>
 
           <Input classes='h-75px' name='name' label='Nome' type='text' />
-          <Input classes='h-75px' name='email' label='Email' type='email' />
+          <Input classes='h-75px' name='email' label='E-mail' type='email' />
           <DatePicker
             classes='h-75px'
             name='birthDate'
