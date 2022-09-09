@@ -32,7 +32,7 @@ const FormEditBook = forwardRef<FormHandles, FormEditBookProps>((props, ref) => 
     <Form className='form' ref={ref} onSubmit={handleSubmit}>
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-100'>
-          <h3 className='mb-5'>Dados do Livro</h3>
+          <h3 className='mb-5 text-muted'>Informações do Livro</h3>
           <InputSingleImage name='image' />
           <div className='d-flex justify-content-start flex-row gap-5'>
             <div className='d-flex justify-content-center flex-column w-100'>
