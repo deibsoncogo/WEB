@@ -278,7 +278,7 @@ export function FormUpdateCourse(props: Props) {
 
         {hasErrorClass && (
           <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
-            <strong>Não é possível atualizar o curso!</strong>O curso deve possuir, no mínimo, uma
+            <strong>Não foi possível atualizar o curso!</strong>É necessário adicionar pelo menos 1
             aula.
             <button
               type='button'

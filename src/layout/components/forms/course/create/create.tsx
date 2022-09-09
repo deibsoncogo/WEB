@@ -224,8 +224,7 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
 
         {hasErrorClass && (
           <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
-            <strong>Não é possível criar curso!</strong>
-            Você precisa adicionar, no mínimo, uma aula.
+            <strong>Não é possível criar curso!</strong>É necessário adicionar pelo menos 1 aula
             <button
               type='button'
               onClick={() => setHasErrorClass(false)}
