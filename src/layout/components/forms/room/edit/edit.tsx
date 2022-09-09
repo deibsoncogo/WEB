@@ -114,7 +114,7 @@ export function FormUpdateRoom({
           .required('Quantidade de parcelas é necessário')
           .positive('Quantidade de parcelas deve ser positiva'),
         description: Yup.string()
-          .required('Descriçao é necessária')
+          .required('Descrição é necessária')
           .max(65535, 'Descrição muito longa'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })

@@ -92,7 +92,7 @@ export function FormCreateRoom({
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário'),
         description: Yup.string()
-          .required('Descriçao é necessária')
+          .required('Descrição é necessária')
           .max(65535, 'Descrição muito longa'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
