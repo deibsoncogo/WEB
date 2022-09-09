@@ -59,7 +59,7 @@ export function FormCreateRoom({
 
   async function verifyErrorStreamingRoom(data: IFormRoom) {
     if (!data.itemChat && !data.itemRoom)
-      setMessageError('Você precisa adicionar, no mínimo, um dos itens')
+      setMessageError('É necessário selecionar pelo menos 1 dos itens')
     else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
       setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
     else {
@@ -98,8 +98,8 @@ export function FormCreateRoom({
       })
 
       const hasError = await verifyErrorStreamingRoom(data)
-      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       hasError ? setHasErrorRoom(hasError) : handleCreateRoom(data)
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {

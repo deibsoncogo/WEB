@@ -81,7 +81,7 @@ export function FormUpdateRoom({
 
   async function verifyErrorStreamingRoom(data: IFormRoom) {
     if (!data.itemChat && !data.itemRoom)
-      setMessageError('Você precisa adicionar, no mínimo, um dos itens')
+      setMessageError('É necessário selecionar pelo menos 1 dos itens')
     else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
       setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
     else {
