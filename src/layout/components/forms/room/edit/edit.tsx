@@ -120,8 +120,8 @@ export function FormUpdateRoom({
       })
 
       const hasError = await verifyErrorStreamingRoom(data)
-      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       hasError ? setHasErrorRoom(hasError) : handleUpdateRoom(data)
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
