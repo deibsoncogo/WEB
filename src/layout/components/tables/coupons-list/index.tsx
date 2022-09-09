@@ -85,7 +85,7 @@ export function CouponsTable({
                       style={{ maxWidth: '130px' }}
                       onClick={() => handleOrdenation('expirationDate')}
                     >
-                      Data de expiração
+                      Data de Expiração
                     </th>
                     <th
                       className={getColumnHeaderClasses({ title: 'isActive' })}
