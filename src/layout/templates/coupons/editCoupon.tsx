@@ -96,7 +96,7 @@ const EditCoupon = ({
 
   useEffect(() => {
     if (couponEditedSuccessful) {
-      toast.success('Cupom atualizado com sucesso')
+      toast.success('Cupom editado com sucesso')
       cleanUpEditCoupon()
       closeDrawer()
     }

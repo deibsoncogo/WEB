@@ -127,7 +127,7 @@ export function NotificationTable({
       .update({ ...data, id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive })
       .then(() => {
         router.push(appRoutes.ALERTS)
-        toast.success('Notificação atualizada com sucesso!')
+        toast.success('Notificação editada com sucesso!')
       })
       .catch(() => toast.error('Não foi possível atualizar a notificação!'))
       .finally(() => {

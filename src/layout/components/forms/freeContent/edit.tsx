@@ -107,7 +107,7 @@ export function UpdateFreeContentForm({
       .update(dataToSubmit)
       .then(() => {
         router.push(appRoutes.CONTENTS)
-        toast.success('Conteúdo atualizado com sucesso!')
+        toast.success('Conteúdo editado com sucesso!')
       })
       .catch(() => toast.error('Não foi possível atualizar o conteúdo!'))
       .finally(() => setUpdateContent(false))

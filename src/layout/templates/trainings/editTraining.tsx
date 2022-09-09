@@ -109,7 +109,10 @@ function EditTrainingPageTemplate({
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination,
+    })
   }
 
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
@@ -121,11 +124,11 @@ function EditTrainingPageTemplate({
   }
 
   const formatStreamingList = (streamings: IStreaming[]): IStreaming[] => {
-    return streamings.map((streaming) => {     
+    return streamings.map((streaming) => {
       return {
         ...streaming,
         dateISO: streaming.date,
-        date: getIsoDateToBRL(streaming.date),       
+        date: getIsoDateToBRL(streaming.date),
       }
     })
   }
@@ -136,7 +139,7 @@ function EditTrainingPageTemplate({
 
   useEffect(() => {
     if (trainingEditedSuccessful) {
-      toast.success('Treinamemto Editado Com Sucesso')
+      toast.success('Treinamemto editado com sucesso')
       cleanUpGetTraining()
       router.push(appRoutes.TRAININGS)
     }

@@ -116,7 +116,10 @@ export function FormUpdateCourse(props: Props) {
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: props.getCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination: props.getCategoriesNoPagination,
+    })
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
@@ -165,7 +168,7 @@ export function FormUpdateCourse(props: Props) {
     props.updateCourse
       .update(formData)
       .then(() => {
-        toast.success('Curso atualizado com sucesso!')
+        toast.success('Curso editado com sucesso!')
         router.push('/courses')
       })
       .catch(() => toast.error('Não foi possível atualizar o curso!'))

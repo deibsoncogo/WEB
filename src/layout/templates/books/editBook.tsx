@@ -69,7 +69,10 @@ function EditBookPageTemplate({
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination,
+    })
   }
 
   const handleCancel = () => {
@@ -82,7 +85,7 @@ function EditBookPageTemplate({
 
   useEffect(() => {
     if (bookEditedSuccessful) {
-      toast.success('Livro Editado Com Sucesso')
+      toast.success('Livro editado com sucesso')
       cleanUpEditBook()
       router.push(appRoutes.BOOKS)
     }

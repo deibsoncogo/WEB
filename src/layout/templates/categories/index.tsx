@@ -221,7 +221,7 @@ function CategoriesTemplate({
     }
 
     if (categorySuccessfullUpdated) {
-      toast.success('Categoria atualizada com sucesso')
+      toast.success('Categoria editada com sucesso')
       handleCloseDrawerUpdateCategory()
       cleanUpUpdateCategory()
     }

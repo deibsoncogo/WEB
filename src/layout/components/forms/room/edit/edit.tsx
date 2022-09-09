@@ -73,7 +73,10 @@ export function FormUpdateRoom({
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination: getCategoriesNoPagination,
+    })
   }
 
   async function verifyErrorStreamingRoom(data: IFormRoom) {
@@ -162,7 +165,7 @@ export function FormUpdateRoom({
     updateRoom
       .update(formData)
       .then(() => {
-        toast.success('Sala atualizada com sucesso!')
+        toast.success('Sala editada com sucesso!')
         router.push(appRoutes.ROOMS)
       })
       .catch(() => toast.error('Não foi possível atualizar sala!'))
