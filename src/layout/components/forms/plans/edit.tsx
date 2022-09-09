@@ -54,7 +54,7 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
 
   return (
     <Form className='form' ref={ref} onSubmit={handleSubmit}>
-      <h3 className='mb-5'>Informações do Plano</h3>
+      <h3 className='mb-5 text-muted'>Informações do Plano</h3>
 
       <div className='container p-0 m-0'>
         <div className='row'>
@@ -67,15 +67,8 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
           <div className='col'>
             <Input name='name' label='Nome' classes='h-75px' />
             <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
-            <Select
-              name='relatedPlan'
-              label='Plano Relacionado'
-              classes='h-75px'
-              defaultValue=''
-            >
-              <option value=''>
-                Selecione
-              </option>
+            <Select name='relatedPlan' label='Plano Relacionado' classes='h-75px' defaultValue=''>
+              <option value=''>Selecione</option>
               {plansOptions.map(({ label, value }) => (
                 <option value={value} key={value}>
                   {label}
@@ -128,7 +121,7 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
           </div>
         </div>
 
-        <h3 className='mb-5 mt-5'>Itens Inclusos no Plano</h3>
+        <h3 className='mb-5 mt-5 text-muted'>Itens Inclusos no Plano</h3>
         {!hasAtLastOneProduct && (
           <div
             className='text-danger'
