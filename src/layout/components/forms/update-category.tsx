@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import React from 'react'
+import React, { KeyboardEventHandler } from 'react'
 import { UpdateCategoryParams } from '../../../domain/usecases/interfaces/category/updateCategory'
 import { Button } from '../buttons/CustomButton'
 import { DrawerRight } from '../drawerRight/DrawerRight'
@@ -15,15 +15,26 @@ type Props = {
 
 const UpdateCategoryDrawer = React.forwardRef<FormHandles, Props>((props, ref) => {
   const { close, updateCategory, loading, visible } = props
+
+  const handleKeyDown: KeyboardEventHandler = (event) => {
+    if (event.key === 'Enter') event.preventDefault()
+  }
+
   return (
     <DrawerRight title='Editar Categoria' visible={visible} close={close}>
       <div className='mt-6 d-flex flex-column justify-content-between h-100'>
         <Form className='form' ref={ref} onSubmit={updateCategory} id='update-category-form'>
-          <Input name='name' label='Nome' placeholder='Nome da categoria' type='text' />
+          <Input
+            name='name'
+            label='Nome'
+            placeholder='Nome da categoria'
+            type='text'
+            tabIndex={0}
+            onKeyDown={handleKeyDown}
+          />
         </Form>
 
         <div className='d-flex mb-15'>
-        
           <Button
             title='Cancelar'
             type='button'
