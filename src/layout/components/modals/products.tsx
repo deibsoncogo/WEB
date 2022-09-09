@@ -150,7 +150,7 @@ export function ProductsModal({
 
           <Form className='form w-100' ref={formRef} initialData={defaultValue} onSubmit={() => {}}>
             <div className='modal-body'>
-              <div className='container gap-20 row mh-150px overflow-auto'>
+              <div className='container gap-10 row mh-150px overflow-auto'>
                 <div className='w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75 h-95px'>
@@ -166,10 +166,10 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <div className='w-75 h-95px'>
+                    <div className='w-50 h-95px'>
                       <DatePicker
                         name='courseExpireDate'
-                        label='Data de expiração'
+                        label='Data de Expiração'
                         minDate={moment().toDate()}
                       />
                     </div>
@@ -179,15 +179,15 @@ export function ProductsModal({
                 <div className='col align-self-end w-50 h-100 mb-8'>
                   <button
                     type='button'
-                    className='btn btn-outline-primary btn-sm border border-primary w-300px h-25  '
+                    className='btn btn-outline-primary btn-sm border border-primary w-200px h-25  '
                     onClick={() => handleIncreaseProduct('course', 'courseExpireDate')}
                   >
-                    + Adicionar outro curso
+                    + Adicionar curso
                   </button>
                 </div>
               </div>
 
-              <div className='container gap-20 row mh-150px overflow-auto'>
+              <div className='container gap-10 row mh-150px overflow-auto'>
                 <div className='w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75 h-95px'>
@@ -203,10 +203,10 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <div className='w-75 h-95px'>
+                    <div className='w-50 h-95px'>
                       <DatePicker
                         name='trainingExpireDate'
-                        label='Data de expiração'
+                        label='Data de Expiração'
                         minDate={moment().toDate()}
                       />
                     </div>
@@ -216,15 +216,15 @@ export function ProductsModal({
                 <div className='col align-self-end w-50 h-100 mb-8'>
                   <button
                     type='button'
-                    className='btn btn-outline-primary btn-sm border border-primary w-300px h-25  '
+                    className='btn btn-outline-primary btn-sm border border-primary w-200px h-25  '
                     onClick={() => handleIncreaseProduct('training', 'trainingExpireDate')}
                   >
-                    + Adicionar outro treinamento
+                    + Adicionar treinamento
                   </button>
                 </div>
               </div>
 
-              <div className='container gap-20 row mh-150px overflow-auto'>
+              <div className='container gap-10 row mh-150px overflow-auto'>
                 <div className='w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75 h-95px'>
@@ -240,10 +240,10 @@ export function ProductsModal({
                       </Select>
                     </div>
 
-                    <div className='w-75 h-95px'>
+                    <div className='w-50 h-95px'>
                       <DatePicker
                         name='planExpireDate'
-                        label='Data de expiração'
+                        label='Data de Expiração'
                         minDate={moment().toDate()}
                       />
                     </div>
@@ -253,10 +253,10 @@ export function ProductsModal({
                 <div className='col align-self-end w-50 h-100 mb-8'>
                   <button
                     type='button'
-                    className='btn btn-outline-primary btn-sm border border-primary w-300px h-25  '
+                    className='btn btn-outline-primary btn-sm border border-primary w-200px h-25  '
                     onClick={() => handleIncreaseProduct('plan', 'planExpireDate')}
                   >
-                    + Adicionar outro plano
+                    + Adicionar plano
                   </button>
                 </div>
               </div>
@@ -266,22 +266,22 @@ export function ProductsModal({
                   {selectedProducts.map((selectedProduct) => (
                     <div
                       key={selectedProduct.productId}
-                      className='container gap-20 row mh-150px overflow-auto'
+                      className='container gap-10 row mh-150px overflow-auto'
                     >
                       <div className='w-50'>
                         <div className='d-flex align-items-center gap-5'>
                           <div className='w-75 h-95px'>
-                            <Input 
+                            <Input
                               name={selectedProduct.product.name}
                               label={setProductLabel(selectedProduct.product.type)}
                               value={selectedProduct.product.name}
                               disabled
                             />
                           </div>
-                          <div className='w-75 h-95px'>
+                          <div className='w-50 h-95px'>
                             <DatePicker
                               name={`${selectedProduct.product.name}-expireDate`}
-                              label='Data de expiração'
+                              label='Data de Expiração'
                               disabled
                             />
                           </div>
@@ -295,13 +295,11 @@ export function ProductsModal({
                           onClick={() => handleDecreaseProduct(selectedProduct.productId)}
                           className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                         >
-                          <button
-                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
-                          >
+                          <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
                             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
                           </button>
                         </Tooltip>
-                      </div> 
+                      </div>
                     </div>
                   ))}
                 </div>

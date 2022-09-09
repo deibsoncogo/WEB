@@ -385,7 +385,7 @@ export function FormEditUser({
 
       <ProductsModal
         isOpen={isProductsModalOpen}
-        modalTitle='Adicionar produto grátis'
+        modalTitle='Adicionar Produto Grátis'
         action={handleOpenModal}
         onRequestClose={() => {
           setIsProductsModalOpen(false)
