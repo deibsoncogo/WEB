@@ -37,7 +37,12 @@ type Props = {
   getZoomUsers: IGetZoomUsers
 }
 
-export function FormCreateRoom({ createRoom, getCategoriesNoPagination, getUsers, getZoomUsers }: Props) {
+export function FormCreateRoom({
+  createRoom,
+  getCategoriesNoPagination,
+  getUsers,
+  getZoomUsers,
+}: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -130,7 +135,7 @@ export function FormCreateRoom({ createRoom, getCategoriesNoPagination, getUsers
     createRoom
       .create(formData)
       .then(() => {
-        toast.success('Sala criada com sucesso!')
+        toast.success('Sala cadastrada com sucesso!')
         router.push(appRoutes.ROOMS)
       })
       .catch(() => toast.error('Não foi possível criar sala!'))
@@ -142,7 +147,10 @@ export function FormCreateRoom({ createRoom, getCategoriesNoPagination, getUsers
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination: getCategoriesNoPagination,
+    })
   }
 
   async function fetchData() {

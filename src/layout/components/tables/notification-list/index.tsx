@@ -111,7 +111,7 @@ export function NotificationTable({
       .create({ ...data, isActive: false })
       .then(() => {
         router.push(appRoutes.ALERTS)
-        toast.success('Notificação criada com sucesso!')
+        toast.success('Notificação cadastrada com sucesso!')
       })
       .catch(() => toast.error('Não foi possível criar a notificação!'))
       .finally(() => {

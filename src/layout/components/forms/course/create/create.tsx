@@ -54,7 +54,10 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination: getCategoriesNoPagination,
+    })
   }
 
   async function handleFormSubmit(data: IFormCourse) {
@@ -136,7 +139,7 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
     createCourse
       .create(formData)
       .then(() => {
-        toast.success('Curso criado com sucesso!')
+        toast.success('Curso cadastrado com sucesso!')
         router.push('/courses')
       })
       .catch(() => toast.error('Não foi possível criar o curso!'))

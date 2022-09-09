@@ -215,7 +215,7 @@ function CategoriesTemplate({
     }
 
     if (categoryCreated) {
-      toast.success('Categoria criada com  sucesso')
+      toast.success('Categoria cadastrada com sucesso')
       handleCloseModalCreateCategory()
       cleanUpCreateCategory()
     }

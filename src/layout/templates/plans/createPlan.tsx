@@ -81,7 +81,7 @@ const CreatePlanPageTemplate = ({
     })
   }
 
-  async function handleSetPlansOptions() {    
+  async function handleSetPlansOptions() {
     const notRelatedPlans = await remoteGetNotRelatedPlans.get()
     const options = getRelatedPlanData(notRelatedPlans)
 
@@ -134,7 +134,7 @@ const CreatePlanPageTemplate = ({
 
   useEffect(() => {
     if (createPlanSuccessful) {
-      toast.success('Plano criado com sucesso')
+      toast.success('Plano cadastrado com sucesso')
       cleanUpCreatePlan()
       router.push(appRoutes.PLANS)
     }

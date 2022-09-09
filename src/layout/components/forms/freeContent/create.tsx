@@ -96,7 +96,7 @@ export function CreateFreeContentForm({ createFreeContent }: CreateFreeContentPr
       .create(dataToSubmit)
       .then(() => {
         router.push(appRoutes.CONTENTS)
-        toast.success('Conteúdo criado com sucesso!')
+        toast.success('Conteúdo cadastrado com sucesso!')
       })
       .catch(() => toast.error('Não foi possível criar o conteúdo!'))
       .finally(() => setRegisterFreeContent(false))
