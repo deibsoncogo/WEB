@@ -85,14 +85,14 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
           <div className='col-3'>
             <DatePicker
               name='trainingEndDate'
-              label='Data de Termino'
+              label='Data de Término'
               placeholderText='00/00/000'
             />
           </div>
           <div className='col-3'>
             <DatePicker
               name='deactiveChatDate'
-              label='Desativação do chat'
+              label='Desativação do Chat'
               placeholderText='00/00/000'
             />
           </div>
@@ -117,7 +117,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
               <div className='col-4'>
                 <DatePicker
                   name='streamingDate'
-                  label='Dia da transmissão'
+                  label='Dia da Transmissão'
                   placeholderText='00/00/000'
                   autoComplete='off'
                 />
@@ -144,7 +144,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
                   style={{ marginTop: '22px' }}
                 >
                   <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-                  Adicionar Data
+                  Adicionar data
                 </button>
               </div>
             </div>
