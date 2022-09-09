@@ -61,7 +61,7 @@ export function Row({
 
       await toggleStatus.toggle({ id })
       setIsModalUpdateOpen(false)
-      toast.success('Sala editada com sucesso.')
+      toast.success(`Sala ${!isActive ? 'ativada' : 'desativada'} com sucesso.`)
       handleRefresher()
     } catch (err) {
       toast.error('Não foi possível atualizar a sala.')

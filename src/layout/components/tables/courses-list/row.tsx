@@ -49,7 +49,7 @@ export function Row(props: IRow) {
       await props.toggleCourseStatus.toggle({ id: props.id })
       setIsModalUpdateOpen(false)
       setIsActive(!isActive)
-      toast.success('Curso atualizado com sucesso.')
+      toast.success(`Curso ${!isActive ? 'ativado' : 'desativado'} com sucesso.`)
     } catch (err) {
       toast.error('Não foi possível atualizar o curso.')
     } finally {

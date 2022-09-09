@@ -61,7 +61,7 @@ export function Row({
     try {
       await toggleBookStatus.toggle({ id: String(id) })
       handleRefresher()
-      toast.success('Status atualizado com sucesso')
+      toast.success(`Livro ${!active ? 'ativado' : 'desativado'} com sucesso`)
     } catch (err) {
       toast.error('Erro ao atualizar o status do livro')
     }
@@ -104,19 +104,26 @@ export function Row({
           </Link>
         </Tooltip>
 
-          <Tooltip
-            content={belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'}
-            rounded
-            color='primary'
-            onClick={belongsToPlans ? undefined : () => {
-              setIsDeleteCategoryModalOpen(true)
-            }}
-            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+        <Tooltip
+          content={belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'}
+          rounded
+          color='primary'
+          onClick={
+            belongsToPlans
+              ? undefined
+              : () => {
+                  setIsDeleteCategoryModalOpen(true)
+                }
+          }
+          className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+        >
+          <button
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+            disabled={belongsToPlans}
           >
-            <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm' disabled={belongsToPlans}>
-              <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
-            </button>
-          </Tooltip>
+            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+          </button>
+        </Tooltip>
       </td>
 
       <ConfirmationModal
