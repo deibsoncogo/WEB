@@ -134,7 +134,7 @@ export function ProductsModal({
       overlayClassName='react-modal-overlay'
       className='react-modal-content min-vw-100'
     >
-      <div className='modal-dialog modal-xl'>
+      <div className='modal-dialog modal-lg'>
         <div className='modal-content'>
           <div className='modal-header'>
             <h5 className='modal-title'>{modalTitle}</h5>
