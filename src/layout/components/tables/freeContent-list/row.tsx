@@ -47,7 +47,7 @@ export function Row({
       setLoading(true)
       await deleteFreeContent.delete(id)
       setIsModalDeleteOpen(false)
-      toast.success('Conteúdo deletado com sucesso.')
+      toast.success('Conteúdo excluído com sucesso.')
       handleRefresher()
     } catch {
       toast.error('Não foi possível deletar o conteúdo.')

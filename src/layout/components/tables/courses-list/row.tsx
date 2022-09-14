@@ -34,7 +34,7 @@ export function Row(props: IRow) {
       setLoading(true)
       await props.deleteCourse.delete(props.id)
       setIsModalDeleteOpen(false)
-      toast.success('Curso deletado com sucesso.')
+      toast.success('Curso excluído com sucesso.')
       props.handleRefresher()
     } catch {
       toast.error('Não foi possível deletar o curso.')
@@ -49,7 +49,7 @@ export function Row(props: IRow) {
       await props.toggleCourseStatus.toggle({ id: props.id })
       setIsModalUpdateOpen(false)
       setIsActive(!isActive)
-      toast.success('Curso atualizado com sucesso.')
+      toast.success(`Curso ${!isActive ? 'ativado' : 'desativado'} com sucesso.`)
     } catch (err) {
       toast.error('Não foi possível atualizar o curso.')
     } finally {

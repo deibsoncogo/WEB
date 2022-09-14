@@ -210,18 +210,18 @@ function CategoriesTemplate({
 
   useEffect(() => {
     if (categorySuccessfullDeleted) {
-      toast.success('Categoria deletada com sucesso')
+      toast.success('Categoria excluída com sucesso')
       cleanUpDeleteCategory()
     }
 
     if (categoryCreated) {
-      toast.success('Categoria criada com  sucesso')
+      toast.success('Categoria cadastrada com sucesso')
       handleCloseModalCreateCategory()
       cleanUpCreateCategory()
     }
 
     if (categorySuccessfullUpdated) {
-      toast.success('Categoria atualizada com sucesso')
+      toast.success('Categoria editada com sucesso')
       handleCloseDrawerUpdateCategory()
       cleanUpUpdateCategory()
     }

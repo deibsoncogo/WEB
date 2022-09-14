@@ -589,7 +589,7 @@ $font-sizes: (
   // 68.25px
   5hx: $font-size-base * 5.5,
   // 71.5px
-  5tx: $font-size-base * 5.75 // 74.75px,,
+  5tx: $font-size-base * 5.75 // 74.75px,,,
 ) !default;
 
 $headings-margin-bottom: $spacer * 0.5 !default;
@@ -868,7 +868,7 @@ $modal-backdrop-bg: $black !default;
 $modal-backdrop-opacity: if(isDarkMode(), 0.4, 0.3) !default;
 
 $modal-xl: 1140px !default;
-$modal-lg: 800px !default;
+$modal-lg: 900px !default;
 $modal-md: 500px !default;
 $modal-sm: 300px !default;
 

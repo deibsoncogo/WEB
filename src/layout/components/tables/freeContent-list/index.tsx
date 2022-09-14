@@ -1,17 +1,20 @@
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { toast } from "react-toastify"
-import { usePagination } from "../../../../application/hooks/usePagination"
-import { IDeleteFreeContent } from "../../../../domain/usecases/interfaces/freeContent/deleteFreeContent"
-import { GetFreeContentParams, IGetAllFreeContent } from "../../../../domain/usecases/interfaces/freeContent/getAllFreeContent"
-import { KTSVG } from "../../../../helpers"
-import { debounce } from "../../../../helpers/debounce"
-import { IFreeContentResponse } from "../../../../interfaces/api-response/freeContentResponse"
-import { Loading } from "../../loading/loading"
-import { Pagination } from "../../pagination/Pagination"
-import { ItemNotFound } from "../../search/ItemNotFound"
-import { Search } from "../../search/Search"
-import { Row } from "./row"
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import { usePagination } from '../../../../application/hooks/usePagination'
+import { IDeleteFreeContent } from '../../../../domain/usecases/interfaces/freeContent/deleteFreeContent'
+import {
+  GetFreeContentParams,
+  IGetAllFreeContent,
+} from '../../../../domain/usecases/interfaces/freeContent/getAllFreeContent'
+import { KTSVG } from '../../../../helpers'
+import { debounce } from '../../../../helpers/debounce'
+import { IFreeContentResponse } from '../../../../interfaces/api-response/freeContentResponse'
+import { Loading } from '../../loading/loading'
+import { Pagination } from '../../pagination/Pagination'
+import { ItemNotFound } from '../../search/ItemNotFound'
+import { Search } from '../../search/Search'
+import { Row } from './row'
 
 type FreeContentTableProps = {
   getAllFreeContent: IGetAllFreeContent
@@ -30,31 +33,29 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
   const [freeContentQuery, setFreeContentQuery] = useState('')
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
-    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-      name
-    )}`
+    return `text-dark ps-4 ${minWidth} cursor-pointer ${getClassToCurrentOrderColumn(name)}`
   }
 
   useEffect(() => {
-     const paginationParams: GetFreeContentParams = {
-       take: pagination.take,
-       order: pagination.order,
-       orderBy: pagination.orderBy,
-       page: pagination.currentPage,
-       name: freeContentQuery,
-     }
-     getAllFreeContent
-       .getAll(paginationParams)
-       .then((data) => {
-         setFreeContent(data.data)
-         setTotalPage(data.total)
-       })
-       .catch(() => toast.error('Não foi possível listar os conteúdos gratuitos.'))
-       .finally(() =>
-         setTimeout(() => {
-           setLoading(false)
-         }, 500)
-       )
+    const paginationParams: GetFreeContentParams = {
+      take: pagination.take,
+      order: pagination.order,
+      orderBy: pagination.orderBy,
+      page: pagination.currentPage,
+      name: freeContentQuery,
+    }
+    getAllFreeContent
+      .getAll(paginationParams)
+      .then((data) => {
+        setFreeContent(data.data)
+        setTotalPage(data.total)
+      })
+      .catch(() => toast.error('Não foi possível listar os conteúdos gratuitos.'))
+      .finally(() =>
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
+      )
   }, [refresher, pagination.take, pagination.currentPage, pagination.order, freeContentQuery])
 
   function handleRefresher() {
@@ -89,7 +90,7 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th
-                      className={getColumnHeaderClasses('title')}
+                      className={getColumnHeaderClasses('title') + ' rounded-start'}
                       onClick={() => handleOrdenation('title')}
                     >
                       Título
@@ -111,7 +112,7 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
                       onClick={() => handleOrdenation('link')}
                     >
                       Link
-                    </th>                
+                    </th>
                     <th
                       className={getColumnHeaderClasses('articleContent', 'min-w-150px')}
                       onClick={() => handleOrdenation('articleContent')}
@@ -133,8 +134,8 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
                         contentType={item.contentType}
                         link={item?.link}
                         articleContent={item?.articleContent}
-                        deleteFreeContent={deleteFreeContent} 
-                        handleRefresher={handleRefresher}                       
+                        deleteFreeContent={deleteFreeContent}
+                        handleRefresher={handleRefresher}
                       />
                     ))}
                 </tbody>
@@ -145,7 +146,7 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
 
         {freeContent.length == 0 && !loading && <ItemNotFound message='Conteúdo não encontrado' />}
 
-        {loading && <Loading/>}
+        {loading && <Loading />}
 
         <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
           <div />

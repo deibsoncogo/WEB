@@ -53,7 +53,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
 
   return (
     <Form className='form' ref={ref} onSubmit={handleSubmit}>
-      <h3 className='mb-5'>Informações do Plano</h3>
+      <h3 className='mb-5 text-muted'>Informações do Plano</h3>
 
       <div className='container p-0 m-0'>
         <div className='row'>
@@ -73,9 +73,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
               defaultValue=''
               onChange={handlePlanTypeChange}
             >
-              <option value=''>
-                Selecione
-              </option>
+              <option value=''>Selecione</option>
               {plansOptions.map(({ label, value }) => (
                 <option value={value} key={value}>
                   {label}
@@ -128,7 +126,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
           </div>
         </div>
 
-        <h3 className='mb-5 mt-5'>Itens Inclusos no Plano</h3>
+        <h3 className='mb-5 mt-5 text-muted'>Itens Inclusos no Plano</h3>
         {!hasAtLastOneProduct && (
           <div
             className='text-danger'

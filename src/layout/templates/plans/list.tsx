@@ -98,7 +98,13 @@ export function ListPlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }: Pr
     }
 
     if (planStatusToggledSuccessful) {
-      toast.success('Status do plano alterado com sucesso.')
+      toast.success(
+        `Plano ${
+          !plans.find((plan) => plan.id === planToToggleStatusId)?.isActive
+            ? 'ativado'
+            : 'desativado'
+        } com sucesso.`
+      )
       handleCloseToggleStatusConfirmationModal()
       cleanUpTogglePlansStatus()
     }

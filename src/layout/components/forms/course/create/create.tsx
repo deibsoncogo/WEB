@@ -54,7 +54,10 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination: getCategoriesNoPagination,
+    })
   }
 
   async function handleFormSubmit(data: IFormCourse) {
@@ -92,8 +95,8 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
       })
 
       data.content = stateEditor.content
-      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -136,7 +139,7 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
     createCourse
       .create(formData)
       .then(() => {
-        toast.success('Curso criado com sucesso!')
+        toast.success('Curso cadastrado com sucesso!')
         router.push('/courses')
       })
       .catch(() => toast.error('Não foi possível criar o curso!'))
@@ -221,8 +224,7 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
 
         {hasErrorClass && (
           <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
-            <strong>Não é possível criar curso!</strong>
-            Você precisa adicionar, no mínimo, uma aula.
+            <strong>Não é possível criar curso!</strong>É necessário adicionar pelo menos 1 aula
             <button
               type='button'
               onClick={() => setHasErrorClass(false)}

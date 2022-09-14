@@ -19,7 +19,7 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
   const getColumnHeaderClasses = ({ title, extraClases = '' }: HandleClassesParam) => {
-    return `text-dark ps-4 rounded-start cursor-pointer cursor-pointer align-middle min-w-150px ${extraClases} ${getClassToCurrentOrderColumn(
+    return `text-dark ps-4 cursor-pointer cursor-pointer align-middle min-w-150px ${extraClases} ${getClassToCurrentOrderColumn(
       title
     )}`
   }
@@ -34,7 +34,7 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                 <th
                   role='columnheader'
                   scope='col'
-                  className={getColumnHeaderClasses({ title: 'name' })}
+                  className={getColumnHeaderClasses({ title: 'name' }) + ' rounded-start'}
                   onClick={() => handleOrdenation('name')}
                 >
                   Nome
@@ -73,7 +73,7 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                   style={{ maxWidth: '130px' }}
                   onClick={() => handleOrdenation('intervalAccessMonths')}
                 >
-                  Acesso ao conteúdo (meses)
+                  Acesso ao Conteúdo (meses)
                 </th>
                 <th
                   className={getColumnHeaderClasses({ title: 'isActive' })}

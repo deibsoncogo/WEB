@@ -1,7 +1,7 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import { useRouter } from 'next/router'
-import { useRef, useState } from 'react'
+import { KeyboardEventHandler, useRef, useState } from 'react'
 import { appRoutes } from '../../../../application/routing/routes'
 import { Button } from '../../buttons/CustomButton'
 import { InputRadio } from '../../inputs/input-radio'
@@ -96,15 +96,25 @@ export function CreateFreeContentForm({ createFreeContent }: CreateFreeContentPr
       .create(dataToSubmit)
       .then(() => {
         router.push(appRoutes.CONTENTS)
-        toast.success('Conteúdo criado com sucesso!')
+        toast.success('Conteúdo cadastrado com sucesso!')
       })
       .catch(() => toast.error('Não foi possível criar o conteúdo!'))
       .finally(() => setRegisterFreeContent(false))
   }
 
+  const handleKeyDown: KeyboardEventHandler = (event) => {
+    if (event.key === 'Enter') event.preventDefault()
+  }
+
   return (
     <>
-      <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
+      <Form
+        className='form'
+        ref={formRef}
+        onSubmit={handleFormSubmit}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+      >
         <h3 className='mb-5 text-muted'>Informações do conteúdo</h3>
 
         <div className='container p-0 m-0'>

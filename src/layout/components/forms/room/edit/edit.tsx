@@ -73,12 +73,15 @@ export function FormUpdateRoom({
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination: getCategoriesNoPagination,
+    })
   }
 
   async function verifyErrorStreamingRoom(data: IFormRoom) {
     if (!data.itemChat && !data.itemRoom)
-      setMessageError('Você precisa adicionar, no mínimo, um dos itens')
+      setMessageError('É necessário selecionar pelo menos 1 dos itens')
     else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
       setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
     else {
@@ -111,14 +114,14 @@ export function FormUpdateRoom({
           .required('Quantidade de parcelas é necessário')
           .positive('Quantidade de parcelas deve ser positiva'),
         description: Yup.string()
-          .required('Descriçao é necessária')
+          .required('Descrição é necessária')
           .max(65535, 'Descrição muito longa'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
 
       const hasError = await verifyErrorStreamingRoom(data)
-      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       hasError ? setHasErrorRoom(hasError) : handleUpdateRoom(data)
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -162,7 +165,7 @@ export function FormUpdateRoom({
     updateRoom
       .update(formData)
       .then(() => {
-        toast.success('Sala atualizada com sucesso!')
+        toast.success('Sala editada com sucesso!')
         router.push(appRoutes.ROOMS)
       })
       .catch(() => toast.error('Não foi possível atualizar sala!'))

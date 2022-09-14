@@ -4,8 +4,12 @@ import { RiFileExcel2Line } from 'react-icons/ri'
 import { toast } from 'react-toastify'
 import { usePagination } from '../../../../application/hooks/usePagination'
 import { IExportAllSalesToXLSX } from '../../../../domain/usecases/interfaces/sale/exportAllSalesToXLSX'
-import { GetSalesParams, IGetAllSales, SalesFilter } from '../../../../domain/usecases/interfaces/sale/getAllSales'
-import { formatDate,  ParseDate } from '../../../../helpers'
+import {
+  GetSalesParams,
+  IGetAllSales,
+  SalesFilter,
+} from '../../../../domain/usecases/interfaces/sale/getAllSales'
+import { formatDate, ParseDate } from '../../../../helpers'
 import { checkIsDateValid } from '../../../../helpers/dateValidationHelper'
 import { debounce } from '../../../../helpers/debounce'
 import { getCurrentDate } from '../../../../helpers/getCurrentDate'
@@ -28,7 +32,6 @@ type SalesTableProps = {
   exportSalesToXLSX: IExportAllSalesToXLSX
 }
 
-
 export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
@@ -44,9 +47,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
   const formRef = useRef<FormHandles>(null)
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
-    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-      name
-    )}`
+    return `text-dark ps-4 ${minWidth} cursor-pointer ${getClassToCurrentOrderColumn(name)}`
   }
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
       orderBy: pagination.orderBy,
       page: pagination.currentPage,
       name: salesQuery,
-      filters: salesFilter      
+      filters: salesFilter,
     }
     getAllSales
       .getAll(paginationParams)
@@ -70,7 +71,14 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
           setLoading(false)
         }, 500)
       )
-  }, [refresher, pagination.take, pagination.currentPage, pagination.order, salesQuery, salesFilter])
+  }, [
+    refresher,
+    pagination.take,
+    pagination.currentPage,
+    pagination.order,
+    salesQuery,
+    salesFilter,
+  ])
 
   function handleRefresher() {
     setRefresher(!refresher)
@@ -88,23 +96,25 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
     setSalesQuery(text)
   })
 
-  const handleForm = async (data: SalesFilter) => { 
-    
+  const handleForm = async (data: SalesFilter) => {
     if (!formRef.current) throw new Error()
     try {
       formRef.current.setErrors({})
-      const schema = Yup.object().shape({        
-          initialDate: Yup.string().optional().test('date error', 'Data inválida', handleDateValidation), 
-          finalDate: Yup.string().optional().test('date error', 'Data inválida', handleDateValidation)         
+      const schema = Yup.object().shape({
+        initialDate: Yup.string()
+          .optional()
+          .test('date error', 'Data inválida', handleDateValidation),
+        finalDate: Yup.string()
+          .optional()
+          .test('date error', 'Data inválida', handleDateValidation),
       })
 
       await schema.validate(data, { abortEarly: false })
-      if(data.initialDate)
-        data.initialDate = formatDate(ParseDate(String(data.initialDate)), 'YYYY-MM-DD')      
-      if(data.finalDate)
-        data.finalDate = formatDate(ParseDate(String(data.finalDate)), 'YYYY-MM-DD')      
+      if (data.initialDate)
+        data.initialDate = formatDate(ParseDate(String(data.initialDate)), 'YYYY-MM-DD')
+      if (data.finalDate)
+        data.finalDate = formatDate(ParseDate(String(data.finalDate)), 'YYYY-MM-DD')
       setSalesFilter(data)
-      
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -114,7 +124,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
         })
         formRef.current.setErrors(validationErrors)
       }
-    }  
+    }
   }
 
   const handleClearFilter = () => {
@@ -129,19 +139,20 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
       orderBy: pagination.orderBy,
       page: pagination.currentPage,
       name: salesQuery,
-      filters: salesFilter      
+      filters: salesFilter,
     }
-    exportSalesToXLSX.export(paginationParams)    
-    .then((result) => {
-      const { type, data } = result
-      const blob = new Blob([data], { type: type })
-      const link = document.createElement('a')
-      link.href = window.URL.createObjectURL(blob)
-      const filename = `vendas_${getCurrentDate()}.xlsx`
-      link.download = filename
-      link.click()
-    })
-    .catch(() => toast.error('Não foi exportar arquivo'))    
+    exportSalesToXLSX
+      .export(paginationParams)
+      .then((result) => {
+        const { type, data } = result
+        const blob = new Blob([data], { type: type })
+        const link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        const filename = `vendas_${getCurrentDate()}.xlsx`
+        link.download = filename
+        link.click()
+      })
+      .catch(() => toast.error('Não foi exportar arquivo'))
   }
 
   return (
@@ -180,7 +191,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th
-                      className={getColumnHeaderClasses('name')}
+                      className={getColumnHeaderClasses('name') + ' rounded-start'}
                       onClick={() => handleOrdenation('name')}
                     >
                       Nome do Cliente

@@ -97,8 +97,8 @@ export function FormUpdateCourse(props: Props) {
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
       data.content = stateEditor.content
-      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -116,7 +116,10 @@ export function FormUpdateCourse(props: Props) {
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: props.getCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination: props.getCategoriesNoPagination,
+    })
   }
 
   async function handleUpdateCourse(data: IFormCourse) {
@@ -165,7 +168,7 @@ export function FormUpdateCourse(props: Props) {
     props.updateCourse
       .update(formData)
       .then(() => {
-        toast.success('Curso atualizado com sucesso!')
+        toast.success('Curso editado com sucesso!')
         router.push('/courses')
       })
       .catch(() => toast.error('Não foi possível atualizar o curso!'))
@@ -275,7 +278,7 @@ export function FormUpdateCourse(props: Props) {
 
         {hasErrorClass && (
           <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
-            <strong>Não é possível atualizar o curso!</strong>O curso deve possuir, no mínimo, uma
+            <strong>Não foi possível atualizar o curso!</strong>É necessário adicionar pelo menos 1
             aula.
             <button
               type='button'

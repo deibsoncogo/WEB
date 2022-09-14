@@ -31,12 +31,7 @@ type Props = {
   deleteRoom: IDeleteRoom
 }
 
-export function RoomsTable({
-  getAllRooms,
-  getAllTeacherRooms,
-  toggleStatus,
-  deleteRoom,
-}: Props) {
+export function RoomsTable({ getAllRooms, getAllTeacherRooms, toggleStatus, deleteRoom }: Props) {
   const [isAdmin, setIsAdmin] = useState(false)
   const [userId, setUserId] = useState('')
   const paginationHook = usePagination()
@@ -50,9 +45,7 @@ export function RoomsTable({
   const [roomName, setRoomName] = useState('')
 
   const getColumnHeaderClasses = (name: string, minWidth = 'min-w-100px') => {
-    return `text-dark ps-4 ${minWidth} rounded-start cursor-pointer ${getClassToCurrentOrderColumn(
-      name
-    )}`
+    return `text-dark ps-4 ${minWidth} cursor-pointer ${getClassToCurrentOrderColumn(name)}`
   }
 
   async function getRooms(paginationParams: GetRoomParams) {
@@ -64,9 +57,9 @@ export function RoomsTable({
         setTimeout(() => {
           setLoading(false)
         }, 500)
-        return;
-      } 
-      
+        return
+      }
+
       if (isAdmin && userId) {
         const { total, data } = await getAllRooms.getAll(paginationParams)
         setRooms(data)
@@ -143,7 +136,7 @@ export function RoomsTable({
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th
-                      className={getColumnHeaderClasses('name')}
+                      className={getColumnHeaderClasses('name') + ' rounded-start'}
                       onClick={() => handleOrdenation('name')}
                     >
                       Nome

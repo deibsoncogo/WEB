@@ -8,7 +8,6 @@ type Props = {
 }
 
 export function ProductsTable({ grantedProducts, setGrantedProducts }: Props) {
-
   const [error, setError] = useState<any>()
   const [loading, setLoading] = useState(false)
 
@@ -19,7 +18,7 @@ export function ProductsTable({ grantedProducts, setGrantedProducts }: Props) {
           <tr className='fw-bolder text-muted bg-light'>
             <th className={`text-dark ps-4 min-w-300px rounded-start cursor-pointer`}>Produto</th>
             <th className={`text-dark min-w-100px cursor-pointer`}>Data de Expiração</th>
-            <th className={`text-dark cursor-pointer`}>Ação</th>
+            <th className={`text-dark rounded-end cursor-pointer`}>Ação</th>
           </tr>
         </thead>
 

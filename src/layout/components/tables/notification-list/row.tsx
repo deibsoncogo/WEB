@@ -46,7 +46,7 @@ export function Row({
       setLoading(true)
       await deleteNotification.delete(notification.id)
       setIsModalDeleteOpen(false)
-      toast.success('Notificação deletada com sucesso.')
+      toast.success('Notificação excluída com sucesso.')
       handleRefresher()
     } catch {
       toast.error('Não foi possível deletar a notificação.')
@@ -60,7 +60,7 @@ export function Row({
       setLoading(true)
       await toggleStatus.toggle({ id: notification.id })
       setIsModalUpdateOpen(false)
-      toast.success('Notificação atualizada com sucesso.')
+      toast.success(`Notificação ${!notification.isActive ? 'ativada' : 'desativada'} com sucesso.`)
       handleRefresher()
     } catch (err) {
       toast.error('Não foi possível atualizar a notificação.')

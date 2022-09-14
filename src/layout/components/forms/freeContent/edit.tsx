@@ -1,7 +1,7 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
+import { KeyboardEventHandler, useEffect, useRef, useState } from 'react'
 import { appRoutes } from '../../../../application/routing/routes'
 import { Button } from '../../buttons/CustomButton'
 import { InputRadio } from '../../inputs/input-radio'
@@ -107,7 +107,7 @@ export function UpdateFreeContentForm({
       .update(dataToSubmit)
       .then(() => {
         router.push(appRoutes.CONTENTS)
-        toast.success('Conteúdo atualizado com sucesso!')
+        toast.success('Conteúdo editado com sucesso!')
       })
       .catch(() => toast.error('Não foi possível atualizar o conteúdo!'))
       .finally(() => setUpdateContent(false))
@@ -135,10 +135,20 @@ export function UpdateFreeContentForm({
       })
   }, [contentType])
 
+  const handleKeyDown: KeyboardEventHandler = (event) => {
+    if (event.key === 'Enter') event.preventDefault()
+  }
+
   return (
     <>
       {loading && <FullLoading />}
-      <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
+      <Form
+        className='form'
+        ref={formRef}
+        onSubmit={handleFormSubmit}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+      >
         <h3 className='mb-5 text-muted'>Informações do conteúdo</h3>
 
         <div className='container p-0 m-0'>

@@ -9,7 +9,7 @@ const Coupons: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Cupons de desconto</title>
+        <title>Cupons de Desconto</title>
       </Head>
 
       <div className='page d-flex flex-row flex-column-fluid'>

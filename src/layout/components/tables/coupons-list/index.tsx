@@ -29,7 +29,7 @@ export function CouponsTable({
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
   const getColumnHeaderClasses = ({ title, extraClasses = '' }: HandleClassesParam) => {
-    return `text-dark ps-4 rounded-start cursor-pointer cursor-pointer align-middle min-w-150px ${extraClasses} ${getClassToCurrentOrderColumn(
+    return `text-dark ps-4 cursor-pointer cursor-pointer align-middle min-w-150px ${extraClasses} ${getClassToCurrentOrderColumn(
       title
     )}`
   }
@@ -46,7 +46,7 @@ export function CouponsTable({
                     <th
                       role='columnheader'
                       scope='col'
-                      className={getColumnHeaderClasses({ title: 'name' })}
+                      className={getColumnHeaderClasses({ title: 'name' }) + ' rounded-start'}
                       onClick={() => handleOrdenation('name')}
                     >
                       Código
@@ -85,7 +85,7 @@ export function CouponsTable({
                       style={{ maxWidth: '130px' }}
                       onClick={() => handleOrdenation('expirationDate')}
                     >
-                      Data de expiração
+                      Data de Expiração
                     </th>
                     <th
                       className={getColumnHeaderClasses({ title: 'isActive' })}

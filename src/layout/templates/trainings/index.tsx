@@ -83,9 +83,9 @@ export function TrainingsTemplate({
         const { total, data } = await remoteGetAllTeacherTrainings.getAll(paginationParams, userId)
         setTrainings(data)
         setTotalPage(total)
-        return;
-      } 
-      
+        return
+      }
+
       if (isAdmin && userId) {
         const { total, data } = await remoteGetAllTrainings.getAll(paginationParams)
         setTrainings(data)
@@ -125,12 +125,18 @@ export function TrainingsTemplate({
     trainingName,
     selectedTraining,
     isAdmin,
-    userId
+    userId,
   ])
 
   useEffect(() => {
     if (toggleStatusSuccessful) {
-      toast.success('Status do treinamento atualizado com sucesso.')
+      toast.success(
+        `Treinamento ${
+          !trainings.find((training) => training.id === selectedTraining)?.isActive
+            ? 'ativado'
+            : 'desativado'
+        } com sucesso.`
+      )
       handleCloseToggleStatusConfirmationModal()
       toggleStatusCleanUp()
     }

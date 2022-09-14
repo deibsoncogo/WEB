@@ -37,7 +37,12 @@ type Props = {
   getZoomUsers: IGetZoomUsers
 }
 
-export function FormCreateRoom({ createRoom, getCategoriesNoPagination, getUsers, getZoomUsers }: Props) {
+export function FormCreateRoom({
+  createRoom,
+  getCategoriesNoPagination,
+  getUsers,
+  getZoomUsers,
+}: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -54,7 +59,7 @@ export function FormCreateRoom({ createRoom, getCategoriesNoPagination, getUsers
 
   async function verifyErrorStreamingRoom(data: IFormRoom) {
     if (!data.itemChat && !data.itemRoom)
-      setMessageError('Você precisa adicionar, no mínimo, um dos itens')
+      setMessageError('É necessário selecionar pelo menos 1 dos itens')
     else if ((!data.itemChat || data.itemChat) && data.itemRoom && streamingRoom.length == 0)
       setMessageError('Você precisa adicionar, no mínimo, uma transmissão')
     else {
@@ -87,14 +92,14 @@ export function FormCreateRoom({ createRoom, getCategoriesNoPagination, getUsers
           .typeError('Quantidade de parcelas deve ser um número')
           .required('Quantidade de parcelas é necessário'),
         description: Yup.string()
-          .required('Descriçao é necessária')
+          .required('Descrição é necessária')
           .max(65535, 'Descrição muito longa'),
         categoryId: Yup.string().required('Selecione uma categoria'),
       })
 
       const hasError = await verifyErrorStreamingRoom(data)
-      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       hasError ? setHasErrorRoom(hasError) : handleCreateRoom(data)
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -130,7 +135,7 @@ export function FormCreateRoom({ createRoom, getCategoriesNoPagination, getUsers
     createRoom
       .create(formData)
       .then(() => {
-        toast.success('Sala criada com sucesso!')
+        toast.success('Sala cadastrada com sucesso!')
         router.push(appRoutes.ROOMS)
       })
       .catch(() => toast.error('Não foi possível criar sala!'))
@@ -142,7 +147,10 @@ export function FormCreateRoom({ createRoom, getCategoriesNoPagination, getUsers
   }
 
   const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination: getCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination: getCategoriesNoPagination,
+    })
   }
 
   async function fetchData() {

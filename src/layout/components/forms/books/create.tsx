@@ -24,7 +24,10 @@ type FormCreateBookProps = {
   remoteCreateBook: ICreateBook
 }
 
-export function FormCreateBook({ remoteGetCategoriesNoPagination, remoteCreateBook }: FormCreateBookProps) {
+export function FormCreateBook({
+  remoteGetCategoriesNoPagination,
+  remoteCreateBook,
+}: FormCreateBookProps) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
@@ -51,7 +54,7 @@ export function FormCreateBook({ remoteGetCategoriesNoPagination, remoteCreateBo
       .create(formData)
       .then(() => {
         router.push('/books')
-        toast.success('Livro criado com sucesso!')
+        toast.success('Livro cadastrado com sucesso!')
       })
       .catch((error: any) => {
         if (Array.isArray(error.messages?.[0])) {
@@ -66,7 +69,10 @@ export function FormCreateBook({ remoteGetCategoriesNoPagination, remoteCreateBo
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination,
+    })
   }
 
   const handlePopulateSelectInput = async () => {
@@ -88,9 +94,9 @@ export function FormCreateBook({ remoteGetCategoriesNoPagination, remoteCreateBo
 
     try {
       formRef.current.setErrors({})
-     
-      data.price = onlyNums(data.price)   
-      data.discount = onlyNums(data?.discount)      
+
+      data.price = onlyNums(data.price)
+      data.discount = onlyNums(data?.discount)
       const schema = Yup.object().shape({
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Título é necessário'),
@@ -100,11 +106,13 @@ export function FormCreateBook({ remoteGetCategoriesNoPagination, remoteCreateBo
           .required('Estoque é necessário'),
         price: Yup.number()
           .required('Preço é necessário')
-          .min(0.1, 'Preço deve ser maior que zero'),                  
-        discount: Yup.number().test(
-          {name: 'validation',
+          .min(0.1, 'Preço deve ser maior que zero'),
+        discount: Yup.number().test({
+          name: 'validation',
           message: 'Desconto deve ser menor que preço',
-          test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),      
+          test: (value) =>
+            value ? parseFloat(data.discount + '') < parseFloat(data.price + '') : true,
+        }),
         description: Yup.string().required('Descrição é necessária'),
         categoryId: Yup.string().required('Selecione uma categoria'),
         installments: Yup.number()
@@ -113,8 +121,8 @@ export function FormCreateBook({ remoteGetCategoriesNoPagination, remoteCreateBo
       })
 
       await schema.validate(data, { abortEarly: false })
-     
-     handleCreateBook(data)
+
+      handleCreateBook(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -131,7 +139,7 @@ export function FormCreateBook({ remoteGetCategoriesNoPagination, remoteCreateBo
     <Form className='form' ref={formRef} onSubmit={handleFormSubmit}>
       <div className='d-flex flex-row gap-5 w-100'>
         <div className='w-100'>
-          <h3 className='mb-5'>Dados do Livro</h3>
+          <h3 className='mb-5 text-muted'>Informações do Livro</h3>
 
           <InputSingleImage name='image' />
           <div className='d-flex justify-content-start flex-row gap-5'>

@@ -92,7 +92,10 @@ function CreateTrainingPageTemplate({
   }
 
   const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({ categoryName, remoteGetCategoriesNoPagination })
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination,
+    })
   }
 
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
@@ -118,7 +121,7 @@ function CreateTrainingPageTemplate({
 
   useEffect(() => {
     if (trainingCreatedSuccessful) {
-      toast.success('Treinamemto Criado Com Sucesso')
+      toast.success('Treinamento cadastrado Com Sucesso')
       router.push(appRoutes.TRAININGS)
     }
 

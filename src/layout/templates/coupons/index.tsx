@@ -163,14 +163,20 @@ export function CouponsTemplate({
     }
 
     if (toggleCouponStatusSuccessful) {
-      toast.success('Status do cupom alterado com sucesso')
       handleCloseModalToToggleStatus()
       cleanUpToggleCouponStatus()
+      toast.success(
+        `Cupom ${
+          !coupons.find((coupon) => coupon.id === couponToToggleStatus)?.isActive
+            ? 'ativado'
+            : 'desativado'
+        } com sucesso.`
+      )
       return
     }
 
     if (couponDeleteSuccessful) {
-      toast.success('Cupom deletado com sucesso')
+      toast.success('Cupom excluído com sucesso')
       handleCloseModalToConfirmDeletion()
       deleteCouponcleanUp()
     }

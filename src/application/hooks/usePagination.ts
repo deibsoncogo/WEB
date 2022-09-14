@@ -79,7 +79,7 @@ export function usePagination() {
 
   const getClassToCurrentOrderColumn = (columnName: string) => {
     const { order, orderBy } = pagination
-    let orderClass = ''
+    let orderClass = 'table-sort'
     if (order && orderBy === columnName) {
       orderClass = order === 'asc' ? 'table-sort-asc' : 'table-sort-desc'
     }

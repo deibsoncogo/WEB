@@ -81,7 +81,7 @@ export function FormEditUser({
         name: Yup.string()
           .test('no number', 'O campo não deve conter números', validateStringWithNumber)
           .required('Nome é necessário'),
-        email: Yup.string().email('Insira um email válido.').required('Email é necessário'),
+        email: Yup.string().email('Insira um e-mail válido.').required('E-mail é necessário'),
         cpf: Yup.string().test({
           name: 'is valid',
           message: 'CPF inválido',
@@ -217,16 +217,25 @@ export function FormEditUser({
   }, [])
 
   function inputAddress(result: ZipCodeProps) {
-    formRef.current?.setFieldValue('street', result?.street || formRef.current?.getFieldValue('street'))
+    formRef.current?.setFieldValue(
+      'street',
+      result?.street || formRef.current?.getFieldValue('street')
+    )
     formRef.current?.setFieldValue('city', result?.city || formRef.current?.getFieldValue('city'))
-    formRef.current?.setFieldValue('state', result?.state || formRef.current?.getFieldValue('state'))
-    formRef.current?.setFieldValue('neighborhood', result?.neighborhood || formRef.current?.getFieldValue('neighborhood'))
+    formRef.current?.setFieldValue(
+      'state',
+      result?.state || formRef.current?.getFieldValue('state')
+    )
+    formRef.current?.setFieldValue(
+      'neighborhood',
+      result?.neighborhood || formRef.current?.getFieldValue('neighborhood')
+    )
   }
 
   async function handleInputZipCode() {
     const zipCode = formRef.current?.getData().zipCode
     const result = await findCEP(zipCode)
-    if (result) inputAddress(result)  
+    if (result) inputAddress(result)
   }
 
   function handleInputCPF() {
@@ -249,7 +258,7 @@ export function FormEditUser({
             <h3 className='mb-5'>Dados Pessoais</h3>
 
             <Input classes='h-75px' name='name' label='Nome' />
-            <Input classes='h-75px' name='email' label='Email' type='email' disabled={true} />
+            <Input classes='h-75px' name='email' label='E-mail' type='email' disabled={true} />
             <DatePicker
               classes='h-75px'
               name='birthDate'
@@ -355,7 +364,6 @@ export function FormEditUser({
         </div>
 
         <div className='d-flex mt-10'>
-          
           <Button
             title='Cancelar'
             type='button'
@@ -377,7 +385,7 @@ export function FormEditUser({
 
       <ProductsModal
         isOpen={isProductsModalOpen}
-        modalTitle='Adicionar produto grátis'
+        modalTitle='Adicionar Produto Grátis'
         action={handleOpenModal}
         onRequestClose={() => {
           setIsProductsModalOpen(false)
