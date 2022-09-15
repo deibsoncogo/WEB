@@ -209,8 +209,8 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                       Produto
                     </th>
                     <th
-                      className={getColumnHeaderClasses('transactionId')}
-                      onClick={() => handleOrdenation('transactionId')}
+                      className={getColumnHeaderClasses('id')}
+                      onClick={() => handleOrdenation('id')}
                     >
                       ID da Transação
                     </th>
