@@ -8,6 +8,7 @@ import { Socket } from 'socket.io-client'
 import { useRequest } from '../../../../../application/hooks/useRequest'
 import { IChatRoom } from '../../../../../domain/models/createChatRoom'
 import { MessageType } from '../../../../../domain/models/messageType'
+import { SocketRoomEvents } from '../../../../../domain/models/socketRoomEvents'
 import { IGetAllChatRooms } from '../../../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
 import { IJoinChatRoom } from '../../../../../domain/usecases/interfaces/chatRoom/joinChatRoom'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
@@ -69,7 +70,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
         messageType: MessageType.Text,
       }
 
-      socket?.emit('createMessage', chatRoom, () => {
+      socket?.emit(SocketRoomEvents.CreateMessage, chatRoom, () => {
         setMessage('')
         setLoadingSendMessage(false)
       })
@@ -110,7 +111,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
       mimeType: file.type,
     }
 
-    socket?.emit('createMessage', chatRoom, () => {
+    socket?.emit(SocketRoomEvents.CreateMessage, chatRoom, () => {
       setMessage('')
       setLoadingSendMessage(false)
     })
@@ -119,7 +120,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
   const handleDeleteMessage = () => {
     if (selectedMessageToDelete) {
       setLoadingDeletion(true)
-      socket?.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
+      socket?.emit(SocketRoomEvents.DeleteMessage, { id: selectedMessageToDelete }, () => {
         setLoadingDeletion(false)
         setSelectedMessageToDelete(null)
       })
@@ -141,23 +142,23 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
   }
 
   const socketInitializer = (tokenChat: string) => {
-    socket = getSocketConnection('room', tokenChat)
+    socket = getSocketConnection(SocketRoomEvents.Room, tokenChat)
     socket.connect()
 
-    socket.on('receiveMessage', (message) => {
+    socket.on(SocketRoomEvents.ReceiveMessage, (message) => {
       setMessages((oldState) => [...oldState, message])
-      socket?.emit('viewMessage', { chatRoomId: message.id })
+      socket?.emit(SocketRoomEvents.ViewMessage, { messageId: message.id })
     })
 
-    socket.on('deletedMessage', (deletedMessage) => {
+    socket.on(SocketRoomEvents.DeletedMessage, (deletedMessage) => {
       setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
     })
 
-    socket.on('updateMessagesViews', (updatedMessages) => {
+    socket.on(SocketRoomEvents.UpdateMessageViews, (updatedMessages) => {
       setMessages(() => updatedMessages)
     })
 
-    socket.on('connect_error', (err) => {
+    socket.on(SocketRoomEvents.ConnectError, () => {
       toast.error('Falha ao se conectar com o servidor')
     })
   }
@@ -181,7 +182,6 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
       if (typeof id == 'string') {
         const response = await getAllChatRooms.getAll({ roomId: id })
         setMessages(response.data)
-
         if (response.existsNewViewedMessages) {
           setIsToEmitViewAllMessages(true)
         }
@@ -202,9 +202,11 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
     }
     return () => {
       if (socket) {
-        socket.removeAllListeners('receiveMessage')
-        socket.removeAllListeners('deleteMessage')
-        socket.removeAllListeners('connect_error')
+        socket.removeAllListeners(SocketRoomEvents.ReceiveMessage)
+        socket.removeAllListeners(SocketRoomEvents.DeletedMessage)
+        socket.removeAllListeners(SocketRoomEvents.UpdateMessageViews)
+        socket.removeAllListeners(SocketRoomEvents.UpdateMessageViews)
+        socket.removeAllListeners(SocketRoomEvents.ConnectError)
         socket.disconnect()
         socket = null
       }
@@ -213,7 +215,8 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
 
   useEffect(() => {
     if (isToEmitViewAllMessages && socket) {
-      socket.emit('viewAllMessages')
+      console.log('foi emitido')
+      socket.emit(SocketRoomEvents.ViewAllMessages)
     }
   }, [isToEmitViewAllMessages, socket])
 

@@ -147,7 +147,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
 
     socket.on('receiveMessage', (message) => {
       setMessages((oldState) => [...oldState, message])
-      socket?.emit('viewMessage', { chatTrainingId: message.id })
+      socket?.emit('viewMessage', { messageId: message.id })
     })
 
     socket.on('deletedMessage', (deletedMessage) => {
