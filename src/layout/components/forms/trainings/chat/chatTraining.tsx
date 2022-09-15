@@ -8,7 +8,7 @@ import { Socket } from 'socket.io-client'
 import { useRequest } from '../../../../../application/hooks/useRequest'
 import { IChatTraining } from '../../../../../domain/models/createChatTraining'
 import { MessageType } from '../../../../../domain/models/messageType'
-import { IGetAllChatTraining } from '../../../../../domain/usecases/interfaces/chatTraining/getAllChatRooms'
+import { IGetAllChatTraining } from '../../../../../domain/usecases/interfaces/chatTraining/getAllChatTraining'
 import { IJoinTrainingChatRoom } from '../../../../../domain/usecases/interfaces/chatTraining/joinTrainingChatRoom'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { getSocketConnection } from '../../../../../utils/getSocketConnection'
@@ -30,6 +30,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
   const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
   const [loadingDeletion, setLoadingDeletion] = useState(false)
   const [loadingSendMessage, setLoadingSendMessage] = useState(false)
+  const [isToEmitViewAllMessages, setIsToEmitViewAllMessages] = useState(false)
 
   const inputFileRef = useRef<HTMLInputElement>(null)
   const lastMessageRef = useRef<HTMLDivElement>(null)
@@ -146,10 +147,15 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
 
     socket.on('receiveMessage', (message) => {
       setMessages((oldState) => [...oldState, message])
+      socket?.emit('viewMessage', { chatTrainingId: message.id })
     })
 
     socket.on('deletedMessage', (deletedMessage) => {
       setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
+    })
+
+    socket.on('updateMessagesViews', (updatedMessages) => {
+      setMessages(() => updatedMessages)
     })
 
     socket.on('connect_error', () => {
@@ -160,7 +166,12 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
   useEffect(() => {
     const fetchData = async () => {
       if (typeof id == 'string') {
-        setMessages(await getAllChatTraining.getAll({ trainingId: id }))
+        const response = await getAllChatTraining.getAll({ trainingId: id })
+        setMessages(response.data)
+
+        if (response.existsNewViewedMessages) {
+          setIsToEmitViewAllMessages(true)
+        }
       }
     }
     fetchData()
@@ -200,6 +211,12 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
       }
     }
   }, [accessTokenChat])
+
+  useEffect(() => {
+    if (isToEmitViewAllMessages && socket) {
+      socket.emit('viewAllMessages')
+    }
+  }, [isToEmitViewAllMessages, socket])
 
   return (
     <>
