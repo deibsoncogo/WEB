@@ -215,7 +215,6 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
 
   useEffect(() => {
     if (isToEmitViewAllMessages && socket) {
-      console.log('foi emitido')
       socket.emit(SocketRoomEvents.ViewAllMessages)
     }
   }, [isToEmitViewAllMessages, socket])

@@ -8,6 +8,7 @@ import { Socket } from 'socket.io-client'
 import { useRequest } from '../../../../../application/hooks/useRequest'
 import { IChatTraining } from '../../../../../domain/models/createChatTraining'
 import { MessageType } from '../../../../../domain/models/messageType'
+import { SocketTrainingEvents } from '../../../../../domain/models/socketTrainingEvents'
 import { IGetAllChatTraining } from '../../../../../domain/usecases/interfaces/chatTraining/getAllChatTraining'
 import { IJoinTrainingChatRoom } from '../../../../../domain/usecases/interfaces/chatTraining/joinTrainingChatRoom'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
@@ -70,7 +71,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
         messageType: MessageType.Text,
       }
 
-      socket?.emit('createMessage', chatMessage, () => {
+      socket?.emit(SocketTrainingEvents.CreateMessage, chatMessage, () => {
         setMessage('')
         setLoadingSendMessage(false)
       })
@@ -104,7 +105,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
       mimeType: file.type,
     }
 
-    socket?.emit('createMessage', chatTraining, () => {
+    socket?.emit(SocketTrainingEvents.CreateMessage, chatTraining, () => {
       setMessage('')
       setLoadingSendMessage(false)
     })
@@ -120,7 +121,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
   const handleDeleteMessage = () => {
     if (selectedMessageToDelete) {
       setLoadingDeletion(true)
-      socket?.emit('deleteMessage', { id: selectedMessageToDelete }, () => {
+      socket?.emit(SocketTrainingEvents.DeleteMessage, { id: selectedMessageToDelete }, () => {
         setLoadingDeletion(false)
         setSelectedMessageToDelete(null)
       })
@@ -142,23 +143,23 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
   }
 
   const socketInitializer = (token: string) => {
-    socket = getSocketConnection('training', token)
+    socket = getSocketConnection(SocketTrainingEvents.Training, token)
     socket.connect()
 
-    socket.on('receiveMessage', (message) => {
+    socket.on(SocketTrainingEvents.ReceiveMessage, (message) => {
       setMessages((oldState) => [...oldState, message])
-      socket?.emit('viewMessage', { messageId: message.id })
+      socket?.emit(SocketTrainingEvents.ViewMessage, { messageId: message.id })
     })
 
-    socket.on('deletedMessage', (deletedMessage) => {
+    socket.on(SocketTrainingEvents.DeletedMessage, (deletedMessage) => {
       setMessages((oldState) => oldState.filter((message) => message.id !== deletedMessage.id))
     })
 
-    socket.on('updateMessagesViews', (updatedMessages) => {
+    socket.on(SocketTrainingEvents.UpdateMessagesViews, (updatedMessages) => {
       setMessages(() => updatedMessages)
     })
 
-    socket.on('connect_error', () => {
+    socket.on(SocketTrainingEvents.ConnectError, () => {
       toast.error('Falha ao se conectar com o servidor')
     })
   }
@@ -203,9 +204,10 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
     }
     return () => {
       if (socket) {
-        socket.removeAllListeners('receiveMessage')
-        socket.removeAllListeners('deleteMessage')
-        socket.removeAllListeners('connect_error')
+        socket.removeAllListeners(SocketTrainingEvents.ReceiveMessage)
+        socket.removeAllListeners(SocketTrainingEvents.DeletedMessage)
+        socket.removeAllListeners(SocketTrainingEvents.UpdateMessagesViews)
+        socket.removeAllListeners(SocketTrainingEvents.ConnectError)
         socket.disconnect()
         socket = null
       }
@@ -214,7 +216,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
 
   useEffect(() => {
     if (isToEmitViewAllMessages && socket) {
-      socket.emit('viewAllMessages')
+      socket.emit(SocketTrainingEvents.ViewAllMessages)
     }
   }, [isToEmitViewAllMessages, socket])
 
