@@ -1,15 +1,15 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
 import { IGetSale } from '../../../domain/usecases/interfaces/sale/getSale'
-import { ISalesResponse } from '../../../interfaces/api-response/salesResponse'
+import { ISaleInformation } from '../../../interfaces/api-response/saleInformations'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteGetSale implements IGetSale {
   constructor(
     private readonly url: string,
-    private readonly httpClient: HttpClient<ISalesResponse>
+    private readonly httpClient: HttpClient<ISaleInformation>
   ) {}
 
-  async get(id: string): Promise<ISalesResponse> {
+  async get(id: string): Promise<ISaleInformation> {
     const httpResponse = await this.httpClient.request({
       url: `${this.url}/${id}`,
       method: 'get',

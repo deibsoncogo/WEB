@@ -1,5 +1,5 @@
-import { ISalesResponse } from '../../../../interfaces/api-response/salesResponse'
+import { ISaleInformation } from '../../../../interfaces/api-response/saleInformations'
 
 export interface IGetSale {
-  get: (id: string) => Promise<ISalesResponse>
+  get: (id: string) => Promise<ISaleInformation>
 }
