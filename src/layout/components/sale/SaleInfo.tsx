@@ -1,8 +1,10 @@
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { IGetSale } from '../../../domain/usecases/interfaces/sale/getSale'
 import { formatDate, formatDateToUTC, KTSVG } from '../../../helpers'
-import { ISalesResponse } from '../../../interfaces/api-response/salesResponse'
+import { ISaleInformation } from '../../../interfaces/api-response/saleInformations'
+import { SaleItems } from '../tables/saleItems-list'
 
 type Props = {
   id: string | string[] | undefined
@@ -10,56 +12,45 @@ type Props = {
 }
 
 export function PageSaleInfo({ id, getSale }: Props) {
-  const [sale, setSale] = useState<any>()
+  const [sale, setSale] = useState<ISaleInformation>()
 
   useEffect(() => {
     if (typeof id === 'string') {
       getSale
         .get(id)
-        .then((data) => {
-          let status: string
-          let payment_method: string
-
-          switch (data.status) {
+        .then((sale) => {
+          switch (sale.status) {
             case 'pending':
-              status = 'Pendente'
+              sale.status = 'Pendente'
               break
             case 'failed':
-              status = 'Falhou'
+              sale.status = 'Falhou'
               break
             case 'paid':
-              status = 'Pago'
+              sale.status = 'Pago'
               break
             case 'canceled':
-              status = 'Cancelado'
+              sale.status = 'Cancelado'
               break
             default:
-              status = data.status
+              sale.status = sale.status
           }
 
-          switch (data.type) {
+          switch (sale.payment_method) {
             case 'credit_card':
-              payment_method = 'Cartão de Crédito'
+              sale.payment_method = 'Cartão de Crédito'
               break
             case 'boleto':
-              payment_method = 'Boleto'
+              sale.payment_method = 'Boleto'
               break
             case 'pix':
-              payment_method = 'Pix'
+              sale.payment_method = 'Pix'
               break
             case 'multi_method':
-              payment_method = '2 Cartões'
+              sale.payment_method = '2 Cartões'
               break
             default:
-              payment_method = data.type
-          }
-
-          const sale = {
-            id: data.id,
-            date: data.createdAt,
-            status,
-            payment_method,
-            user: data.cart.user,
+              sale.payment_method = sale.payment_method
           }
           setSale(sale)
           console.log(sale)
@@ -80,7 +71,7 @@ export function PageSaleInfo({ id, getSale }: Props) {
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Data:
             <span className='text-black-50 fs-5 fw-light'>
-              {formatDate(formatDateToUTC(sale?.date), 'DD/MM/YYYY')}
+              {sale?.date && formatDate(formatDateToUTC(sale?.date), 'DD/MM/YYYY')}
             </span>
           </span>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
@@ -91,13 +82,55 @@ export function PageSaleInfo({ id, getSale }: Props) {
             Método de pagamento:
             <span className='text-black-50 fs-5 fw-light'>{sale?.payment_method}</span>
           </span>
+          {sale?.payment_method === 'Boleto' && (
+            <>
+              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                Código de barras:
+                <span className='text-black-50 fs-5 fw-light'>{sale.bar_code}</span>
+              </span>
+              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                {sale.pdf && (
+                  <Link href={sale?.pdf}>
+                    <a className='fs-4'>Baixar boleto</a>
+                  </Link>
+                )}
+              </span>
+            </>
+          )}
+          {sale?.payment_method === 'Cartão de Crédito' && (
+            <>
+              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                Cartão:
+                <span className='text-black-50 fs-5 fw-light'>{`**** **** **** ${sale.last_four_digits}`}</span>
+              </span>
+              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                Número de Parcelas:
+                <span className='text-black-50 fs-5 fw-light'>{sale.installments}</span>
+              </span>
+            </>
+          )}
+          {sale?.payment_method === 'Pix' && (
+            <>
+              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                Pix Copia e Cola:
+                <span className='text-black-50 fs-5 fw-light'>{sale.qr_code}</span>
+              </span>
+              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                {sale.qr_code_url && (
+                  <Link href={sale.qr_code_url}>
+                    <a className='fs-4'>Visualizar código QR</a>
+                  </Link>
+                )}
+              </span>
+            </>
+          )}
         </div>
         <div className='w-100'>
           <span className='text-dark fw-bolder d-block fs-1 mb-10'>
-            Informações do Usuário e Entrega
+            {sale?.shipping_address ? 'Informações do Usuário e Entrega' : 'Informações do Usuário'}
           </span>
           <div className='d-flex gap-20'>
-            <div className='w-25'>
+            <div className={sale?.shipping_address ? 'w-25' : 'w-50'}>
               <span className='text-dark d-flex align-items-center fs-3 mb-5'>
                 <KTSVG path='/icons/com006.svg' className='svg-icon-2x me-2' />
                 Dados Pessoais
@@ -119,74 +152,102 @@ export function PageSaleInfo({ id, getSale }: Props) {
                 <span className='text-black-50 fs-5 fw-light'>{sale?.user.phoneNumber}</span>
               </span>
             </div>
-            <div className='w-25'>
+            <div className={sale?.shipping_address ? 'w-25' : 'w-50'}>
               <span className='text-dark d-block fs-3 mb-5'>
                 <KTSVG path='/icons/gen018.svg' className='svg-icon-2x me-2' />
                 Endereço de Faturamento
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Logradouro:
-                <span className='text-black-50 fs-5 fw-light'></span>
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale?.billing_address.line_1.split(',')[1]}
+                </span>
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Número:
-                <span className='text-black-50 fs-5 fw-light'></span>
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale?.billing_address.line_1.split(',')[0]}
+                </span>
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Complemento:
-                <span className='text-black-50 fs-5 fw-light'></span>
+                <span className='text-black-50 fs-5 fw-light'>{sale?.billing_address.line_2}</span>
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Bairro:
-                <span className='text-black-50 fs-5 fw-light'></span>
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale?.billing_address.line_1.split(',')[2]}
+                </span>
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 CEP:
-                <span className='text-black-50 fs-5 fw-light'></span>
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale?.billing_address.zip_code}
+                </span>
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Cidade:
-                <span className='text-black-50 fs-5 fw-light'></span>
+                <span className='text-black-50 fs-5 fw-light'>{sale?.billing_address.city}</span>
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Estado:
-                <span className='text-black-50 fs-5 fw-light'></span>
+                <span className='text-black-50 fs-5 fw-light'>{sale?.billing_address.state}</span>
               </span>
             </div>
-            <div className='w-25'>
-              <span className='text-dark d-flex align-items-center fs-3 mb-5'>
-                <KTSVG path='/icons/gen018.svg' className='svg-icon-2x me-2' />
-                Endereço de Entrega
-              </span>
-              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
-                Logradouro:
-                <span className='text-black-50 fs-5 fw-light'></span>
-              </span>
-              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
-                Número:
-                <span className='text-black-50 fs-5 fw-light'></span>
-              </span>
-              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
-                Complemento:
-                <span className='text-black-50 fs-5 fw-light'></span>
-              </span>
-              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
-                Bairro:
-                <span className='text-black-50 fs-5 fw-light'></span>
-              </span>
-              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
-                CEP:
-                <span className='text-black-50 fs-5 fw-light'></span>
-              </span>
-              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
-                Cidade:
-                <span className='text-black-50 fs-5 fw-light'></span>
-              </span>
-              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
-                Estado:
-                <span className='text-black-50 fs-5 fw-light'></span>
-              </span>
-            </div>
+            {sale?.shipping_address && (
+              <div className='w-25'>
+                <span className='text-dark d-flex align-items-center fs-3 mb-5'>
+                  <KTSVG path='/icons/gen018.svg' className='svg-icon-2x me-2' />
+                  Endereço de Entrega
+                </span>
+                <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                  Logradouro:
+                  <span className='text-black-50 fs-5 fw-light'>
+                    {sale?.shipping_address.line_1.split(',')[1]}
+                  </span>
+                </span>
+                <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                  Número:
+                  <span className='text-black-50 fs-5 fw-light'>
+                    {sale?.shipping_address.line_1.split(',')[0]}
+                  </span>
+                </span>
+                <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                  Complemento:
+                  <span className='text-black-50 fs-5 fw-light'>
+                    {sale?.shipping_address.line_2}
+                  </span>
+                </span>
+                <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                  Bairro:
+                  <span className='text-black-50 fs-5 fw-light'>
+                    {sale?.shipping_address.line_1.split(',')[2]}
+                  </span>
+                </span>
+                <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                  CEP:
+                  <span className='text-black-50 fs-5 fw-light'>
+                    {sale?.shipping_address.zip_code}
+                  </span>
+                </span>
+                <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                  Cidade:
+                  <span className='text-black-50 fs-5 fw-light'>{sale?.shipping_address.city}</span>
+                </span>
+                <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                  Estado:
+                  <span className='text-black-50 fs-5 fw-light'>
+                    {sale?.shipping_address.state}
+                  </span>
+                </span>
+              </div>
+            )}
+          </div>
+          <div>
+            <span className='text-dark fw-bolder d-flex align-items-center fs-1 mb-10'>
+              Informações do Pedido
+            </span>
+            {sale?.products && <SaleItems items={sale.products} />}
           </div>
         </div>
       </div>
