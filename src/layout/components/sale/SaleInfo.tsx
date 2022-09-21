@@ -19,39 +19,20 @@ export function PageSaleInfo({ id, getSale }: Props) {
       getSale
         .get(id)
         .then((sale) => {
-          switch (sale.status) {
-            case 'pending':
-              sale.status = 'Pendente'
-              break
-            case 'failed':
-              sale.status = 'Falhou'
-              break
-            case 'paid':
-              sale.status = 'Pago'
-              break
-            case 'canceled':
-              sale.status = 'Cancelado'
-              break
-            default:
-              sale.status = sale.status
+          const saleStatusMap: {
+            [key: string]: string
+          } = {
+            pending: 'Pendente',
+            failed: 'Falhou',
+            canceled: 'Cancelada',
+            paid: 'Paid',
           }
+          const salePaymentMethodMap: {
+            [key: string]: string
+          } = { credit_card: 'Cartão de Crédito', boleto: 'Boleto', pix: 'Pix' }
 
-          switch (sale.payment_method) {
-            case 'credit_card':
-              sale.payment_method = 'Cartão de Crédito'
-              break
-            case 'boleto':
-              sale.payment_method = 'Boleto'
-              break
-            case 'pix':
-              sale.payment_method = 'Pix'
-              break
-            case 'multi_method':
-              sale.payment_method = '2 Cartões'
-              break
-            default:
-              sale.payment_method = sale.payment_method
-          }
+          sale.status = saleStatusMap[sale.status] || sale.status
+          sale.payment_method = salePaymentMethodMap[sale.payment_method] || sale.payment_method
           setSale(sale)
         })
         .catch(() => toast.error('Não foi possível retornar os detalhes da venda.'))
