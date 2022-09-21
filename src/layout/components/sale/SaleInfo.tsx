@@ -53,7 +53,6 @@ export function PageSaleInfo({ id, getSale }: Props) {
               sale.payment_method = sale.payment_method
           }
           setSale(sale)
-          console.log(sale)
         })
         .catch(() => toast.error('Não foi possível retornar os detalhes da venda.'))
     }
