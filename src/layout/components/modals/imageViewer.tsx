@@ -18,7 +18,7 @@ export const ImageViewer = ({ isOpen, image, close }: ImageViewerProps) => {
       onRequestClose={close}
       style={{ overlay: { zIndex: 999999 }, content: { maxWidth: '960px' } }}
     >
-      <div className='position-relative d-flex justify-content-center align-itens-center'>
+      <div className='align-self-center image-viewer'>
         <div
           className='position-absolute bg-light-primary rounded d-flex justify-content-center'
           style={{ right: 10, top: 10 }}
@@ -31,8 +31,7 @@ export const ImageViewer = ({ isOpen, image, close }: ImageViewerProps) => {
             <KTSVG path='/icons/arr061.svg' className='svg-icon svg-icon-2x' />
           </button>
         </div>
-
-        <div className='align-self-center image-viewer'>{image}</div>
+        {image}
       </div>
     </Modal>
   )
