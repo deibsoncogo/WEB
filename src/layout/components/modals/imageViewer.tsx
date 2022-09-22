@@ -10,7 +10,6 @@ type ImageViewerProps = {
 }
 
 export const ImageViewer = ({ isOpen, image, close }: ImageViewerProps) => {
-  console.log(image?.props)
   return (
     <Modal
       isOpen={isOpen}
