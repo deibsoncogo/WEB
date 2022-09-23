@@ -120,6 +120,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
                   label='Dia da Transmissão'
                   placeholderText='00/00/000'
                   autoComplete='off'
+                  minDate={new Date()}
                 />
               </div>
               <div className='col-4'>
