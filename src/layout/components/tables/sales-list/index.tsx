@@ -98,6 +98,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
 
   const handleForm = async (data: SalesFilter) => {
     if (!formRef.current) throw new Error()
+    
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
@@ -114,7 +115,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
         data.initialDate = formatDate(ParseDate(String(data.initialDate)), 'YYYY-MM-DD')
       if (data.finalDate)
         data.finalDate = formatDate(ParseDate(String(data.finalDate)), 'YYYY-MM-DD')
-      setSalesFilter(data)
+      //setSalesFilter(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
