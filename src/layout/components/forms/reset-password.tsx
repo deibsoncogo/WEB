@@ -26,12 +26,24 @@ export function FormResetPassword() {
         password: Yup.string()
           .min(8, 'No mínimo 8 caracteres')
           .required('Senha é necessária')
-          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%_])[0-9a-zA-Z!@#%_]{8,}$/),
+          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%_])[0-9a-zA-Z!@#%_]{8,}$/, {
+            message: `A senha deve conter:
+            - Letras maiúscula;
+            - Letras minúscula;
+            - Números;
+            - Caracteres especiais (!, @, #, %, _)`,
+          }),
         passwordConfirm: Yup.string()
           .min(8, 'No mínimo 8 caracteres')
           .oneOf([Yup.ref('password'), null], 'As senhas devem ser idênticas')
           .required('Senha é necessária')
-          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%_])[0-9a-zA-Z!@#%_]{8,}$/),
+          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%_])[0-9a-zA-Z!@#%_]{8,}$/, {
+            message: `A senha deve conter:
+            - Letras maiúscula;
+            - Letras minúscula;
+            - Números;
+            - Caracteres especiais (!, @, #, %, _)`,
+          }),
       })
       await schema.validate(data, { abortEarly: false })
 
