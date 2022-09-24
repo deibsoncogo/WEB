@@ -139,7 +139,7 @@ function EditTrainingPageTemplate({
 
   useEffect(() => {
     if (trainingEditedSuccessful) {
-      toast.success('Treinamemto editado com sucesso')
+      toast.success('Treinamento editado com sucesso')
       cleanUpGetTraining()
       router.push(appRoutes.TRAININGS)
     }
