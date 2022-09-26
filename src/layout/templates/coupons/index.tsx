@@ -28,6 +28,7 @@ import { IGetAllAvailableProducts } from '../../../domain/usecases/interfaces/pr
 import ConfirmationModal from '../../components/modal/ConfirmationModal'
 import { CreateCoupon } from './createCoupon'
 import { EditCoupon } from './editCoupon'
+import { IDisableCoupon, IDisableCouponParams } from '../../../domain/usecases/interfaces/coupon/disableCoupon'
 
 type CouponsTemplateProps = {
   remoteGetCoupons: IGetCoupons
@@ -36,6 +37,7 @@ type CouponsTemplateProps = {
   remoteDeleteCoupon: IDeleteCoupon
   remoteToggleCouponStatus: IToggleCouponStatus
   remoteGetAllAvailableProducts: IGetAllAvailableProducts
+  remoteDisableCoupon: IDisableCoupon
 }
 
 export function CouponsTemplate({
@@ -45,6 +47,7 @@ export function CouponsTemplate({
   remoteDeleteCoupon,
   remoteToggleCouponStatus,
   remoteGetAllAvailableProducts,
+  remoteDisableCoupon
 }: CouponsTemplateProps) {
   const paginationHook = usePagination()
 
@@ -58,6 +61,7 @@ export function CouponsTemplate({
   const [couponName, setCouponName] = useState('')
   const [couponToToggleStatus, setCouponToToggleStatus] = useState<string | null>(null)
   const [couponTobeDeleted, setCouponTobeDeleted] = useState<string | null>(null)
+  const [couponToDisable, setCouponToDisable] = useState<string | null>(null)
 
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false)
   const paginationParams: IGetCouponsParams = {
@@ -91,6 +95,14 @@ export function CouponsTemplate({
     error: deleteCouponError,
   } = useRequest<IDeleteCouponParams>(remoteDeleteCoupon.delete)
 
+  const {
+    makeRequest: disableCoupon,
+    data: couponDisableSuccessful,
+    loading: disableStatus,
+    cleanUp: disableCleanUp,
+    error: disableError,
+  } = useRequest<IDisableCouponParams>(remoteDisableCoupon.disable)
+
   const handleSearchCoupon = debounce((text: string) => {
     setCouponName(text)
   })
@@ -115,6 +127,20 @@ export function CouponsTemplate({
 
   const handleCloseModalToToggleStatus = () => {
     setCouponToToggleStatus(null)
+  }
+
+  const handleCouponToBeDisabled = (id: string) => {
+    setCouponToDisable(id)
+  }
+
+  const handleDisableCoupon = () => {
+    if (couponToDisable) {
+      disableCoupon({ id: couponToDisable })
+    }
+  }
+
+  const handleCloseModalToConfirmDisable = () => {
+    setCouponToDisable(null)
   }
 
   const handleCouponToBeDeleted = (id: string) => {
@@ -152,6 +178,7 @@ export function CouponsTemplate({
     toggleCouponStatusSuccessful,
     couponDeleteSuccessful,
     selectedCoupon,
+    couponDisableSuccessful
   ])
 
   useEffect(() => {
@@ -180,7 +207,13 @@ export function CouponsTemplate({
       handleCloseModalToConfirmDeletion()
       deleteCouponcleanUp()
     }
-  }, [toggleCouponStatusSuccessful, paginatedCoupons, couponDeleteSuccessful])
+
+    if (couponDisableSuccessful) {
+      toast.success('Cupom excluído com sucesso')
+      handleCloseModalToConfirmDisable()
+      disableCleanUp()
+    }
+  }, [toggleCouponStatusSuccessful, paginatedCoupons, couponDeleteSuccessful, couponDisableSuccessful])
 
   useEffect(() => {
     if (getCouponsError) {
@@ -220,6 +253,7 @@ export function CouponsTemplate({
           toggleCouponStatus={handleToggleCouponStatus}
           deleteCoupon={handleCouponToBeDeleted}
           selectCouponToBeEdited={handleSelectCouponToBeEdited}
+          disableCoupon={handleCouponToBeDisabled}
         />
       </div>
 
@@ -248,11 +282,11 @@ export function CouponsTemplate({
       />
 
       <ConfirmationModal
-        isOpen={!!couponTobeDeleted}
+        isOpen={!!couponToDisable}
         content='Você tem certeja que deseja excluir este cupom?'
         loading={toggleStatusLoading}
-        onRequestClose={handleCloseModalToConfirmDeletion}
-        onConfimation={handleDeleteCoupon}
+        onRequestClose={handleCloseModalToConfirmDisable}
+        onConfimation={handleDisableCoupon}
         title='Deletar'
       />
     </>

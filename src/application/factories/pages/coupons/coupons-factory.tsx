@@ -5,6 +5,7 @@ import {
   makeRemoteGetCoupons,
   makeRemoteUpdateCoupons,
 } from '../../usecases/coupons'
+import { makeRemoteDisableCoupon } from '../../usecases/coupons/remote-disableCoupon-factory'
 import { makeRemoteToggleCouponStatus } from '../../usecases/coupons/remote-toggleCouponStatus-factory'
 import { makeRemoteGetAllAvailableProducts } from '../../usecases/product/remote-getAllAvailableProducts-factory'
 
@@ -17,6 +18,7 @@ export const MakeCouponsPage = () => {
       remoteDeleteCoupon={makeRemoteDeleteCoupons()}
       remoteToggleCouponStatus={makeRemoteToggleCouponStatus()}
       remoteGetAllAvailableProducts={makeRemoteGetAllAvailableProducts()}
+      remoteDisableCoupon={makeRemoteDisableCoupon()}
     />
   )
 }

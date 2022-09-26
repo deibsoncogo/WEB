@@ -12,6 +12,7 @@ type PlansTableProps = {
   toggleCouponStatus: (id: string) => void
   deleteCoupon: (id: string) => void
   selectCouponToBeEdited: (coupon: ICoupon) => void
+  disableCoupon: (id: string) => void
 }
 
 type HandleClassesParam = {
@@ -25,6 +26,7 @@ export function CouponsTable({
   toggleCouponStatus,
   deleteCoupon,
   selectCouponToBeEdited,
+  disableCoupon
 }: PlansTableProps) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
@@ -110,13 +112,14 @@ export function CouponsTable({
                       toggleCouponStatus={toggleCouponStatus}
                       deleteCoupon={deleteCoupon}
                       selectCouponToBeEdited={selectCouponToBeEdited}
+                      disableCoupon={disableCoupon}
                     />
                   ))}
                 </tbody>
               </table>
 
               {coupons.length === 0 && (
-                <p className='text-center my-8 pt-2'>Nenhum plano encontrado</p>
+                <p className='text-center my-8 pt-2'>Nenhum cupom encontrado</p>
               )}
             </div>
           </div>
@@ -127,7 +130,7 @@ export function CouponsTable({
         </>
       )}
 
-      {coupons.length === 0 && <ItemNotFound message='Nenhuma categoria encontrado' />}
+      {coupons.length === 0 && <ItemNotFound message='Nenhum cupom encontrado' />}
     </>
   )
 }
