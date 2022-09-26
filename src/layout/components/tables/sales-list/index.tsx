@@ -115,7 +115,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
         data.initialDate = formatDate(ParseDate(String(data.initialDate)), 'YYYY-MM-DD')
       if (data.finalDate)
         data.finalDate = formatDate(ParseDate(String(data.finalDate)), 'YYYY-MM-DD')
-      //setSalesFilter(data)
+      setSalesFilter(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
