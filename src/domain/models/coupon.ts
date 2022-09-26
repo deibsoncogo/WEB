@@ -9,6 +9,7 @@ export interface ICoupon {
   value: number
   quantity: number
   isActive: boolean
+  isDeleted: boolean
   expirationDate: string
   productId?: string
   product: Product
