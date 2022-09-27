@@ -16,9 +16,10 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
     price: Number(onlyNums(training.price)),
     discount: Number(onlyNums(training.discount)),
     streamings: formattedStreamings,
-    trainingEndDate: formatDate(new Date(training.trainingEndDate), 'YYYY-MM-DD'),
-    deactiveChatDate: formatDate(new Date(training.deactiveChatDate), 'YYYY-MM-DD'),
+    trainingEndDate: formatDate(new Date(training.trainingEndDate), 'YYYY-MM-DD HH:mm'),
+    deactiveChatDate: formatDate(new Date(training.deactiveChatDate), 'YYYY-MM-DD HH:mm'),
   }
+
   const {
     categoryId,
     description,
