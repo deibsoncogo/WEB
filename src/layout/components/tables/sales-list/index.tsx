@@ -98,6 +98,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
 
   const handleForm = async (data: SalesFilter) => {
     if (!formRef.current) throw new Error()
+    
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({

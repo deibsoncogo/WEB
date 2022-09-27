@@ -7,18 +7,22 @@ import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 type SelectMultiProps = {
   name: string
   label: string
+  customStyles?: any
   classes?: string
   numberOfItems?: number
-  loadOptions: (searchValue: string) => Promise<ISelectOption[]>
+  loadOptions?: (searchValue: string) => Promise<ISelectOption[]>
   defaultValues?: ISelectOption[]
+  defaultOptions?: ISelectOption[]
 }
 
 const SelectMulti = ({
   loadOptions,
   name,
   label,
+  customStyles,
   classes,
   defaultValues = [],
+  defaultOptions,
   numberOfItems,
 }: SelectMultiProps) => {
   const selectRef = useRef(null)
@@ -33,7 +37,7 @@ const SelectMulti = ({
     }
     setInputValues(e as ISelectOption[])
   }
-
+  
   useEffect(() => {
     registerField({
       ref: selectRef,
@@ -64,7 +68,7 @@ const SelectMulti = ({
         isMulti
         name={name}
         cacheOptions
-        defaultOptions
+        defaultOptions={defaultOptions ? defaultOptions: true}
         defaultValue={defaultValues}
         loadOptions={loadOptions}
         className='basic-multi-select'
@@ -73,6 +77,7 @@ const SelectMulti = ({
         onFocus={clearError}
         onChange={handleInputChange}
         value={inputValues}
+        styles={customStyles ? customStyles: undefined}
       />
       {error && <span className='text-danger'>{error}</span>}
     </div>
