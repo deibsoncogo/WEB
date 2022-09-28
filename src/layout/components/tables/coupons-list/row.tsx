@@ -12,14 +12,12 @@ type CouponTableRowProps = {
   toggleCouponStatus: (id: string) => void
   deleteCoupon: (id: string) => void
   selectCouponToBeEdited: (coupon: ICoupon) => void
-  disableCoupon: (id: string) => void
 }
 const Row = ({
   coupon,
   toggleCouponStatus,
   deleteCoupon,
   selectCouponToBeEdited,
-  disableCoupon
 }: CouponTableRowProps) => {
   function handleCouponStatusChange() {
     toggleCouponStatus(coupon.id)
@@ -31,10 +29,6 @@ const Row = ({
 
   function handleSelectCouponToBeEdited() {
     selectCouponToBeEdited(coupon)
-  }
-
-  function handleDisableCoupon() {
-    disableCoupon(coupon.id)
   }
 
   return (
@@ -81,7 +75,7 @@ const Row = ({
           </button>
         </Tooltip>
 
-        <Tooltip content={'Excluir'} rounded color='primary' onClick={handleDisableCoupon}>
+        <Tooltip content={'Excluir'} rounded color='primary' onClick={handleDeleteCoupon}>
           <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'>
             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
           </button>

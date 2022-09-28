@@ -12,7 +12,6 @@ type PlansTableProps = {
   toggleCouponStatus: (id: string) => void
   deleteCoupon: (id: string) => void
   selectCouponToBeEdited: (coupon: ICoupon) => void
-  disableCoupon: (id: string) => void
 }
 
 type HandleClassesParam = {
@@ -26,7 +25,6 @@ export function CouponsTable({
   toggleCouponStatus,
   deleteCoupon,
   selectCouponToBeEdited,
-  disableCoupon
 }: PlansTableProps) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
@@ -112,7 +110,6 @@ export function CouponsTable({
                       toggleCouponStatus={toggleCouponStatus}
                       deleteCoupon={deleteCoupon}
                       selectCouponToBeEdited={selectCouponToBeEdited}
-                      disableCoupon={disableCoupon}
                     />
                   ))}
                 </tbody>

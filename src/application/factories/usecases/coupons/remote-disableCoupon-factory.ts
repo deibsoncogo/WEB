@@ -1,6 +1,6 @@
-import { RemoteDisableCoupon } from '../../../../data/usecases/coupon/remote-disableCoupon'
-import { IDisableCoupon } from '../../../../domain/usecases/interfaces/coupon/disableCoupon'
+import { RemoteDeleteCoupon } from '../../../../data/usecases/coupon/remote-deleteCoupon'
+import { IDeleteCoupon } from '../../../../domain/usecases/interfaces/coupon/deleteCoupon'
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
-export const makeRemoteDisableCoupon = (): IDisableCoupon =>
-  new RemoteDisableCoupon(makeApiUrl('/coupon/disable'), makeAxiosHttpClient())
+export const makeRemoteDeleteCoupon = (): IDeleteCoupon =>
+  new RemoteDeleteCoupon(makeApiUrl('/coupon/:id'), makeAxiosHttpClient())
