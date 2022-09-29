@@ -47,13 +47,13 @@ export function Row({
       setLoading(true)
       await deleteTraining.deleteTraining()
       handleRefresher()
-      toast.success('Treinamento excluído com sucesso')
+      toast.success('Treinamento excluído com sucesso!')
     } catch (err) {
       if (err instanceof ConflitctEntitiesError) {
-        toast.error('Existem produtos vinculados a este treinamento')
+        toast.error('Existem produtos vinculados a este treinamento!')
         return
       }
-      toast.error('Erro ao deletar o treinamento Treinamento')
+      toast.error('Erro ao deletar o treinamento Treinamento!')
     } finally {
       setLoading(false)
     }

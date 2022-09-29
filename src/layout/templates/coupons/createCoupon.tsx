@@ -104,7 +104,7 @@ const CreateCoupon = ({
 
   useEffect(() => {
     if (couponCreatedSuccessful) {
-      toast.success('Cupom cadastrado com sucesso')
+      toast.success('Cupom cadastrado com sucesso!')
       cleanUpCreateCoupon()
       closeDrawer()
     }
@@ -123,7 +123,7 @@ const CreateCoupon = ({
         })
         return
       }
-      toast.error(createCouponError)
+      toast.error(createCouponError + '!')
       cleanUpCreateCoupon()
     }
   }, [createCouponError])

@@ -1,12 +1,12 @@
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { toast } from "react-toastify"
-import { IGetUser } from "../../../domain/usecases/interfaces/user/getUser"
-import { formatDate, formatDateToUTC, KTSVG } from "../../../helpers"
-import { IUserResponse } from "../../../interfaces/api-response"
-import { cpfMask } from "../../formatters/cpfFormatter"
-import { phoneMask } from "../../formatters/phoneFormatter"
-import { PurchaseItems } from "../tables/purchaseItems-list"
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import { IGetUser } from '../../../domain/usecases/interfaces/user/getUser'
+import { formatDate, formatDateToUTC, KTSVG } from '../../../helpers'
+import { IUserResponse } from '../../../interfaces/api-response'
+import { cpfMask } from '../../formatters/cpfFormatter'
+import { phoneMask } from '../../formatters/phoneFormatter'
+import { PurchaseItems } from '../tables/purchaseItems-list'
 
 type Props = {
   transactionId: string
@@ -29,7 +29,7 @@ export function PurchaseDetails({ transactionId, getUser }: Props) {
       neighborhood: 'Floresta',
       cep: '90035-170',
       city: 'Porto Alegre',
-      state: 'RS'
+      state: 'RS',
     },
     deliveryAddress: {
       street: 'Rua Santo Inácio',
@@ -38,7 +38,7 @@ export function PurchaseDetails({ transactionId, getUser }: Props) {
       neighborhood: 'Moinhos de Vento',
       cep: '90570-150',
       city: 'Porto Alegre',
-      state: 'RS'
+      state: 'RS',
     },
     purchaseItems: [
       {
@@ -46,9 +46,9 @@ export function PurchaseDetails({ transactionId, getUser }: Props) {
         name: 'Day Trade - Do básico ao avançado',
         price: 1000,
         quantity: 10,
-        total: 10000
-      }
-    ]
+        total: 10000,
+      },
+    ],
   })
 
   useEffect(() => {
@@ -63,21 +63,17 @@ export function PurchaseDetails({ transactionId, getUser }: Props) {
         }
         setUser(userData)
       })
-      .catch((err) => toast.error(err.messages))
+      .catch((err) => toast.error(err.messages) + '!')
   }, [])
 
   return (
     <div className='border border-secondary p-5'>
       <div className='mb-10'>
-        <span className='text-dark fw-bolder d-block fs-1 mb-10'>
-          Informações da Transação
-        </span>
+        <span className='text-dark fw-bolder d-block fs-1 mb-10'>Informações da Transação</span>
         <div>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Transação:
-            <span className='text-black-50 fs-5 fw-light'>
-              {transactionId}
-            </span>
+            <span className='text-black-50 fs-5 fw-light'>{transactionId}</span>
           </span>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Data:
@@ -87,21 +83,15 @@ export function PurchaseDetails({ transactionId, getUser }: Props) {
           </span>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Status:
-            <span className='text-black-50 fs-5 fw-light'>
-              {purchases.status}
-            </span>
+            <span className='text-black-50 fs-5 fw-light'>{purchases.status}</span>
           </span>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Método de pagamento:
-            <span className='text-black-50 fs-5 fw-light'>
-              {purchases.paymentMethod}
-            </span>
+            <span className='text-black-50 fs-5 fw-light'>{purchases.paymentMethod}</span>
           </span>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Código de barras:
-            <span className='text-black-50 fs-5 fw-light'>
-              {purchases.barCode}
-            </span>
+            <span className='text-black-50 fs-5 fw-light'>{purchases.barCode}</span>
           </span>
           <Link href='/'>
             <a className='fs-4'>Baixar boleto</a>
@@ -115,50 +105,38 @@ export function PurchaseDetails({ transactionId, getUser }: Props) {
         <div className='d-flex gap-20'>
           <div className='w-25'>
             <span className='text-dark d-flex align-items-center fs-3 mb-5'>
-              <KTSVG path="/icons/com006.svg" className='svg-icon-2x me-2' />
+              <KTSVG path='/icons/com006.svg' className='svg-icon-2x me-2' />
               Dados Pessoais
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Nome:
-              <span className='text-black-50 fs-5 fw-light'>
-                {user?.name}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{user?.name}</span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               CPF:
-              <span className='text-black-50 fs-5 fw-light'>
-                {cpfMask(user?.cpf!)}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{cpfMask(user?.cpf!)}</span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               E-mail:
-              <span className='text-black-50 fs-5 fw-light'>
-                {user?.email}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{user?.email}</span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Telefone:
-              <span className='text-black-50 fs-5 fw-light'>
-                {phoneMask(user?.phoneNumber!)}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{phoneMask(user?.phoneNumber!)}</span>
             </span>
           </div>
           <div className='w-25'>
             <span className='text-dark d-block fs-3 mb-5'>
-              <KTSVG path="/icons/gen018.svg" className='svg-icon-2x me-2' />
+              <KTSVG path='/icons/gen018.svg' className='svg-icon-2x me-2' />
               Endereço de Faturamento
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Logradouro:
-              <span className='text-black-50 fs-5 fw-light'>
-                {purchases.paymentAddress.street}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{purchases.paymentAddress.street}</span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Número:
-              <span className='text-black-50 fs-5 fw-light'>
-                {purchases.paymentAddress.number}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{purchases.paymentAddress.number}</span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Complemento:
@@ -174,26 +152,20 @@ export function PurchaseDetails({ transactionId, getUser }: Props) {
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               CEP:
-              <span className='text-black-50 fs-5 fw-light'>
-                {purchases.paymentAddress.cep}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{purchases.paymentAddress.cep}</span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Cidade:
-              <span className='text-black-50 fs-5 fw-light'>
-                {purchases.paymentAddress.city}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{purchases.paymentAddress.city}</span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Estado:
-              <span className='text-black-50 fs-5 fw-light'>
-                {purchases.paymentAddress.state}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{purchases.paymentAddress.state}</span>
             </span>
           </div>
           <div className='w-25'>
             <span className='text-dark d-flex align-items-center fs-3 mb-5'>
-              <KTSVG path="/icons/gen018.svg" className='svg-icon-2x me-2' />
+              <KTSVG path='/icons/gen018.svg' className='svg-icon-2x me-2' />
               Endereço de Entrega
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
@@ -222,21 +194,15 @@ export function PurchaseDetails({ transactionId, getUser }: Props) {
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               CEP:
-              <span className='text-black-50 fs-5 fw-light'>
-                {purchases.deliveryAddress.cep}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{purchases.deliveryAddress.cep}</span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Cidade:
-              <span className='text-black-50 fs-5 fw-light'>
-                {purchases.deliveryAddress.city}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{purchases.deliveryAddress.city}</span>
             </span>
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Estado:
-              <span className='text-black-50 fs-5 fw-light'>
-                {purchases.deliveryAddress.state}
-              </span>
+              <span className='text-black-50 fs-5 fw-light'>{purchases.deliveryAddress.state}</span>
             </span>
           </div>
         </div>

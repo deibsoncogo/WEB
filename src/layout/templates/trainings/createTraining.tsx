@@ -121,7 +121,7 @@ function CreateTrainingPageTemplate({
 
   useEffect(() => {
     if (trainingCreatedSuccessful) {
-      toast.success('Treinamento cadastrado com sucesso')
+      toast.success('Treinamento cadastrado com sucesso!')
       router.push(appRoutes.TRAININGS)
     }
 
@@ -136,11 +136,11 @@ function CreateTrainingPageTemplate({
 
   useEffect(() => {
     if (createTrainingError) {
-      toast.error(createTrainingError)
+      toast.error(createTrainingError + '!')
     }
 
     if (getZoomUsersError) {
-      toast.error(getZoomUsersError)
+      toast.error(getZoomUsersError + '!')
     }
   }, [createTrainingError, getZoomUsersError])
 

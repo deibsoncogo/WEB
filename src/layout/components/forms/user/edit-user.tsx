@@ -68,7 +68,7 @@ export function FormEditUser({
       setIsProductsModalOpen(false)
       toast.success('Produtos adicionados com sucesso!')
     } catch (err: any) {
-      toast.error(err.messages[0])
+      toast.error(err.messages[0] + '!')
     }
   }
 
@@ -150,7 +150,7 @@ export function FormEditUser({
       toast.success('Usuário editado com sucesso!')
     } catch (error: any) {
       if (error instanceof UnexpectedError) {
-        toast.error('Erro Inesperado. Não foi possível atualizar o usuário.')
+        toast.error('Erro Inesperado. Não foi possível atualizar o usuário!')
       }
     } finally {
       setUpdateUser(false)
@@ -213,7 +213,7 @@ export function FormEditUser({
         formRef.current?.setFieldValue('complement', newData.complement)
         formRef.current?.setFieldValue('state', newData.state)
       })
-      .catch((err) => toast.error(err.messages))
+      .catch((err) => toast.error(err.messages) + '')
   }, [])
 
   function inputAddress(result: ZipCodeProps) {

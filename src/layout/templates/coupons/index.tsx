@@ -170,13 +170,13 @@ export function CouponsTemplate({
           !coupons.find((coupon) => coupon.id === couponToToggleStatus)?.isActive
             ? 'ativado'
             : 'desativado'
-        } com sucesso.`
+        } com sucesso!`
       )
       return
     }
 
     if (couponDeleteSuccessful) {
-      toast.success('Cupom excluído com sucesso')
+      toast.success('Cupom excluído com sucesso!')
       handleCloseModalToConfirmDeletion()
       deleteCouponcleanUp()
     }
@@ -184,17 +184,17 @@ export function CouponsTemplate({
 
   useEffect(() => {
     if (getCouponsError) {
-      toast.error(getCouponsError)
+      toast.error(getCouponsError + '!')
       return
     }
 
     if (toggleStatusError) {
-      toast.error(toggleStatusError)
+      toast.error(toggleStatusError + '!')
       cleanUpToggleCouponStatus()
     }
 
     if (deleteCouponError) {
-      toast.error(deleteCouponError)
+      toast.error(deleteCouponError + '!')
       deleteCouponcleanUp()
     }
   }, [getCouponsError, toggleStatusError])

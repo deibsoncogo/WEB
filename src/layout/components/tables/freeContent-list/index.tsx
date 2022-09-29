@@ -50,7 +50,7 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
         setFreeContent(data.data)
         setTotalPage(data.total)
       })
-      .catch(() => toast.error('Não foi possível listar os conteúdos gratuitos.'))
+      .catch(() => toast.error('Não foi possível listar os conteúdos gratuitos!'))
       .finally(() =>
         setTimeout(() => {
           setLoading(false)

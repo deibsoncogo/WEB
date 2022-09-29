@@ -85,7 +85,7 @@ function EditBookPageTemplate({
 
   useEffect(() => {
     if (bookEditedSuccessful) {
-      toast.success('Livro editado com sucesso')
+      toast.success('Livro editado com sucesso!')
       cleanUpEditBook()
       router.push(appRoutes.BOOKS)
     }
@@ -99,13 +99,13 @@ function EditBookPageTemplate({
 
   useEffect(() => {
     if (getBookError) {
-      toast.error(getBookError)
+      toast.error(getBookError + '!')
       cleanUpEditBook()
       router.push(appRoutes.BOOKS)
     }
 
     if (editBookError) {
-      toast.error(editBookError)
+      toast.error(editBookError + '!')
       setLoadingPageData(false)
     }
   }, [editBookError, getBookError])

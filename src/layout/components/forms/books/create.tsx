@@ -58,10 +58,10 @@ export function FormCreateBook({
       })
       .catch((error: any) => {
         if (Array.isArray(error.messages?.[0])) {
-          toast.error(error.messages?.[0])
+          toast.error(`${error.messages?.[0]}!`)
           return
         }
-        toast.error(error.message)
+        toast.error(`${error.message}!`)
       })
       .finally(() => {
         setRegisterBook(false)
@@ -81,7 +81,7 @@ export function FormCreateBook({
 
       setDefaultCategoryOptions(categoryOptions)
     } catch (err) {
-      toast.error('Não foi possível carregar as categorias de cursos.')
+      toast.error('Não foi possível carregar as categorias de cursos!')
     }
   }
 

@@ -69,7 +69,7 @@ export function RoomsTable({ getAllRooms, getAllTeacherRooms, toggleStatus, dele
         }, 500)
       }
     } catch (err) {
-      toast.error('Erro ao buscar salas.')
+      toast.error('Erro ao buscar salas!')
     }
   }
 

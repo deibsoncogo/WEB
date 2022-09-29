@@ -151,7 +151,7 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
       setDefaultTeacherOptions(await searchTeachers(''))
       setDefaultCategoryOptions(await searchCategories(''))
     } catch (error) {
-      toast.error('Não foi possível carregar os dados')
+      toast.error('Não foi possível carregar os dados!')
     }
   }
   useEffect(() => {

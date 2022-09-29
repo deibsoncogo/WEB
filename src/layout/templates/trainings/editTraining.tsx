@@ -139,7 +139,7 @@ function EditTrainingPageTemplate({
 
   useEffect(() => {
     if (trainingEditedSuccessful) {
-      toast.success('Treinamento editado com sucesso')
+      toast.success('Treinamento editado com sucesso!')
       cleanUpGetTraining()
       router.push(appRoutes.TRAININGS)
     }
@@ -195,17 +195,17 @@ function EditTrainingPageTemplate({
 
   useEffect(() => {
     if (getTrainingError) {
-      toast.error(getTrainingError)
+      toast.error(getTrainingError + '!')
       router.push(appRoutes.TRAININGS)
     }
 
     if (editTrainingError) {
-      toast.error(editTrainingError)
+      toast.error(editTrainingError + '!')
       setLoadingPageData(false)
     }
 
     if (getZoomUsersError) {
-      toast.error(getZoomUsersError)
+      toast.error(getZoomUsersError + '!')
       setLoadingPageData(false)
     }
   }, [editTrainingError, getTrainingError, getZoomUsersError])

@@ -65,7 +65,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
         setSales(data.data)
         setTotalPage(data.total)
       })
-      .catch(() => toast.error('Não foi possível listar as vendas'))
+      .catch(() => toast.error('Não foi possível listar as vendas!'))
       .finally(() =>
         setTimeout(() => {
           setLoading(false)
@@ -152,7 +152,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
         link.download = filename
         link.click()
       })
-      .catch(() => toast.error('Não foi exportar arquivo'))
+      .catch(() => toast.error('Não foi possível exportar arquivo!'))
   }
 
   return (

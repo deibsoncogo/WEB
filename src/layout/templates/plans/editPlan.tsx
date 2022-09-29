@@ -94,7 +94,7 @@ const EditPlanPageTemplate = ({
     }
   }
 
-  async function handleSetPlansOptions() {    
+  async function handleSetPlansOptions() {
     const notRelatedPlans = await remoteGetNotRelatedPlans.get()
     const options = getRelatedPlanData(notRelatedPlans)
     const filteredOptions = options.filter((option) => option.value !== plan?.id)
@@ -193,7 +193,7 @@ const EditPlanPageTemplate = ({
 
   useEffect(() => {
     if (editPlanSuccessful) {
-      toast.success('Plano editado com sucesso')
+      toast.success('Plano editado com sucesso!')
       cleanUpEditPlan()
       router.push(appRoutes.PLANS)
     }
@@ -206,12 +206,12 @@ const EditPlanPageTemplate = ({
 
   useEffect(() => {
     if (editPlanError) {
-      toast.error(editPlanError)
+      toast.error(editPlanError + '!')
       cleanUpEditPlan()
     }
 
     if (getPlanError) {
-      toast.error(getPlanError)
+      toast.error(getPlanError + '!')
     }
   }, [editPlanError, getPlanError])
 
@@ -226,7 +226,7 @@ const EditPlanPageTemplate = ({
         trainings = [],
         courses = [],
         books = [],
-        rooms = []
+        rooms = [],
       } = plan
 
       setFiledValue('planType', planType || defaultPlan)

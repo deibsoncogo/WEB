@@ -28,7 +28,7 @@ const getAsyncTeachersToSelectInput = async ({
 
     return teacherOptions
   } catch {
-    toast.error('Falha em buscar os professores')
+    toast.error('Falha em buscar os professores!')
     return []
   }
 }

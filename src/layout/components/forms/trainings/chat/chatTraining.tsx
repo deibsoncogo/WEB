@@ -86,7 +86,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
     const [fileType] = file?.type.split('/')
 
     if (fileType === 'video') {
-      toast.error('Não é permitido fazer o upload de vídeos')
+      toast.error('Não é permitido fazer o upload de vídeos!')
       return
     }
     setLoadingSendMessage(true)
@@ -153,7 +153,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
     })
 
     socket.on('connect_error', () => {
-      toast.error('Falha ao se conectar com o servidor')
+      toast.error('Falha ao se conectar com o servidor!')
     })
   }
 
@@ -164,7 +164,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
       }
     }
     fetchData()
-      .catch(() => toast.error('Não foi possível carregar as mensagens'))
+      .catch(() => toast.error('Não foi possível carregar as mensagens!'))
       .finally(() => {
         setLoading(false)
       })

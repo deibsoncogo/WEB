@@ -51,7 +51,7 @@ export function FormCreateUser({
       setIsProductsModalOpen(false)
       toast.success('Produtos adicionados com sucesso!')
     } catch (err: any) {
-      toast.error(err.messages[0])
+      toast.error(err.messages[0] + '!')
     }
   }
 
@@ -151,10 +151,10 @@ export function FormCreateUser({
     try {
       await userRegister.signUp(data)
       router.push(appRoutes.USERS)
-      toast.success('Usuário cadastrado com sucesso')
+      toast.success('Usuário cadastrado com sucesso!')
     } catch (error: any) {
       if (error instanceof UnexpectedError) {
-        toast.error('Erro Inesperado. Não foi possível cadastrar o usuário.')
+        toast.error('Erro Inesperado. Não foi possível cadastrar o usuário!')
       }
     } finally {
       setRegisterUser(false)

@@ -103,7 +103,7 @@ export function ListPlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }: Pr
           !plans.find((plan) => plan.id === planToToggleStatusId)?.isActive
             ? 'ativado'
             : 'desativado'
-        } com sucesso.`
+        } com sucesso!`
       )
       handleCloseToggleStatusConfirmationModal()
       cleanUpTogglePlansStatus()
@@ -112,11 +112,11 @@ export function ListPlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }: Pr
 
   useEffect(() => {
     if (getPlansError) {
-      toast.error(getPlansError)
+      toast.error(getPlansError + '!')
     }
 
     if (togglePlanStatusError) {
-      toast.error(togglePlanStatusError)
+      toast.error(togglePlanStatusError + '!')
       cleanUpTogglePlansStatus()
     }
   }, [getPlansError])

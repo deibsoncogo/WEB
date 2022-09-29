@@ -134,7 +134,7 @@ const CreatePlanPageTemplate = ({
 
   useEffect(() => {
     if (createPlanSuccessful) {
-      toast.success('Plano cadastrado com sucesso')
+      toast.success('Plano cadastrado com sucesso!')
       cleanUpCreatePlan()
       router.push(appRoutes.PLANS)
     }
@@ -142,7 +142,7 @@ const CreatePlanPageTemplate = ({
 
   useEffect(() => {
     if (createPlanError) {
-      toast.error(createPlanError)
+      toast.error(createPlanError + '!')
       cleanUpCreatePlan()
     }
   }, [createPlanError])

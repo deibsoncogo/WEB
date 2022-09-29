@@ -28,6 +28,6 @@ export async function findCEP(cep: any) {
 
     return data
   } catch (err) {
-    toast.error('Erro ao buscar CEP.')
+    toast.error('Erro ao buscar CEP!')
   }
 }
