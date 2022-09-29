@@ -70,17 +70,6 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                   role='columnheader'
                   scope='col'
                   className={getColumnHeaderClasses({
-                    title: 'intervalPaymentMonths',
-                  })}
-                  style={{ maxWidth: '130px' }}
-                  onClick={() => handleOrdenation('intervalPaymentMonths')}
-                >
-                  Intervalo de Pagamento (meses)
-                </th>
-                <th
-                  role='columnheader'
-                  scope='col'
-                  className={getColumnHeaderClasses({
                     title: 'installments',
                   })}
                   style={{ maxWidth: '130px' }}
