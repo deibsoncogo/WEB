@@ -240,7 +240,7 @@ export function UsersTable({
                       >
                         Endereço
                       </th>
-                      <th className={getColumnHeaderClasses('actions')}>Ação</th>
+                      <th className={getColumnHeaderClasses('actions') + ' rounded-end'}>Ação</th>
                     </tr>
                   </thead>
 
