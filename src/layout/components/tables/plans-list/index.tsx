@@ -69,6 +69,28 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                 <th
                   role='columnheader'
                   scope='col'
+                  className={getColumnHeaderClasses({
+                    title: 'intervalPaymentMonths',
+                  })}
+                  style={{ maxWidth: '130px' }}
+                  onClick={() => handleOrdenation('intervalPaymentMonths')}
+                >
+                  Intervalo de Pagamento (meses)
+                </th>
+                <th
+                  role='columnheader'
+                  scope='col'
+                  className={getColumnHeaderClasses({
+                    title: 'installments',
+                  })}
+                  style={{ maxWidth: '130px' }}
+                  onClick={() => handleOrdenation('installments')}
+                >
+                  Quantidade de Parcelas (meses)
+                </th>
+                <th
+                  role='columnheader'
+                  scope='col'
                   className={getColumnHeaderClasses({ title: 'intervalAccessMonths' })}
                   style={{ maxWidth: '130px' }}
                   onClick={() => handleOrdenation('intervalAccessMonths')}
