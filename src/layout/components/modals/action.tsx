@@ -9,7 +9,13 @@ type NewTransactionModalProps = {
   onRequestClose: () => void
 }
 
-export function ActionModal({ isOpen, modalTitle, message, action, onRequestClose }: NewTransactionModalProps) {
+export function ActionModal({
+  isOpen,
+  modalTitle,
+  message,
+  action,
+  onRequestClose,
+}: NewTransactionModalProps) {
   return (
     <Modal
       isOpen={isOpen}
@@ -21,13 +27,13 @@ export function ActionModal({ isOpen, modalTitle, message, action, onRequestClos
         <div className='modal-content'>
           <div className='modal-header'>
             <h5 className='modal-title'>{modalTitle}</h5>
-            <button
+            <div
               className='btn btn-icon btn-sm btn-active-light-primary ms-2'
+              data-bs-dismiss='modal'
               aria-label='Close'
-              onClick={onRequestClose}
             >
-              <KTSVG path='/icons/arr061.svg' className='svg-icon svg-icon-2x' />
-            </button>
+              <span className='svg-icon svg-icon-1'></span>
+            </div>
           </div>
 
           <div className='modal-body text-center'>
