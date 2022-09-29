@@ -44,7 +44,7 @@ export function ProductsModal({
     const expireDate = formRef.current?.getFieldValue(fieldExpireDate)
 
     if (!name) {
-      formRef.current?.setFieldError(fieldName, 'Selecione um produto!')
+      formRef.current?.setFieldError(fieldName, 'Produto é necessário!')
       return
     }
 
