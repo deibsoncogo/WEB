@@ -49,7 +49,7 @@ export function ProductsModal({
     }
 
     if (!expireDate) {
-      formRef.current?.setFieldError(fieldExpireDate, 'Selecione uma data de expiração!')
+      formRef.current?.setFieldError(fieldExpireDate, 'Data é necessária!')
       return
     }
 
