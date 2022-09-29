@@ -121,7 +121,7 @@ function CreateTrainingPageTemplate({
 
   useEffect(() => {
     if (trainingCreatedSuccessful) {
-      toast.success('Treinamento cadastrado Com Sucesso')
+      toast.success('Treinamento cadastrado com sucesso')
       router.push(appRoutes.TRAININGS)
     }
 
