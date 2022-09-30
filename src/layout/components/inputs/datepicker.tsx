@@ -14,11 +14,12 @@ interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
   label: string
   classes?: string
   mask?: (string | (string | RegExp)[]) & string
+  minYear?: number
   maxYear?: number
 }
 
 registerLocale('br', br)
-export function DatePicker({ name, label, classes, mask, maxYear = 0, ...rest }: Props) {
+export function DatePicker({ name, label, classes, mask, minYear = 0, maxYear = 0, ...rest }: Props) {
   const datepickerRef = useRef(null)
   const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
 
@@ -52,7 +53,7 @@ export function DatePicker({ name, label, classes, mask, maxYear = 0, ...rest }:
     })
   }, [fieldName, registerField])
 
-  const years = rangeInt(1900, new Date().getFullYear() + 1 + maxYear)
+  const years = rangeInt(new Date().getFullYear() - minYear, new Date().getFullYear() + 1 + maxYear)
 
   return (
     <div className={`${classes} fv-row mb-7`}>
