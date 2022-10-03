@@ -19,7 +19,7 @@ interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
 }
 
 registerLocale('br', br)
-export function DatePicker({ name, label, classes, mask, minYear = 0, maxYear = 0, ...rest }: Props) {
+export function DatePicker({ name, label, classes, mask, minYear = 100, maxYear = 0, ...rest }: Props) {
   const datepickerRef = useRef(null)
   const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
 
