@@ -134,7 +134,7 @@ export function ProductsModal({
       overlayClassName='react-modal-overlay'
       className='react-modal-content min-vw-100'
     >
-      <div className='modal-dialog modal-lg' style={{ cursor: 'auto' }}>
+      <div className='modal-dialog modal-lg'>
         <div className='modal-content'>
           <div className='modal-header'>
             <h5 className='modal-title'>{modalTitle}</h5>
@@ -262,7 +262,7 @@ export function ProductsModal({
               </div>
 
               {selectedProducts.length > 0 && (
-                <div className='mh-300px overflow-scroll'>
+                <div className='mh-200px overflow-scroll'>
                   {selectedProducts.map((selectedProduct) => (
                     <div
                       key={selectedProduct.productId}
