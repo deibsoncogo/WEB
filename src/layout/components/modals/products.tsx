@@ -261,7 +261,7 @@ export function ProductsModal({
               </div>
 
               {selectedProducts.length > 0 && (
-                <div className='mh-200px overflow-scroll'>
+                <div className='mh-300px overflow-scroll'>
                   {selectedProducts.map((selectedProduct) => (
                     <div
                       key={selectedProduct.productId}
