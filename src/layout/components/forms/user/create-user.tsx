@@ -194,6 +194,8 @@ export function FormCreateUser({
     setDefaultValue(result)
   }
 
+  const dateBase = new Date()
+
   return (
     <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
       <div className='d-flex flex-row gap-5 w-100'>
@@ -206,7 +208,8 @@ export function FormCreateUser({
             classes='h-75px'
             name='birthDate'
             label='Data de Nascimento'
-            maxDate={new Date('01/01/2003')}
+            maxDate={new Date(dateBase.getFullYear() - 18, dateBase.getMonth(), dateBase.getDate())}
+            maxYearAmount={-17}
           />
           <InputMasked
             classes='h-75px'

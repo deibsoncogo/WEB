@@ -266,7 +266,7 @@ export function FormEditUser({
               name='birthDate'
               label='Data de Nascimento'
               maxDate={new Date(dateBase.getFullYear() - 18, dateBase.getMonth(), dateBase.getDate())}
-              maxYear={-17}
+              maxYearAmount={-17}
             />
             <InputMasked
               classes='h-75px'
