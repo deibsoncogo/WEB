@@ -89,8 +89,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
               placeholderText='00/00/0000'
               autoComplete='off'
               minDate={new Date()}
-              minYear={0}
-              maxYear={10}
+              minYearAmount={0}
             />
           </div>
           <div className='col-3'>
@@ -100,8 +99,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
               placeholderText='00/00/0000'
               autoComplete='off'
               minDate={new Date()}
-              minYear={0}
-              maxYear={10}
+              minYearAmount={0}
             />
           </div>
         </div>
@@ -129,8 +127,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
                   placeholderText='00/00/0000'
                   autoComplete='off'
                   minDate={new Date()}
-                  minYear={0}
-                  maxYear={10}
+                  minYearAmount={0}
                 />
               </div>
               <div className='col-4'>
