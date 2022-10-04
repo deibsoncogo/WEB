@@ -1,39 +1,32 @@
-import { useEffect, useRef, useState } from 'react'
-
-import { useRouter } from 'next/router'
-
+import { Editor } from '@tinymce/tinymce-react'
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import * as Yup from 'yup'
-
-import { ICreateCourse } from '../../../../../domain/usecases/interfaces/course/createCourse'
-import { Input, InputCurrence, InputNumber, TextArea } from '../../../inputs'
-
-import { Editor } from '@tinymce/tinymce-react'
+import { useRouter } from 'next/router'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import * as Yup from 'yup'
 import { appRoutes } from '../../../../../application/routing/routes'
 import { CourseClass } from '../../../../../domain/models/courseClass'
 import { CreateCourse } from '../../../../../domain/models/createCourse'
 import { FileUpload } from '../../../../../domain/models/fileUpload'
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
+import { ICreateCourse } from '../../../../../domain/usecases/interfaces/course/createCourse'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
+import { onlyNums } from '../../../../formatters/currenceFormatter'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
+import { Button } from '../../../buttons/CustomButton'
+import { Input, InputCurrence, InputNumber, TextArea } from '../../../inputs'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 import { SelectAsync } from '../../../inputs/selectAsync'
 import FilesInternalTable from '../filesUpload/filesInternalTable'
 import CoursesInternalTable from './courseInternalTable'
-import { Button } from '../../../buttons/CustomButton'
-import { onlyNums } from '../../../../formatters/currenceFormatter'
-import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
-import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 
 type Props = {
   createCourse: ICreateCourse
-  getCategoriesNoPagination: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
 }
 
-export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getUsers }: Props) {
+export function FormCreateCourse({ createCourse, getUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [registerCourse, setRegisterCourse] = useState(false)
@@ -42,7 +35,6 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
   const [courseClass, setCourseClass] = useState<CourseClass[]>([])
   const [hasErrorClass, setHasErrorClass] = useState(false)
 
-  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
   function handleChange(event: any) {
@@ -51,13 +43,6 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
 
   const searchTeachers = async (teacherName: string) => {
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
-  }
-
-  const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({
-      categoryName,
-      remoteGetCategoriesNoPagination: getCategoriesNoPagination,
-    })
   }
 
   async function handleFormSubmit(data: IFormCourse) {
@@ -91,7 +76,7 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
         description: Yup.string()
           .required('Descriçao é necessária')
           .max(65535, 'Descrição muito longa'),
-        categoryId: Yup.string().required('Selecione uma categoria'),
+        level: Yup.string().required('Nível é necessário').max(50, 'No máximo 50 caracteres'),
       })
 
       data.content = stateEditor.content
@@ -115,7 +100,7 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
       data.name,
       data.description,
       data.content,
-      data.categoryId,
+      data.level,
       data.discount,
       data.installments,
       false,
@@ -149,7 +134,6 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
   async function fetchData() {
     try {
       setDefaultTeacherOptions(await searchTeachers(''))
-      setDefaultCategoryOptions(await searchCategories(''))
     } catch (error) {
       toast.error('Não foi possível carregar os dados')
     }
@@ -179,25 +163,14 @@ export function FormCreateCourse({ createCourse, getCategoriesNoPagination, getU
             <InputCurrence name='discount' label='Desconto' />
           </div>
           <div className='w-50'>
-            <TextArea
-              name='description'
-              label='Descrição'
-              style={{ minHeight: '236px', margin: 0 }}
-            />
-            <SelectAsync
-              searchOptions={searchCategories}
-              name='categoryId'
-              label='Categoria'
-              classes='h-75px'
-              placeholder='Digite o nome da categoria'
-              defaultOptions={defaultCategoryOptions}
-            />
+            <TextArea name='description' label='Descrição' style={{ minHeight: '236px', margin: 0 }} />
+            <Input name='level' label='Nível' />
             <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
         </div>
 
         <h3 className='mb-5 mt-5 text-muted'>Conteúdo e Materiais do Curso</h3>
-        <h5 className='mb-5 mt-5'>Conteúdo Prográmatico do Curso</h5>
+        <h5 className='mb-5 mt-5'>Conteúdo Programático do Curso</h5>
 
         <Editor
           init={{
