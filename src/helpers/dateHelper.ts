@@ -9,10 +9,6 @@ export function rangeInt(start: number, end: number): number[] {
 }
 
 export function formatDate(date: Date | string, format: string): string {
-  if (date instanceof Date) {
-    date.setTime(date.getTime() + 1000 * 60 * 60 * 3)
-  }
-
   const newDate = moment(date).format(format)
   return newDate
 }
