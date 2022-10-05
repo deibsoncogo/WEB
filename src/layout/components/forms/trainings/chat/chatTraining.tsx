@@ -7,24 +7,29 @@ import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
 import { useRequest } from '../../../../../application/hooks/useRequest'
 import { IChatTraining } from '../../../../../domain/models/createChatTraining'
-import { MessageType } from '../../../../../domain/models/messageType'
 import { SocketTrainingEvents } from '../../../../../domain/models/socketTrainingEvents'
 import { IGetAllChatTraining } from '../../../../../domain/usecases/interfaces/chatTraining/getAllChatTraining'
 import { IJoinTrainingChatRoom } from '../../../../../domain/usecases/interfaces/chatTraining/joinTrainingChatRoom'
-import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
+import { IUploadFileChatTraining } from '../../../../../domain/usecases/interfaces/chatTraining/uploadFileChatTraining'
+import { KTSVG } from '../../../../../helpers'
 import { getSocketConnection } from '../../../../../utils/getSocketConnection'
 import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import ConfirmationModal from '../../../modal/ConfirmationModal'
+import { handleUploadFile } from './utils/handleUploadFile'
+import { isPreviousDateDifferentFromCurrent } from './utils/isPreviousDateDifferentFromCurrent'
+import { isToShowAvatarImage } from './utils/isToShowAvatarImage'
+import { sendMessage } from './utils/sendMessage'
 
 let socket: Socket | null
 
 type props = {
   getAllChatTraining: IGetAllChatTraining
   remoteJoinChat: IJoinTrainingChatRoom
+  remoteUploadFile: IUploadFileChatTraining
 }
 
-export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
+export function ChatInner({ getAllChatTraining, remoteJoinChat, remoteUploadFile }: props) {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<IChatTraining[]>([])
   const [loading, setLoading] = useState(true)
@@ -43,72 +48,20 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
     remoteJoinChat.join
   )
 
-  const IsPreviousDateDifferentFromCurrent = (index: number) => {
-    if (messages?.length > 1 && index >= 1) {
-      return messages[index - 1].date !== messages[index]?.date
-    }
-    return true
-  }
+  const {
+    makeRequest: uploadFile,
+    data: fileUploadSuccess,
+    cleanUp: cleanUpFileUpload,
+    error: fileUploadError,
+  } = useRequest<IChatTraining, FormData>(remoteUploadFile.upload)
 
-  const IsToShowAvatarImage = (index: number) => {
-    if (messages?.length > 1 && index >= 1) {
-      return messages.length === index - 1
-        ? true
-        : messages[index].date !== messages[index + 1]?.date
-    }
-    return messages?.length == 1
-  }
-
-  const handleSendMessage = async () => {
-    try {
-      setLoadingSendMessage(true)
-      const currentDateMessage = new Date()
-      const chatMessage = {
-        trainingId: id,
-        text: message,
-        date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
-        hour: formatTime(currentDateMessage, 'HH:mm:ss'),
-        messageType: MessageType.Text,
-      }
-
-      socket?.emit(SocketTrainingEvents.CreateMessage, chatMessage, () => {
-        setMessage('')
-        setLoadingSendMessage(false)
-      })
-    } catch {
-      toast.error('Não foi possível enviar a mensagem!')
-    }
+  const handleSendMessage = () => {
+    sendMessage({ message, setLoadingSendMessage, setMessage, socket, trainingId: String(id) })
   }
 
   const handleChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target?.files?.[0]
-    if (!file) {
-      return
-    }
-    const [fileType] = file?.type.split('/')
-
-    if (fileType === 'video') {
-      toast.error('Não é permitido fazer o upload de vídeos')
-      return
-    }
     setLoadingSendMessage(true)
-    const currentDateMessage = new Date()
-
-    const chatTraining = {
-      trainingId: id,
-      date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
-      hour: formatTime(currentDateMessage, 'HH:mm:ss'),
-      file,
-      fileName: file.name,
-      messageType: MessageType.File,
-      fileType,
-      mimeType: file.type,
-    }
-
-    socket?.emit(SocketTrainingEvents.CreateMessage, chatTraining, () => {
-      setMessage('')
-      setLoadingSendMessage(false)
-    })
+    handleUploadFile({ event, trainingId: String(id), uploadFile })
   }
 
   const onEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -199,6 +152,29 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
   }, [messages])
 
   useEffect(() => {
+    if (isToEmitViewAllMessages && socket) {
+      socket.emit(SocketTrainingEvents.ViewAllMessages)
+    }
+  }, [isToEmitViewAllMessages, socket])
+
+  useEffect(() => {
+    if (fileUploadSuccess) {
+      setLoadingSendMessage(false)
+      cleanUpFileUpload()
+
+      socket?.emit(SocketTrainingEvents.ReceivedFileUploaded, {
+        trainingChatId: fileUploadSuccess.id,
+      })
+    }
+  }, [fileUploadSuccess])
+
+  useEffect(() => {
+    if (fileUploadError) {
+      toast.error(fileUploadError)
+    }
+  }, [fileUploadError])
+
+  useEffect(() => {
     if (!socket && accessTokenChat) {
       socketInitializer(String(accessTokenChat))
     }
@@ -213,12 +189,6 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
       }
     }
   }, [accessTokenChat])
-
-  useEffect(() => {
-    if (isToEmitViewAllMessages && socket) {
-      socket.emit(SocketTrainingEvents.ViewAllMessages)
-    }
-  }, [isToEmitViewAllMessages, socket])
 
   return (
     <>
@@ -236,8 +206,8 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat }: props) {
           <ChatMessage
             key={instantMessage.id}
             message={instantMessage}
-            isPreviousDateDifferentFromCurrent={IsPreviousDateDifferentFromCurrent(index)}
-            isToShowAvatarImage={IsToShowAvatarImage(index)}
+            isPreviousDateDifferentFromCurrent={isPreviousDateDifferentFromCurrent(index, messages)}
+            isToShowAvatarImage={isToShowAvatarImage(index, messages)}
             setSelectedMessageToDelete={handleSelecMessageToDelete}
           />
         ))}
