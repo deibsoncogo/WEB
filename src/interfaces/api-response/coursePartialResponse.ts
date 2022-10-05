@@ -6,7 +6,7 @@ export interface IPartialCourseResponse {
   discount: string
   isActive: boolean
   belongsToPlans: boolean
-  categoryId: string
+  level: string
   teacherName: string
   userId: string
 }

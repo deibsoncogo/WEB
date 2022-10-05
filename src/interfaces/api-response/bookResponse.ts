@@ -8,10 +8,5 @@ export interface IBookResponse {
   discount: string
   stock: number
   isActive: boolean
-
-  category: {
-    id: string
-    name: string
-    created_at: string
-  }
+  level: string
 }
