@@ -85,10 +85,11 @@ export default function RoomInternalTable({
         <DatePicker
           name='streamingDate'
           label='Dia da transmissão'
-          placeholderText='00/00/000'
+          placeholderText='00/00/0000'
           autoComplete='off'
           mask='99/99/9999'
           minDate={new Date()}
+          minYearAmount={0}
         />
         <DatePicker
           name='streamingHour'

@@ -250,6 +250,8 @@ export function FormEditUser({
     if (!result) formRef.current.setFieldError('cpf', 'CPF inválido')
   }
 
+  const dateBase = new Date()
+
   return (
     <>
       <Form className='form' ref={formRef} initialData={defaultValue} onSubmit={handleFormSubmit}>
@@ -263,7 +265,8 @@ export function FormEditUser({
               classes='h-75px'
               name='birthDate'
               label='Data de Nascimento'
-              maxDate={new Date('01/01/2003')}
+              maxDate={new Date(dateBase.getFullYear() - 18, dateBase.getMonth(), dateBase.getDate())}
+              maxYearAmount={-17}
             />
             <InputMasked
               classes='h-75px'
