@@ -170,6 +170,7 @@ export function ProductsModal({
                         name='courseExpireDate'
                         label='Data de Expiração'
                         minDate={moment().toDate()}
+                        minYearAmount={0}
                       />
                     </div>
                   </div>
@@ -207,6 +208,7 @@ export function ProductsModal({
                         name='trainingExpireDate'
                         label='Data de Expiração'
                         minDate={moment().toDate()}
+                        minYearAmount={0}
                       />
                     </div>
                   </div>
@@ -244,6 +246,7 @@ export function ProductsModal({
                         name='planExpireDate'
                         label='Data de Expiração'
                         minDate={moment().toDate()}
+                        minYearAmount={0}
                       />
                     </div>
                   </div>

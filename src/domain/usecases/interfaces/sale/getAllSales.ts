@@ -6,7 +6,7 @@ import { OutputPagination } from "../../../shared/interface/OutputPagination";
 export interface SalesFilter {
   initialDate: string
   finalDate: string
-  status: string
+  status: string[]
 }
 
 export interface GetSalesParams extends InputPagination {

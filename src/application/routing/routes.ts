@@ -19,6 +19,7 @@ export const appRoutes = {
   EDIT_ROOM: '/rooms/edit/[id]',
   COUPONS: '/coupons',
   SALES: '/sales',
+  SALE_INFO: '/sales/show/[id]',
   USERS: '/users',
   NOTFOUND: '/404',
   CHATROOM: '/rooms/chat/[id]',
@@ -45,16 +46,17 @@ export const professorRoutes = [
   appRoutes.EDIT_ROOM,
   appRoutes.TRAININGS,
   appRoutes.EDIT_TRAINING,
-  appRoutes.NOTFOUND
+  appRoutes.NOTFOUND,
 ]
 
 export const adminRoutes = [
   appRoutes.ALERTS,
-  appRoutes.BOOKS,  
+  appRoutes.BOOKS,
   appRoutes.BANNERS,
   appRoutes.PLANS,
   appRoutes.CATEGORIES,
   appRoutes.USERS,
   appRoutes.SALES,
   appRoutes.COUPONS,
+  appRoutes.SALE_INFO,
 ].concat(professorRoutes)

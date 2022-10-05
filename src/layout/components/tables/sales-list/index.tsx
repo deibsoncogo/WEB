@@ -98,6 +98,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
 
   const handleForm = async (data: SalesFilter) => {
     if (!formRef.current) throw new Error()
+    
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
@@ -209,8 +210,8 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                       Produto
                     </th>
                     <th
-                      className={getColumnHeaderClasses('transactionId')}
-                      onClick={() => handleOrdenation('transactionId')}
+                      className={getColumnHeaderClasses('id')}
+                      onClick={() => handleOrdenation('id')}
                     >
                       ID da Transação
                     </th>

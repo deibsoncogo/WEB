@@ -60,7 +60,13 @@ const EditCouponDrawerForm = React.forwardRef<FormHandles, Props>((props, ref) =
 
           <InputNumber name='quantity' label='Quantidade' />
 
-          <DatePicker name='expirationDate' label='Data de Expiração' minDate={new Date()} />
+          <DatePicker
+            name='expirationDate'
+            label='Data de Expiração'
+            placeholderText='00/00/0000'
+            minDate={new Date()}
+            minYearAmount={0}
+          />
 
           <SelectMulti
             name='productId'

@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from 'next/link'
 
 interface IRow {
   id: string
@@ -8,8 +8,7 @@ interface IRow {
   transactionId: string
   total: string
   status: string
-  handleRefresher: () => void;
-
+  handleRefresher: () => void
 }
 
 export function Row({
@@ -20,18 +19,18 @@ export function Row({
   transactionId,
   total,
   status,
-  handleRefresher
- 
+  handleRefresher,
 }: IRow) {
- 
-   return (
+  return (
     <>
       <tr>
         <td className='ps-4'>
           <span className='text-dark fw-bold d-block fs-7'>{customerName}</span>
         </td>
         <td>
-          <span className='text-dark fw-bold d-block fs-7 text-overflow-custom'>{purchaseDate}</span>
+          <span className='text-dark fw-bold d-block fs-7 text-overflow-custom'>
+            {purchaseDate}
+          </span>
         </td>
         <td>
           <span className='text-dark fw-bold d-block fs-7'>{product}</span>
@@ -45,14 +44,12 @@ export function Row({
         <td>
           <span className='text-dark fw-bold d-block fs-7'>{status}</span>
         </td>
-       
+
         <td className='text-end d-flex justify-content-start px-4'>
-          <Link href=''>
-              <a className='primary border-2 border-bottom border-secondary'>
-                    Visualizar
-              </a>
+          <Link href={`/sales/show/${id}`}>
+            <a className='primary border-2 border-bottom border-secondary'>Visualizar</a>
           </Link>
-        </td>     
+        </td>
       </tr>
     </>
   )
