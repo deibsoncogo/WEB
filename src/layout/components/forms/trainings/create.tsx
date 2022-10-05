@@ -18,11 +18,9 @@ type FormCreateTrainingProps = {
   onCancel: () => void
   removeStreamItem: (index: number) => void
   searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
-  searchCategories: (categoryName: string) => Promise<ISelectOption[]>
   loadingSubmit: boolean
   streamList: IStreaming[]
   zoomUsersOptions: ISelectOption[]
-  defaultCategoryOptions: ISelectOption[]
   defaultTeacherOptions: ISelectOption[]
 }
 
@@ -32,12 +30,10 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
     onSubmit,
     removeStreamItem,
     searchTeachers,
-    searchCategories,
     onCancel,
     streamList,
     loadingSubmit,
     zoomUsersOptions,
-    defaultCategoryOptions,
     defaultTeacherOptions,
   } = props
 
@@ -65,19 +61,8 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
           </div>
 
           <div className='col d-flex flex-column'>
-            <TextArea
-              name='description'
-              label='Descrição'
-              style={{ minHeight: '240px', margin: 0 }}
-            />
-            <SelectAsync
-              searchOptions={searchCategories}
-              name='categoryId'
-              label='Categoria'
-              classes='h-75px'
-              placeholder='Digite o nome da categoria'
-              defaultOptions={defaultCategoryOptions}
-            />
+            <TextArea name='description' label='Descrição' style={{ minHeight: '240px', margin: 0 }} />
+            <Input name='level' label='Nível' />
           </div>
         </div>
       </div>
@@ -195,3 +180,4 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
 FormCreateTraining.displayName = 'FormCreateTraining'
 
 export { FormCreateTraining }
+

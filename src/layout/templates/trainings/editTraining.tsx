@@ -7,12 +7,8 @@ import { appRoutes } from '../../../application/routing/routes'
 import { IStreaming } from '../../../domain/models/streaming'
 import { ITraining } from '../../../domain/models/training'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
-import { IGetCategoriesNoPagination } from '../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { IEditTraining } from '../../../domain/usecases/interfaces/trainings/editTraining'
-import {
-  IGetTraining,
-  IGetTrainingParams,
-} from '../../../domain/usecases/interfaces/trainings/getTraining'
+import { IGetTraining, IGetTrainingParams } from '../../../domain/usecases/interfaces/trainings/getTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
 import { IGetZoomUsers, IZoomUser } from '../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
@@ -21,14 +17,12 @@ import { trainingFormSchema } from '../../components/forms/trainings/type'
 import { FullLoading } from '../../components/FullLoading/FullLoading'
 import { maskedToMoney, onlyNums } from '../../formatters/currenceFormatter'
 import { formatTrainingToSubmit } from './utils/formatTrainingToSubmit'
-import { getAsyncCategoiesNoPaginationToSelectInput } from './utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { getAsyncTeachersToSelectInput } from './utils/getAsyncTeachersToSelectInput'
 import { getIsoDateToBRL } from './utils/getIsoDateToBRL'
 import { getStreamingDate } from './utils/getStramingDate'
 
 type EditTrainingPageProps = {
   remoteGetTeachers: IGetAllUsers
-  remoteGetCategoriesNoPagination: IGetCategoriesNoPagination
   remoteEditTraining: IEditTraining
   remoteGetTraining: IGetTraining
   remoteGetZoomUsers: IGetZoomUsers
@@ -36,7 +30,6 @@ type EditTrainingPageProps = {
 
 function EditTrainingPageTemplate({
   remoteGetTeachers,
-  remoteGetCategoriesNoPagination,
   remoteEditTraining,
   remoteGetTraining,
   remoteGetZoomUsers,
@@ -108,13 +101,6 @@ function EditTrainingPageTemplate({
     setStreamList(temp)
   }
 
-  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({
-      categoryName,
-      remoteGetCategoriesNoPagination,
-    })
-  }
-
   const handleGetAsyncTeachersToSelectInput = async (teacherName: string) => {
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers })
   }
@@ -154,7 +140,7 @@ function EditTrainingPageTemplate({
         discount,
         trainingEndDate,
         deactiveChatDate,
-        category,
+        level,
         imageUrl,
         installments,
         zoomUserId,
@@ -167,8 +153,7 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('installments', installments)
       formRef.current?.setFieldValue('teacherId', teacher.id)
       formRef.current?.setFieldValue('teacherId-label', teacher.name)
-      formRef.current?.setFieldValue('categoryId', category.id)
-      formRef.current?.setFieldValue('categoryId-label', category.name)
+      formRef.current?.setFieldValue('level', level)
       formRef.current?.setFieldValue('price', maskedToMoney(price))
       formRef.current?.setFieldValue('discount', maskedToMoney(discount))
       formRef.current?.setFieldValue('trainingEndDate', new Date(trainingEndDate))
@@ -221,7 +206,6 @@ function EditTrainingPageTemplate({
         onSubmit={handleFormSubmit}
         onCancel={handleCancel}
         searchTeachers={handleGetAsyncTeachersToSelectInput}
-        searchCategories={handleGetAsyncCategoriesToSelectInput}
         loadingSubmit={loadingTrainingEdition}
         zoomUsersOptions={zoomUsersOptions}
       />
@@ -230,3 +214,4 @@ function EditTrainingPageTemplate({
 }
 
 export { EditTrainingPageTemplate }
+

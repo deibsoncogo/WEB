@@ -18,7 +18,6 @@ type FormEditTrainingProps = {
   onCancel: () => void
   removeStreamItem: (index: number) => void
   searchTeachers: (teacherName: string) => Promise<ISelectOption[]>
-  searchCategories: (categoryName: string) => Promise<ISelectOption[]>
   loadingSubmit: boolean
   streamList: IStreaming[]
   zoomUsersOptions: ISelectOption[]
@@ -31,7 +30,6 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
     onCancel,
     removeStreamItem,
     searchTeachers,
-    searchCategories,
     streamList,
     loadingSubmit,
     zoomUsersOptions,
@@ -60,18 +58,8 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
           </div>
 
           <div className='col d-flex flex-column'>
-            <TextArea
-              name='description'
-              label='Descrição'
-              style={{ minHeight: '240px', margin: 0 }}
-            />
-            <SelectAsync
-              searchOptions={searchCategories}
-              name='categoryId'
-              label='Categoria'
-              classes='h-75px'
-              placeholder='Digite o nome da categoria'
-            />
+            <TextArea name='description' label='Descrição' style={{ minHeight: '240px', margin: 0 }}/>
+            <Input name='level' label='Nível' />
           </div>
 
           <div className='row'></div>
