@@ -27,4 +27,5 @@ export interface IPlan {
   books?: IBook[]
   rooms?: IRoom[]
   product?: Product
+  categoryId: string
 }
