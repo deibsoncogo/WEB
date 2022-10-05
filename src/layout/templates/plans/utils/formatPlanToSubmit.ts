@@ -6,7 +6,6 @@ function formatPlanToSubmit(plan: IPlan): FormData {
     name,
     description,
     price,
-    relatedPlan,
     planType,
     installments,
     intervalAccessMonths,
@@ -35,7 +34,6 @@ function formatPlanToSubmit(plan: IPlan): FormData {
   formData.append('description', description)
   formData.append('price', String(price))
   formData.append('planType', planType)
-  formData.append('plansId', JSON.stringify(relatedPlan))
   formData.append('booksId', JSON.stringify(books))
   formData.append('roomsId', JSON.stringify(rooms))
   formData.append('coursesId', JSON.stringify(courses))

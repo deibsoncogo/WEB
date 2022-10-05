@@ -9,7 +9,6 @@ import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
 import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan'
-import { IGetNotRelatedPlans } from '../../../domain/usecases/interfaces/plan/getNotRelatedPlans'
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
@@ -24,7 +23,6 @@ type Props = {
   remoteGetTrainings: IGetAllTrainings
   remoteGetBooks: IGetAllBooks
   remoteGetRooms: IGetAllRooms
-  remoteGetNotRelatedPlans: IGetNotRelatedPlans
 }
 
 const CreatePlanPageTemplate = ({
@@ -32,7 +30,6 @@ const CreatePlanPageTemplate = ({
   remoteGetTrainings,
   remoteGetBooks,
   remoteGetRooms,
-  remoteGetNotRelatedPlans,
   remoteCreatePlan,
 }: Props) => {
   const router = useRouter()
@@ -73,19 +70,6 @@ const CreatePlanPageTemplate = ({
       dataFormatted.append('isActive', String(false))
       createPlan(dataFormatted)
     }
-  }
-
-  const getRelatedPlanData = (relatedPlan: IPlan[]): ISelectOption[] => {
-    return relatedPlan.map((item) => {
-      return { label: item.product!.name, value: String(item.id) }
-    })
-  }
-
-  async function handleSetPlansOptions() {
-    const notRelatedPlans = await remoteGetNotRelatedPlans.get()
-    const options = getRelatedPlanData(notRelatedPlans)
-
-    setPlansOptions(options)
   }
 
   async function handleGetCoursesOptions(searchValue: string): Promise<ISelectOption[]> {
@@ -147,10 +131,6 @@ const CreatePlanPageTemplate = ({
     }
   }, [createPlanError])
 
-  useEffect(() => {
-    handleSetPlansOptions()
-  }, [])
-
   return (
     <FormCreatePlan
       ref={createPlanFormRef}
@@ -160,7 +140,6 @@ const CreatePlanPageTemplate = ({
       loadTrainingsOptions={handleGetTrainingsOptions}
       loadBooksOptions={handleGetBooksOptions}
       loadRoomsOptions={handleGetRoomsOptions}
-      plansOptions={plansOptions}
       hasAtLastOneProduct={hasAtLastOneProduct}
       loadingFormSubmit={createPlanLoading}
     />

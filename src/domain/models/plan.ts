@@ -22,7 +22,6 @@ export interface IPlan {
   intervalAccessMonths: number
   isActive: boolean
   planType: PlanType
-  relatedPlan?: IPlan[]
   trainings?: ITraining[]
   courses?: Course[]
   books?: IBook[]
