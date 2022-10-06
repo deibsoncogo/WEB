@@ -7,6 +7,7 @@ import { appRoutes } from '../../../application/routing/routes'
 import { IPlan, PlanType } from '../../../domain/models/plan'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
+import { IGetCategoriesNoPagination } from '../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
 import { IGetPlan, IGetPlanParams } from '../../../domain/usecases/interfaces/plan/getPlan'
 import { IEditPlan } from '../../../domain/usecases/interfaces/plan/updatePlan'
@@ -17,6 +18,7 @@ import { extractSelectOptionsFromArr, getOptionsFromSearchRequest } from '../../
 import { FormEditPlan } from '../../components/forms/plans/edit'
 import { planFormSchema } from '../../components/forms/plans/planSchema'
 import { maskedToMoney } from '../../formatters/currenceFormatter'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { formatPlanToSubmit } from './utils/formatPlanToSubmit'
 
 type Props = {
@@ -26,6 +28,7 @@ type Props = {
   remoteGetTrainings: IGetAllTrainings
   remoteGetBooks: IGetAllBooks
   remoteGetRooms: IGetAllRooms
+  remoteGetCategoriesNoPagination: IGetCategoriesNoPagination
 }
 
 const EditPlanPageTemplate = ({
@@ -35,6 +38,7 @@ const EditPlanPageTemplate = ({
   remoteGetRooms,
   remoteGetPlan,
   remoteEditPlan,
+  remoteGetCategoriesNoPagination,
 }: Props) => {
   const router = useRouter()
   const { id: planId } = router.query
@@ -195,6 +199,7 @@ const EditPlanPageTemplate = ({
         courses = [],
         books = [],
         rooms = [],
+        category,
       } = plan
 
       setFiledValue('planType', planType || defaultPlan)
@@ -207,10 +212,19 @@ const EditPlanPageTemplate = ({
       setFiledValue('books', extractSelectOptionsFromArr(books))
       setFiledValue('rooms', extractSelectOptionsFromArr(rooms))
       setFiledValue('trainings', extractSelectOptionsFromArr(trainings))
+      setFiledValue('categoryId', category.id)
+      setFiledValue('categoryId-label', category.name)
 
       handlePlanTypeSet()
     }
   }, [plan])
+
+  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination,
+    })
+  }
 
   useEffect(() => {
     if (plan) {
@@ -231,6 +245,7 @@ const EditPlanPageTemplate = ({
       loadingFormSubmit={editPlanLoading}
       planType={planType as PlanType}
       planTypeChange={handlePlanTypeChange}
+      searchCategories={handleGetAsyncCategoriesToSelectInput}
     />
   )
 }

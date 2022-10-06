@@ -5,7 +5,7 @@ import { IPlan, PlanType } from '../../../../domain/models/plan'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { onlyNums } from '../../../formatters/currenceFormatter'
 import { Button as CustomButton } from '../../buttons/CustomButton'
-import { Input, Select, TextArea } from '../../inputs'
+import { Input, Select, SelectAsync, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
 import { SelectMulti } from '../../inputs/input-multi-select'
 import { InputNumber } from '../../inputs/input-number'
@@ -23,6 +23,7 @@ type FormEditPlansProps = {
   hasAtLastOneProduct: boolean
   loadingFormSubmit: boolean
   planType: PlanType
+  searchCategories: (categoryName: string) => Promise<ISelectOption[]>
 }
 
 const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) => {
@@ -34,6 +35,7 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
     loadBooksOptions,
     loadRoomsOptions,
     planTypeChange,
+    searchCategories,
     hasAtLastOneProduct,
     loadingFormSubmit,
     planType,
@@ -100,6 +102,13 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
               name='description'
               label='Descrição'
               style={{ minHeight: '240px', margin: 0 }}
+            />
+            <SelectAsync
+              searchOptions={searchCategories}
+              name='categoryId'
+              label='Categoria'
+              classes='h-75px'
+              placeholder='Digite o nome da categoria'
             />
             {planType === PlanType.SINGLE_PAYMENT && (
               <InputNumber
