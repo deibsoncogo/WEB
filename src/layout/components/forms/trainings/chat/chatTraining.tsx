@@ -160,11 +160,10 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat, remoteUploadFile
   useEffect(() => {
     if (fileUploadSuccess) {
       setLoadingSendMessage(false)
-      cleanUpFileUpload()
-
       socket?.emit(SocketTrainingEvents.ReceivedFileUploaded, {
         trainingChatId: fileUploadSuccess.id,
       })
+      cleanUpFileUpload()
     }
   }, [fileUploadSuccess])
 

@@ -1,6 +1,6 @@
 import { IChatRoom } from '../../../models/createChatRoom'
 
-export interface GetChatRoomParam {
+export interface IGetChatAllRoomParam {
   roomId: string
 }
 
@@ -9,5 +9,5 @@ export interface IGetAllChatRoomsResponse {
   existsNewViewedMessages: boolean
 }
 export interface IGetAllChatRooms {
-  getAll: (params: GetChatRoomParam) => Promise<IGetAllChatRoomsResponse>
+  getAll: (params: IGetChatAllRoomParam) => Promise<IGetAllChatRoomsResponse>
 }

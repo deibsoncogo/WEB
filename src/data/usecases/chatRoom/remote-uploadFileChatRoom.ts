@@ -1,9 +1,9 @@
 import { InvalidParamsError } from '../../../domain/errors'
 import { UnexpectedError } from '../../../domain/errors/unexpected-error'
-import { IUploadFileChatTraining } from '../../../domain/usecases/interfaces/chatTraining/uploadFileChatTraining'
+import { IUploadFileChatRoom } from '../../../domain/usecases/interfaces/chatRoom/uploadFileChatRoom'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteUploadFileChatTraining implements IUploadFileChatTraining {
+export class RemoteUploadFileChatRoom implements IUploadFileChatRoom {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<void>) {}
 
   upload = async (data: FormData) => {
