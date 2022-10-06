@@ -5,7 +5,7 @@ import { IPlan, PlanType } from '../../../../domain/models/plan'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { onlyNums } from '../../../formatters/currenceFormatter'
 import { Button as CustomButton } from '../../buttons/CustomButton'
-import { Input, Select, TextArea } from '../../inputs'
+import { Input, Select, SelectAsync, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
 import { SelectMulti } from '../../inputs/input-multi-select'
 import { InputNumber } from '../../inputs/input-number'
@@ -19,11 +19,11 @@ type FormEditPlansProps = {
   loadTrainingsOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadBooksOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadRoomsOptions: (searchValue: string) => Promise<ISelectOption[]>
-  plansOptions: ISelectOption[]
   planTypeChange: (newPlanType: PlanType) => void
   hasAtLastOneProduct: boolean
   loadingFormSubmit: boolean
   planType: PlanType
+  searchCategories: (categoryName: string) => Promise<ISelectOption[]>
 }
 
 const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) => {
@@ -34,8 +34,8 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
     loadTrainingsOptions,
     loadBooksOptions,
     loadRoomsOptions,
-    plansOptions,
     planTypeChange,
+    searchCategories,
     hasAtLastOneProduct,
     loadingFormSubmit,
     planType,
@@ -67,14 +67,6 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
           <div className='col'>
             <Input name='name' label='Nome' classes='h-75px' />
             <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
-            <Select name='relatedPlan' label='Plano Relacionado' classes='h-75px' defaultValue=''>
-              <option value=''>Selecione</option>
-              {plansOptions.map(({ label, value }) => (
-                <option value={value} key={value}>
-                  {label}
-                </option>
-              ))}
-            </Select>
             <Select
               name='planType'
               label='Tipo de Plano'
@@ -110,6 +102,13 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
               name='description'
               label='Descrição'
               style={{ minHeight: '240px', margin: 0 }}
+            />
+            <SelectAsync
+              searchOptions={searchCategories}
+              name='categoryId'
+              label='Categoria'
+              classes='h-75px'
+              placeholder='Digite o nome da categoria'
             />
             {planType === PlanType.SINGLE_PAYMENT && (
               <InputNumber
