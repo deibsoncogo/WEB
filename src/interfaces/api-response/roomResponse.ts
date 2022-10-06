@@ -12,9 +12,8 @@ export interface IRoomResponse{
     isChatActive: boolean;
     isStreamingRoomActive: boolean;
     userId: string;    
-    categoryId: string;
+    level: string;
     teacherName: string;
-    categoryName: string;
     zoomUserId: string;
     streamingRooms: IStreamingRoom[]
 }

@@ -11,11 +11,5 @@ export interface IBook {
   isActive: boolean
   belongsToPlans: boolean
   installments: number
-  categoryId: string
-
-  category: {
-    id: string
-    name: string
-    created_at: string
-  }
+  level: string
 }

@@ -5,7 +5,7 @@ export interface ITrainingResponse {
   price: number
   discount: number
   description: string
-  categoryId: string
+  level: string
   teacherId: string
   trainingEndDate: Date
   deactiveChatDate: Date

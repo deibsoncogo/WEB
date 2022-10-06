@@ -21,7 +21,7 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
   }
 
   const {
-    categoryId,
+    level,
     description,
     discount,
     name,
@@ -41,7 +41,7 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
   formData.append('price', String(price))
   formData.append('discount', String(discount))
   formData.append('teacherId', String(teacherId))
-  formData.append('categoryId', String(categoryId))
+  formData.append('level', String(level))
   formData.append('name', String(name))
   formData.append('description', String(description))
   formData.append('installments', String(installments))

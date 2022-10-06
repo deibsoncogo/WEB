@@ -10,6 +10,6 @@ interface IFormRoom {
   itemRoom: boolean;
   price: string; 
   userId: string;
-  categoryId: string;    
+  level: string;    
   zoomUserId: string 
 }
