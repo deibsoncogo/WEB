@@ -3,6 +3,7 @@ import { ITraining } from './training'
 import { IBook } from './book'
 import { IRoom } from './room'
 import { Product } from './product'
+import { ICategory } from '../../interfaces/api-response/categoryResponse'
 
 export enum PlanType {
   SINGLE_PAYMENT = 'single_payment',
@@ -28,4 +29,5 @@ export interface IPlan {
   rooms?: IRoom[]
   product?: Product
   categoryId: string
+  category: ICategory
 }
