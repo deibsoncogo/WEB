@@ -7,26 +7,34 @@ import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
 import { useRequest } from '../../../../../application/hooks/useRequest'
 import { IChatRoom } from '../../../../../domain/models/createChatRoom'
-import { MessageType } from '../../../../../domain/models/messageType'
 import { SocketRoomEvents } from '../../../../../domain/models/socketRoomEvents'
-import { IGetAllChatRooms } from '../../../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
+import {
+  IGetAllChatRooms,
+  IGetAllChatRoomsResponse,
+  IGetChatAllRoomParam,
+} from '../../../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
 import { IJoinChatRoom } from '../../../../../domain/usecases/interfaces/chatRoom/joinChatRoom'
-import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
+import { IUploadFileChatRoom } from '../../../../../domain/usecases/interfaces/chatRoom/uploadFileChatRoom'
+import { KTSVG } from '../../../../../helpers'
 import { getSocketConnection } from '../../../../../utils/getSocketConnection'
 import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import ConfirmationModal from '../../../modal/ConfirmationModal'
+import { IsPreviousDateDifferentFromCurrent } from './utils/isPreviousDateDifferentFromCurrent'
+import { isToShowAvatarImage } from './utils/isToShowAvatarImage'
+import { sendChatRoomMessage } from './utils/sendChatRoomMessage'
+import { uploadFileChatRoomMessage } from './utils/uploadFileChatRoomMessage'
 let socket: Socket | null
 
 type props = {
   getAllChatRooms: IGetAllChatRooms
   remoteJoinChat: IJoinChatRoom
+  remoteUploadFile: IUploadFileChatRoom
 }
 
-export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
+export function ChatInner({ getAllChatRooms, remoteJoinChat, remoteUploadFile }: props) {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState<IChatRoom[]>([])
-  const [loading, setLoading] = useState(true)
   const [selectedMessageToDelete, setSelectedMessageToDelete] = useState<string | null>(null)
   const [loadingDeletion, setLoadingDeletion] = useState(false)
   const [loadingSendMessage, setLoadingSendMessage] = useState(false)
@@ -38,45 +46,27 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
   const router = useRouter()
   const { id } = router.query
 
+  const {
+    makeRequest: getAllChatMessages,
+    error: getAllChatMessagesError,
+    data: responseGetAllMessages,
+    cleanUp: cleanUpGetAllMessages,
+    loading: lodingGetAllMessages,
+  } = useRequest<IGetAllChatRoomsResponse, IGetChatAllRoomParam>(getAllChatRooms.getAll)
+
   const { makeRequest: joinChatRoom, data: accessTokenChat } = useRequest<IJoinChatRoom>(
     remoteJoinChat.join
   )
 
-  const IsPreviousDateDifferentFromCurrent = (index: number) => {
-    if (messages?.length > 1 && index >= 1) {
-      return messages[index - 1].date !== messages[index]?.date
-    }
-    return true
-  }
-
-  const IsToShowAvatarImage = (index: number) => {
-    if (messages?.length > 1 && index >= 1) {
-      return messages.length === index - 1
-        ? true
-        : messages[index].date !== messages[index + 1]?.date
-    }
-    return messages?.length == 1
-  }
+  const {
+    makeRequest: uploadFile,
+    data: fileUploadSuccess,
+    cleanUp: cleanUpFileUpload,
+    error: fileUploadError,
+  } = useRequest<IChatRoom, FormData>(remoteUploadFile.upload)
 
   const handleSendMessage = async () => {
-    try {
-      setLoadingSendMessage(true)
-      const currentDateMessage = new Date()
-      const chatRoom = {
-        roomId: id,
-        text: message,
-        date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
-        hour: formatTime(currentDateMessage, 'HH:mm:ss'),
-        messageType: MessageType.Text,
-      }
-
-      socket?.emit(SocketRoomEvents.CreateMessage, chatRoom, () => {
-        setMessage('')
-        setLoadingSendMessage(false)
-      })
-    } catch {
-      toast.error('Não foi possível enviar a mensagem!')
-    }
+    sendChatRoomMessage({ message, setMessage, roomId: String(id), setLoadingSendMessage, socket })
   }
 
   const onEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -87,33 +77,11 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
   }
 
   const handleChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target?.files?.[0]
-    if (!file) {
-      return
-    }
-    const [fileType] = file?.type.split('/')
-
-    if (fileType === 'video') {
-      toast.error('Não é permitido fazer o upload de vídeos')
-      return
-    }
     setLoadingSendMessage(true)
-    const currentDateMessage = new Date()
-
-    const chatRoom = {
-      roomId: id,
-      date: formatDate(currentDateMessage, 'YYYY-MM-DD'),
-      hour: formatTime(currentDateMessage, 'HH:mm:ss'),
-      file,
-      fileName: file.name,
-      messageType: MessageType.File,
-      fileType,
-      mimeType: file.type,
-    }
-
-    socket?.emit(SocketRoomEvents.CreateMessage, chatRoom, () => {
-      setMessage('')
-      setLoadingSendMessage(false)
+    uploadFileChatRoomMessage({
+      roomId: String(id),
+      event,
+      uploadFile,
     })
   }
 
@@ -164,6 +132,11 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
   }
 
   useEffect(() => {
+    getAllChatMessages({ roomId: String(id) })
+    joinChatRoom({ roomId: id })
+  }, [])
+
+  useEffect(() => {
     let timeout: NodeJS.Timeout
     if (messages.length > 0) {
       timeout = setTimeout(() => {
@@ -178,23 +151,46 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
   }, [messages])
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (typeof id == 'string') {
-        const response = await getAllChatRooms.getAll({ roomId: id })
-        setMessages(response.data)
-        if (response.existsNewViewedMessages) {
-          setIsToEmitViewAllMessages(true)
-        }
-      }
-    }
-    fetchData()
-      .catch(() => toast.error('Não foi possível carregar as mensagens'))
-      .finally(() => {
-        setLoading(false)
-      })
+    if (responseGetAllMessages) {
+      const { data, existsNewViewedMessages } = responseGetAllMessages
+      setMessages(data)
 
-    joinChatRoom({ roomId: id })
-  }, [])
+      if (existsNewViewedMessages) {
+        setIsToEmitViewAllMessages(true)
+      }
+
+      cleanUpGetAllMessages()
+    }
+  }, [responseGetAllMessages])
+
+  useEffect(() => {
+    if (fileUploadSuccess) {
+      setLoadingSendMessage(false)
+      socket?.emit(SocketRoomEvents.ReceivedFileUploaded, {
+        roomChatMessageId: fileUploadSuccess.id,
+      })
+      cleanUpFileUpload()
+    }
+  }, [fileUploadSuccess])
+
+  useEffect(() => {
+    if (fileUploadError) {
+      toast.error(fileUploadError)
+      cleanUpFileUpload()
+      return
+    }
+
+    if (getAllChatMessagesError) {
+      toast.error(getAllChatMessagesError)
+      cleanUpGetAllMessages()
+    }
+  }, [fileUploadError, getAllChatMessagesError])
+
+  useEffect(() => {
+    if (isToEmitViewAllMessages && socket) {
+      socket.emit(SocketRoomEvents.ViewAllMessages)
+    }
+  }, [isToEmitViewAllMessages, socket])
 
   useEffect(() => {
     if (!socket && accessTokenChat) {
@@ -213,12 +209,6 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
     }
   }, [accessTokenChat])
 
-  useEffect(() => {
-    if (isToEmitViewAllMessages && socket) {
-      socket.emit(SocketRoomEvents.ViewAllMessages)
-    }
-  }, [isToEmitViewAllMessages, socket])
-
   return (
     <div>
       <ConfirmationModal
@@ -230,14 +220,14 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat }: props) {
         title='Deletar'
       />
 
-      {loading && <FullLoading />}
+      {lodingGetAllMessages && <FullLoading />}
       <div className='card-body position-relative overflow-auto mh-550px'>
         {messages.map((instantMessage, index) => (
           <ChatMessage
             key={index}
             message={instantMessage}
-            isPreviousDateDifferentFromCurrent={IsPreviousDateDifferentFromCurrent(index)}
-            isToShowAvatarImage={IsToShowAvatarImage(index)}
+            isPreviousDateDifferentFromCurrent={IsPreviousDateDifferentFromCurrent(index, messages)}
+            isToShowAvatarImage={isToShowAvatarImage(index, messages)}
             setSelectedMessageToDelete={handleSelecMessageToDelete}
           />
         ))}

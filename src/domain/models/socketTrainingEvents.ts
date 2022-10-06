@@ -9,5 +9,6 @@ export enum SocketTrainingEvents {
   ViewedMessage = 'viewedMessage',
   DeleteMessage = 'deleteMessage',
   DeletedMessage = 'deletedMessage',
+  ReceivedFileUploaded = 'receivedFileUploaded',
   ConnectError = 'connect_error',
 }

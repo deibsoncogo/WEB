@@ -9,5 +9,6 @@ export enum SocketRoomEvents {
   UpdateMessageViews = 'updateMessageViews',
   DeleteMessage = 'deleteMessage',
   DeletedMessage = 'deletedMessage',
+  ReceivedFileUploaded = 'receivedFileUploaded',
   ConnectError = 'connect_error',
 }
