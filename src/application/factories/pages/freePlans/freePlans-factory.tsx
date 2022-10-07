@@ -1,11 +1,11 @@
-import { ListPlansTemplate } from '../../../../layout/templates/plans/list'
-import { makeRemoteGetPlans } from '../../usecases/plans/remote-getPlans-factory'
+import { ListFreePlansTemplate } from '../../../../layout/templates/freePlans/list'
+import { makeRemoteGetFreePlans } from '../../usecases/freePlan/remote-getPlans-factory'
 import { makeRemoteTogglePlanStatus } from '../../usecases/plans/remote-togglePlanStatus-factory'
 
-export const MakeListPlansPage = () => {
+export const MakeListFreePlansPage = () => {
   return (
-    <ListPlansTemplate
-      remoteGetPlans={makeRemoteGetPlans()}
+    <ListFreePlansTemplate
+      remoteGetPlans={makeRemoteGetFreePlans()}
       remoteTogglePlanStatus={makeRemoteTogglePlanStatus()}
     />
   )

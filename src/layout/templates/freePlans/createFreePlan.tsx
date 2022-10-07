@@ -2,10 +2,9 @@ import { FormHandles } from '@unform/core'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
-import { makeRemoteGetCategoriesNoPagination } from '../../../application/factories/usecases/categories/remote-getCategoriesNoPagination-factory'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
-import { IPlan } from '../../../domain/models/plan'
+import { IFreePlan } from '../../../domain/models/freePlan'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
@@ -14,9 +13,10 @@ import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRoo
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { getOptionsFromSearchRequest } from '../../../utils/getOptionsFromSearchRequest'
-import { FormCreatePlan } from '../../components/forms/plans/create'
-import { planFormSchema } from '../../components/forms/plans/planSchema'
-import { formatPlanToSubmit } from './utils/formatPlanToSubmit'
+import { FormCreateFreePlan } from '../../components/forms/freePlan/create'
+import { freePlanFormSchema } from '../../components/forms/freePlan/freePlanSchema'
+
+import { formatFreePlanToSubmit } from './utils/formatFreePlanToSubmit'
 
 type Props = {
   remoteCreateFreePlan: ICreateFreePlan
@@ -45,11 +45,11 @@ const CreateFreePlanPageTemplate = ({
     cleanUp: cleanUpCreatePlan,
   } = useRequest<void, FormData>(remoteCreateFreePlan.create)
 
-  async function handleFormSubmit(data: IPlan) {
+  async function handleFormSubmit(data: IFreePlan) {
     const { courses = [], trainings = [], books = [], rooms = [] } = data
     const products = courses?.length + books?.length + trainings?.length + rooms?.length
 
-    const { error, success } = await applyYupValidation<IPlan>(planFormSchema, data)
+    const { error, success } = await applyYupValidation<IFreePlan>(freePlanFormSchema, data)
 
     if (error) {
       createPlanFormRef?.current?.setErrors(error)
@@ -66,7 +66,7 @@ const CreateFreePlanPageTemplate = ({
     }
 
     if (success) {
-      const dataFormatted = formatPlanToSubmit(success)
+      const dataFormatted = formatFreePlanToSubmit(success)
       dataFormatted.append('isActive', String(false))
       createPlan(dataFormatted)
     }
@@ -118,9 +118,9 @@ const CreateFreePlanPageTemplate = ({
 
   useEffect(() => {
     if (createPlanSuccessful) {
-      toast.success('Plano cadastrado com sucesso')
+      toast.success('Plano Gratuito cadastrado com sucesso')
       cleanUpCreatePlan()
-      router.push(appRoutes.PLANS)
+      router.push(appRoutes.FREE_PLANS)
     }
   }, [createPlanSuccessful])
 
@@ -132,7 +132,7 @@ const CreateFreePlanPageTemplate = ({
   }, [createPlanError])
 
   return (
-    <FormCreatePlan
+    <FormCreateFreePlan
       ref={createPlanFormRef}
       onSubmit={handleFormSubmit}
       onCancel={handleClickCancel}
@@ -140,7 +140,6 @@ const CreateFreePlanPageTemplate = ({
       loadTrainingsOptions={handleGetTrainingsOptions}
       loadBooksOptions={handleGetBooksOptions}
       loadRoomsOptions={handleGetRoomsOptions}
-      getCategoriesNoPagination={makeRemoteGetCategoriesNoPagination()}
       hasAtLastOneProduct={hasAtLastOneProduct}
       loadingFormSubmit={createPlanLoading}
     />

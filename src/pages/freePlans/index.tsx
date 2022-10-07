@@ -1,9 +1,9 @@
 import Head from 'next/head'
-import { MakeListPlansPage } from '../../application/factories/pages/plans/plans-factory'
+import { MakeListFreePlansPage } from '../../application/factories/pages/freePlans/freePlans-factory'
 import { AsideDefault } from '../../layout/components/aside/AsideDefault'
 import { HeaderWrapper } from '../../layout/components/header/HeaderWrapper'
 
-function Plans() {
+function FreePlans() {
   return (
     <>
       <Head>
@@ -17,7 +17,7 @@ function Plans() {
           <HeaderWrapper title='Planos Gratuitos' />
 
           <div id='kt_content_container' className='container'>
-            <MakeListPlansPage />
+            <MakeListFreePlansPage />
           </div>
         </div>
       </div>
@@ -25,4 +25,4 @@ function Plans() {
   )
 }
 
-export default Plans
+export default FreePlans

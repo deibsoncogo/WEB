@@ -5,7 +5,7 @@ import { makeRemoteCreateFreePlan } from '../../usecases/freePlan/remote-createF
 import { makeRemoteGetAllRooms } from '../../usecases/room/remote-getAllRooms-factory'
 import { makeRemoteGetAllTrainings } from '../../usecases/trainings/remote-getAllUsers-factory'
 
-export const MakeCreatePlanPageTemplate = () => {
+export const MakeCreateFreePlanPageTemplate = () => {
   return (
     <CreateFreePlanPageTemplate
       remoteGetCourses={makeRemoteGetAllCourses()}

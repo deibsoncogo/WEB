@@ -4,14 +4,21 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { usePagination } from '../../../application/hooks/usePagination'
 import { useRequest } from '../../../application/hooks/useRequest'
-import { IPlan } from '../../../domain/models/plan'
+import { IFreePlan } from '../../../domain/models/freePlan'
 import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
-import { IGetFreePlans } from '../../../domain/usecases/interfaces/freePlan/getFreePlans'
-import { IToggleFreePlanStatus } from '../../../domain/usecases/interfaces/freePlan/toggleFreePlanStatus'
+import {
+  IGetFreePlans,
+  IGetFreePlansParams,
+} from '../../../domain/usecases/interfaces/freePlan/getFreePlans'
+import {
+  IToggleFreePlanStatus,
+  IToggleFreePlanStatusParams,
+} from '../../../domain/usecases/interfaces/freePlan/toggleFreePlanStatus'
 import { KTSVG } from '../../../helpers'
 import { debounce } from '../../../helpers/debounce'
 import ConfirmationModal from '../../components/modal/ConfirmationModal'
 import { Search } from '../../components/search/Search'
+import { FreePlansTable } from '../../components/tables/freePlans-list'
 import { PlansTable } from '../../components/tables/plans-list'
 
 type Props = {
@@ -25,7 +32,7 @@ export function ListFreePlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }
   const [toggleStatusPlanConfirmationModalOpen, setToggleStatusPlanConfirmationModalOpen] =
     useState(false)
 
-  const [plans, setPlans] = useState<IPlan[]>([])
+  const [plans, setPlans] = useState<IFreePlan[]>([])
 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
@@ -45,7 +52,7 @@ export function ListFreePlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }
     data: plansSuccessful,
     error: getPlansError,
     cleanUp: cleanUpGetPlans,
-  } = useRequest<OutputPagination<IPlan>, IGetFreePlansParams>(remoteGetPlans.get)
+  } = useRequest<OutputPagination<IFreePlan>, IGetFreePlansParams>(remoteGetPlans.get)
 
   const {
     makeRequest: togglePlanStatus,
@@ -126,17 +133,17 @@ export function ListFreePlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }
             <Search ref={searchPlanFormRef} onChangeText={handleSearchPlan} />
           </h3>
           <div className='card-toolbar'>
-            <Link href='/plans/create'>
+            <Link href='/freePlans/create'>
               <button className='btn btn-sm btn-light-primary'>
                 <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-                Novo Plano
+                Novo Plano Gratuito
               </button>
             </Link>
           </div>
         </div>
 
-        <PlansTable
-          plans={plans}
+        <FreePlansTable
+          freePlans={plans}
           paginationHook={paginationHook}
           togglePlanStatus={handleOpenToggleStatusConfirmationModal}
         />
