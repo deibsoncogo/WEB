@@ -102,9 +102,9 @@ export function FormUpdateRoom({
         level: Yup.string().required('Nível é necessário').max(50, 'No máximo 50 caracteres'),
       })
 
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       const hasError = await verifyErrorStreamingRoom(data)
       hasError ? setHasErrorRoom(hasError) : handleUpdateRoom(data)
-      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {

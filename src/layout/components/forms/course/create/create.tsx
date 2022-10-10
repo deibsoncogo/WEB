@@ -80,8 +80,8 @@ export function FormCreateCourse({ createCourse, getUsers }: Props) {
       })
 
       data.content = stateEditor.content
-      courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
       await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
+      courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
