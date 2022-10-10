@@ -2,5 +2,5 @@ import { RemoteToggleFreePlanStatus } from '../../../../data/usecases/freePlan/r
 import { IToggleFreePlanStatus } from '../../../../domain/usecases/interfaces/freePlan/toggleFreePlanStatus'
 import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
-export const makeRemoteTogglePlanStatus = (): IToggleFreePlanStatus =>
+export const makeRemoteToggleFreePlanStatus = (): IToggleFreePlanStatus =>
   new RemoteToggleFreePlanStatus(makeApiUrl('/freePlan/toggleStatus'), makeAxiosHttpClient())

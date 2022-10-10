@@ -8,10 +8,19 @@ import { Switch } from '../../inputs'
 type FreePlanTableRowProps = {
   freePlan: IFreePlan
   togglePlanStatus: (params: IToggleFreePlanStatusParams) => void
+  onDeleteFreePlan: (freePlanId: string) => void
 }
-const FreePlanTableRow = ({ freePlan, togglePlanStatus }: FreePlanTableRowProps) => {
+const FreePlanTableRow = ({
+  freePlan,
+  togglePlanStatus,
+  onDeleteFreePlan,
+}: FreePlanTableRowProps) => {
   const handlePlanStatusChange = () => {
     togglePlanStatus({ id: String(freePlan.id) })
+  }
+
+  const handleDeleteFreePlan = () => {
+    onDeleteFreePlan(String(freePlan.id))
   }
   return (
     <tr>
@@ -39,6 +48,15 @@ const FreePlanTableRow = ({ freePlan, togglePlanStatus }: FreePlanTableRowProps)
               <KTSVG path='/icons/art005.svg' className='svg-icon-3' />
             </span>
           </Link>
+        </Tooltip>
+
+        <Tooltip content={'Deletar'} rounded color='primary'>
+          <button
+            onClick={handleDeleteFreePlan}
+            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
+          >
+            <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
+          </button>
         </Tooltip>
       </td>
     </tr>

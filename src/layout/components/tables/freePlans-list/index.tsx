@@ -8,6 +8,7 @@ type PlansTableProps = {
   freePlans: IFreePlan[]
   paginationHook: usePaginationType
   togglePlanStatus: (params: IToggleFreePlanStatusParams) => void
+  onDeleteFreePlan: (freePlanId: string) => void
 }
 
 type HandleClassesParam = {
@@ -19,6 +20,7 @@ export function FreePlansTable({
   freePlans = [],
   paginationHook,
   togglePlanStatus,
+  onDeleteFreePlan,
 }: PlansTableProps) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
@@ -66,9 +68,7 @@ export function FreePlansTable({
                 >
                   Ativo
                 </th>
-                <th className='text-dark rounded-end align-middle' style={{ minWidth: '100px' }}>
-                  Ação
-                </th>
+                <th className='text-dark rounded-end align-middle'>Ação</th>
               </tr>
             </thead>
 
@@ -78,6 +78,7 @@ export function FreePlansTable({
                   key={freePlan.id}
                   freePlan={freePlan}
                   togglePlanStatus={togglePlanStatus}
+                  onDeleteFreePlan={onDeleteFreePlan}
                 />
               ))}
             </tbody>

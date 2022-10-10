@@ -7,6 +7,10 @@ import { useRequest } from '../../../application/hooks/useRequest'
 import { IFreePlan } from '../../../domain/models/freePlan'
 import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
 import {
+  IDeleteFreePlan,
+  IDeleteFreePlanParams,
+} from '../../../domain/usecases/interfaces/freePlan/deleteFreePlan'
+import {
   IGetFreePlans,
   IGetFreePlansParams,
 } from '../../../domain/usecases/interfaces/freePlan/getFreePlans'
@@ -19,18 +23,21 @@ import { debounce } from '../../../helpers/debounce'
 import ConfirmationModal from '../../components/modal/ConfirmationModal'
 import { Search } from '../../components/search/Search'
 import { FreePlansTable } from '../../components/tables/freePlans-list'
-import { PlansTable } from '../../components/tables/plans-list'
 
 type Props = {
-  remoteGetPlans: IGetFreePlans
-  remoteTogglePlanStatus: IToggleFreePlanStatus
+  remoteGetFreePlans: IGetFreePlans
+  remoteToggleFreePlanStatus: IToggleFreePlanStatus
+  remoteDeleteFreePlan: IDeleteFreePlan
 }
 
-let planToToggleStatusId: string | null = null
-export function ListFreePlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }: Props) {
+export function ListFreePlansTemplate({
+  remoteGetFreePlans,
+  remoteToggleFreePlanStatus,
+  remoteDeleteFreePlan,
+}: Props) {
   const [planName, setPlanName] = useState('')
-  const [toggleStatusPlanConfirmationModalOpen, setToggleStatusPlanConfirmationModalOpen] =
-    useState(false)
+  const [freePlanToToggleStatusId, setFreePlanToToggleStatusId] = useState<string | null>(null)
+  const [freePlanToDeletionId, setFreePlanToDeletionId] = useState<string | null>(null)
 
   const [plans, setPlans] = useState<IFreePlan[]>([])
 
@@ -52,7 +59,7 @@ export function ListFreePlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }
     data: plansSuccessful,
     error: getPlansError,
     cleanUp: cleanUpGetPlans,
-  } = useRequest<OutputPagination<IFreePlan>, IGetFreePlansParams>(remoteGetPlans.get)
+  } = useRequest<OutputPagination<IFreePlan>, IGetFreePlansParams>(remoteGetFreePlans.get)
 
   const {
     makeRequest: togglePlanStatus,
@@ -60,26 +67,42 @@ export function ListFreePlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }
     error: togglePlanStatusError,
     cleanUp: cleanUpTogglePlansStatus,
     loading: loadingTogglePlanStatus,
-  } = useRequest<string, IToggleFreePlanStatusParams>(remoteTogglePlanStatus.toggle)
+  } = useRequest<string, IToggleFreePlanStatusParams>(remoteToggleFreePlanStatus.toggle)
+
+  const {
+    makeRequest: deleteFreePlan,
+    data: deleteFreePlanSuccessful,
+    error: deleteFreePlanError,
+    cleanUp: cleanUpDeleteFreePlan,
+    loading: loadingFreePlanDeletion,
+  } = useRequest<string, IDeleteFreePlanParams>(remoteDeleteFreePlan.delete)
 
   const handleSearchPlan = debounce((text: string) => {
     setPlanName(text)
   })
 
   const handleOpenToggleStatusConfirmationModal = (params: IToggleFreePlanStatusParams) => {
-    setToggleStatusPlanConfirmationModalOpen(true)
-    planToToggleStatusId = params.id
+    setFreePlanToToggleStatusId(params.id)
+  }
+
+  const handleOpenDeleteFreePlanConfirmationModal = (freePlanId: string) => {
+    setFreePlanToDeletionId(freePlanId)
+  }
+
+  const handleCloseDeleteFreePlanConfirmationModal = () => {
+    setFreePlanToDeletionId(null)
+  }
+
+  const onDeleteFreePlan = () => {
+    deleteFreePlan({ id: freePlanToDeletionId as string })
   }
 
   const handleCloseToggleStatusConfirmationModal = () => {
-    setToggleStatusPlanConfirmationModalOpen(false)
-    planToToggleStatusId = null
+    setFreePlanToToggleStatusId(null)
   }
 
   const handleModalConfirmation = () => {
-    if (planToToggleStatusId) {
-      togglePlanStatus({ id: planToToggleStatusId })
-    }
+    togglePlanStatus({ id: freePlanToToggleStatusId as string })
   }
 
   useEffect(() => {
@@ -91,6 +114,7 @@ export function ListFreePlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }
     pagination.orderBy,
     planName,
     planStatusToggledSuccessful,
+    deleteFreePlanSuccessful,
   ])
 
   useEffect(() => {
@@ -99,31 +123,40 @@ export function ListFreePlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }
       setTotalPage(total)
       setPlans(data)
       cleanUpGetPlans()
+      return
     }
 
     if (planStatusToggledSuccessful) {
-      toast.success(
-        `Plano ${
-          !plans.find((plan) => plan.id === planToToggleStatusId)?.isActive
-            ? 'ativado'
-            : 'desativado'
-        } com sucesso.`
-      )
+      toast.success('Status do Plano alterado com sucesso!')
       handleCloseToggleStatusConfirmationModal()
       cleanUpTogglePlansStatus()
+      return
     }
-  }, [plansSuccessful])
+
+    if (deleteFreePlanSuccessful) {
+      toast.success('Plano Gratuito deletado com sucesso!')
+      handleCloseDeleteFreePlanConfirmationModal()
+      cleanUpDeleteFreePlan()
+    }
+  }, [plansSuccessful, planStatusToggledSuccessful, deleteFreePlanSuccessful])
 
   useEffect(() => {
     if (getPlansError) {
       toast.error(getPlansError)
+      return
     }
 
     if (togglePlanStatusError) {
       toast.error(togglePlanStatusError)
       cleanUpTogglePlansStatus()
+      return
     }
-  }, [getPlansError])
+
+    if (deleteFreePlanError) {
+      toast.error(deleteFreePlanSuccessful)
+      cleanUpDeleteFreePlan()
+    }
+  }, [getPlansError, deleteFreePlanSuccessful, togglePlanStatusError])
 
   return (
     <>
@@ -146,11 +179,21 @@ export function ListFreePlansTemplate({ remoteGetPlans, remoteTogglePlanStatus }
           freePlans={plans}
           paginationHook={paginationHook}
           togglePlanStatus={handleOpenToggleStatusConfirmationModal}
+          onDeleteFreePlan={handleOpenDeleteFreePlanConfirmationModal}
         />
       </div>
 
       <ConfirmationModal
-        isOpen={toggleStatusPlanConfirmationModalOpen}
+        isOpen={!!freePlanToDeletionId}
+        loading={loadingFreePlanDeletion}
+        onRequestClose={handleCloseDeleteFreePlanConfirmationModal}
+        onConfimation={onDeleteFreePlan}
+        content='Você tem ceterza que deseja excluir este Plano Gratuito?'
+        title='Deletar'
+      />
+
+      <ConfirmationModal
+        isOpen={!!freePlanToToggleStatusId}
         content='Deseja realmente alterar os status do plano ?'
         loading={loadingTogglePlanStatus}
         onRequestClose={handleCloseToggleStatusConfirmationModal}

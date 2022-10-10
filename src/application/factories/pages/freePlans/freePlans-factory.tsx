@@ -1,12 +1,14 @@
 import { ListFreePlansTemplate } from '../../../../layout/templates/freePlans/list'
-import { makeRemoteGetFreePlans } from '../../usecases/freePlan/remote-getPlans-factory'
-import { makeRemoteTogglePlanStatus } from '../../usecases/plans/remote-togglePlanStatus-factory'
+import { makeRemoteDeleteFreePlan } from '../../usecases/freePlan/remote-deleteFreePlan-factory'
+import { makeRemoteGetFreePlans } from '../../usecases/freePlan/remote-getFreePlans-factory'
+import { makeRemoteToggleFreePlanStatus } from '../../usecases/freePlan/remote-toggleFreePlanStatus-factory copy'
 
 export const MakeListFreePlansPage = () => {
   return (
     <ListFreePlansTemplate
-      remoteGetPlans={makeRemoteGetFreePlans()}
-      remoteTogglePlanStatus={makeRemoteTogglePlanStatus()}
+      remoteGetFreePlans={makeRemoteGetFreePlans()}
+      remoteToggleFreePlanStatus={makeRemoteToggleFreePlanStatus()}
+      remoteDeleteFreePlan={makeRemoteDeleteFreePlan()}
     />
   )
 }
