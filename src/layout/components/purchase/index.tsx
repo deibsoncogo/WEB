@@ -63,7 +63,7 @@ export function PurchaseDetails({ transactionId, getUser }: Props) {
         }
         setUser(userData)
       })
-      .catch((err) => toast.error(err.messages) + '!')
+      .catch((err) => toast.error(err.messages + '!'))
   }, [])
 
   return (

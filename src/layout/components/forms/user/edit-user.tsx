@@ -213,7 +213,7 @@ export function FormEditUser({
         formRef.current?.setFieldValue('complement', newData.complement)
         formRef.current?.setFieldValue('state', newData.state)
       })
-      .catch((err) => toast.error(err.messages) + '')
+      .catch((err) => toast.error(err.messages) + '!')
   }, [])
 
   function inputAddress(result: ZipCodeProps) {
