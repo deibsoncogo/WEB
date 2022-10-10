@@ -86,14 +86,20 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
             <DatePicker
               name='trainingEndDate'
               label='Data de Término'
-              placeholderText='00/00/000'
+              placeholderText='00/00/0000'
+              autoComplete='off'
+              minDate={new Date()}
+              minYearAmount={0}
             />
           </div>
           <div className='col-3'>
             <DatePicker
               name='deactiveChatDate'
               label='Desativação do Chat'
-              placeholderText='00/00/000'
+              placeholderText='00/00/0000'
+              autoComplete='off'
+              minDate={new Date()}
+              minYearAmount={0}
             />
           </div>
         </div>
@@ -118,8 +124,10 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
                 <DatePicker
                   name='streamingDate'
                   label='Dia da Transmissão'
-                  placeholderText='00/00/000'
+                  placeholderText='00/00/0000'
                   autoComplete='off'
+                  minDate={new Date()}
+                  minYearAmount={0}
                 />
               </div>
               <div className='col-4'>

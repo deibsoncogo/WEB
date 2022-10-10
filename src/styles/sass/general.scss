@@ -16,6 +16,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .react-modal-content {
@@ -30,10 +31,25 @@ body {
   border-radius: 0.25rem;
 }
 
+.image-viewer {
+  position: relative;
+}
+
 .image-viewer img {
   width: auto !important;
   border: none !important;
   height: auto !important;
+  max-height: 100vh;
+  max-width: 100vw;
+  cursor: auto;
+}
+
+.image-viewer div {
+  width: auto !important;
+  border: none !important;
+  height: auto !important;
+  max-height: 100vh;
+  max-width: 100vw;
   cursor: auto;
 }
 

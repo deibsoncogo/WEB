@@ -3,7 +3,7 @@ import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
 
-import {InputMasked, Select } from '../inputs'
+import {InputMasked, Select, SelectMulti } from '../inputs'
 import { salesTypeOptions } from '../tables/sales-list/salesTypeOptions'
 import { SalesFilter } from '../../../domain/usecases/interfaces/sale/getAllSales'
 
@@ -14,21 +14,19 @@ type FilterFormProps = {
 const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
   const { handleForm } = props
 
+  const customStyles = {
+    control: (base: any) => ({
+      ...base,
+      minHeight: 45
+    })
+  };
+
   return (
     <>
       <Form autoComplete='off' ref={ref} onSubmit={handleForm} id='filter-form'>
-        <div className='d-flex flex-row gap-2'>
-          <Select name='status' label='Status' classes='h-75px w-50' defaultValue=''>
-            <option disabled value=''>
-              Selecione
-            </option>
-            {salesTypeOptions.map(({ label, value }) => (
-              <option value={value} key={value}>
-                {label}
-              </option>
-            ))}
-          </Select>
-
+        <div className='d-flex flex-row gap-5'>
+        <SelectMulti defaultOptions={salesTypeOptions} name='status' label='Status'  classes='h-75px w-50' customStyles={customStyles}/>
+       
           <InputMasked
             classes='h-75px w-25'
             name='initialDate'

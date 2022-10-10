@@ -162,6 +162,9 @@ function EditTrainingPageTemplate({
       } = trainingData
       const formattedStreamings = formatStreamingList(streamings)
 
+      const trainingEndDateNew = new Date(trainingEndDate)
+      const deactiveChatDateNew = new Date(deactiveChatDate)
+
       formRef.current?.setFieldValue('name', name)
       formRef.current?.setFieldValue('description', description)
       formRef.current?.setFieldValue('installments', installments)
@@ -171,8 +174,8 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('categoryId-label', category.name)
       formRef.current?.setFieldValue('price', maskedToMoney(price))
       formRef.current?.setFieldValue('discount', maskedToMoney(discount))
-      formRef.current?.setFieldValue('trainingEndDate', new Date(trainingEndDate))
-      formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDate))
+      formRef.current?.setFieldValue('trainingEndDate', new Date(trainingEndDateNew.setTime(trainingEndDateNew.getTime() + 1000 * 60 * 60 * 3)))
+      formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDateNew.setTime(deactiveChatDateNew.getTime() + 1000 * 60 * 60 * 3)))
       formRef.current?.setFieldValue('imagePreview', imageUrl)
       formRef.current?.setFieldValue('zoomUserId', zoomUserId)
       formRef.current?.setFieldValue('active', isActive)
