@@ -44,12 +44,12 @@ export function ProductsModal({
     const expireDate = formRef.current?.getFieldValue(fieldExpireDate)
 
     if (!name) {
-      formRef.current?.setFieldError(fieldName, 'Selecione um produto!')
+      formRef.current?.setFieldError(fieldName, 'Produto é necessário!')
       return
     }
 
     if (!expireDate) {
-      formRef.current?.setFieldError(fieldExpireDate, 'Selecione uma data de expiração!')
+      formRef.current?.setFieldError(fieldExpireDate, 'Data é necessária!')
       return
     }
 
@@ -138,14 +138,13 @@ export function ProductsModal({
         <div className='modal-content'>
           <div className='modal-header'>
             <h5 className='modal-title'>{modalTitle}</h5>
-            <button
-              type='button'
+            <div
               className='btn btn-icon btn-sm btn-active-light-primary ms-2'
+              data-bs-dismiss='modal'
               aria-label='Close'
-              onClick={onRequestClose}
             >
-              <KTSVG path='/icons/arr061.svg' className='svg-icon svg-icon-2x' />
-            </button>
+              <span className='svg-icon svg-icon-1'></span>
+            </div>
           </div>
 
           <Form className='form w-100' ref={formRef} initialData={defaultValue} onSubmit={() => {}}>
@@ -265,7 +264,7 @@ export function ProductsModal({
               </div>
 
               {selectedProducts.length > 0 && (
-                <div className='mh-200px overflow-scroll'>
+                <div className='mh-300px overflow-scroll'>
                   {selectedProducts.map((selectedProduct) => (
                     <div
                       key={selectedProduct.productId}

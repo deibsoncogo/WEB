@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { usePagination } from '../../../application/hooks/usePagination'
 import { IBook } from '../../../domain/models/book'
-import { IGetAllBooks, IGetAllBooksParams } from '../../../domain/usecases/interfaces/book/getAllBooks'
+import {
+  IGetAllBooks,
+  IGetAllBooksParams,
+} from '../../../domain/usecases/interfaces/book/getAllBooks'
 import { KTSVG } from '../../../helpers'
 import { debounce } from '../../../helpers/debounce'
 import { Search } from '../../components/search/Search'
@@ -35,7 +38,7 @@ export function BooksTemplate({ remoteGetAllBooks }: IBooksTemplate) {
       setTotalPage(total)
       setBooks(data)
     } catch (err) {
-      toast.error('Erro ao buscar livros.')
+      toast.error('Erro ao buscar livros!')
     }
   }
 
@@ -56,7 +59,7 @@ export function BooksTemplate({ remoteGetAllBooks }: IBooksTemplate) {
     pagination.orderBy,
     currentPage,
     bookName,
-    refresher
+    refresher,
   ])
 
   return (

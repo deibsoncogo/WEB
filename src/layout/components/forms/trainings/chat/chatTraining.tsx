@@ -113,7 +113,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat, remoteUploadFile
     })
 
     socket.on(SocketTrainingEvents.ConnectError, () => {
-      toast.error('Falha ao se conectar com o servidor')
+      toast.error('Falha ao se conectar com o servidor!')
     })
   }
 
@@ -129,7 +129,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat, remoteUploadFile
       }
     }
     fetchData()
-      .catch(() => toast.error('Não foi possível carregar as mensagens'))
+      .catch(() => toast.error('Não foi possível carregar as mensagens!'))
       .finally(() => {
         setLoading(false)
       })

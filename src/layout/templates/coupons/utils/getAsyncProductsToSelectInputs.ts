@@ -26,7 +26,7 @@ const getAsyncProductsToSelectInput = async ({
 
     return productOptions
   } catch {
-    toast.error('Falha em buscar categorias')
+    toast.error('Falha em buscar categorias!')
     return []
   }
 }

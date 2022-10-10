@@ -72,7 +72,7 @@ export function NotificationTable({
         setNotification(data.data)
         setTotalPage(data.total)
       })
-      .catch(() => toast.error('Não foi possível listar as notificações.'))
+      .catch(() => toast.error('Não foi possível listar as notificações!'))
       .finally(() =>
         setTimeout(() => {
           setLoading(false)

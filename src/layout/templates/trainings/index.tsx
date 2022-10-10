@@ -92,7 +92,7 @@ export function TrainingsTemplate({
         setTotalPage(total)
       }
     } catch (err) {
-      toast.error('Erro ao buscar treinamentos.')
+      toast.error('Erro ao buscar treinamentos!')
     }
   }
 
@@ -135,7 +135,7 @@ export function TrainingsTemplate({
           !trainings.find((training) => training.id === selectedTraining)?.isActive
             ? 'ativado'
             : 'desativado'
-        } com sucesso.`
+        } com sucesso!`
       )
       handleCloseToggleStatusConfirmationModal()
       toggleStatusCleanUp()
@@ -144,7 +144,7 @@ export function TrainingsTemplate({
 
   useEffect(() => {
     if (toggleStatusError) {
-      toast.error('Error ao alterar o status do treinamento')
+      toast.error('Error ao alterar o status do treinamento!')
       toggleStatusCleanUp()
     }
   }, [toggleStatusError])

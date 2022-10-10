@@ -23,13 +23,13 @@ export const ImageViewer = ({ isOpen, image, close }: ImageViewerProps) => {
           className='position-absolute bg-light-primary rounded d-flex justify-content-center'
           style={{ right: 10, top: 10 }}
         >
-          <button
-            className='btn btn-icon btn-sm btn-active-light-primary'
+          <div
+            className='btn btn-icon btn-sm btn-active-light-primary ms-2'
+            data-bs-dismiss='modal'
             aria-label='Close'
-            onClick={close}
           >
-            <KTSVG path='/icons/arr061.svg' className='svg-icon svg-icon-2x' />
-          </button>
+            <span className='svg-icon svg-icon-1'></span>
+          </div>
         </div>
         {image}
       </div>

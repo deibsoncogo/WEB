@@ -126,7 +126,7 @@ export function UpdateFreeContentForm({
         setStateEditor({ content: data?.articleContent ? data?.articleContent : '' })
       })
       .catch(() => {
-        toast.error('Não foi possível carregar os dados')
+        toast.error('Não foi possível carregar os dados!')
       })
       .finally(() => {
         setTimeout(() => {

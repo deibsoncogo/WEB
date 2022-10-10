@@ -144,7 +144,7 @@ export function FormCreateRoom({ createRoom, getUsers, getZoomUsers }: Props) {
         setZoomUsersOptions(options)
       }
     } catch (error) {
-      toast.error('Não foi possível carregar os dados')
+      toast.error('Não foi possível carregar os dados!')
     }
   }
 

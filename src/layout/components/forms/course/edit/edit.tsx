@@ -183,7 +183,7 @@ export function FormUpdateCourse(props: Props) {
       }
       setDefaultTeacherOptions(await searchTeachers(''))
     } catch (error) {
-      toast.error('Não foi possível carregar os dados')
+      toast.error('Não foi possível carregar os dados!')
     } finally {
       setLoading(false)
     }

@@ -18,7 +18,7 @@ export default function Logout() {
       localStorage.clear()
       route.push('/')
     } catch (err) {
-      toast.error('Erro ao deslogar.')
+      toast.error('Erro ao deslogar!')
     }
   }
 }

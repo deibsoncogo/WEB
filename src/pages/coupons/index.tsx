@@ -16,7 +16,7 @@ const Coupons: NextPage = () => {
         <AsideDefault />
 
         <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
-          <HeaderWrapper title='Cupons de desconto' />
+          <HeaderWrapper title='Cupons de Desconto' />
 
           <div id='kt_content_container' className='container'>
             <MakeCouponsPage />

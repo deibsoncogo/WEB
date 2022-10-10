@@ -45,10 +45,10 @@ export function FormCreateBook({ remoteCreateBook }: FormCreateBookProps) {
       })
       .catch((error: any) => {
         if (Array.isArray(error.messages?.[0])) {
-          toast.error(error.messages?.[0])
+          toast.error(`${error.messages?.[0]}!`)
           return
         }
-        toast.error(error.message)
+        toast.error(`${error.message}!`)
       })
       .finally(() => {
         setRegisterBook(false)

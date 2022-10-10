@@ -46,10 +46,10 @@ export function Row({
       setLoading(true)
       await deleteRoom.delete(id)
       setIsModalDeleteOpen(false)
-      toast.success('Sala excluída com sucesso.')
+      toast.success('Sala excluída com sucesso!')
       handleRefresher()
     } catch {
-      toast.error('Não foi possível deletar a sala.')
+      toast.error('Não foi possível deletar a sala!')
     } finally {
       setLoading(false)
     }
@@ -61,10 +61,10 @@ export function Row({
 
       await toggleStatus.toggle({ id })
       setIsModalUpdateOpen(false)
-      toast.success(`Sala ${!isActive ? 'ativada' : 'desativada'} com sucesso.`)
+      toast.success(`Sala ${!isActive ? 'ativada' : 'desativada'} com sucesso!`)
       handleRefresher()
     } catch (err) {
-      toast.error('Não foi possível atualizar a sala.')
+      toast.error('Não foi possível atualizar a sala!')
     } finally {
       setLoading(false)
     }
