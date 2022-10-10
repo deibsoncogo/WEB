@@ -15,7 +15,7 @@ export const trainingFormSchema = (data: ITraining) => Yup.object().shape({
   installments: Yup.number()
     .required('Quantidade de parcelas é necessário')
     .min(1, 'Quantidade de parcelas deve ser maior que zero'),
-  categoryId: Yup.string().required('Selecione uma categoria'),
+  level: Yup.string().required('Nível é necessário').max(50, 'No máximo 50 caracteres'),
   trainingEndDate: Yup.date().required('Data é necessária'),
   deactiveChatDate: Yup.date().required('Data é necessária'),
   streamings: Yup.array().of(

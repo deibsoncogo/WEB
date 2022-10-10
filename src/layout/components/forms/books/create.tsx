@@ -1,38 +1,24 @@
-import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
-
-import * as Yup from 'yup'
-
-import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-
-import { Input, InputCurrence, InputNumber, SelectAsync, TextArea } from '../../inputs'
-
+import { Form } from '@unform/web'
+import { useRouter } from 'next/router'
+import { useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import * as Yup from 'yup'
+import { ICreateBook } from '../../../../domain/usecases/interfaces/book/createBook'
 import { IFormBook } from '../../../../interfaces/forms/create-book'
 import { onlyNums } from '../../../formatters/currenceFormatter'
-import { ICreateBook } from '../../../../domain/usecases/interfaces/book/createBook'
-import { InputSingleImage } from '../../inputs/input-single-image'
-import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { Button } from '../../buttons/CustomButton'
-import is from 'date-fns/esm/locale/is/index.js'
-import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
-import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
+import { Input, InputCurrence, InputNumber, TextArea } from '../../inputs'
+import { InputSingleImage } from '../../inputs/input-single-image'
 
 type FormCreateBookProps = {
-  remoteGetCategoriesNoPagination: IGetCategoriesNoPagination
   remoteCreateBook: ICreateBook
 }
 
-export function FormCreateBook({
-  remoteGetCategoriesNoPagination,
-  remoteCreateBook,
-}: FormCreateBookProps) {
+export function FormCreateBook({ remoteCreateBook }: FormCreateBookProps) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
-
   const [registerBook, setRegisterBook] = useState(false)
-  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
 
   async function handleCreateBook(data: IFormBook) {
     const formData = new FormData()
@@ -44,12 +30,13 @@ export function FormCreateBook({
     formData.append('price', onlyNums(String(data.price)))
     formData.append('discount', onlyNums(String(data.discount)))
     formData.append('description', String(data.description))
-    formData.append('categoryId', String(data.categoryId))
+    formData.append('level', String(data.level))
     formData.append('installments', String(data.installments))
     formData.append('id', String(data.id))
     formData.append('isActive', String(false))
 
     setRegisterBook(true)
+
     await remoteCreateBook
       .create(formData)
       .then(() => {
@@ -67,27 +54,6 @@ export function FormCreateBook({
         setRegisterBook(false)
       })
   }
-
-  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({
-      categoryName,
-      remoteGetCategoriesNoPagination,
-    })
-  }
-
-  const handlePopulateSelectInput = async () => {
-    try {
-      const categoryOptions = await handleGetAsyncCategoriesToSelectInput('')
-
-      setDefaultCategoryOptions(categoryOptions)
-    } catch (err) {
-      toast.error('Não foi possível carregar as categorias de cursos!')
-    }
-  }
-
-  useEffect(() => {
-    handlePopulateSelectInput()
-  }, [])
 
   async function handleFormSubmit(data: IFormBook) {
     if (!formRef.current) throw new Error()
@@ -114,7 +80,7 @@ export function FormCreateBook({
             value ? parseFloat(data.discount + '') < parseFloat(data.price + '') : true,
         }),
         description: Yup.string().required('Descrição é necessária'),
-        categoryId: Yup.string().required('Selecione uma categoria'),
+        level: Yup.string().required('Nível é necessário').max(50, 'No máximo 50 caracteres'),
         installments: Yup.number()
           .required('Quantidade de parcelas é necessário')
           .min(1, 'Quantidade de parcelas deve ser maior que zero'),
@@ -151,21 +117,8 @@ export function FormCreateBook({
               <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
             </div>
             <div className='d-flex justify-content-start flex-column w-100'>
-              <TextArea
-                name='description'
-                label='Descrição'
-                style={{ minHeight: '240px', margin: 0 }}
-              />
-
-              <SelectAsync
-                searchOptions={handleGetAsyncCategoriesToSelectInput}
-                name='categoryId'
-                label='Categoria'
-                classes='h-75px'
-                placeholder='Digite o nome da categoria'
-                defaultOptions={defaultCategoryOptions}
-              />
-
+              <TextArea name='description' label='Descrição' style={{ minHeight: '240px', margin: 0 }} />
+              <Input name='level' label='Nível' />
               <InputNumber name='installments' label='Quantidade de Parcelas' classes='h-75px' />
             </div>
           </div>

@@ -1,34 +1,31 @@
 import { CourseClass } from "./courseClass";
 
-export class CreateCourse{
+export class CreateCourse {
     name: string;
     description: string;
     content: string;
-    categoryId: string;
-    discount: string; 
+    level: string;
+    discount: string;
     installments: string;
     isActive: boolean;
-    price: string; 
-    accessTime: string; 
+    price: string;
+    accessTime: string;
     userId: string;
     courseClass: CourseClass[]
 
-    constructor(name: string, description: string, content: string, categoryId: string,
-        discount: string, installments: string, isActive: boolean,  price: string,  
-        accessTime: string, userId: string, courseClass: CourseClass[])
-    {
+    constructor(name: string, description: string, content: string, level: string,
+        discount: string, installments: string, isActive: boolean, price: string,
+        accessTime: string, userId: string, courseClass: CourseClass[]) {
         this.name = name;
         this.description = description;
         this.content = content;
-        this.categoryId = categoryId;
+        this.level = level;
         this.discount = discount;
         this.installments = installments;
         this.isActive = isActive;
         this.price = price;
         this.accessTime = accessTime;
-        this.userId = userId;   
-        this.courseClass = courseClass        
-        
-        
+        this.userId = userId;
+        this.courseClass = courseClass
     }
 }

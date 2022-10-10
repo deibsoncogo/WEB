@@ -10,10 +10,12 @@ export const bookFormSchema = (data: IBook) => Yup.object().shape({
     .required('Estoque é necessário'),
   price: Yup.number().required('Preço é necessário').min(0.1, 'Preço deve ser maior que zero'),
   discount: Yup.number().test(
-    {name: 'validation',
-    message: 'Desconto deve ser menor que preço',
-    test: (value) => value?  parseFloat(data.discount+'') < parseFloat(data.price+'') : true}),
-  categoryId: Yup.string().required('Selecione uma categoria'),
+    {
+      name: 'validation',
+      message: 'Desconto deve ser menor que preço',
+      test: (value) => value ? parseFloat(data.discount + '') < parseFloat(data.price + '') : true
+    }),
+  level: Yup.string().required('Nível é necessário').max(50, 'No máximo 50 caracteres'),
   installments: Yup.number()
     .required('Quantidade de parcelas é necessário')
     .min(1, 'Quantidade de parcelas deve ser maior que zero'),

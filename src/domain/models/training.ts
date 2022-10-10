@@ -6,16 +6,9 @@ export interface ITraining {
   image: Blob
   zoomUserId: string
   imageUrl: string
-  categoryId: string
-  category: {
-    id: string
-    name: string
-  }
+  level: string
   teacherId: string
-  teacher: {
-    id: string
-    name: string
-  }
+  teacher: { id: string, name: string }
   belongsToPlans: boolean
   isActive: boolean
   price: number

@@ -9,6 +9,5 @@ interface IFormCourse {
   description: string
   content: string
   userId: string
-  categoryId: string   
- 
+  level: string   
 }

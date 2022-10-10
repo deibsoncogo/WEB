@@ -2,6 +2,7 @@ import { FormHandles } from '@unform/core'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import { makeRemoteGetCategoriesNoPagination } from '../../../application/factories/usecases/categories/remote-getCategoriesNoPagination-factory'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
 import { IPlan } from '../../../domain/models/plan'
@@ -9,7 +10,6 @@ import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
 import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan'
-import { IGetNotRelatedPlans } from '../../../domain/usecases/interfaces/plan/getNotRelatedPlans'
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
@@ -24,7 +24,6 @@ type Props = {
   remoteGetTrainings: IGetAllTrainings
   remoteGetBooks: IGetAllBooks
   remoteGetRooms: IGetAllRooms
-  remoteGetNotRelatedPlans: IGetNotRelatedPlans
 }
 
 const CreatePlanPageTemplate = ({
@@ -32,13 +31,11 @@ const CreatePlanPageTemplate = ({
   remoteGetTrainings,
   remoteGetBooks,
   remoteGetRooms,
-  remoteGetNotRelatedPlans,
   remoteCreatePlan,
 }: Props) => {
   const router = useRouter()
   const [hasAtLastOneProduct, setHasAtLastOneProduct] = useState(true)
   const createPlanFormRef = useRef<FormHandles>(null)
-  const [plansOptions, setPlansOptions] = useState<ISelectOption[]>([])
 
   const {
     makeRequest: createPlan,
@@ -73,19 +70,6 @@ const CreatePlanPageTemplate = ({
       dataFormatted.append('isActive', String(false))
       createPlan(dataFormatted)
     }
-  }
-
-  const getRelatedPlanData = (relatedPlan: IPlan[]): ISelectOption[] => {
-    return relatedPlan.map((item) => {
-      return { label: item.product!.name, value: String(item.id) }
-    })
-  }
-
-  async function handleSetPlansOptions() {
-    const notRelatedPlans = await remoteGetNotRelatedPlans.get()
-    const options = getRelatedPlanData(notRelatedPlans)
-
-    setPlansOptions(options)
   }
 
   async function handleGetCoursesOptions(searchValue: string): Promise<ISelectOption[]> {
@@ -147,10 +131,6 @@ const CreatePlanPageTemplate = ({
     }
   }, [createPlanError])
 
-  useEffect(() => {
-    handleSetPlansOptions()
-  }, [])
-
   return (
     <FormCreatePlan
       ref={createPlanFormRef}
@@ -160,7 +140,7 @@ const CreatePlanPageTemplate = ({
       loadTrainingsOptions={handleGetTrainingsOptions}
       loadBooksOptions={handleGetBooksOptions}
       loadRoomsOptions={handleGetRoomsOptions}
-      plansOptions={plansOptions}
+      getCategoriesNoPagination={makeRemoteGetCategoriesNoPagination()}
       hasAtLastOneProduct={hasAtLastOneProduct}
       loadingFormSubmit={createPlanLoading}
     />

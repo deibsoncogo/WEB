@@ -1,21 +1,21 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
 import { IChatRoom } from '../../../domain/models/createChatRoom'
-import { GetChatRoomParam, IGetAllChatRooms } from '../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
+import {
+  IGetChatAllRoomParam,
+  IGetAllChatRooms,
+} from '../../../domain/usecases/interfaces/chatRoom/getAllChatRooms'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteGetAllChatRooms implements IGetAllChatRooms {
-  constructor(
-    private readonly url: string,
-    private readonly httpClient: HttpClient<IChatRoom[]>
-  ) {}
+  constructor(private readonly url: string, private readonly httpClient: HttpClient<IChatRoom[]>) {}
 
-  async getAll(query: GetChatRoomParam) {    
+  getAll = async (query: IGetChatAllRoomParam) => {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get',
-      params: query
+      params: query,
     })
-   
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body
