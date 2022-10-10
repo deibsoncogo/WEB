@@ -96,9 +96,9 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
     setSalesQuery(text)
   })
 
-  const handleForm = async (data: SalesFilter) => {
+  const handleForm = async (data: SalesFilter) => {   
     if (!formRef.current) throw new Error()
-    
+
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
@@ -130,6 +130,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
 
   const handleClearFilter = () => {
     formRef.current?.reset()
+    formRef.current?.setErrors({})
     setSalesFilter(undefined)
   }
 

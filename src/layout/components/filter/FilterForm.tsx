@@ -17,7 +17,8 @@ const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
   const customStyles = {
     control: (base: any) => ({
       ...base,
-      minHeight: 45
+      minHeight: 45,
+      minWidth: 300
     })
   };
 
@@ -28,7 +29,8 @@ const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
         <SelectMulti defaultOptions={salesTypeOptions} name='status' label='Status'  classes='h-75px w-50' customStyles={customStyles}/>
        
           <InputMasked
-            classes='h-75px w-25'
+            style={{width: "150px"}}
+            classes='h-75px'
             name='initialDate'
             label='Data Inicial'
             placeholder='00/00/0000'
@@ -36,7 +38,8 @@ const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
           />
 
           <InputMasked
-            classes='h-75px w-25'
+            style={{width: "150px"}}
+            classes='h-75px'
             name='finalDate'
             label='Data Final'
             placeholder='00/00/0000'
