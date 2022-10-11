@@ -109,7 +109,7 @@ const EditCoupon = ({
 
   useEffect(() => {
     if (couponEditedSuccessful) {
-      toast.success('Cupom editado com sucesso')
+      toast.success('Cupom editado com sucesso!')
       cleanUpEditCoupon()
       closeDrawer()
     }
@@ -129,7 +129,7 @@ const EditCoupon = ({
         return
       }
 
-      toast.error(updateCouponError)
+      toast.error(updateCouponError + '!')
       cleanUpEditCoupon()
     }
   }, [updateCouponError])

@@ -54,8 +54,9 @@ export function FormForgotPassword() {
         setMessage(err.message)
         return
       }
-      if (err.response.data.statusCode === 400) {
+      if (err.response.status === 400) {
         setMessage('E-mail inválido')
+        return
       }
       setMessage(err.response.data.message[0])
     }

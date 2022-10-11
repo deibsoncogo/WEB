@@ -80,8 +80,8 @@ export function FormCreateCourse({ createCourse, getUsers }: Props) {
       })
 
       data.content = stateEditor.content
-      courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
       await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
+      courseClass.length == 0 ? setHasErrorClass(true) : handleCreateCourse(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -135,7 +135,7 @@ export function FormCreateCourse({ createCourse, getUsers }: Props) {
     try {
       setDefaultTeacherOptions(await searchTeachers(''))
     } catch (error) {
-      toast.error('Não foi possível carregar os dados')
+      toast.error('Não foi possível carregar os dados!')
     }
   }
   useEffect(() => {
@@ -197,7 +197,7 @@ export function FormCreateCourse({ createCourse, getUsers }: Props) {
 
         {hasErrorClass && (
           <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
-            <strong>Não é possível criar curso!</strong>É necessário adicionar pelo menos 1 aula
+            <strong>Não é possível criar curso!</strong>É necessário adicionar pelo menos 1 aula.
             <button
               type='button'
               onClick={() => setHasErrorClass(false)}

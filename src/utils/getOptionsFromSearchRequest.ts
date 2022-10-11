@@ -26,7 +26,7 @@ export async function getOptionsFromSearchRequest({
 
     return options
   } catch (e: any) {
-    toast.error(e?.message)
+    toast.error(e?.message + '!')
     return []
   }
 }

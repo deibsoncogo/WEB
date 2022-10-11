@@ -86,8 +86,8 @@ export function CouponsTemplate({
     makeRequest: deleteCoupon,
     data: couponDeleteSuccessful,
     loading: deleteStatus,
-    cleanUp: deleteCleanUp,
-    error: deleteError,
+    cleanUp: deleteCouponcleanUp,
+    error: deleteCouponError,
   } = useRequest<IDeleteCouponParams>(remoteDeleteCoupon.delete)
 
   const handleSearchCoupon = debounce((text: string) => {
@@ -126,7 +126,7 @@ export function CouponsTemplate({
     }
   }
 
-  const handleCloseModalToConfirmDelete = () => {
+  const handleCloseModalToConfirmDeletion = () => {
     setCouponTobeDeleted(null)
   }  
 
@@ -170,32 +170,32 @@ export function CouponsTemplate({
           !coupons.find((coupon) => coupon.id === couponToToggleStatus)?.isActive
             ? 'ativado'
             : 'desativado'
-        } com sucesso.`
+        } com sucesso!`
       )
       return
     }
 
     if (couponDeleteSuccessful) {
-      toast.success('Cupom excluído com sucesso')
-      handleCloseModalToConfirmDelete()
-      deleteCleanUp()
+      toast.success('Cupom excluído com sucesso!')
+      handleCloseModalToConfirmDeletion()
+      deleteCouponcleanUp()
     }
   }, [toggleCouponStatusSuccessful, paginatedCoupons, couponDeleteSuccessful, couponDeleteSuccessful])
 
   useEffect(() => {
     if (getCouponsError) {
-      toast.error(getCouponsError)
+      toast.error(getCouponsError + '!')
       return
     }
 
     if (toggleStatusError) {
-      toast.error(toggleStatusError)
+      toast.error(toggleStatusError + '!')
       cleanUpToggleCouponStatus()
     }
 
-    if (deleteError) {
-      toast.error(deleteError)
-      deleteCleanUp()
+    if (deleteCouponError) {
+      toast.error(deleteCouponError + '!')
+      deleteCouponcleanUp()
     }
   }, [getCouponsError, toggleStatusError])
 
@@ -251,7 +251,7 @@ export function CouponsTemplate({
         isOpen={!!couponTobeDeleted}
         content='Você tem certeja que deseja excluir este cupom?'
         loading={toggleStatusLoading}
-        onRequestClose={handleCloseModalToConfirmDelete}
+        onRequestClose={handleCloseModalToConfirmDeletion}
         onConfimation={handleDeleteCoupon}
         title='Deletar'
       />

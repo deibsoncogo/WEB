@@ -66,7 +66,7 @@ export function FormLogin(props: Props) {
       localStorage.setItem('access_token', response.accessToken)
       localStorage.setItem('expiration', jwtDecode<IToken>(response.accessToken).exp)
       router.push('/dashboard')
-      toast.success('Login efetuado com sucesso')
+      toast.success('Login efetuado com sucesso!')
     } catch (err: any) {
       setHasError(true)
       setMessage(err.message)

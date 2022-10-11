@@ -103,7 +103,7 @@ function CreateTrainingPageTemplate({ remoteGetTeachers, remoteCreateTraining, r
 
   useEffect(() => {
     if (trainingCreatedSuccessful) {
-      toast.success('Treinamento cadastrado Com Sucesso')
+      toast.success('Treinamento cadastrado com sucesso!')
       router.push(appRoutes.TRAININGS)
     }
 
@@ -119,11 +119,11 @@ function CreateTrainingPageTemplate({ remoteGetTeachers, remoteCreateTraining, r
 
   useEffect(() => {
     if (createTrainingError) {
-      toast.error(createTrainingError)
+      toast.error(createTrainingError + '!')
     }
 
     if (getZoomUsersError) {
-      toast.error(getZoomUsersError)
+      toast.error(getZoomUsersError + '!')
     }
   }, [createTrainingError, getZoomUsersError])
 

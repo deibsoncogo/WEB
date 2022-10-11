@@ -46,9 +46,9 @@ export function AsideMenuMain() {
         requestLogout.logout(new UserLogout(jwtDecode<IToken>(userId).id))
         localStorage.clear()
         route.push('/')
-        toast.success('Logout efetuado com sucesso')
+        toast.success('Logout efetuado com sucesso!')
       } catch (err) {
-        toast.error('Não foi possível sair da conta. Tente mais tarde.')
+        toast.error('Não foi possível sair da conta. Tente mais tarde!')
       }
     }
   }

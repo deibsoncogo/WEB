@@ -65,7 +65,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
         setSales(data.data)
         setTotalPage(data.total)
       })
-      .catch(() => toast.error('Não foi possível listar as vendas'))
+      .catch(() => toast.error('Não foi possível listar as vendas!'))
       .finally(() =>
         setTimeout(() => {
           setLoading(false)
@@ -96,9 +96,9 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
     setSalesQuery(text)
   })
 
-  const handleForm = async (data: SalesFilter) => {
+  const handleForm = async (data: SalesFilter) => {   
     if (!formRef.current) throw new Error()
-    
+
     try {
       formRef.current.setErrors({})
       const schema = Yup.object().shape({
@@ -130,6 +130,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
 
   const handleClearFilter = () => {
     formRef.current?.reset()
+    formRef.current?.setErrors({})
     setSalesFilter(undefined)
   }
 
@@ -153,7 +154,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
         link.download = filename
         link.click()
       })
-      .catch(() => toast.error('Não foi exportar arquivo'))
+      .catch(() => toast.error('Não foi possível exportar arquivo!'))
   }
 
   return (

@@ -47,9 +47,9 @@ export function Row({
       setLoading(true)
       await deleteBook.deleteBook()
       getBooks()
-      toast.success('Livro excluído com sucesso')
+      toast.success('Livro excluído com sucesso!')
     } catch (err) {
-      toast.error('Erro ao excluir o livro')
+      toast.error('Erro ao excluir o livro!')
     } finally {
       setLoading(false)
     }
@@ -61,9 +61,9 @@ export function Row({
     try {
       await toggleBookStatus.toggle({ id: String(id) })
       handleRefresher()
-      toast.success(`Livro ${!active ? 'ativado' : 'desativado'} com sucesso`)
+      toast.success(`Livro ${!active ? 'ativado' : 'desativado'} com sucesso!`)
     } catch (err) {
-      toast.error('Erro ao atualizar o status do livro')
+      toast.error('Erro ao atualizar o status do livro!')
     }
     setIsModalUpdateOpen(false)
     setLoading(false)

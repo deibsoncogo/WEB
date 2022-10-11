@@ -79,9 +79,9 @@ export function FormCreateRoom({ createRoom, getUsers, getZoomUsers }: Props) {
         level: Yup.string().required('Nível é necessário').max(50, 'No máximo 50 caracteres'),
       })
 
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       const hasError = await verifyErrorStreamingRoom(data)
       hasError ? setHasErrorRoom(hasError) : handleCreateRoom(data)
-      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -144,7 +144,7 @@ export function FormCreateRoom({ createRoom, getUsers, getZoomUsers }: Props) {
         setZoomUsersOptions(options)
       }
     } catch (error) {
-      toast.error('Não foi possível carregar os dados')
+      toast.error('Não foi possível carregar os dados!')
     }
   }
 

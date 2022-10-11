@@ -92,9 +92,10 @@ export function FormUpdateCourse(props: Props) {
           .max(65535, 'Descrição muito longa'),
         level: Yup.string().required('Nível é necessário').max(50, 'No máximo 50 caracteres'),
       })
+
       data.content = stateEditor.content
-      courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
       await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
+      courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -183,7 +184,7 @@ export function FormUpdateCourse(props: Props) {
       }
       setDefaultTeacherOptions(await searchTeachers(''))
     } catch (error) {
-      toast.error('Não foi possível carregar os dados')
+      toast.error('Não foi possível carregar os dados!')
     } finally {
       setLoading(false)
     }

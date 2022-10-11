@@ -196,32 +196,32 @@ function CategoriesTemplate({
 
   useEffect(() => {
     if (deleteCategoryError) {
-      toast.error(deleteCategoryError)
+      toast.error(deleteCategoryError + '!')
     }
 
     if (getCategoriesError) {
-      toast.error(getCategoriesError)
+      toast.error(getCategoriesError + '!')
     }
 
     if (updateCategoryError) {
-      toast.error(updateCategoryError)
+      toast.error(updateCategoryError + '!')
     }
   }, [deleteCategoryError, getCategoriesError, updateCategoryError])
 
   useEffect(() => {
     if (categorySuccessfullDeleted) {
-      toast.success('Categoria excluída com sucesso')
+      toast.success('Categoria excluída com sucesso!')
       cleanUpDeleteCategory()
     }
 
     if (categoryCreated) {
-      toast.success('Categoria cadastrada com sucesso')
+      toast.success('Categoria cadastrada com sucesso!')
       handleCloseModalCreateCategory()
       cleanUpCreateCategory()
     }
 
     if (categorySuccessfullUpdated) {
-      toast.success('Categoria editada com sucesso')
+      toast.success('Categoria editada com sucesso!')
       handleCloseDrawerUpdateCategory()
       cleanUpUpdateCategory()
     }

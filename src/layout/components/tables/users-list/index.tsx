@@ -148,15 +148,15 @@ export function UsersTable({
 
   useEffect(() => {
     if (errorExportUsersToXLSX) {
-      toast.error(errorExportUsersToXLSX)
+      toast.error(errorExportUsersToXLSX + '!')
     }
 
     if (errorDeleteUser) {
-      toast.error(errorDeleteUser)
+      toast.error(errorDeleteUser + '!')
     }
 
     if (errorResetUserPassword) {
-      toast.error(errorResetUserPassword)
+      toast.error(errorResetUserPassword + '!')
     }
   }, [errorExportUsersToXLSX, errorDeleteUser, errorResetUserPassword])
 
@@ -173,12 +173,12 @@ export function UsersTable({
     }
 
     if (userDeletedSuccessful) {
-      toast.success('Usuário excluído com sucesso')
+      toast.success('Usuário excluído com sucesso!')
       cleanUpDeleteUser()
     }
 
     if (resetUserPasswordSuccessful) {
-      toast.success('Senha atualizada com sucesso')
+      toast.success('Senha atualizada com sucesso!')
       cleanUpResetUserPassword()
       handleCloseResetUserPasswordModal()
     }
@@ -240,7 +240,7 @@ export function UsersTable({
                       >
                         Endereço
                       </th>
-                      <th className={getColumnHeaderClasses('actions')}>Ação</th>
+                      <th className={getColumnHeaderClasses('actions') + ' rounded-end'}>Ação</th>
                     </tr>
                   </thead>
 

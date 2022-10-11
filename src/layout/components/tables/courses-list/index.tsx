@@ -79,7 +79,7 @@ export default function CoursesTable(props: Props) {
         }, 500)
       }
     } catch (err) {
-      toast.error('Erro ao buscar cursos.')
+      toast.error('Erro ao buscar cursos!')
     }
   }
 

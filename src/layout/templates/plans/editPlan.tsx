@@ -165,7 +165,7 @@ const EditPlanPageTemplate = ({
 
   useEffect(() => {
     if (editPlanSuccessful) {
-      toast.success('Plano editado com sucesso')
+      toast.success('Plano editado com sucesso!')
       cleanUpEditPlan()
       router.push(appRoutes.PLANS)
     }
@@ -178,12 +178,12 @@ const EditPlanPageTemplate = ({
 
   useEffect(() => {
     if (editPlanError) {
-      toast.error(editPlanError)
+      toast.error(editPlanError + '!')
       cleanUpEditPlan()
     }
 
     if (getPlanError) {
-      toast.error(getPlanError)
+      toast.error(getPlanError + '!')
     }
   }, [editPlanError, getPlanError])
 

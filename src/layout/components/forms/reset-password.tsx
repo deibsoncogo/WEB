@@ -26,12 +26,16 @@ export function FormResetPassword() {
         password: Yup.string()
           .min(8, 'No mínimo 8 caracteres')
           .required('Senha é necessária')
-          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%_])[0-9a-zA-Z!@#%_]{8,}$/),
+          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%_])[0-9a-zA-Z!@#%_]{8,}$/, {
+            message: `A senha deve ter no mínimo 8 caracteres e conter 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial.`,
+          }),
         passwordConfirm: Yup.string()
           .min(8, 'No mínimo 8 caracteres')
           .oneOf([Yup.ref('password'), null], 'As senhas devem ser idênticas')
           .required('Senha é necessária')
-          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%_])[0-9a-zA-Z!@#%_]{8,}$/),
+          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#%_])[0-9a-zA-Z!@#%_]{8,}$/, {
+            message: `A senha deve ter no mínimo 8 caracteres e conter 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial.`,
+          }),
       })
       await schema.validate(data, { abortEarly: false })
 

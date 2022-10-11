@@ -127,7 +127,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat, remoteUploadFile }:
     })
 
     socket.on(SocketRoomEvents.ConnectError, () => {
-      toast.error('Falha ao se conectar com o servidor')
+      toast.error('Falha ao se conectar com o servidor!')
     })
   }
 
