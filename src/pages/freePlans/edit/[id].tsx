@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { MakeEditPlanPageTemplate } from '../../../application/factories/pages/plans/edit-plan-factory'
+import { MakeEditFreePlanPageTemplate } from '../../../application/factories/pages/freePlans/edit-plan-factory'
 
 import { AsideDefault } from '../../../layout/components/aside/AsideDefault'
 
@@ -21,7 +21,7 @@ const CreateTrainings: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <MakeEditPlanPageTemplate />
+              <MakeEditFreePlanPageTemplate />
             </div>
           </div>
         </div>

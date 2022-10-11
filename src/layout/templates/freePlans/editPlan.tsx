@@ -4,15 +4,13 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
-import { IFreePlan } from '../../../domain/models/freePlan'
+import { IPlan } from '../../../domain/models/plan'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
-import {
-  IGetFreePlan,
-  IGetFreePlanParams,
-} from '../../../domain/usecases/interfaces/freePlan/getFreePlan'
-import { IEditFreePlan } from '../../../domain/usecases/interfaces/freePlan/updateFreePlan'
+import { IGetPlan, IGetPlanParams } from '../../../domain/usecases/interfaces/plan/getPlan'
+import { IEditPlan } from '../../../domain/usecases/interfaces/plan/updatePlan'
+
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
@@ -22,8 +20,8 @@ import { freePlanFormSchema } from '../../components/forms/freePlan/freePlanSche
 import { formatFreePlanToSubmit } from './utils/formatFreePlanToSubmit'
 
 type Props = {
-  remoteGetPlan: IGetFreePlan
-  remoteEditPlan: IEditFreePlan
+  remoteGetPlan: IGetPlan
+  remoteEditPlan: IEditPlan
   remoteGetCourses: IGetAllCourses
   remoteGetTrainings: IGetAllTrainings
   remoteGetBooks: IGetAllBooks
@@ -42,7 +40,7 @@ const EditFreePlanPageTemplate = ({
   const { id: planId } = router.query
 
   const [hasAtLastOneProduct, setHasAtLastOneProduct] = useState(true)
-  const [freePlan, setFreePlan] = useState<IFreePlan | null>(null)
+  const [freePlan, setFreePlan] = useState<IPlan | null>(null)
 
   const editPlanFormRef = useRef<FormHandles>(null)
 
@@ -59,13 +57,13 @@ const EditFreePlanPageTemplate = ({
     data: getPlanSuccessful,
     error: getPlanError,
     cleanUp: cleanUpGetPlan,
-  } = useRequest<IFreePlan, IGetFreePlanParams>(remoteGetPlan.get)
+  } = useRequest<IPlan, IGetPlanParams>(remoteGetPlan.get)
 
-  async function handleFormSubmit(data: IFreePlan) {
+  async function handleFormSubmit(data: IPlan) {
     const { courses = [], trainings = [], books = [], rooms = [] } = data
     const products = courses?.length + books?.length + trainings?.length + rooms?.length
 
-    const { error, success } = await applyYupValidation<IFreePlan>(freePlanFormSchema, data)
+    const { error, success } = await applyYupValidation<IPlan>(freePlanFormSchema, data)
 
     if (error) {
       editPlanFormRef?.current?.setErrors(error)

@@ -1,18 +1,14 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { IEditFreePlan } from '../../../domain/usecases/interfaces/freePlan/updateFreePlan'
+import { IDeletePlan, IDeletePlanParams } from '../../../domain/usecases/interfaces/plan/deletePlan'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteEditFreePlan implements IEditFreePlan {
+export class RemoteDeletePlan implements IDeletePlan {
   constructor(private readonly url: string, private readonly httpClient: HttpClient<void>) {}
 
-  edit = async (data: FormData) => {
+  delete = async (params: IDeletePlanParams) => {
     const httpResponse = await this.httpClient.request({
-      url: this.url,
-      method: 'put',
-      body: data,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      url: `${this.url}/${params.id}`,
+      method: 'delete',
     })
 
     switch (httpResponse.statusCode) {

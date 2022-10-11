@@ -199,7 +199,6 @@ const EditPlanPageTemplate = ({
         courses = [],
         books = [],
         rooms = [],
-        category,
       } = plan
 
       setFiledValue('planType', planType || defaultPlan)
@@ -212,8 +211,6 @@ const EditPlanPageTemplate = ({
       setFiledValue('books', extractSelectOptionsFromArr(books))
       setFiledValue('rooms', extractSelectOptionsFromArr(rooms))
       setFiledValue('trainings', extractSelectOptionsFromArr(trainings))
-      setFiledValue('categoryId', category.id)
-      setFiledValue('categoryId-label', category.name)
 
       handlePlanTypeSet()
     }

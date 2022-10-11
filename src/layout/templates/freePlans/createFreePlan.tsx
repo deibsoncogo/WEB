@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
-import { IFreePlan } from '../../../domain/models/freePlan'
+import { IPlan } from '../../../domain/models/plan'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
-import { ICreateFreePlan } from '../../../domain/usecases/interfaces/freePlan/createFreePlan'
+import { ICreatePlan } from '../../../domain/usecases/interfaces/plan/createPlan'
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
@@ -19,7 +19,7 @@ import { freePlanFormSchema } from '../../components/forms/freePlan/freePlanSche
 import { formatFreePlanToSubmit } from './utils/formatFreePlanToSubmit'
 
 type Props = {
-  remoteCreateFreePlan: ICreateFreePlan
+  remoteCreateFreePlan: ICreatePlan
   remoteGetCourses: IGetAllCourses
   remoteGetTrainings: IGetAllTrainings
   remoteGetBooks: IGetAllBooks
@@ -45,11 +45,11 @@ const CreateFreePlanPageTemplate = ({
     cleanUp: cleanUpCreatePlan,
   } = useRequest<void, FormData>(remoteCreateFreePlan.create)
 
-  async function handleFormSubmit(data: IFreePlan) {
+  async function handleFormSubmit(data: IPlan) {
     const { courses = [], trainings = [], books = [], rooms = [] } = data
     const products = courses?.length + books?.length + trainings?.length + rooms?.length
 
-    const { error, success } = await applyYupValidation<IFreePlan>(freePlanFormSchema, data)
+    const { error, success } = await applyYupValidation<IPlan>(freePlanFormSchema, data)
 
     if (error) {
       createPlanFormRef?.current?.setErrors(error)

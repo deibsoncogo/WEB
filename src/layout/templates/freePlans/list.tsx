@@ -4,20 +4,15 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { usePagination } from '../../../application/hooks/usePagination'
 import { useRequest } from '../../../application/hooks/useRequest'
-import { IFreePlan } from '../../../domain/models/freePlan'
+import { IPlan, PlanType } from '../../../domain/models/plan'
 import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
+import { IDeletePlan, IDeletePlanParams } from '../../../domain/usecases/interfaces/plan/deletePlan'
+import { IGetPlans, IGetPlansParams } from '../../../domain/usecases/interfaces/plan/getPlans'
 import {
-  IDeleteFreePlan,
-  IDeleteFreePlanParams,
-} from '../../../domain/usecases/interfaces/freePlan/deleteFreePlan'
-import {
-  IGetFreePlans,
-  IGetFreePlansParams,
-} from '../../../domain/usecases/interfaces/freePlan/getFreePlans'
-import {
-  IToggleFreePlanStatus,
-  IToggleFreePlanStatusParams,
-} from '../../../domain/usecases/interfaces/freePlan/toggleFreePlanStatus'
+  ITogglePlanStatus,
+  ITogglePlanStatusParams,
+} from '../../../domain/usecases/interfaces/plan/togglePlanStatus'
+
 import { KTSVG } from '../../../helpers'
 import { debounce } from '../../../helpers/debounce'
 import ConfirmationModal from '../../components/modal/ConfirmationModal'
@@ -25,9 +20,9 @@ import { Search } from '../../components/search/Search'
 import { FreePlansTable } from '../../components/tables/freePlans-list'
 
 type Props = {
-  remoteGetFreePlans: IGetFreePlans
-  remoteToggleFreePlanStatus: IToggleFreePlanStatus
-  remoteDeleteFreePlan: IDeleteFreePlan
+  remoteGetFreePlans: IGetPlans
+  remoteToggleFreePlanStatus: ITogglePlanStatus
+  remoteDeleteFreePlan: IDeletePlan
 }
 
 export function ListFreePlansTemplate({
@@ -39,17 +34,18 @@ export function ListFreePlansTemplate({
   const [freePlanToToggleStatusId, setFreePlanToToggleStatusId] = useState<string | null>(null)
   const [freePlanToDeletionId, setFreePlanToDeletionId] = useState<string | null>(null)
 
-  const [plans, setPlans] = useState<IFreePlan[]>([])
+  const [plans, setPlans] = useState<IPlan[]>([])
 
   const paginationHook = usePagination()
   const { pagination, setTotalPage } = paginationHook
   const { take, currentPage, order } = pagination
-  const paginationParams: IGetFreePlansParams = {
+  const paginationParams: IGetPlansParams = {
     page: currentPage,
     take,
     name: planName,
     order,
     orderBy: pagination.orderBy,
+    planType: PlanType.FREE_PLAN,
   }
 
   const searchPlanFormRef = useRef<FormHandles>(null)
@@ -59,7 +55,7 @@ export function ListFreePlansTemplate({
     data: plansSuccessful,
     error: getPlansError,
     cleanUp: cleanUpGetPlans,
-  } = useRequest<OutputPagination<IFreePlan>, IGetFreePlansParams>(remoteGetFreePlans.get)
+  } = useRequest<OutputPagination<IPlan>, IGetPlansParams>(remoteGetFreePlans.get)
 
   const {
     makeRequest: togglePlanStatus,
@@ -67,7 +63,7 @@ export function ListFreePlansTemplate({
     error: togglePlanStatusError,
     cleanUp: cleanUpTogglePlansStatus,
     loading: loadingTogglePlanStatus,
-  } = useRequest<string, IToggleFreePlanStatusParams>(remoteToggleFreePlanStatus.toggle)
+  } = useRequest<string, ITogglePlanStatusParams>(remoteToggleFreePlanStatus.toggle)
 
   const {
     makeRequest: deleteFreePlan,
@@ -75,13 +71,13 @@ export function ListFreePlansTemplate({
     error: deleteFreePlanError,
     cleanUp: cleanUpDeleteFreePlan,
     loading: loadingFreePlanDeletion,
-  } = useRequest<string, IDeleteFreePlanParams>(remoteDeleteFreePlan.delete)
+  } = useRequest<string, IDeletePlanParams>(remoteDeleteFreePlan.delete)
 
   const handleSearchPlan = debounce((text: string) => {
     setPlanName(text)
   })
 
-  const handleOpenToggleStatusConfirmationModal = (params: IToggleFreePlanStatusParams) => {
+  const handleOpenToggleStatusConfirmationModal = (params: ITogglePlanStatusParams) => {
     setFreePlanToToggleStatusId(params.id)
   }
 

@@ -1,13 +1,13 @@
 import { usePaginationType } from '../../../../application/hooks/usePagination'
-import { IFreePlan } from '../../../../domain/models/freePlan'
-import { IToggleFreePlanStatusParams } from '../../../../domain/usecases/interfaces/freePlan/toggleFreePlanStatus'
+import { IPlan } from '../../../../domain/models/plan'
+import { ITogglePlanStatusParams } from '../../../../domain/usecases/interfaces/plan/togglePlanStatus'
 import { Pagination } from '../../pagination/Pagination'
 import { FreePlanTableRow } from './row'
 
 type PlansTableProps = {
-  freePlans: IFreePlan[]
+  freePlans: IPlan[]
   paginationHook: usePaginationType
-  togglePlanStatus: (params: IToggleFreePlanStatusParams) => void
+  togglePlanStatus: (params: ITogglePlanStatusParams) => void
   onDeleteFreePlan: (freePlanId: string) => void
 }
 

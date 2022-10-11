@@ -14,7 +14,6 @@ function formatPlanToSubmit(plan: IPlan): FormData {
     courses,
     rooms,
     trainings,
-    categoryId,
   } = plan
   const formData = new FormData()
 
@@ -39,7 +38,6 @@ function formatPlanToSubmit(plan: IPlan): FormData {
   formData.append('roomsId', JSON.stringify(rooms))
   formData.append('coursesId', JSON.stringify(courses))
   formData.append('trainingsId', JSON.stringify(trainings))
-  formData.append('categoryId', categoryId)
 
   return formData
 }

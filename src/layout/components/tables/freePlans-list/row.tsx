@@ -1,13 +1,13 @@
 import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
-import { IFreePlan } from '../../../../domain/models/freePlan'
-import { IToggleFreePlanStatusParams } from '../../../../domain/usecases/interfaces/freePlan/toggleFreePlanStatus'
+import { IPlan } from '../../../../domain/models/plan'
+import { ITogglePlanStatusParams } from '../../../../domain/usecases/interfaces/plan/togglePlanStatus'
 import { KTSVG } from '../../../../helpers'
 import { Switch } from '../../inputs'
 
 type FreePlanTableRowProps = {
-  freePlan: IFreePlan
-  togglePlanStatus: (params: IToggleFreePlanStatusParams) => void
+  freePlan: IPlan
+  togglePlanStatus: (params: ITogglePlanStatusParams) => void
   onDeleteFreePlan: (freePlanId: string) => void
 }
 const FreePlanTableRow = ({
