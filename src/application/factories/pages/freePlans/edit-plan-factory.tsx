@@ -1,5 +1,6 @@
-import { EditFreePlanPageTemplate } from '../../../../layout/templates/freePlans/editPlan'
+import { EditFreePlanPageTemplate } from '../../../../layout/templates/freePlans/editFreePlan'
 import { makeRemoteGetAllBooks } from '../../usecases/book/remote-getAllBooks-factory'
+import { makeRemoteGetCategoriesNoPagination } from '../../usecases/categories/remote-getCategoriesNoPagination-factory'
 import { makeRemoteGetAllCourses } from '../../usecases/course/remote-getAllCourses-factory'
 import { makeRemoteEditPlan } from '../../usecases/plans/remote-editPlan-factory'
 import { makeRemoteGetPlan } from '../../usecases/plans/remote-getPlan-factory'
@@ -15,6 +16,7 @@ export const MakeEditFreePlanPageTemplate = () => {
       remoteGetRooms={makeRemoteGetAllRooms()}
       remoteGetPlan={makeRemoteGetPlan()}
       remoteEditPlan={makeRemoteEditPlan()}
+      remoteGetCategoriesNoPagination={makeRemoteGetCategoriesNoPagination()}
     />
   )
 }

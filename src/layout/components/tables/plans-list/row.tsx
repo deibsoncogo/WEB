@@ -21,7 +21,9 @@ const PlanTableRow = ({ plan, togglePlanStatus }: PlanTableRowProps) => {
       </td>
 
       <td className='ps-4' scope='row'>
-        <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>{plan.description}</span>
+        <span className='text-dark fw-bold d-block fs-7 mw-200px text-overflow-custom'>
+          {plan.description}
+        </span>
       </td>
 
       <td className='ps-4' scope='row'>
@@ -33,7 +35,7 @@ const PlanTableRow = ({ plan, togglePlanStatus }: PlanTableRowProps) => {
       </td>
 
       <td className='ps-4' scope='row'>
-        <span className='fw-bold d-block fs-7'>{plan.intervalAccessMonths}</span>
+        <span className='fw-bold d-block fs-7'>{plan.intervalAccess}</span>
       </td>
 
       <td>

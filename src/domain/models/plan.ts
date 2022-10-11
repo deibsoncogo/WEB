@@ -1,3 +1,4 @@
+import { Category } from '../../interfaces/model/Category'
 import { Course } from '../../interfaces/model/Course'
 import { IBook } from './book'
 import { Product } from './product'
@@ -27,7 +28,7 @@ export interface IPlan {
   price: number
   intervalPaymentMonths?: number
   installments?: number
-  intervalAccessMonths: number
+  intervalAccess: number
   isActive: boolean
   planType: PlanType
   trainings?: ITraining[]
@@ -35,6 +36,6 @@ export interface IPlan {
   books?: IBook[]
   rooms?: IRoom[]
   product?: Product
-  contentAccessDays: number
-  level: string
+  category: Category
+  categoryId: string
 }

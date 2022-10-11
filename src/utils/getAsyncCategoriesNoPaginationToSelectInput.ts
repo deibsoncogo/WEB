@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify'
-import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
-import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { ISelectOption } from '../domain/shared/interface/SelectOption'
+import { IGetCategoriesNoPagination } from '../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 
 type Params = {
   categoryName: string

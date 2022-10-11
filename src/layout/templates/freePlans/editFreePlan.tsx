@@ -7,6 +7,7 @@ import { appRoutes } from '../../../application/routing/routes'
 import { IPlan } from '../../../domain/models/plan'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
+import { IGetCategoriesNoPagination } from '../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
 import { IGetPlan, IGetPlanParams } from '../../../domain/usecases/interfaces/plan/getPlan'
 import { IEditPlan } from '../../../domain/usecases/interfaces/plan/updatePlan'
@@ -15,6 +16,7 @@ import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRoo
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { extractSelectOptionsFromArr, getOptionsFromSearchRequest } from '../../../utils'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { FormEditFreePlan } from '../../components/forms/freePlan/edit'
 import { freePlanFormSchema } from '../../components/forms/freePlan/freePlanSchema'
 import { formatFreePlanToSubmit } from './utils/formatFreePlanToSubmit'
@@ -26,6 +28,7 @@ type Props = {
   remoteGetTrainings: IGetAllTrainings
   remoteGetBooks: IGetAllBooks
   remoteGetRooms: IGetAllRooms
+  remoteGetCategoriesNoPagination: IGetCategoriesNoPagination
 }
 
 const EditFreePlanPageTemplate = ({
@@ -35,6 +38,7 @@ const EditFreePlanPageTemplate = ({
   remoteGetRooms,
   remoteGetPlan,
   remoteEditPlan,
+  remoteGetCategoriesNoPagination,
 }: Props) => {
   const router = useRouter()
   const { id: planId } = router.query
@@ -127,6 +131,13 @@ const EditFreePlanPageTemplate = ({
     })
   }
 
+  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination,
+    })
+  }
+
   const handleClickCancel = () => {
     router.push(appRoutes.PLANS)
   }
@@ -169,10 +180,10 @@ const EditFreePlanPageTemplate = ({
     if (freePlan) {
       const {
         name,
-        level,
+        category,
         description,
         imageUrl,
-        contentAccessDays,
+        intervalAccess,
         trainings = [],
         courses = [],
         books = [],
@@ -182,12 +193,13 @@ const EditFreePlanPageTemplate = ({
       setFiledValue('name', name)
       setFiledValue('description', description)
       setFiledValue('imagePreview', imageUrl)
-      setFiledValue('level', level)
-      setFiledValue('contentAccessDays', contentAccessDays)
+      setFiledValue('intervalAccess', intervalAccess)
       setFiledValue('courses', extractSelectOptionsFromArr(courses))
       setFiledValue('books', extractSelectOptionsFromArr(books))
       setFiledValue('rooms', extractSelectOptionsFromArr(rooms))
       setFiledValue('trainings', extractSelectOptionsFromArr(trainings))
+      setFiledValue('categoryId', category.id)
+      setFiledValue('categoryId-label', category.name)
     }
   }, [freePlan])
 
@@ -202,6 +214,7 @@ const EditFreePlanPageTemplate = ({
       loadRoomsOptions={handleGetRoomsOptions}
       hasAtLastOneProduct={hasAtLastOneProduct}
       loadingFormSubmit={editPlanLoading}
+      searchCategories={handleGetAsyncCategoriesToSelectInput}
     />
   )
 }

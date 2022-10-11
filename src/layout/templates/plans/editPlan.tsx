@@ -15,10 +15,10 @@ import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRoo
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { extractSelectOptionsFromArr, getOptionsFromSearchRequest } from '../../../utils'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { FormEditPlan } from '../../components/forms/plans/edit'
 import { planFormSchema } from '../../components/forms/plans/planSchema'
 import { maskedToMoney } from '../../formatters/currenceFormatter'
-import { getAsyncCategoiesNoPaginationToSelectInput } from '../trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { formatPlanToSubmit } from './utils/formatPlanToSubmit'
 
 type Props = {
@@ -148,7 +148,7 @@ const EditPlanPageTemplate = ({
     if (plan) {
       if (plan.planType === PlanType.SINGLE_PAYMENT) {
         setFiledValue('installments', plan.installments)
-        setFiledValue('intervalAccessMonths', plan.intervalAccessMonths)
+        setFiledValue('intervalAccess', plan.intervalAccess)
       }
 
       if (plan.planType === PlanType.RECURRING_PAYMENT) {
@@ -194,6 +194,7 @@ const EditPlanPageTemplate = ({
         price,
         planType: defaultPlan,
         description,
+        category,
         imageUrl,
         trainings = [],
         courses = [],
@@ -211,6 +212,8 @@ const EditPlanPageTemplate = ({
       setFiledValue('books', extractSelectOptionsFromArr(books))
       setFiledValue('rooms', extractSelectOptionsFromArr(rooms))
       setFiledValue('trainings', extractSelectOptionsFromArr(trainings))
+      setFiledValue('categoryId', category.id)
+      setFiledValue('categoryId-label', category.name)
 
       handlePlanTypeSet()
     }

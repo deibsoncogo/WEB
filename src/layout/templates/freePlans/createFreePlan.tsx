@@ -2,6 +2,7 @@ import { FormHandles } from '@unform/core'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import { makeRemoteGetCategoriesNoPagination } from '../../../application/factories/usecases/categories/remote-getCategoriesNoPagination-factory'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
 import { IPlan } from '../../../domain/models/plan'
@@ -140,6 +141,7 @@ const CreateFreePlanPageTemplate = ({
       loadTrainingsOptions={handleGetTrainingsOptions}
       loadBooksOptions={handleGetBooksOptions}
       loadRoomsOptions={handleGetRoomsOptions}
+      getCategoriesNoPagination={makeRemoteGetCategoriesNoPagination()}
       hasAtLastOneProduct={hasAtLastOneProduct}
       loadingFormSubmit={createPlanLoading}
     />

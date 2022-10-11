@@ -34,7 +34,7 @@ const FreePlanTableRow = ({
         </span>
       </td>
       <td className='ps-4' scope='row'>
-        <span className='fw-bold d-block fs-7'>{freePlan.contentAccessDays}</span>
+        <span className='fw-bold d-block fs-7'>{freePlan.intervalAccess}</span>
       </td>
 
       <td>

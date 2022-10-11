@@ -1,9 +1,12 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import { forwardRef } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
+import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { Button as CustomButton } from '../../buttons/CustomButton'
-import { Input, InputNumber, TextArea } from '../../inputs'
+import { Input, InputNumber, SelectAsync, TextArea } from '../../inputs'
 import { SelectMulti } from '../../inputs/input-multi-select'
 import { InputSingleImage } from '../../inputs/input-single-image'
 
@@ -14,6 +17,7 @@ type FormCreateFreePlanProps = {
   loadTrainingsOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadBooksOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadRoomsOptions: (searchValue: string) => Promise<ISelectOption[]>
+  getCategoriesNoPagination: IGetCategoriesNoPagination
   hasAtLastOneProduct: boolean
   loadingFormSubmit: boolean
 }
@@ -26,9 +30,31 @@ const FormCreateFreePlan = forwardRef<FormHandles, FormCreateFreePlanProps>((pro
     loadTrainingsOptions,
     loadBooksOptions,
     loadRoomsOptions,
+    getCategoriesNoPagination,
     hasAtLastOneProduct,
     loadingFormSubmit,
   } = props
+
+  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
+
+  const searchCategories = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination: getCategoriesNoPagination,
+    })
+  }
+
+  async function fetchData() {
+    try {
+      setDefaultCategoryOptions(await searchCategories(''))
+    } catch (err) {
+      toast.error('Não foi possível carregar os dados')
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
     <Form className='form' ref={ref} onSubmit={onSubmit}>
@@ -44,8 +70,15 @@ const FormCreateFreePlan = forwardRef<FormHandles, FormCreateFreePlanProps>((pro
         <div className='row'>
           <div className='col'>
             <Input name='name' label='Nome' classes='h-75px' />
-            <InputNumber name='contentAccessDays' label='Acesso ao Conteúdo (dias)' />
-            <Input name='level' label='Nivel' classes='h-75px' />
+            <InputNumber name='intervalAccess' label='Acesso ao Conteúdo (dias)' />
+            <SelectAsync
+              searchOptions={searchCategories}
+              name='categoryId'
+              label='Categoria'
+              classes='h-75px'
+              placeholder='Digite o nome da categoria'
+              defaultOptions={defaultCategoryOptions}
+            />
           </div>
 
           <div className='col'>

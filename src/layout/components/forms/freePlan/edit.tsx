@@ -5,7 +5,7 @@ import { IPlan } from '../../../../domain/models/plan'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { onlyNums } from '../../../formatters/currenceFormatter'
 import { Button as CustomButton } from '../../buttons/CustomButton'
-import { Input, InputNumber, TextArea } from '../../inputs'
+import { Input, InputNumber, SelectAsync, TextArea } from '../../inputs'
 import { SelectMulti } from '../../inputs/input-multi-select'
 import { InputSingleImage } from '../../inputs/input-single-image'
 
@@ -16,6 +16,7 @@ type FormEditFreePlanProps = {
   loadTrainingsOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadBooksOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadRoomsOptions: (searchValue: string) => Promise<ISelectOption[]>
+  searchCategories: (categoryName: string) => Promise<ISelectOption[]>
   hasAtLastOneProduct: boolean
   loadingFormSubmit: boolean
 }
@@ -28,6 +29,7 @@ const FormEditFreePlan = forwardRef<FormHandles, FormEditFreePlanProps>((props, 
     loadTrainingsOptions,
     loadBooksOptions,
     loadRoomsOptions,
+    searchCategories,
     hasAtLastOneProduct,
     loadingFormSubmit,
   } = props
@@ -50,8 +52,14 @@ const FormEditFreePlan = forwardRef<FormHandles, FormEditFreePlanProps>((props, 
         <div className='row'>
           <div className='col'>
             <Input name='name' label='Nome' classes='h-75px' />
-            <InputNumber name='contentAccessDays' label='Acesso ao Conteúdo (dias)' />
-            <Input name='level' label='Nivel' classes='h-75px' />
+            <InputNumber name='intervalAccess' label='Acesso ao Conteúdo (dias)' />
+            <SelectAsync
+              searchOptions={searchCategories}
+              name='categoryId'
+              label='Categoria'
+              classes='h-75px'
+              placeholder='Digite o nome da categoria'
+            />
           </div>
 
           <div className='col'>

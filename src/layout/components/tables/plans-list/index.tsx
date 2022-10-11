@@ -69,9 +69,9 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                 <th
                   role='columnheader'
                   scope='col'
-                  className={getColumnHeaderClasses({ title: 'intervalAccessMonths' })}
+                  className={getColumnHeaderClasses({ title: 'intervalAccess' })}
                   style={{ maxWidth: '130px' }}
-                  onClick={() => handleOrdenation('intervalAccessMonths')}
+                  onClick={() => handleOrdenation('intervalAccess')}
                 >
                   Acesso ao Conteúdo (meses)
                 </th>
