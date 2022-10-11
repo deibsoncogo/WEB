@@ -4,22 +4,22 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
-import { IPlan, PlanType } from '../../../domain/models/plan'
+import { IPlan } from '../../../domain/models/plan'
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IGetAllBooks } from '../../../domain/usecases/interfaces/book/getAllBooks'
 import { IGetCategoriesNoPagination } from '../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
 import { IGetAllCourses } from '../../../domain/usecases/interfaces/course/getAllCourses'
 import { IGetPlan, IGetPlanParams } from '../../../domain/usecases/interfaces/plan/getPlan'
 import { IEditPlan } from '../../../domain/usecases/interfaces/plan/updatePlan'
+
 import { IGetAllRooms } from '../../../domain/usecases/interfaces/room/getAllRooms'
 import { IGetAllTrainings } from '../../../domain/usecases/interfaces/trainings/getAllTrainings'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { extractSelectOptionsFromArr, getOptionsFromSearchRequest } from '../../../utils'
 import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../utils/getAsyncCategoriesNoPaginationToSelectInput'
-import { FormEditPlan } from '../../components/forms/plans/edit'
-import { planFormSchema } from '../../components/forms/plans/planSchema'
-import { maskedToMoney } from '../../formatters/currenceFormatter'
-import { formatPlanToSubmit } from './utils/formatPlanToSubmit'
+import { FormEditFreePlan } from '../../components/forms/freePlan/edit'
+import { freePlanFormSchema } from '../../components/forms/freePlan/freePlanSchema'
+import { formatFreePlanToSubmit } from './utils/formatFreePlanToSubmit'
 
 type Props = {
   remoteGetPlan: IGetPlan
@@ -31,7 +31,7 @@ type Props = {
   remoteGetCategoriesNoPagination: IGetCategoriesNoPagination
 }
 
-const EditPlanPageTemplate = ({
+const EditFreePlanPageTemplate = ({
   remoteGetCourses,
   remoteGetTrainings,
   remoteGetBooks,
@@ -44,8 +44,7 @@ const EditPlanPageTemplate = ({
   const { id: planId } = router.query
 
   const [hasAtLastOneProduct, setHasAtLastOneProduct] = useState(true)
-  const [planType, setPlanType] = useState<PlanType | null>(null)
-  const [plan, setPlan] = useState<IPlan | null>(null)
+  const [freePlan, setFreePlan] = useState<IPlan | null>(null)
 
   const editPlanFormRef = useRef<FormHandles>(null)
 
@@ -68,7 +67,7 @@ const EditPlanPageTemplate = ({
     const { courses = [], trainings = [], books = [], rooms = [] } = data
     const products = courses?.length + books?.length + trainings?.length + rooms?.length
 
-    const { error, success } = await applyYupValidation<IPlan>(planFormSchema, data)
+    const { error, success } = await applyYupValidation<IPlan>(freePlanFormSchema, data)
 
     if (error) {
       editPlanFormRef?.current?.setErrors(error)
@@ -85,9 +84,9 @@ const EditPlanPageTemplate = ({
     }
 
     if (success) {
-      const dataFormatted = formatPlanToSubmit(success)
+      const dataFormatted = formatFreePlanToSubmit(success)
       dataFormatted.append('id', String(planId))
-      dataFormatted.append('isActive', String(plan?.isActive))
+      dataFormatted.append('isActive', String(freePlan?.isActive))
       editPlan(dataFormatted)
     }
   }
@@ -132,29 +131,19 @@ const EditPlanPageTemplate = ({
     })
   }
 
+  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
+    return getAsyncCategoiesNoPaginationToSelectInput({
+      categoryName,
+      remoteGetCategoriesNoPagination,
+    })
+  }
+
   const handleClickCancel = () => {
     router.push(appRoutes.PLANS)
   }
 
-  const handlePlanTypeChange = (newPlanType: PlanType) => {
-    setPlanType(newPlanType)
-  }
-
   const setFiledValue = (field: string, value: any) => {
     editPlanFormRef.current?.setFieldValue(field, value)
-  }
-
-  const handlePlanTypeSet = () => {
-    if (plan) {
-      if (plan.planType === PlanType.SINGLE_PAYMENT) {
-        setFiledValue('installments', plan.installments)
-        setFiledValue('intervalAccess', plan.intervalAccess)
-      }
-
-      if (plan.planType === PlanType.RECURRING_PAYMENT) {
-        setFiledValue('intervalPaymentMonths', plan.intervalPaymentMonths)
-      }
-    }
   }
 
   useEffect(() => {
@@ -165,75 +154,57 @@ const EditPlanPageTemplate = ({
 
   useEffect(() => {
     if (editPlanSuccessful) {
-      toast.success('Plano editado com sucesso!')
+      toast.success('Plano Gratuito editado com sucesso')
       cleanUpEditPlan()
-      router.push(appRoutes.PLANS)
+      router.push(appRoutes.FREE_PLANS)
     }
 
     if (getPlanSuccessful) {
-      setPlan(getPlanSuccessful)
+      setFreePlan(getPlanSuccessful)
       cleanUpGetPlan()
     }
   }, [editPlanSuccessful, getPlanSuccessful])
 
   useEffect(() => {
     if (editPlanError) {
-      toast.error(editPlanError + '!')
+      toast.error(editPlanError)
       cleanUpEditPlan()
     }
 
     if (getPlanError) {
-      toast.error(getPlanError + '!')
+      toast.error(getPlanError)
     }
   }, [editPlanError, getPlanError])
 
   useEffect(() => {
-    if (plan) {
+    if (freePlan) {
       const {
         name,
-        price,
-        planType: defaultPlan,
-        description,
         category,
+        description,
         imageUrl,
+        intervalAccess,
         trainings = [],
         courses = [],
         books = [],
         rooms = [],
-      } = plan
+      } = freePlan
 
-      setFiledValue('planType', planType || defaultPlan)
-      setPlanType(planType || defaultPlan)
       setFiledValue('name', name)
-      setFiledValue('price', maskedToMoney(price))
       setFiledValue('description', description)
       setFiledValue('imagePreview', imageUrl)
+      setFiledValue('intervalAccess', intervalAccess)
       setFiledValue('courses', extractSelectOptionsFromArr(courses))
       setFiledValue('books', extractSelectOptionsFromArr(books))
       setFiledValue('rooms', extractSelectOptionsFromArr(rooms))
       setFiledValue('trainings', extractSelectOptionsFromArr(trainings))
       setFiledValue('categoryId', category.id)
       setFiledValue('categoryId-label', category.name)
-
-      handlePlanTypeSet()
     }
-  }, [plan])
-
-  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({
-      categoryName,
-      remoteGetCategoriesNoPagination,
-    })
-  }
-
-  useEffect(() => {
-    if (plan) {
-      handlePlanTypeSet()
-    }
-  }, [planType])
+  }, [freePlan])
 
   return (
-    <FormEditPlan
+    <FormEditFreePlan
       ref={editPlanFormRef}
       onSubmit={handleFormSubmit}
       onCancel={handleClickCancel}
@@ -243,11 +214,9 @@ const EditPlanPageTemplate = ({
       loadRoomsOptions={handleGetRoomsOptions}
       hasAtLastOneProduct={hasAtLastOneProduct}
       loadingFormSubmit={editPlanLoading}
-      planType={planType as PlanType}
-      planTypeChange={handlePlanTypeChange}
       searchCategories={handleGetAsyncCategoriesToSelectInput}
     />
   )
 }
 
-export { EditPlanPageTemplate }
+export { EditFreePlanPageTemplate }

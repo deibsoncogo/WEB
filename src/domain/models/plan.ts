@@ -1,14 +1,22 @@
+import { Category } from '../../interfaces/model/Category'
 import { Course } from '../../interfaces/model/Course'
-import { ITraining } from './training'
 import { IBook } from './book'
-import { IRoom } from './room'
 import { Product } from './product'
-import { ICategory } from '../../interfaces/api-response/categoryResponse'
+import { IRoom } from './room'
+import { ITraining } from './training'
 
 export enum PlanType {
   SINGLE_PAYMENT = 'single_payment',
   RECURRING_PAYMENT = 'recurring_payment',
+  FREE_PLAN = 'free_plan',
 }
+
+export type AllPlanOptions =
+  | PlanType.FREE_PLAN
+  | PlanType.RECURRING_PAYMENT
+  | PlanType.SINGLE_PAYMENT
+  | 'all'
+  | 'onlyPaid'
 
 export interface IPlan {
   id?: string
@@ -20,7 +28,7 @@ export interface IPlan {
   price: number
   intervalPaymentMonths?: number
   installments?: number
-  intervalAccessMonths: number
+  intervalAccess: number
   isActive: boolean
   planType: PlanType
   trainings?: ITraining[]
@@ -28,6 +36,6 @@ export interface IPlan {
   books?: IBook[]
   rooms?: IRoom[]
   product?: Product
+  category: Category
   categoryId: string
-  category: ICategory
 }

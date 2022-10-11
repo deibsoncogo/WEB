@@ -5,8 +5,8 @@ import { toast } from 'react-toastify'
 import { IPlan, PlanType } from '../../../../domain/models/plan'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { IGetCategoriesNoPagination } from '../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
+import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { onlyNums } from '../../../formatters/currenceFormatter'
-import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { Button as CustomButton } from '../../buttons/CustomButton'
 import { Input, Select, SelectAsync, TextArea } from '../../inputs'
 import { InputCurrence } from '../../inputs/input-currence'
@@ -136,7 +136,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
 
             {planType === PlanType.SINGLE_PAYMENT && (
               <InputNumber
-                name='intervalAccessMonths'
+                name='intervalAccess'
                 label='Acesso ao conteúdo (meses)'
                 classes='h-75px'
               />

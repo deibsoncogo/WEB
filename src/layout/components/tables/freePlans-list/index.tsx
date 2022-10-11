@@ -2,12 +2,13 @@ import { usePaginationType } from '../../../../application/hooks/usePagination'
 import { IPlan } from '../../../../domain/models/plan'
 import { ITogglePlanStatusParams } from '../../../../domain/usecases/interfaces/plan/togglePlanStatus'
 import { Pagination } from '../../pagination/Pagination'
-import PlanTableRow from './row'
+import { FreePlanTableRow } from './row'
 
 type PlansTableProps = {
-  plans: IPlan[]
+  freePlans: IPlan[]
   paginationHook: usePaginationType
   togglePlanStatus: (params: ITogglePlanStatusParams) => void
+  onDeleteFreePlan: (freePlanId: string) => void
 }
 
 type HandleClassesParam = {
@@ -15,7 +16,12 @@ type HandleClassesParam = {
   extraClases?: string
 }
 
-export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: PlansTableProps) {
+export function FreePlansTable({
+  freePlans = [],
+  paginationHook,
+  togglePlanStatus,
+  onDeleteFreePlan,
+}: PlansTableProps) {
   const { getClassToCurrentOrderColumn, handleOrdenation } = paginationHook
 
   const getColumnHeaderClasses = ({ title, extraClases = '' }: HandleClassesParam) => {
@@ -50,30 +56,11 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                 <th
                   role='columnheader'
                   scope='col'
-                  className={getColumnHeaderClasses({ title: 'price' })}
-                  onClick={() => handleOrdenation('price')}
-                >
-                  Preço
-                </th>
-                <th
-                  role='columnheader'
-                  scope='col'
-                  className={getColumnHeaderClasses({
-                    title: 'intervalPaymentMonths',
-                  })}
-                  style={{ maxWidth: '130px' }}
-                  onClick={() => handleOrdenation('intervalPaymentMonths')}
-                >
-                  Intervalo de Pagamento (meses)
-                </th>
-                <th
-                  role='columnheader'
-                  scope='col'
                   className={getColumnHeaderClasses({ title: 'intervalAccess' })}
                   style={{ maxWidth: '130px' }}
                   onClick={() => handleOrdenation('intervalAccess')}
                 >
-                  Acesso ao Conteúdo (meses)
+                  Acesso ao Conteúdo (dias)
                 </th>
                 <th
                   className={getColumnHeaderClasses({ title: 'isActive' })}
@@ -81,20 +68,25 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                 >
                   Ativo
                 </th>
-                <th className='text-dark rounded-end align-middle' style={{ minWidth: '100px' }}>
-                  Ação
-                </th>
+                <th className='text-dark rounded-end align-middle'>Ação</th>
               </tr>
             </thead>
 
             <tbody className='w-100'>
-              {plans?.map((plan) => (
-                <PlanTableRow key={plan.id} plan={plan} togglePlanStatus={togglePlanStatus} />
+              {freePlans?.map((freePlan) => (
+                <FreePlanTableRow
+                  key={freePlan.id}
+                  freePlan={freePlan}
+                  togglePlanStatus={togglePlanStatus}
+                  onDeleteFreePlan={onDeleteFreePlan}
+                />
               ))}
             </tbody>
           </table>
 
-          {plans.length === 0 && <p className='text-center my-8 pt-2'>Nenhum plano encontrado</p>}
+          {freePlans.length === 0 && (
+            <p className='text-center my-8 pt-2'>Nenhum plano encontrado</p>
+          )}
         </div>
       </div>
       <div className='card d-flex flex-row justify-content-end align-items-center ps-9 pe-9 pb-5'>

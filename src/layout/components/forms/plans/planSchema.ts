@@ -14,7 +14,7 @@ export const planFormSchema = Yup.object().shape({
       .integer('Quantidade de parcelas deve ser um número inteiro')
       .min(1, 'Quantidade de parcelas deve ser maior que zero'),
   }),
-  intervalAccessMonths: Yup.number().when('planType', {
+  intervalAccess: Yup.number().when('planType', {
     is: PlanType.SINGLE_PAYMENT,
     then: Yup.number()
       .required('Acesso ao conteúdo é necessário')

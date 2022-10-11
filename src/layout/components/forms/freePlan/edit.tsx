@@ -1,32 +1,27 @@
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import { ChangeEvent, forwardRef } from 'react'
-import { IPlan, PlanType } from '../../../../domain/models/plan'
+import { forwardRef } from 'react'
+import { IPlan } from '../../../../domain/models/plan'
 import { ISelectOption } from '../../../../domain/shared/interface/SelectOption'
 import { onlyNums } from '../../../formatters/currenceFormatter'
 import { Button as CustomButton } from '../../buttons/CustomButton'
-import { Input, Select, SelectAsync, TextArea } from '../../inputs'
-import { InputCurrence } from '../../inputs/input-currence'
+import { Input, InputNumber, SelectAsync, TextArea } from '../../inputs'
 import { SelectMulti } from '../../inputs/input-multi-select'
-import { InputNumber } from '../../inputs/input-number'
 import { InputSingleImage } from '../../inputs/input-single-image'
-import { planTypeOptions } from './planTypeOptions'
 
-type FormEditPlansProps = {
+type FormEditFreePlanProps = {
   onSubmit: (data: any) => void
   onCancel: () => void
   loadCoursesOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadTrainingsOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadBooksOptions: (searchValue: string) => Promise<ISelectOption[]>
   loadRoomsOptions: (searchValue: string) => Promise<ISelectOption[]>
-  planTypeChange: (newPlanType: PlanType) => void
+  searchCategories: (categoryName: string) => Promise<ISelectOption[]>
   hasAtLastOneProduct: boolean
   loadingFormSubmit: boolean
-  planType: PlanType
-  searchCategories: (categoryName: string) => Promise<ISelectOption[]>
 }
 
-const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) => {
+const FormEditFreePlan = forwardRef<FormHandles, FormEditFreePlanProps>((props, ref) => {
   const {
     onSubmit,
     onCancel,
@@ -34,27 +29,18 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
     loadTrainingsOptions,
     loadBooksOptions,
     loadRoomsOptions,
-    planTypeChange,
     searchCategories,
     hasAtLastOneProduct,
     loadingFormSubmit,
-    planType,
   } = props
 
   const handleSubmit = (data: IPlan) => {
-    onSubmit({
-      ...data,
-      price: onlyNums(data.price),
-    })
-  }
-
-  const handlePlanTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    planTypeChange(e.target.value as PlanType)
+    onSubmit(data)
   }
 
   return (
     <Form className='form' ref={ref} onSubmit={handleSubmit}>
-      <h3 className='mb-5 text-muted'>Informações do Plano</h3>
+      <h3 className='mb-5 text-muted'>Informações do Plano Gratuito</h3>
 
       <div className='container p-0 m-0'>
         <div className='row'>
@@ -66,35 +52,14 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
         <div className='row'>
           <div className='col'>
             <Input name='name' label='Nome' classes='h-75px' />
-            <InputCurrence name='price' label='Preço' type='text' classes='h-75px' />
-            <Select
-              name='planType'
-              label='Tipo de Plano'
+            <InputNumber name='intervalAccess' label='Acesso ao Conteúdo (dias)' />
+            <SelectAsync
+              searchOptions={searchCategories}
+              name='categoryId'
+              label='Categoria'
               classes='h-75px'
-              defaultValue=''
-              onChange={handlePlanTypeChange}
-            >
-              <option disabled value=''>
-                Selecione
-              </option>
-              {planTypeOptions.map(({ label, value }) => (
-                <option value={value} key={value}>
-                  {label}
-                </option>
-              ))}
-            </Select>
-
-            {planType === PlanType.RECURRING_PAYMENT && (
-              <InputNumber
-                name='intervalPaymentMonths'
-                label='Intervalo de Pagamento (meses)'
-                classes='h-75px'
-              />
-            )}
-
-            {planType === PlanType.SINGLE_PAYMENT && (
-              <InputNumber name='installments' label='Quantidade de parcelas' classes='h-75px' />
-            )}
+              placeholder='Digite o nome da categoria'
+            />
           </div>
 
           <div className='col'>
@@ -103,24 +68,10 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
               label='Descrição'
               style={{ minHeight: '240px', margin: 0 }}
             />
-            <SelectAsync
-              searchOptions={searchCategories}
-              name='categoryId'
-              label='Categoria'
-              classes='h-75px'
-              placeholder='Digite o nome da categoria'
-            />
-            {planType === PlanType.SINGLE_PAYMENT && (
-              <InputNumber
-                name='intervalAccess'
-                label='Acesso ao conteúdo (meses)'
-                classes='h-75px'
-              />
-            )}
           </div>
         </div>
 
-        <h3 className='mb-5 mt-5 text-muted'>Itens Inclusos no Plano</h3>
+        <h3 className='mb-5 mt-5 text-muted'>Itens Inclusos no Plano Gratuito</h3>
         {!hasAtLastOneProduct && (
           <div
             className='text-danger'
@@ -171,6 +122,6 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
   )
 })
 
-FormEditPlan.displayName = 'FormEditPlan'
+FormEditFreePlan.displayName = 'FormEditFreePlan'
 
-export { FormEditPlan }
+export { FormEditFreePlan }
