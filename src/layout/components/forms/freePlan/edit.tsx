@@ -33,10 +33,7 @@ const FormEditFreePlan = forwardRef<FormHandles, FormEditFreePlanProps>((props, 
   } = props
 
   const handleSubmit = (data: IPlan) => {
-    onSubmit({
-      ...data,
-      price: onlyNums(data.price),
-    })
+    onSubmit(data)
   }
 
   return (
