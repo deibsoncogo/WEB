@@ -106,9 +106,8 @@ export function NotificationTable({
   }
 
   const handleCreateNotification = (data: IFormNotification) => {
-    setLoadingAction(true)
-
     try {
+      setLoadingAction(true)
       socket?.emit(SocketNotificationEvents.CreateNotification, { ...data, isActive: false }, () => {
         router.push(appRoutes.ALERTS)
         toast.success('Notificação cadastrada com sucesso!')
@@ -121,23 +120,23 @@ export function NotificationTable({
     }
   }
 
-  async function createNotificationRequest(data: IFormNotification) {
-    setLoadingAction(true)
-    createNotification
-      .create({ ...data, isActive: false })
-      .then(() => {
+  const handleUpdateNotification = (data: IFormNotification) => {
+    try {
+      setLoadingAction(true)
+      socket?.emit(SocketNotificationEvents.UpdateNotification, { ...data, id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive }, () => {
         router.push(appRoutes.ALERTS)
-        toast.success('Notificação cadastrada com sucesso!')
-      })
-      .catch(() => toast.error('Não foi possível criar a notificação!'))
-      .finally(() => {
+        toast.success('Notificação editada com sucesso!')
         setLoadingAction(false)
+        setNotificationToUpdate(undefined)
         handleCloseModalNotification()
         handleRefresher()
       })
+    } catch {
+      toast.error('Não foi possível atualizar a notificação!')
+    }
   }
 
-  async function updateNotificationRequest(data: IFormNotification) {
+  /* async function updateNotificationRequest(data: IFormNotification) {
     setLoadingAction(true)
     updateNotification
       .update({ ...data, id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive })
@@ -152,7 +151,7 @@ export function NotificationTable({
         handleRefresher()
         setNotificationToUpdate(undefined)
       })
-  }
+  } */
 
   async function handleFormSubmit(data: IFormNotification) {
     if (!notificationFormRef.current) throw new Error()
@@ -165,7 +164,7 @@ export function NotificationTable({
       })
 
       await schema.validate(data, { abortEarly: false })
-      notificationToUpdate ? updateNotificationRequest(data) : handleCreateNotification(data)
+      notificationToUpdate ? handleUpdateNotification(data) : handleCreateNotification(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -286,7 +285,7 @@ export function NotificationTable({
                         notification={item}
                         toggleStatus={toggleStatus}
                         openModalToUpdate={handleOpenModalNotification}
-                        deleteNotification={deleteNotification}
+                        socket={socket}
                         handleRefresher={handleRefresher}
                       />
                     ))}
