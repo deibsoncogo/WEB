@@ -18,7 +18,12 @@ export const CustomImage = ({ imageURL, onClick }: CustomImageProps) => {
     >
       {isLoading && <Spinner animation='border' variant='primary' />}
       <img
-        style={{ width: 250, height: 250, display: isLoading ? 'none' : 'initial' }}
+        style={{
+          width: 250,
+          height: 250,
+          display: isLoading ? 'none' : 'initial',
+          objectFit: 'cover',
+        }}
         src={imageURL}
         alt='Chat message'
         className='rounded w-100 cursor-pointer'
