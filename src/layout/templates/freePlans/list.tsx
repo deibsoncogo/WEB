@@ -123,7 +123,13 @@ export function ListFreePlansTemplate({
     }
 
     if (planStatusToggledSuccessful) {
-      toast.success('Status do Plano alterado com sucesso!')
+      toast.success(
+        `Plano ${
+          !plans.find((plan) => plan.id === freePlanToToggleStatusId)?.isActive
+            ? 'ativado'
+            : 'desativado'
+        } com sucesso!`
+      )
       handleCloseToggleStatusConfirmationModal()
       cleanUpTogglePlansStatus()
       return
