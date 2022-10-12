@@ -122,7 +122,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
             <TextArea
               name='description'
               label='Descrição'
-              style={{ minHeight: '145px', margin: 0 }}
+              style={{ minHeight: '141px', margin: 0 }}
             />
 
             <SelectAsync
