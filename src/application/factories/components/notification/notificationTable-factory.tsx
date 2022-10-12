@@ -2,6 +2,7 @@ import { NotificationTable } from "../../../../layout/components/tables/notifica
 import { makeRemoteCreateNotification } from "../../usecases/notification/remote-createNotification-factory"
 import { makeRemoteDeleteNotification } from "../../usecases/notification/remote-deleteFreeContent-factory"
 import { makeRemoteGetAllNotifiation } from "../../usecases/notification/remote-getAllFreeContent-factory"
+import { makeRemoteJoinNotification } from "../../usecases/notification/remote-joinNotification-factory"
 import { makeRemoteToggleNotificationStatus } from "../../usecases/notification/remote-toggleNotificationStatus-factory"
 import { makeRemoteUpdateNotification } from "../../usecases/notification/remote-updateNotification-factory"
 
@@ -13,7 +14,7 @@ export const MakeNotificationTable = () => {
       getAllNotification={makeRemoteGetAllNotifiation()}
       toggleStatus={makeRemoteToggleNotificationStatus()}
       deleteNotification={makeRemoteDeleteNotification()}  
-
+      joinNotification={makeRemoteJoinNotification()}
     />
   )
 }

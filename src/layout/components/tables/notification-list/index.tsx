@@ -23,6 +23,11 @@ import router from 'next/router'
 import { appRoutes } from '../../../../application/routing/routes'
 import { INotification } from '../../../../domain/models/notification'
 import { IUpdateNotification } from '../../../../domain/usecases/interfaces/notification/updateNotification'
+import { Socket } from 'socket.io-client'
+import { SocketNotificationEvents } from '../../../../domain/models/socketNotificationEvents'
+import { getSocketConnection } from '../../../../utils/getSocketConnection'
+import { useRequest } from '../../../../application/hooks/useRequest'
+import { IJoinNotification } from '../../../../domain/usecases/interfaces/notification/join-notification'
 
 type NotificationTableProps = {
   createNotification: ICreateNotification
@@ -30,7 +35,10 @@ type NotificationTableProps = {
   getAllNotification: IGetAllNotification
   toggleStatus: IToggleNotificationStatus
   deleteNotification: IDeleteNotification
+  joinNotification: IJoinNotification
 }
+
+let socket: Socket | null
 
 export function NotificationTable({
   createNotification,
@@ -38,6 +46,7 @@ export function NotificationTable({
   getAllNotification,
   toggleStatus,
   deleteNotification,
+  joinNotification
 }: NotificationTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
@@ -58,27 +67,18 @@ export function NotificationTable({
     return `text-dark ps-4 ${minWidth} cursor-pointer ${getClassToCurrentOrderColumn(name)}`
   }
 
-  useEffect(() => {
-    const paginationParams: GetNotificationParams = {
-      take: pagination.take,
-      order: pagination.order,
-      orderBy: pagination.orderBy,
-      page: pagination.currentPage,
-      name: notificationQuery,
-    }
-    getAllNotification
-      .getAll(paginationParams)
-      .then((data) => {
-        setNotification(data.data)
-        setTotalPage(data.total)
-      })
-      .catch(() => toast.error('Não foi possível listar as notificações!'))
-      .finally(() =>
-        setTimeout(() => {
-          setLoading(false)
-        }, 500)
-      )
-  }, [refresher, pagination.take, pagination.currentPage, pagination.order, notificationQuery])
+  const { makeRequest: joinNotificationRequest, data: accessToken } = useRequest<IJoinNotification>(
+    joinNotification.join
+  )
+
+  const socketInitializer = (tokenChat: string) => {
+    socket = getSocketConnection(SocketNotificationEvents.Notification, tokenChat)
+    socket.connect()
+
+    socket.on(SocketNotificationEvents.ConnectError, () => {
+      toast.error('Falha ao se conectar com o servidor!')
+    })
+  }
 
   function handleRefresher() {
     setRefresher(!refresher)
@@ -103,6 +103,22 @@ export function NotificationTable({
     notificationFormRef.current?.setErrors({})
     setIsDrawerNotificationOpen(false)
     setNotificationToUpdate(undefined)
+  }
+
+  const handleCreateNotification = (data: IFormNotification) => {
+    setLoadingAction(true)
+
+    try {
+      socket?.emit(SocketNotificationEvents.CreateNotification, { ...data, isActive: false }, () => {
+        router.push(appRoutes.ALERTS)
+        toast.success('Notificação cadastrada com sucesso!')
+        setLoadingAction(false)
+        handleCloseModalNotification()
+        handleRefresher()
+      })
+    } catch {
+      toast.error('Não foi possível criar a notificação!')
+    }
   }
 
   async function createNotificationRequest(data: IFormNotification) {
@@ -149,7 +165,7 @@ export function NotificationTable({
       })
 
       await schema.validate(data, { abortEarly: false })
-      notificationToUpdate ? updateNotificationRequest(data) : createNotificationRequest(data)
+      notificationToUpdate ? updateNotificationRequest(data) : handleCreateNotification(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -161,6 +177,47 @@ export function NotificationTable({
       }
     }
   }
+
+  useEffect(() => {
+    joinNotificationRequest()
+  }, [])
+
+  useEffect(() => {
+    if (!socket && accessToken) {
+      socketInitializer(String(accessToken))
+    }
+    return () => {
+      if (socket) {
+        socket.removeAllListeners(SocketNotificationEvents.ReceiveNotification)
+        socket.removeAllListeners(SocketNotificationEvents.DeleteNotification)
+        socket.removeAllListeners(SocketNotificationEvents.ConnectError)
+        socket.disconnect()
+        socket = null
+      }
+    }
+  }, [accessToken])
+
+  useEffect(() => {
+    const paginationParams: GetNotificationParams = {
+      take: pagination.take,
+      order: pagination.order,
+      orderBy: pagination.orderBy,
+      page: pagination.currentPage,
+      name: notificationQuery,
+    }
+    getAllNotification
+      .getAll(paginationParams)
+      .then((data) => {
+        setNotification(data.data)
+        setTotalPage(data.total)
+      })
+      .catch(() => toast.error('Não foi possível listar as notificações!'))
+      .finally(() =>
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
+      )
+  }, [refresher, pagination.take, pagination.currentPage, pagination.order, notificationQuery])
 
   return (
     <>
