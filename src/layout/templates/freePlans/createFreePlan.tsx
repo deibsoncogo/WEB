@@ -114,7 +114,7 @@ const CreateFreePlanPageTemplate = ({
   }
 
   const handleClickCancel = () => {
-    router.push(appRoutes.PLANS)
+    router.push(appRoutes.FREE_PLANS)
   }
 
   useEffect(() => {

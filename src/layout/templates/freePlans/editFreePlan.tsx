@@ -139,7 +139,7 @@ const EditFreePlanPageTemplate = ({
   }
 
   const handleClickCancel = () => {
-    router.push(appRoutes.PLANS)
+    router.push(appRoutes.FREE_PLANS)
   }
 
   const setFiledValue = (field: string, value: any) => {
