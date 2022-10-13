@@ -9,5 +9,5 @@ export interface IRoom {
   discount: number
   isActive: boolean
   userId: string
-  categoryId: string
+  level: string
 }

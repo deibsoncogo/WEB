@@ -7,28 +7,19 @@ import { appRoutes } from '../../../application/routing/routes'
 import { IBook } from '../../../domain/models/book'
 import { IEditBook } from '../../../domain/usecases/interfaces/book/editBook'
 import { IGetBook, IGetBookParams } from '../../../domain/usecases/interfaces/book/getBook'
-import { IGetCategoriesNoPagination } from '../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
-import { IGetCategories } from '../../../domain/usecases/interfaces/category/getCategories'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditBook } from '../../components/forms/books/edit'
 import { bookFormSchema } from '../../components/forms/books/type'
 import { FullLoading } from '../../components/FullLoading/FullLoading'
 import { maskedToMoney } from '../../formatters/currenceFormatter'
-import { getAsyncCategoiesNoPaginationToSelectInput } from '../trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
-import { getAsyncCategoiesToSelectInput } from '../trainings/utils/getAsyncCategoriesToSelectInput'
 import { formatBookToSubmit } from './utils/formatBookToSubmit'
 
 type EditBookPageProps = {
-  remoteGetCategoriesNoPagination: IGetCategoriesNoPagination
   remoteGetBook: IGetBook
   remoteEditBook: IEditBook
 }
 
-function EditBookPageTemplate({
-  remoteGetCategoriesNoPagination,
-  remoteGetBook,
-  remoteEditBook,
-}: EditBookPageProps) {
+function EditBookPageTemplate({ remoteGetBook, remoteEditBook }: EditBookPageProps) {
   const router = useRouter()
   const { id: bookId } = router.query
 
@@ -66,13 +57,6 @@ function EditBookPageTemplate({
     if (error) {
       formRef?.current?.setErrors(error)
     }
-  }
-
-  const handleGetAsyncCategoriesToSelectInput = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({
-      categoryName,
-      remoteGetCategoriesNoPagination,
-    })
   }
 
   const handleCancel = () => {
@@ -119,7 +103,7 @@ function EditBookPageTemplate({
         price,
         discount,
         description,
-        category,
+        level,
         installments,
         imageUrl,
       } = book
@@ -127,8 +111,7 @@ function EditBookPageTemplate({
       formRef.current?.setFieldValue('name', name)
       formRef.current?.setFieldValue('description', description)
       formRef.current?.setFieldValue('author', author)
-      formRef.current?.setFieldValue('categoryId', category.id)
-      formRef.current?.setFieldValue('categoryId-label', category.name)
+      formRef.current?.setFieldValue('level', level)
       formRef.current?.setFieldValue('installments', installments)
       formRef.current?.setFieldValue('stock', stock)
       formRef.current?.setFieldValue('price', maskedToMoney(price))
@@ -144,7 +127,6 @@ function EditBookPageTemplate({
         ref={formRef}
         onSubmit={handleFormSubmit}
         onCancel={handleCancel}
-        searchCategories={handleGetAsyncCategoriesToSelectInput}
         loadingSubmit={loadingBookEdition}
       />
     </>
@@ -152,3 +134,4 @@ function EditBookPageTemplate({
 }
 
 export { EditBookPageTemplate }
+

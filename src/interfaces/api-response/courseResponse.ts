@@ -10,7 +10,6 @@ export interface ICourseResponse {
   userId: string
   content: string
   isActive: boolean
-  categoryId: string
   teacherName: string
-  categoryName: string
+  level: string
 }

@@ -6,7 +6,7 @@ export class UpdateCourse {
   name: string
   description: string
   content: string
-  categoryId: string
+  level: string
   discount?: string
   imageUrl?: string
   installments: string
@@ -22,7 +22,7 @@ export class UpdateCourse {
     name: string,
     description: string,
     content: string,
-    categoryId: string,
+    level: string,
     discount: string,
     imageUrl: string | undefined,
     installments: string,
@@ -37,7 +37,7 @@ export class UpdateCourse {
     this.name = name
     this.description = description
     this.content = content
-    this.categoryId = categoryId
+    this.level = level
     this.discount = discount
     this.imageUrl = imageUrl
     this.installments = installments

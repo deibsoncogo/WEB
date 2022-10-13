@@ -35,11 +35,7 @@ const PlanTableRow = ({ plan, togglePlanStatus }: PlanTableRowProps) => {
       </td>
 
       <td className='ps-4' scope='row'>
-        <span className='fw-bold d-block fs-7'>{plan.installments}</span>
-      </td>
-
-      <td className='ps-4' scope='row'>
-        <span className='fw-bold d-block fs-7'>{plan.intervalAccessMonths}</span>
+        <span className='fw-bold d-block fs-7'>{plan.intervalAccess}</span>
       </td>
 
       <td>

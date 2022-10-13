@@ -1,22 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
-
-import { useRouter } from 'next/router'
-
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import * as Yup from 'yup'
-
+import { useRouter } from 'next/router'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import * as Yup from 'yup'
 import { appRoutes } from '../../../../../application/routing/routes'
 import { CreateRoom } from '../../../../../domain/models/createRoom'
 import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
 import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
 import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
-import {
-  IGetZoomUsers,
-  IZoomUser,
-} from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
+import { IGetZoomUsers, IZoomUser } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { onlyNums } from '../../../../formatters/currenceFormatter'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { Button } from '../../../buttons/CustomButton'
@@ -27,34 +21,23 @@ import { InputNumber } from '../../../inputs/input-number'
 import { InputSingleImage } from '../../../inputs/input-single-image'
 import { SelectAsync } from '../../../inputs/selectAsync'
 import RoomInternalTable from './roomInternalTable'
-import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
-import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 
 type Props = {
   createRoom: ICreateRoom
-  getCategoriesNoPagination: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
   getZoomUsers: IGetZoomUsers
 }
 
-export function FormCreateRoom({
-  createRoom,
-  getCategoriesNoPagination,
-  getUsers,
-  getZoomUsers,
-}: Props) {
+export function FormCreateRoom({ createRoom, getUsers, getZoomUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
   const [registerRoom, setRegisterRoom] = useState(false)
   const [isToShowStreaming, setIsToShowStreaming] = useState(false)
-  const [streamingRoom] = useState<IStreamingRoom[]>([])
   const [hasErrorRoom, setHasErrorRoom] = useState(false)
-
   const [errorMessage, setMessageError] = useState('')
-
+  const [streamingRoom] = useState<IStreamingRoom[]>([])
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
-  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
   async function verifyErrorStreamingRoom(data: IFormRoom) {
@@ -70,6 +53,7 @@ export function FormCreateRoom({
 
   async function handleFormSubmit(data: IFormRoom) {
     if (!formRef.current) throw new Error()
+
     try {
       formRef.current.setErrors({})
       data.price = onlyNums(data.price)
@@ -78,9 +62,7 @@ export function FormCreateRoom({
         imagePreview: Yup.string().required('Imagem é necessária'),
         name: Yup.string().required('Nome é necessário').max(50, 'No máximo 50 caracteres'),
         userId: Yup.string().required('Selecione um professor'),
-        price: Yup.number()
-          .required('Preço é necessário')
-          .min(0.1, 'Preço deve ser maior que zero'),
+        price: Yup.number().required('Preço é necessário').min(0.1, 'Preço deve ser maior que zero'),
         discount: Yup.number().test({
           name: 'validation',
           message: 'Desconto deve ser menor que preço',
@@ -94,12 +76,12 @@ export function FormCreateRoom({
         description: Yup.string()
           .required('Descrição é necessária')
           .max(65535, 'Descrição muito longa'),
-        categoryId: Yup.string().required('Selecione uma categoria'),
+        level: Yup.string().required('Nível é necessário').max(50, 'No máximo 50 caracteres'),
       })
 
+      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
       const hasError = await verifyErrorStreamingRoom(data)
       hasError ? setHasErrorRoom(hasError) : handleCreateRoom(data)
-      await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -111,6 +93,7 @@ export function FormCreateRoom({
       }
     }
   }
+  
   async function handleCreateRoom(data: IFormRoom) {
     const room = new CreateRoom(
       data.name,
@@ -122,7 +105,7 @@ export function FormCreateRoom({
       data.itemRoom,
       data.price,
       data.userId,
-      data.categoryId,
+      data.level,
       data.itemRoom ? data.zoomUserId : undefined,
       data.itemRoom ? streamingRoom : undefined
     )
@@ -146,24 +129,18 @@ export function FormCreateRoom({
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: getUsers })
   }
 
-  const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({
-      categoryName,
-      remoteGetCategoriesNoPagination: getCategoriesNoPagination,
-    })
-  }
-
   async function fetchData() {
     try {
       setDefaultTeacherOptions(await searchTeachers(''))
-      setDefaultCategoryOptions(await searchCategories(''))
 
       const zoomUsers: IZoomUser[] = await getZoomUsers.get()
+
       if (zoomUsers) {
         const options: ISelectOption[] = zoomUsers.map((user) => ({
           label: `${user.first_name} ${user.last_name}`,
           value: user.id,
         }))
+
         setZoomUsersOptions(options)
       }
     } catch (error) {
@@ -196,19 +173,8 @@ export function FormCreateRoom({
             <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
           <div className='w-50'>
-            <TextArea
-              name='description'
-              label='Descrição'
-              style={{ minHeight: '238px', margin: 0 }}
-            />
-            <SelectAsync
-              searchOptions={searchCategories}
-              name='categoryId'
-              label='Categoria'
-              classes='h-75px'
-              placeholder='Digite o nome da categoria'
-              defaultOptions={defaultCategoryOptions}
-            />
+            <TextArea name='description' label='Descrição' style={{ minHeight: '238px', margin: 0 }} />
+            <Input name='level' label='Nível' />
           </div>
         </div>
 

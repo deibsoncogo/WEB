@@ -6,15 +6,15 @@ function formatPlanToSubmit(plan: IPlan): FormData {
     name,
     description,
     price,
-    relatedPlan,
     planType,
     installments,
-    intervalAccessMonths,
+    intervalAccess,
     intervalPaymentMonths,
     books,
     courses,
     rooms,
     trainings,
+    categoryId,
   } = plan
   const formData = new FormData()
 
@@ -24,7 +24,7 @@ function formatPlanToSubmit(plan: IPlan): FormData {
 
   if (planType === PlanType.SINGLE_PAYMENT) {
     formData.append('installments', String(installments))
-    formData.append('intervalAccessMonths', String(intervalAccessMonths))
+    formData.append('intervalAccess', String(intervalAccess))
   }
 
   if (planType === PlanType.RECURRING_PAYMENT) {
@@ -35,11 +35,11 @@ function formatPlanToSubmit(plan: IPlan): FormData {
   formData.append('description', description)
   formData.append('price', String(price))
   formData.append('planType', planType)
-  formData.append('plansId', JSON.stringify(relatedPlan))
   formData.append('booksId', JSON.stringify(books))
   formData.append('roomsId', JSON.stringify(rooms))
   formData.append('coursesId', JSON.stringify(courses))
   formData.append('trainingsId', JSON.stringify(trainings))
+  formData.append('categoryId', categoryId)
 
   return formData
 }

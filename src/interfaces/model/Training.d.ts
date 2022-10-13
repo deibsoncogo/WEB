@@ -4,7 +4,7 @@ interface ITrainings {
   price: number
   discount: number
   description: string
-  categoryId: string
+  level: string
   active: boolean
   streamings: Streaming[]
   imageUrl: string

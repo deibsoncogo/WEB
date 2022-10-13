@@ -7,10 +7,5 @@ export interface Book {
   author: string
   discount: string
   stock: number
-
-  category: {
-    id: string
-    name: string
-    created_at: string
-  }
+  level: string
 }

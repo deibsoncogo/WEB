@@ -1,20 +1,16 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { IPlan } from '../../../domain/models/plan'
-import { IGetNotRelatedPlans } from '../../../domain/usecases/interfaces/plan/getNotRelatedPlans'
+import { IDeletePlan, IDeletePlanParams } from '../../../domain/usecases/interfaces/plan/deletePlan'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
-export class RemoteGetNotRelatedPlans implements IGetNotRelatedPlans {
-  constructor(
-    private readonly url: string,
-    private readonly httpClient: HttpClient<IPlan[]>
-  ) {}
+export class RemoteDeletePlan implements IDeletePlan {
+  constructor(private readonly url: string, private readonly httpClient: HttpClient<void>) {}
 
-  async get() {    
+  delete = async (params: IDeletePlanParams) => {
     const httpResponse = await this.httpClient.request({
-      url: this.url,
-      method: 'get'
+      url: `${this.url}/${params.id}`,
+      method: 'delete',
     })
-   
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body

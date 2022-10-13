@@ -15,7 +15,7 @@ function formatBookToSubmit(book: IBook): FormData {
     price,
     discount,
     description,
-    categoryId,
+    level,
     installments
   } = formattedData
 
@@ -28,7 +28,7 @@ function formatBookToSubmit(book: IBook): FormData {
   formData.append('price', String(price))
   formData.append('discount', String(discount))
   formData.append('description', String(description))
-  formData.append('categoryId', String(categoryId))
+  formData.append('level', String(level))
   formData.append('installments', String(installments))
   formData.append('active', String(false))
 

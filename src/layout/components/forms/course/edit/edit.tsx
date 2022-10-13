@@ -1,37 +1,34 @@
-import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
-import * as Yup from 'yup'
-import { Form } from '@unform/web'
-import { FormHandles } from '@unform/core'
-import { Input, InputCurrence, InputNumber, SelectAsync, TextArea } from '../../../inputs'
-import { toast } from 'react-toastify'
-import { IUpdateCourse } from '../../../../../domain/usecases/interfaces/course/upDateCourse'
-import { IGetCourse } from '../../../../../domain/usecases/interfaces/course/getCourse'
-import { ICourseResponse } from '../../../../../interfaces/api-response/courseResponse'
-import { maskedToMoney, onlyNums } from '../../../../formatters/currenceFormatter'
-import { UpdateCourse } from '../../../../../domain/models/updateCourse'
 import { Editor } from '@tinymce/tinymce-react'
+import { FormHandles } from '@unform/core'
+import { Form } from '@unform/web'
+import { useRouter } from 'next/router'
+import { useEffect, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
+import * as Yup from 'yup'
+import { appRoutes } from '../../../../../application/routing/routes'
+import { DeleteFileUpload } from '../../../../../domain/models/deleteFile'
+import { FileUpload } from '../../../../../domain/models/fileUpload'
+import { UpdateCourse } from '../../../../../domain/models/updateCourse'
+import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
+import { IGetCourse } from '../../../../../domain/usecases/interfaces/course/getCourse'
+import { IUpdateCourse } from '../../../../../domain/usecases/interfaces/course/upDateCourse'
 import { IGetAllAttachmentByCourseId } from '../../../../../domain/usecases/interfaces/courseAttachment/getAllAttachmentByCourseId'
 import { IGetAllCourseClassByCourseId } from '../../../../../domain/usecases/interfaces/courseClass/getAllCourseClassByCourseId'
+import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
 import { ICourseAttachmentResponse } from '../../../../../interfaces/api-response/courseAttachmentResponse'
 import { ICourseClassResponse } from '../../../../../interfaces/api-response/courseClassResponse'
-import { FileUpload } from '../../../../../domain/models/fileUpload'
+import { ICourseResponse } from '../../../../../interfaces/api-response/courseResponse'
+import { maskedToMoney, onlyNums } from '../../../../formatters/currenceFormatter'
+import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
+import { Button } from '../../../buttons/CustomButton'
+import { FullLoading } from '../../../FullLoading/FullLoading'
+import { Input, InputCurrence, InputNumber, SelectAsync, TextArea } from '../../../inputs'
+import { InputSingleImage } from '../../../inputs/input-single-image'
 import CoursesInternalTable from './courseClass/courseInternalTable'
 import FilesInternalTable from './filesUpload/filesInternalTable'
-import { DeleteFileUpload } from '../../../../../domain/models/deleteFile'
-import { appRoutes } from '../../../../../application/routing/routes'
-import { Button } from '../../../buttons/CustomButton'
-import { InputSingleImage } from '../../../inputs/input-single-image'
-import { FullLoading } from '../../../FullLoading/FullLoading'
-import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
-import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
-import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
-import { IGetCategoriesNoPagination } from '../../../../../domain/usecases/interfaces/category/getAllGategoriesNoPagination'
-import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../../templates/trainings/utils/getAsyncCategoriesNoPaginationToSelectInput'
 
 type Props = {
   updateCourse: IUpdateCourse
-  getCategoriesNoPagination: IGetCategoriesNoPagination
   getUsers: IGetAllUsers
   getAttachments: IGetAllAttachmentByCourseId
   getCourseClass: IGetAllCourseClassByCourseId
@@ -57,7 +54,6 @@ export function FormUpdateCourse(props: Props) {
 
   const [IdDeletedCourseClass] = useState<string[]>([])
 
-  const [defaultCategoryOptions, setDefaultCategoryOptions] = useState<ISelectOption[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
   function handleChange(event: any) {
@@ -94,11 +90,12 @@ export function FormUpdateCourse(props: Props) {
         description: Yup.string()
           .required('Descriçao é necessária')
           .max(65535, 'Descrição muito longa'),
-        categoryId: Yup.string().required('Selecione uma categoria'),
+        level: Yup.string().required('Nível é necessário').max(50, 'No máximo 50 caracteres'),
       })
+
       data.content = stateEditor.content
-      courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
       await schema.validate({ ...data, price: onlyNums(data.price) }, { abortEarly: false })
+      courseClass.length == 0 ? setHasErrorClass(true) : handleUpdateCourse(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -115,13 +112,6 @@ export function FormUpdateCourse(props: Props) {
     return getAsyncTeachersToSelectInput({ teacherName, remoteGetTeachers: props.getUsers })
   }
 
-  const searchCategories = async (categoryName: string) => {
-    return getAsyncCategoiesNoPaginationToSelectInput({
-      categoryName,
-      remoteGetCategoriesNoPagination: props.getCategoriesNoPagination,
-    })
-  }
-
   async function handleUpdateCourse(data: IFormCourse) {
     const price = onlyNums(data.price)
     const discount = onlyNums(data.discount)
@@ -133,7 +123,7 @@ export function FormUpdateCourse(props: Props) {
       data.name,
       data.description,
       data.content,
-      data.categoryId,
+      data.level,
       discount,
       defaultValue?.imageUrl,
       data.installments,
@@ -181,8 +171,7 @@ export function FormUpdateCourse(props: Props) {
         const data = await props.getCourse.get(props.id)
         formRef.current?.setFieldValue('userId', data.userId)
         formRef.current?.setFieldValue('userId-label', data.teacherName)
-        formRef.current?.setFieldValue('categoryId', data.categoryId)
-        formRef.current?.setFieldValue('categoryId-label', data.categoryName)
+        formRef.current?.setFieldValue('level', data.level)
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)
         formRef.current?.setFieldValue('installments', data.installments)
         formRef.current?.setFieldValue('accessTime', data?.accessTime)
@@ -194,7 +183,6 @@ export function FormUpdateCourse(props: Props) {
         setCourseClass(await props.getCourseClass.getAllByCourseId(props.id))
       }
       setDefaultTeacherOptions(await searchTeachers(''))
-      setDefaultCategoryOptions(await searchCategories(''))
     } catch (error) {
       toast.error('Não foi possível carregar os dados!')
     } finally {
@@ -228,19 +216,8 @@ export function FormUpdateCourse(props: Props) {
             <InputCurrence name='discount' label='Desconto' type='text' classes='h-75px' />
           </div>
           <div className='w-50'>
-            <TextArea
-              name='description'
-              label='Descrição'
-              style={{ minHeight: '236px', margin: 0 }}
-            />
-            <SelectAsync
-              searchOptions={searchCategories}
-              name='categoryId'
-              label='Categoria'
-              classes='h-75px'
-              placeholder='Digite o nome da categoria'
-              defaultOptions={defaultCategoryOptions}
-            />
+            <TextArea name='description' label='Descrição' style={{ minHeight: '236px', margin: 0 }} />
+            <Input name='level' label='Nível' />
             <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
         </div>

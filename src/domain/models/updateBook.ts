@@ -3,7 +3,7 @@ export class UpdateBook {
   name: string
   description: string
   content: string
-  categoryId: string
+  level: string
   discount?: number
   image: Blob
   installments: number
@@ -17,7 +17,7 @@ export class UpdateBook {
     name: string,
     description: string,
     content: string,
-    categoryId: string,
+    level: string,
     discount: number | undefined,
     image: Blob,
     installments: number,
@@ -30,7 +30,7 @@ export class UpdateBook {
     this.name = name
     this.description = description
     this.content = content
-    this.categoryId = categoryId
+    this.level = level
     this.discount = discount
     this.image = image
     this.installments = installments

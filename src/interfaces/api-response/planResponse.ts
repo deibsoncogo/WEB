@@ -11,7 +11,7 @@ export interface IPlanResponse {
   price: number
   intervalPaymentMonths?: number
   installments: number
-  intervalAccessMonths: number
+  intervalAccess: number
   isActive: boolean
   planType: PlanType
 }

@@ -1,29 +1,29 @@
 import { AsideMenuItem } from './AsideMenuItem'
 
-import { ImBooks } from 'react-icons/im'
-import { FiLogOut } from 'react-icons/fi'
+import clsx from 'clsx'
+import jwtDecode from 'jwt-decode'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { BiCategory } from 'react-icons/bi'
+import { BsCast, BsMegaphoneFill } from 'react-icons/bs'
+import { FiLogOut } from 'react-icons/fi'
 import { HiReceiptTax } from 'react-icons/hi'
-import { BsMegaphoneFill, BsCast } from 'react-icons/bs'
+import { ImBooks } from 'react-icons/im'
 import {
   MdHomeFilled,
-  MdViewList,
   MdOndemandVideo,
   MdPeopleAlt,
   MdReceiptLong,
+  MdViewColumn,
+  MdViewList,
 } from 'react-icons/md'
-import { RiPagesLine, RiFileCopy2Fill, RiArtboardFill } from 'react-icons/ri'
-import clsx from 'clsx'
-import { useRouter } from 'next/router'
+import { RiArtboardFill, RiFileCopy2Fill, RiPagesLine } from 'react-icons/ri'
+import { toast } from 'react-toastify'
 import { makeRemoteLogout } from '../../../application/factories/usecases/remote-logout-factory'
+import { roles } from '../../../application/wrappers/authWrapper'
 import { UserLogout } from '../../../domain/models/userLogout'
-import jwtDecode from 'jwt-decode'
 import { keys } from '../../../helpers/KeyConstants'
 import { IToken } from '../../../interfaces/application/token'
-import { toast } from 'react-toastify'
-import { useEffect, useState } from 'react'
-import { roleOptions } from '../../../utils/selectOptions'
-import { roles } from '../../../application/wrappers/authWrapper'
 
 export function AsideMenuMain() {
   const [isAdmin, setIsAdmin] = useState(false)
@@ -105,11 +105,19 @@ export function AsideMenuMain() {
         </div>
       </div>
       {isAdmin && (
-        <AsideMenuItem
-          to='/plans'
-          title='Planos'
-          icon={<MdViewList size={20} className='svg-icon-2 mh-50px' />}
-        />
+        <>
+          <AsideMenuItem
+            to='/plans'
+            title='Planos'
+            icon={<MdViewList size={20} className='svg-icon-2 mh-50px' />}
+          />
+
+          <AsideMenuItem
+            to='/freePlans'
+            title='Planos Gratuitos'
+            icon={<MdViewColumn size={20} className='svg-icon-2 mh-50px' />}
+          />
+        </>
       )}
 
       <AsideMenuItem
