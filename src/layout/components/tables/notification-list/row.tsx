@@ -2,7 +2,9 @@ import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { Socket } from 'socket.io-client'
 import { INotification } from '../../../../domain/models/notification'
+import { SocketNotificationEvents } from '../../../../domain/models/socketNotificationEvents'
 import { IDeleteNotification } from '../../../../domain/usecases/interfaces/notification/deleteNotification'
 import { IToggleNotificationStatus } from '../../../../domain/usecases/interfaces/notification/toggleNotificationStatus'
 import { KTSVG } from '../../../../helpers'
@@ -14,7 +16,7 @@ import ConfirmationModal from '../../modal/ConfirmationModal'
 interface IRow {
   notification: INotificationResponse
   toggleStatus: IToggleNotificationStatus
-  deleteNotification: IDeleteNotification
+  socket: Socket | null
   openModalToUpdate: (data: INotification) => void
   handleRefresher: () => void
 }
@@ -23,7 +25,7 @@ export function Row({
   notification,
   toggleStatus,
   openModalToUpdate,
-  deleteNotification,
+  socket,
   handleRefresher,
 }: IRow) {
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false)
@@ -41,13 +43,14 @@ export function Row({
     return textLimited.length >= textLimit ? textLimited + ' ...' : textLimited
   }
 
-  async function handleDeleteNotification() {
+  const handleDeleteNotification = () => {
     try {
       setLoading(true)
-      await deleteNotification.delete(notification.id)
-      setIsModalDeleteOpen(false)
-      toast.success('Notificação excluída com sucesso!')
-      handleRefresher()
+      socket?.emit(SocketNotificationEvents.DeleteNotification, notification.id, () => {
+        setIsModalDeleteOpen(false)
+        toast.success('Notificação excluída com sucesso!')
+        handleRefresher()
+      })
     } catch {
       toast.error('Não foi possível deletar a notificação!')
     } finally {

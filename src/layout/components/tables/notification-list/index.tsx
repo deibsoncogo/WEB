@@ -23,21 +23,24 @@ import router from 'next/router'
 import { appRoutes } from '../../../../application/routing/routes'
 import { INotification } from '../../../../domain/models/notification'
 import { IUpdateNotification } from '../../../../domain/usecases/interfaces/notification/updateNotification'
+import { Socket } from 'socket.io-client'
+import { SocketNotificationEvents } from '../../../../domain/models/socketNotificationEvents'
+import { getSocketConnection } from '../../../../utils/getSocketConnection'
+import { useRequest } from '../../../../application/hooks/useRequest'
+import { IJoinNotification } from '../../../../domain/usecases/interfaces/notification/join-notification'
 
 type NotificationTableProps = {
-  createNotification: ICreateNotification
-  updateNotification: IUpdateNotification
   getAllNotification: IGetAllNotification
   toggleStatus: IToggleNotificationStatus
-  deleteNotification: IDeleteNotification
+  joinNotification: IJoinNotification
 }
 
+let socket: Socket | null
+
 export function NotificationTable({
-  createNotification,
-  updateNotification,
   getAllNotification,
   toggleStatus,
-  deleteNotification,
+  joinNotification
 }: NotificationTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
@@ -58,27 +61,18 @@ export function NotificationTable({
     return `text-dark ps-4 ${minWidth} cursor-pointer ${getClassToCurrentOrderColumn(name)}`
   }
 
-  useEffect(() => {
-    const paginationParams: GetNotificationParams = {
-      take: pagination.take,
-      order: pagination.order,
-      orderBy: pagination.orderBy,
-      page: pagination.currentPage,
-      name: notificationQuery,
-    }
-    getAllNotification
-      .getAll(paginationParams)
-      .then((data) => {
-        setNotification(data.data)
-        setTotalPage(data.total)
-      })
-      .catch(() => toast.error('Não foi possível listar as notificações!'))
-      .finally(() =>
-        setTimeout(() => {
-          setLoading(false)
-        }, 500)
-      )
-  }, [refresher, pagination.take, pagination.currentPage, pagination.order, notificationQuery])
+  const { makeRequest: joinNotificationRequest, data: accessToken } = useRequest<IJoinNotification>(
+    joinNotification.join
+  )
+
+  const socketInitializer = (tokenChat: string) => {
+    socket = getSocketConnection(SocketNotificationEvents.Notification, tokenChat)
+    socket.connect()
+
+    socket.on(SocketNotificationEvents.ConnectError, () => {
+      toast.error('Falha ao se conectar com o servidor!')
+    })
+  }
 
   function handleRefresher() {
     setRefresher(!refresher)
@@ -105,37 +99,35 @@ export function NotificationTable({
     setNotificationToUpdate(undefined)
   }
 
-  async function createNotificationRequest(data: IFormNotification) {
-    setLoadingAction(true)
-    createNotification
-      .create({ ...data, isActive: false })
-      .then(() => {
+  const handleCreateNotification = (data: IFormNotification) => {
+    try {
+      setLoadingAction(true)
+      socket?.emit(SocketNotificationEvents.CreateNotification, { ...data, isActive: false }, () => {
         router.push(appRoutes.ALERTS)
         toast.success('Notificação cadastrada com sucesso!')
-      })
-      .catch(() => toast.error('Não foi possível criar a notificação!'))
-      .finally(() => {
         setLoadingAction(false)
         handleCloseModalNotification()
         handleRefresher()
       })
+    } catch {
+      toast.error('Não foi possível criar a notificação!')
+    }
   }
 
-  async function updateNotificationRequest(data: IFormNotification) {
-    setLoadingAction(true)
-    updateNotification
-      .update({ ...data, id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive })
-      .then(() => {
+  const handleUpdateNotification = (data: IFormNotification) => {
+    try {
+      setLoadingAction(true)
+      socket?.emit(SocketNotificationEvents.UpdateNotification, { id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive, ...data }, () => {
         router.push(appRoutes.ALERTS)
         toast.success('Notificação editada com sucesso!')
-      })
-      .catch(() => toast.error('Não foi possível atualizar a notificação!'))
-      .finally(() => {
         setLoadingAction(false)
+        setNotificationToUpdate(undefined)
         handleCloseModalNotification()
         handleRefresher()
-        setNotificationToUpdate(undefined)
       })
+    } catch {
+      toast.error('Não foi possível atualizar a notificação!')
+    }
   }
 
   async function handleFormSubmit(data: IFormNotification) {
@@ -149,7 +141,7 @@ export function NotificationTable({
       })
 
       await schema.validate(data, { abortEarly: false })
-      notificationToUpdate ? updateNotificationRequest(data) : createNotificationRequest(data)
+      notificationToUpdate ? handleUpdateNotification(data) : handleCreateNotification(data)
     } catch (err) {
       const validationErrors = {}
       if (err instanceof Yup.ValidationError) {
@@ -161,6 +153,45 @@ export function NotificationTable({
       }
     }
   }
+
+  useEffect(() => {
+    joinNotificationRequest()
+  }, [])
+
+  useEffect(() => {
+    if (!socket && accessToken) {
+      socketInitializer(String(accessToken))
+    }
+    return () => {
+      if (socket) {
+        socket.removeAllListeners(SocketNotificationEvents.ConnectError)
+        socket.disconnect()
+        socket = null
+      }
+    }
+  }, [accessToken])
+
+  useEffect(() => {
+    const paginationParams: GetNotificationParams = {
+      take: pagination.take,
+      order: pagination.order,
+      orderBy: pagination.orderBy,
+      page: pagination.currentPage,
+      name: notificationQuery,
+    }
+    getAllNotification
+      .getAll(paginationParams)
+      .then((data) => {
+        setNotification(data.data)
+        setTotalPage(data.total)
+      })
+      .catch(() => toast.error('Não foi possível listar as notificações!'))
+      .finally(() =>
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
+      )
+  }, [refresher, pagination.take, pagination.currentPage, pagination.order, notificationQuery])
 
   return (
     <>
@@ -229,7 +260,7 @@ export function NotificationTable({
                         notification={item}
                         toggleStatus={toggleStatus}
                         openModalToUpdate={handleOpenModalNotification}
-                        deleteNotification={deleteNotification}
+                        socket={socket}
                         handleRefresher={handleRefresher}
                       />
                     ))}
