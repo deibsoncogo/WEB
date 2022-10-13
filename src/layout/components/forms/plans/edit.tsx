@@ -101,7 +101,7 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
             <TextArea
               name='description'
               label='Descrição'
-              style={{ minHeight: '240px', margin: 0 }}
+              style={{ minHeight: '141px', margin: 0 }}
             />
             <SelectAsync
               searchOptions={searchCategories}
