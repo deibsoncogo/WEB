@@ -164,8 +164,6 @@ export function NotificationTable({
     }
     return () => {
       if (socket) {
-        socket.removeAllListeners(SocketNotificationEvents.ReceiveNotification)
-        socket.removeAllListeners(SocketNotificationEvents.DeleteNotification)
         socket.removeAllListeners(SocketNotificationEvents.ConnectError)
         socket.disconnect()
         socket = null
