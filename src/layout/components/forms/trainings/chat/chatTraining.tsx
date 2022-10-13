@@ -238,7 +238,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat, remoteUploadFile
             rows={1}
             value={message}
             placeholder='Escreva uma mensagem'
-            className='form-control form-control-lg form-control-solid border-transparent bg-secondary ms-5 me-5'
+            className='form-control form-control-lg form-control-solid border-transparent ms-5 me-5'
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={onEnterPress}
             style={{ minHeight: '50px' }}

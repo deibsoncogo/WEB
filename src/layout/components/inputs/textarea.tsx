@@ -34,9 +34,9 @@ export function TextArea({ name, label, ...rest }: IInputProps) {
         </label>
       )}
 
-      <div className='form-control bg-secondary d-flex align-items-center form-control-lg p-0'>
+      <div className='form-control d-flex align-items-center form-control-lg p-0'>
         <textarea
-          className='form-control form-control-lg form-control-solid border-transparent bg-secondary'
+          className='form-control form-control-lg form-control-solid border-transparent'
           name={name}
           ref={inputRef}
           defaultValue={defaultValue}

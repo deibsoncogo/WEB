@@ -127,7 +127,7 @@ const SelectAsync = ({
 
         <input type='hidden' name={name} ref={selectRef} />
 
-        <div className='form-control bg-secondary d-flex align-items-center form-control-lg p-0 border-0'>
+        <div className='form-control d-flex align-items-center form-control-lg p-0 border-0'>
           <input
             type='text'
             name={labelField}
