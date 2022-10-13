@@ -17,34 +17,23 @@ type Props = {
 const NotificationDrawer = React.forwardRef<FormHandles, Props>((props, ref) => {
   const { close, handleFormSubmit, loading, visible, isUpdate } = props
   return (
-    <DrawerRight title={isUpdate? 'Editar Notificação':'Nova Notificação'} visible={visible} close={close}>
+    <DrawerRight
+      title={isUpdate ? 'Editar Notificação' : 'Nova Notificação'}
+      visible={visible}
+      close={close}
+    >
       <div className='mt-6 d-flex flex-column justify-content-between h-100'>
         <Form className='form' ref={ref} onSubmit={handleFormSubmit} id='create-notification-form'>
           <Input name='tag' label='Tag' type='text' />
-          <TextArea
-              name='text'
-              label='Texto'
-              style={{ minHeight: '100px', margin: 0 }}
-            />
+          <TextArea name='text' label='Texto' style={{ minHeight: '100px', margin: 0 }} />
 
-            <Select
-              name='notificationType'
-              label='Tipo'
-              classes='h-75px'
-              defaultValue=''             
-            >
-              <option disabled value=''>
-                Selecione
-              </option>
-              {notificationTypeOptions.map(({ label, value }) => (
-                <option value={value} key={value}>
-                  {label}
-                </option>
-              ))}
-            </Select>
-
+          <Select
+            name='notificationType'
+            label='Tipo'
+            classes='h-75px'
+            options={notificationTypeOptions}
+          />
         </Form>
-
 
         <div className='d-flex mb-15'>
           <Button

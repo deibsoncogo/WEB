@@ -2,8 +2,7 @@ import { forwardRef } from 'react'
 import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
 
-
-import {InputMasked, Select, SelectMulti } from '../inputs'
+import { InputMasked, SelectMulti } from '../inputs'
 import { salesTypeOptions } from '../tables/sales-list/salesTypeOptions'
 import { SalesFilter } from '../../../domain/usecases/interfaces/sale/getAllSales'
 
@@ -18,18 +17,24 @@ const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
     control: (base: any) => ({
       ...base,
       minHeight: 45,
-      minWidth: 300
-    })
-  };
+      minWidth: 300,
+    }),
+  }
 
   return (
     <>
       <Form autoComplete='off' ref={ref} onSubmit={handleForm} id='filter-form'>
         <div className='d-flex flex-row gap-5'>
-        <SelectMulti defaultOptions={salesTypeOptions} name='status' label='Status'  classes='h-75px w-50' customStyles={customStyles}/>
-       
+          <SelectMulti
+            defaultOptions={salesTypeOptions}
+            name='status'
+            label='Status'
+            classes='h-75px w-50'
+            customStyles={customStyles}
+          />
+
           <InputMasked
-            style={{width: "150px"}}
+            style={{ width: '150px' }}
             classes='h-75px'
             name='initialDate'
             label='Data Inicial'
@@ -38,7 +43,7 @@ const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
           />
 
           <InputMasked
-            style={{width: "150px"}}
+            style={{ width: '150px' }}
             classes='h-75px'
             name='finalDate'
             label='Data Final'

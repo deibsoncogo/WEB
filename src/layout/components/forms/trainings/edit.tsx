@@ -58,7 +58,11 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
           </div>
 
           <div className='col d-flex flex-column'>
-            <TextArea name='description' label='Descrição' style={{ minHeight: '240px', margin: 0 }}/>
+            <TextArea
+              name='description'
+              label='Descrição'
+              style={{ minHeight: '240px', margin: 0 }}
+            />
             <Input name='level' label='Nível' />
           </div>
 
@@ -94,16 +98,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
 
         <div className='row d-flex'>
           <div className='col-3'>
-            <Select name='zoomUserId' label='Usuário do Zoom' defaultValue=''>
-              <option disabled value=''>
-                Selecione
-              </option>
-              {zoomUsersOptions.map(({ label, value }) => (
-                <option value={value} key={value}>
-                  {label}
-                </option>
-              ))}
-            </Select>
+            <Select name='zoomUserId' label='Usuário do Zoom' options={zoomUsersOptions} />
           </div>
 
           <div className='col-9'>

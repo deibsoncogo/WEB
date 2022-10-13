@@ -58,7 +58,7 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
 
   const [planType, setPlanType] = useState<PlanType | ''>('')
 
-  const handlePlanTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handlePlanTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPlanType(e.target.value as PlanType)
   }
 
@@ -92,18 +92,9 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
               name='planType'
               label='Tipo de Plano'
               classes='h-75px'
-              defaultValue=''
+              options={planTypeOptions}
               onChange={handlePlanTypeChange}
-            >
-              <option disabled value=''>
-                Selecione
-              </option>
-              {planTypeOptions.map(({ label, value }) => (
-                <option value={value} key={value}>
-                  {label}
-                </option>
-              ))}
-            </Select>
+            />
 
             {planType === PlanType.RECURRING_PAYMENT && (
               <InputNumber

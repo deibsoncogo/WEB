@@ -62,16 +62,7 @@ export default function RoomInternalTable({
 
       <div className='d-flex flex-row align-middle gap-5'>
         <div className='col-3'>
-          <Select name='zoomUserId' label='Usuário do Zoom' defaultValue=''>
-            <option disabled value=''>
-              Selecione
-            </option>
-            {zoomUsersOptions?.map(({ label, value }) => (
-              <option value={value} key={value}>
-                {label}
-              </option>
-            ))}
-          </Select>
+          <Select name='zoomUserId' label='Usuário do Zoom' options={zoomUsersOptions} />
         </div>
 
         <DatePicker
