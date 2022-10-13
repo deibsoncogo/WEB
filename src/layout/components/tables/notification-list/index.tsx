@@ -30,22 +30,16 @@ import { useRequest } from '../../../../application/hooks/useRequest'
 import { IJoinNotification } from '../../../../domain/usecases/interfaces/notification/join-notification'
 
 type NotificationTableProps = {
-  createNotification: ICreateNotification
-  updateNotification: IUpdateNotification
   getAllNotification: IGetAllNotification
   toggleStatus: IToggleNotificationStatus
-  deleteNotification: IDeleteNotification
   joinNotification: IJoinNotification
 }
 
 let socket: Socket | null
 
 export function NotificationTable({
-  createNotification,
-  updateNotification,
   getAllNotification,
   toggleStatus,
-  deleteNotification,
   joinNotification
 }: NotificationTableProps) {
   const paginationHook = usePagination()
@@ -123,7 +117,7 @@ export function NotificationTable({
   const handleUpdateNotification = (data: IFormNotification) => {
     try {
       setLoadingAction(true)
-      socket?.emit(SocketNotificationEvents.UpdateNotification, { ...data, id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive }, () => {
+      socket?.emit(SocketNotificationEvents.UpdateNotification, { id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive, ...data }, () => {
         router.push(appRoutes.ALERTS)
         toast.success('Notificação editada com sucesso!')
         setLoadingAction(false)
@@ -135,23 +129,6 @@ export function NotificationTable({
       toast.error('Não foi possível atualizar a notificação!')
     }
   }
-
-  /* async function updateNotificationRequest(data: IFormNotification) {
-    setLoadingAction(true)
-    updateNotification
-      .update({ ...data, id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive })
-      .then(() => {
-        router.push(appRoutes.ALERTS)
-        toast.success('Notificação editada com sucesso!')
-      })
-      .catch(() => toast.error('Não foi possível atualizar a notificação!'))
-      .finally(() => {
-        setLoadingAction(false)
-        handleCloseModalNotification()
-        handleRefresher()
-        setNotificationToUpdate(undefined)
-      })
-  } */
 
   async function handleFormSubmit(data: IFormNotification) {
     if (!notificationFormRef.current) throw new Error()
