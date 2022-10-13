@@ -105,7 +105,7 @@ export function Row({
         </Tooltip>
 
         <Tooltip
-          content={belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'}
+          content={belongsToPlans ? 'Não é possível excluir, pois pertence a um plano' : 'Excluir'}
           rounded
           color='primary'
           onClick={
@@ -134,7 +134,7 @@ export function Row({
         }}
         onConfimation={handleDeleteBook}
         content='Você tem certeza que deseja excluir este livro?'
-        title='Deletar'
+        title='Excluir'
       />
 
       <ConfirmationModal

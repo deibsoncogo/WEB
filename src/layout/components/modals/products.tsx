@@ -291,7 +291,7 @@ export function ProductsModal({
                       </div>
                       <div className='col align-self-end w-50 h-100 mb-8'>
                         <Tooltip
-                          content='Deletar'
+                          content='Excluir'
                           rounded
                           color='primary'
                           onClick={() => handleDecreaseProduct(selectedProduct.productId)}

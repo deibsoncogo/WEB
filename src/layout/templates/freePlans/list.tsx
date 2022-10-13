@@ -191,7 +191,7 @@ export function ListFreePlansTemplate({
         onRequestClose={handleCloseDeleteFreePlanConfirmationModal}
         onConfimation={onDeleteFreePlan}
         content='Você tem ceterza que deseja excluir este Plano Gratuito?'
-        title='Deletar'
+        title='Excluir'
       />
 
       <ConfirmationModal

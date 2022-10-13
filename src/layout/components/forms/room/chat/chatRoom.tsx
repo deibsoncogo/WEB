@@ -217,7 +217,7 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat, remoteUploadFile }:
         onRequestClose={handleCloseDeleteConfirmationModal}
         onConfimation={handleDeleteMessage}
         content='Você tem certeza que deseja excluir esta mensagem?'
-        title='Deletar'
+        title='Excluir'
       />
 
       {lodingGetAllMessages && <FullLoading />}

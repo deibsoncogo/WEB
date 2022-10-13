@@ -94,7 +94,7 @@ export function Row({
         }}
         onConfimation={handleDeleteUser}
         content='Você tem certeza que deseja excluir este usuário?'
-        title='Deletar'
+        title='Excluir'
       />
     </tr>
   )

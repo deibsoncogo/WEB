@@ -197,7 +197,7 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat, remoteUploadFile
         onRequestClose={handleCloseDeleteConfirmationModal}
         onConfimation={handleDeleteMessage}
         content='Você tem certeza que deseja excluir esta mensagem?'
-        title='Deletar'
+        title='Excluir'
       />
       {loading && <FullLoading />}
       <div className='card-body position-relative overflow-auto mh-550px pb-100px'>
