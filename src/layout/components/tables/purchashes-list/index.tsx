@@ -13,14 +13,14 @@ export function PurchasesTable({ userId, purchases }: Props) {
 
   return (
     <div className='table-responsive border border-secondary mb-6'>
-      <table className='table table-striped align-middle gs-0 gy-4 mb-0'>
+      <table className='table table-striped align-middle gs-2 gy-4 mb-0'>
         <thead>
           <tr className='fw-bolder text-muted bg-light'>
             <th className={`text-dark ps-4 min-w-100px rounded-start cursor-pointer`}>Data</th>
             <th className={`text-dark min-w-100px cursor-pointer`}>Id da transação</th>
             <th className={`text-dark min-w-100px cursor-pointer`}>Total</th>
             <th className={`text-dark min-w-100px cursor-pointer`}>Status</th>
-            <th className={`text-dark rounded-end cursor-pointer`}>Ação</th>
+            <th className={`text-dark text-end rounded-end cursor-pointer`}>Ação</th>
           </tr>
         </thead>
 

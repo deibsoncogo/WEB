@@ -23,7 +23,6 @@ export default function RoomInternalTable({
   const [hasError, setHasError] = useState<boolean>(false)
   const [messageError, setMessageError] = useState<string>('')
 
- 
   const handleRefresher = () => {
     setRefresher(!refresher)
   }
@@ -39,7 +38,7 @@ export default function RoomInternalTable({
       const streaming = {
         date: formatDate(streamingDate, 'YYYY-MM-DD'),
         hour: formattedStreamingHour,
-        start: false
+        start: false,
       }
       streamingRoomArray.push(streaming)
       formRef.current?.clearField('streamingDate')
@@ -113,7 +112,7 @@ export default function RoomInternalTable({
         <div className='card mb-5 mb-xl-8'>
           <div className='py-3 float-start'>
             <div className='table-responsive'>
-              <table className='table align-middle gs-0 gy-4'>
+              <table className='table align-middle gs-2 gy-4'>
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th className='text-dark ps-4 min-w-200px rounded-start'>
@@ -121,7 +120,7 @@ export default function RoomInternalTable({
                     </th>
                     <th className='text-dark min-w-200px'>Horário de Início </th>
                     <th className='text-dark min-w-150px'>Iniciar</th>
-                    <th className='text-dark min-w-80px text-start rounded-end'>Ação</th>
+                    <th className='text-dark min-w-80px text-end rounded-end'>Ação</th>
                   </tr>
                 </thead>
 

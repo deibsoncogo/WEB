@@ -23,7 +23,6 @@ export default function RoomInternalTable({
   zoomUsersOptions,
   idDeletedStreamingRoom,
   streamRoomUpdate,
-
 }: props) {
   const [refresher, setRefresher] = useState<boolean>(false)
   const [hasError, setHasError] = useState<boolean>(false)
@@ -44,13 +43,13 @@ export default function RoomInternalTable({
       const streaming = {
         date: formatDate(streamingDate, 'YYYY-MM-DD'),
         hour: formattedStreamingHour,
-        start: false,      
+        start: false,
       }
       streamingRoomArray.push(streaming)
       streamRoomUpdate.push(streaming)
       formRef.current?.clearField('streamingDate')
       formRef.current?.clearField('streamingHour')
-  
+
       handleRefresher()
     } else {
       setHasError(true)
@@ -70,15 +69,15 @@ export default function RoomInternalTable({
 
       <div className='d-flex flex-row align-middle gap-5'>
         <div className='col-3'>
-         <Select name='zoomUserId' label='Usuário do Zoom' defaultValue= ''>
-              <option disabled value=''>
-                Selecione
+          <Select name='zoomUserId' label='Usuário do Zoom' defaultValue=''>
+            <option disabled value=''>
+              Selecione
+            </option>
+            {zoomUsersOptions?.map(({ label, value }) => (
+              <option value={value} key={value}>
+                {label}
               </option>
-              {zoomUsersOptions?.map(({ label, value }) => (
-                <option value={value} key={value}>
-                  {label}
-                </option>
-              ))}
+            ))}
           </Select>
         </div>
 
@@ -120,7 +119,7 @@ export default function RoomInternalTable({
         <div className='card mb-5 mb-xl-8'>
           <div className='py-3 float-start'>
             <div className='table-responsive'>
-              <table className='table align-middle gs-0 gy-4'>
+              <table className='table align-middle gs-2 gy-4'>
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th className='text-dark ps-4 min-w-200px rounded-start'>
@@ -128,7 +127,7 @@ export default function RoomInternalTable({
                     </th>
                     <th className='text-dark min-w-200px'>Horário de Início </th>
                     <th className='text-dark min-w-150px'>Iniciar</th>
-                    <th className='text-dark min-w-80px text-start rounded-end'>Ação</th>
+                    <th className='text-dark min-w-80px text-end rounded-end'>Ação</th>
                   </tr>
                 </thead>
 

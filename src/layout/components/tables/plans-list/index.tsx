@@ -28,7 +28,7 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
     <>
       <div className='card-body py-3'>
         <div className='table-responsive w-100'>
-          <table className='table gs-0 gy-4 w-100'>
+          <table className='table gs-2 gy-4 w-100'>
             <thead>
               <tr className='fw-bolder text-muted bg-light '>
                 <th
@@ -81,7 +81,10 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                 >
                   Ativo
                 </th>
-                <th className='text-dark rounded-end align-middle' style={{ minWidth: '100px' }}>
+                <th
+                  className='text-dark text-end rounded-end align-middle'
+                  style={{ minWidth: '100px' }}
+                >
                   Ação
                 </th>
               </tr>
