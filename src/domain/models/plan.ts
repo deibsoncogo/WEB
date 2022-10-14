@@ -26,7 +26,6 @@ export interface IPlan {
   imageKey?: string
   description: string
   price: number
-  intervalPaymentMonths?: number
   installments?: number
   intervalAccess: number
   isActive: boolean

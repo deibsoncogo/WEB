@@ -84,14 +84,6 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
               ))}
             </Select>
 
-            {planType === PlanType.RECURRING_PAYMENT && (
-              <InputNumber
-                name='intervalPaymentMonths'
-                label='Intervalo de Pagamento (meses)'
-                classes='h-75px'
-              />
-            )}
-
             {planType === PlanType.SINGLE_PAYMENT && (
               <InputNumber name='installments' label='Quantidade de parcelas' classes='h-75px' />
             )}
