@@ -150,10 +150,6 @@ const EditPlanPageTemplate = ({
         setFiledValue('installments', plan.installments)
         setFiledValue('intervalAccess', plan.intervalAccess)
       }
-
-      if (plan.planType === PlanType.RECURRING_PAYMENT) {
-        setFiledValue('intervalPaymentMonths', plan.intervalPaymentMonths)
-      }
     }
   }
 

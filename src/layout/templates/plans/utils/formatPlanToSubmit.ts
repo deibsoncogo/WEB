@@ -9,7 +9,6 @@ function formatPlanToSubmit(plan: IPlan): FormData {
     planType,
     installments,
     intervalAccess,
-    intervalPaymentMonths,
     books,
     courses,
     rooms,
@@ -25,10 +24,6 @@ function formatPlanToSubmit(plan: IPlan): FormData {
   if (planType === PlanType.SINGLE_PAYMENT) {
     formData.append('installments', String(installments))
     formData.append('intervalAccess', String(intervalAccess))
-  }
-
-  if (planType === PlanType.RECURRING_PAYMENT) {
-    formData.append('intervalPaymentMonths', String(intervalPaymentMonths))
   }
 
   formData.append('name', name)
