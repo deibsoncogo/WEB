@@ -59,12 +59,12 @@ export function PlansTable({ plans = [], paginationHook, togglePlanStatus }: Pla
                   role='columnheader'
                   scope='col'
                   className={getColumnHeaderClasses({
-                    title: 'intervalPaymentMonths',
+                    title: 'planType',
                   })}
                   style={{ maxWidth: '130px' }}
-                  onClick={() => handleOrdenation('intervalPaymentMonths')}
+                  onClick={() => handleOrdenation('planType')}
                 >
-                  Intervalo de Pagamento (meses)
+                  Tipo de Pagamento
                 </th>
                 <th
                   role='columnheader'
