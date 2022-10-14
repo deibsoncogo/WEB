@@ -50,7 +50,7 @@ const FreePlanTableRow = ({
           </Link>
         </Tooltip>
 
-        <Tooltip content={'Deletar'} rounded color='primary'>
+        <Tooltip content={'Excluir'} rounded color='primary'>
           <button
             onClick={handleDeleteFreePlan}
             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'

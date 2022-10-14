@@ -53,7 +53,7 @@ export function Row({
         toast.error('Existem produtos vinculados a este treinamento!')
         return
       }
-      toast.error('Erro ao deletar o treinamento Treinamento!')
+      toast.error('Erro ao excluir o treinamento Treinamento!')
     } finally {
       setLoading(false)
     }
@@ -114,7 +114,7 @@ export function Row({
         {isAdmin && (
           <Tooltip
             content={
-              belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'
+              belongsToPlans ? 'Não é possível excluir, pois pertence a um plano' : 'Excluir'
             }
             rounded
             color='primary'
@@ -142,7 +142,7 @@ export function Row({
         }}
         onConfimation={handleDeleteTraining}
         content='Você tem ceterza que deseja excluir este treinamento??'
-        title='Deletar'
+        title='Excluir'
       />
 
       <ConfirmationModal

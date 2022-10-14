@@ -227,28 +227,15 @@ export function FormCreateUser({
             mask='(99) 9 9999-9999'
           />
 
-          <Select classes='h-75px' name='level' label='Nível de Conhecimento'>
-            <option value='' disabled selected>
-              Selecione
-            </option>
-            {levelOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+          <Select
+            classes='h-75px'
+            name='level'
+            label='Nível de Conhecimento'
+            options={levelOptions}
+          />
           <Input classes='h-75px' name='password' label='Senha' type='password' />
 
-          <Select classes='h-75px' name='role' label='Permissão'>
-            <option value='' disabled selected>
-              Selecione
-            </option>
-            {roleOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+          <Select classes='h-75px' name='role' label='Permissão' options={roleOptions} />
         </div>
         <div className='w-100'>
           <h3 className='mb-5'>Endereço</h3>
@@ -273,20 +260,7 @@ export function FormCreateUser({
           <Input classes='h-75px' name='neighborhood' label='Bairro' />
           <Input classes='h-75px' name='city' label='Cidade' />
 
-          <Select classes='h-75px' name='state' label='Estado'>
-            <option value='' selected={!!defaultValue?.state}>
-              Selecione
-            </option>
-            {stateOptions.map((option) => (
-              <option
-                key={option.value}
-                value={option.value}
-                selected={defaultValue?.state === option.value}
-              >
-                {option.label}
-              </option>
-            ))}
-          </Select>
+          <Select classes='h-75px' name='state' label='Estado' options={stateOptions} />
         </div>
       </div>
 

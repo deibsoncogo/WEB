@@ -50,7 +50,7 @@ export function Row({
       toast.success('Conteúdo excluído com sucesso!')
       handleRefresher()
     } catch {
-      toast.error('Não foi possível deletar o conteúdo!')
+      toast.error('Não foi possível excluir o conteúdo!')
     } finally {
       setLoading(false)
     }
@@ -113,7 +113,7 @@ export function Row({
           }}
           onConfimation={handleDeleteFreeContent}
           content='Você tem certeza que deseja excluir este conteúdo?'
-          title='Deletar'
+          title='Excluir'
         />
       </tr>
     </>

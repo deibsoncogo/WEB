@@ -49,7 +49,7 @@ export function Row({
       toast.success('Sala excluída com sucesso!')
       handleRefresher()
     } catch {
-      toast.error('Não foi possível deletar a sala!')
+      toast.error('Não foi possível excluir a sala!')
     } finally {
       setLoading(false)
     }
@@ -116,7 +116,7 @@ export function Row({
           {isAdmin && (
             <Tooltip
               content={
-                belongsToPlans ? 'Não é possível deletar, pois pertence a um plano' : 'Deletar'
+                belongsToPlans ? 'Não é possível excluir, pois pertence a um plano' : 'Excluir'
               }
               rounded
               color='primary'
@@ -145,7 +145,7 @@ export function Row({
           }}
           onConfimation={handleDeleteRoom}
           content='Você tem ceterza que deseja excluir esta sala?'
-          title='Deletar'
+          title='Excluir'
         />
 
         <ConfirmationModal

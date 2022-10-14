@@ -27,13 +27,13 @@ export function ActionModal({
         <div className='modal-content'>
           <div className='modal-header'>
             <h5 className='modal-title'>{modalTitle}</h5>
-            <div
+            <button
               className='btn btn-icon btn-sm btn-active-light-primary ms-2'
-              data-bs-dismiss='modal'
               aria-label='Close'
+              onClick={onRequestClose}
             >
-              <span className='svg-icon svg-icon-1'></span>
-            </div>
+              <KTSVG path='/icons/arr061.svg' className='svg-icon svg-icon-2x' />
+            </button>
           </div>
 
           <div className='modal-body text-center'>

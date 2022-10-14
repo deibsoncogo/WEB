@@ -265,7 +265,9 @@ export function FormEditUser({
               classes='h-75px'
               name='birthDate'
               label='Data de Nascimento'
-              maxDate={new Date(dateBase.getFullYear() - 18, dateBase.getMonth(), dateBase.getDate())}
+              maxDate={
+                new Date(dateBase.getFullYear() - 18, dateBase.getMonth(), dateBase.getDate())
+              }
               maxYearAmount={-17}
             />
             <InputMasked
@@ -284,27 +286,14 @@ export function FormEditUser({
               mask='(99) 9 9999-9999'
             />
 
-            <Select classes='h-75px' name='level' label='Nível de Conhecimento'>
-              <option value='' disabled selected>
-                Selecione
-              </option>
-              {levelOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
+            <Select
+              classes='h-75px'
+              name='level'
+              label='Nível de Conhecimento'
+              options={levelOptions}
+            />
 
-            <Select classes='h-75px' name='role' label='Permissão'>
-              <option value='' disabled selected>
-                Selecione
-              </option>
-              {roleOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
+            <Select classes='h-75px' name='role' label='Permissão' options={roleOptions} />
           </div>
           <div className='w-100'>
             <h3 className='mb-5'>Endereço</h3>
@@ -322,20 +311,7 @@ export function FormEditUser({
             <Input classes='h-75px' name='neighborhood' label='Bairro' />
             <Input classes='h-75px' name='city' label='Cidade' />
 
-            <Select classes='h-75px' name='state' label='Estado'>
-              <option value='' selected={!!defaultValue?.state}>
-                Selecione
-              </option>
-              {stateOptions.map((option) => (
-                <option
-                  key={option.value}
-                  value={option.value}
-                  selected={defaultValue?.state === option.value}
-                >
-                  {option.label}
-                </option>
-              ))}
-            </Select>
+            <Select classes='h-75px' name='state' label='Estado' options={stateOptions} />
           </div>
         </div>
 

@@ -48,7 +48,7 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
     })
   }
 
-  const handlePlanTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handlePlanTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
     planTypeChange(e.target.value as PlanType)
   }
 
@@ -71,18 +71,9 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
               name='planType'
               label='Tipo de Plano'
               classes='h-75px'
-              defaultValue=''
+              options={planTypeOptions}
               onChange={handlePlanTypeChange}
-            >
-              <option disabled value=''>
-                Selecione
-              </option>
-              {planTypeOptions.map(({ label, value }) => (
-                <option value={value} key={value}>
-                  {label}
-                </option>
-              ))}
-            </Select>
+            />
 
             {planType === PlanType.RECURRING_PAYMENT && (
               <InputNumber

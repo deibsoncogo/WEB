@@ -37,7 +37,7 @@ const SelectMulti = ({
     }
     setInputValues(e as ISelectOption[])
   }
-  
+
   useEffect(() => {
     registerField({
       ref: selectRef,
@@ -68,7 +68,7 @@ const SelectMulti = ({
         isMulti
         name={name}
         cacheOptions
-        defaultOptions={defaultOptions ? defaultOptions: true}
+        defaultOptions={defaultOptions ? defaultOptions : true}
         defaultValue={defaultValues}
         loadOptions={loadOptions}
         className='basic-multi-select'
@@ -77,7 +77,16 @@ const SelectMulti = ({
         onFocus={clearError}
         onChange={handleInputChange}
         value={inputValues}
-        styles={customStyles ? customStyles: undefined}
+        styles={
+          customStyles
+            ? customStyles
+            : {
+                control: (styles) => ({
+                  ...styles,
+                  backgroundColor: '#f5f8fa',
+                }),
+              }
+        }
       />
       {error && <span className='text-danger'>{error}</span>}
     </div>

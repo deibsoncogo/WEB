@@ -43,9 +43,9 @@ export function InputPercentage({ name, label, classes, ...rest }: IInputProps) 
         </label>
       )}
 
-      <div className='form-control d-flex align-items-center form-control-lg bg-secondary p-0 m-0 border-0'>
+      <div className='form-control d-flex align-items-center form-control-lg p-0 m-0 border-0'>
         <input
-          className='form-control form-control-lg form-control-solid border-transparent bg-secondary input-number-no-arrow'
+          className='form-control form-control-lg form-control-solid border-transparent input-number-no-arrow'
           name={name}
           value={inputValue}
           placeholder='00%'

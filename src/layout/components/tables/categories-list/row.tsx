@@ -39,8 +39,8 @@ export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryD
         <Tooltip
           content={
             category.belongsToProducts
-              ? 'Não é possível deletar, pois está vinculada a um produto'
-              : 'Deletar'
+              ? 'Não é possível excluir, pois está vinculada a um produto'
+              : 'Excluir'
           }
           rounded
           color='primary'

@@ -96,7 +96,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
     setSalesQuery(text)
   })
 
-  const handleForm = async (data: SalesFilter) => {   
+  const handleForm = async (data: SalesFilter) => {
     if (!formRef.current) throw new Error()
 
     try {
@@ -189,7 +189,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
         {sales.length > 0 && (
           <div className='card-body py-3'>
             <div className='table-responsive'>
-              <table className='table align-middle gs-0 gy-4'>
+              <table className='table align-middle gs-2 gy-4'>
                 <thead>
                   <tr className='fw-bolder text-muted bg-light'>
                     <th
@@ -228,7 +228,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                     >
                       Status
                     </th>
-                    <th className='text-dark min-w-80px text-start rounded-end'>Ação</th>
+                    <th className='text-dark min-w-80px text-end rounded-end'>Ação</th>
                   </tr>
                 </thead>
 

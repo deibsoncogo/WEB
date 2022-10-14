@@ -7,6 +7,7 @@ import { Button } from '../buttons/CustomButton'
 import { Input } from '../inputs'
 import { isStrongPassword } from '../../../domain/shared/reggexPatterns/isPasswordStrong'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
+import { KTSVG } from '../../../helpers'
 
 export type IResetPassowrdForm = {
   password: string
@@ -41,7 +42,7 @@ function ResetPasswordModal({
   const resetUserPasswordForm = useRef<FormHandles>(null)
 
   const handleResetPasswordFormSubmit = async (data: IResetPassowrdForm) => {
-    const { error, success } = await applyYupValidation<IResetPassowrdForm>(schema, data)    
+    const { error, success } = await applyYupValidation<IResetPassowrdForm>(schema, data)
 
     if (success) {
       resetPassword(data)
@@ -54,9 +55,16 @@ function ResetPasswordModal({
 
   return (
     <Modal show={isOpen} onHide={onRequestClose} className='mt-20'>
-      <Modal.Header closeButton>
-        <Modal.Title>Redefinir Senha</Modal.Title>
-      </Modal.Header>
+      <div className='modal-header'>
+        <h5 className='modal-title'>Redefinir Senha</h5>
+        <button
+          className='btn btn-icon btn-sm btn-active-light-primary ms-2'
+          aria-label='Close'
+          onClick={onRequestClose}
+        >
+          <KTSVG path='/icons/arr061.svg' className='svg-icon svg-icon-2x' />
+        </button>
+      </div>
 
       <Modal.Body>
         <Form

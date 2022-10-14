@@ -63,13 +63,13 @@ export default function CategoriesTable({
         onRequestClose={handleCloseIsDeleteCategoryModal}
         onConfimation={handleConfimationModal}
         content='Você tem certeza que deseja excluir esta categoria?'
-        title='Deletar'
+        title='Excluir'
       />
       {categories.length > 0 && (
         <>
           <div className='card-body py-3'>
             <div className='table-responsive'>
-              <table className='table align-middle gs-0 gy-4 datatable'>
+              <table className='table align-middle gs-2 gy-4 datatable'>
                 <thead>
                   <tr className='fw-bolder text-muted bg-light justify-content-between'>
                     <th
@@ -79,7 +79,7 @@ export default function CategoriesTable({
                     >
                       Nome
                     </th>
-                    <th className='text-dark rounded-end' style={{ minWidth: '150px' }}>
+                    <th className='text-dark text-end rounded-end' style={{ minWidth: '150px' }}>
                       Ação
                     </th>
                   </tr>

@@ -195,19 +195,18 @@ export function FormCreateCourse({ createCourse, getUsers }: Props) {
         <h3 className='mb-5 mt-5 text-muted'>Arquivos</h3>
         <FilesInternalTable filesUpload={filesUpload} formRef={formRef} />
 
+        <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
         {hasErrorClass && (
-          <div className='alert alert-danger d-flex alert-dismissible fade show' role='alert'>
-            <strong>Não é possível criar curso!</strong>É necessário adicionar pelo menos 1 aula.
-            <button
-              type='button'
-              onClick={() => setHasErrorClass(false)}
-              className='btn-close'
-              data-bs-dismiss='alert'
-              aria-label='Close'
-            ></button>
+          <div
+            className='text-danger'
+            style={{
+              position: 'relative',
+              top: '-15px',
+            }}
+          >
+            É necessário adicionar pelo menos 1 aula
           </div>
         )}
-        <h3 className='mb-5 mt-5 text-muted'>Aulas</h3>
         <CoursesInternalTable
           setCourseClass={setCourseClass}
           courseClassArray={courseClass}

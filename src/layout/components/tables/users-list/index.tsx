@@ -207,7 +207,7 @@ export function UsersTable({
           <>
             <div className='card-body py-3'>
               <div className='table-responsive'>
-                <table className='table align-middle gs-0 gy-4'>
+                <table className='table align-middle gs-2 gy-4'>
                   <thead>
                     <tr className='fw-bolder text-muted bg-light'>
                       <th
@@ -240,7 +240,9 @@ export function UsersTable({
                       >
                         Endereço
                       </th>
-                      <th className={getColumnHeaderClasses('actions') + ' rounded-end'}>Ação</th>
+                      <th className={getColumnHeaderClasses('actions') + ' rounded-end text-end'}>
+                        Ação
+                      </th>
                     </tr>
                   </thead>
 

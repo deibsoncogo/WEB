@@ -12,8 +12,8 @@ import { CouponsTable } from '../../components/tables/coupons-list'
 import { toast } from 'react-toastify'
 import { ICoupon } from '../../../domain/models/coupon'
 import { OutputPagination } from '../../../domain/shared/interface/OutputPagination'
-import {  ICreateCoupon,
-
+import {
+  ICreateCoupon,
   IGetCoupons,
   IGetCouponsParams,
   IUpdateCoupon,
@@ -26,7 +26,10 @@ import { IGetAllAvailableProducts } from '../../../domain/usecases/interfaces/pr
 import ConfirmationModal from '../../components/modal/ConfirmationModal'
 import { CreateCoupon } from './createCoupon'
 import { EditCoupon } from './editCoupon'
-import { IDeleteCoupon, IDeleteCouponParams } from '../../../domain/usecases/interfaces/coupon/deleteCoupon'
+import {
+  IDeleteCoupon,
+  IDeleteCouponParams,
+} from '../../../domain/usecases/interfaces/coupon/deleteCoupon'
 
 type CouponsTemplateProps = {
   remoteGetCoupons: IGetCoupons
@@ -128,7 +131,7 @@ export function CouponsTemplate({
 
   const handleCloseModalToConfirmDeletion = () => {
     setCouponTobeDeleted(null)
-  }  
+  }
 
   const handleSelectCouponToBeEdited = (coupon: ICoupon) => {
     setSelectedCoupon(coupon)
@@ -151,7 +154,7 @@ export function CouponsTemplate({
     toggleCouponStatusSuccessful,
     couponDeleteSuccessful,
     selectedCoupon,
-    couponDeleteSuccessful
+    couponDeleteSuccessful,
   ])
 
   useEffect(() => {
@@ -180,7 +183,12 @@ export function CouponsTemplate({
       handleCloseModalToConfirmDeletion()
       deleteCouponcleanUp()
     }
-  }, [toggleCouponStatusSuccessful, paginatedCoupons, couponDeleteSuccessful, couponDeleteSuccessful])
+  }, [
+    toggleCouponStatusSuccessful,
+    paginatedCoupons,
+    couponDeleteSuccessful,
+    couponDeleteSuccessful,
+  ])
 
   useEffect(() => {
     if (getCouponsError) {
@@ -253,7 +261,7 @@ export function CouponsTemplate({
         loading={toggleStatusLoading}
         onRequestClose={handleCloseModalToConfirmDeletion}
         onConfimation={handleDeleteCoupon}
-        title='Deletar'
+        title='Excluir'
       />
     </>
   )

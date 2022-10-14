@@ -238,11 +238,15 @@ export function FormUpdateRoom({
 
         <h3 className='fs-6 fw-bolder text-dark'>Itens</h3>
         {hasErrorRoom && (
-          <ErrorMandatoryItem
-            mainMessage='Não é possível atualizar Sala!'
-            secondaryMessage={errorMessage}
-            setHasError={setHasErrorRoom}
-          />
+          <div
+            className='text-danger'
+            style={{
+              position: 'relative',
+              top: '-8px',
+            }}
+          >
+            É necessário selecionar pelo menos 1 dos itens
+          </div>
         )}
 
         <InputCheckbox name='itemChat' label='Chat' />

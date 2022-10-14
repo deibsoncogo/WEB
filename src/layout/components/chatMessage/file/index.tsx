@@ -46,7 +46,7 @@ export const File = ({
           className='d-flex justify-content-end p-2 position-absolute bg-light-primary rounded'
           style={{ right: 10, top: 10, zIndex: 999 }}
         >
-          <Tooltip content={'Deletar'} rounded color='primary' onClick={setSelectedMessageToDelete}>
+          <Tooltip content={'Excluir'} rounded color='primary' onClick={setSelectedMessageToDelete}>
             <KTSVG path='/icons/gen027.svg' className='svg-icon-3' />
           </Tooltip>
         </div>

@@ -117,8 +117,8 @@ const SelectAsync = ({
 
   return (
     <>
-      {isOpen && <div className='custom-select-async-drop' onClick={closeOptions} />}
-      <div className='h-75px fv-row mb-7 position-relative custom-select-async'>
+      {isOpen && <div className='custom-select-drop' onClick={closeOptions} />}
+      <div className='h-75px fv-row mb-7 position-relative custom-select'>
         {label && (
           <label className='form-label fs-6 fw-bolder text-dark' htmlFor={name}>
             {label}
@@ -127,7 +127,7 @@ const SelectAsync = ({
 
         <input type='hidden' name={name} ref={selectRef} />
 
-        <div className='form-control bg-secondary d-flex align-items-center form-control-lg p-0 border-0'>
+        <div className='form-control d-flex align-items-center form-control-lg p-0 border-0'>
           <input
             type='text'
             name={labelField}

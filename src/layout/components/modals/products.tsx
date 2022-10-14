@@ -138,13 +138,13 @@ export function ProductsModal({
         <div className='modal-content'>
           <div className='modal-header'>
             <h5 className='modal-title'>{modalTitle}</h5>
-            <div
+            <button
               className='btn btn-icon btn-sm btn-active-light-primary ms-2'
-              data-bs-dismiss='modal'
               aria-label='Close'
+              onClick={onRequestClose}
             >
-              <span className='svg-icon svg-icon-1'></span>
-            </div>
+              <KTSVG path='/icons/arr061.svg' className='svg-icon svg-icon-2x' />
+            </button>
           </div>
 
           <Form className='form w-100' ref={formRef} initialData={defaultValue} onSubmit={() => {}}>
@@ -153,16 +153,17 @@ export function ProductsModal({
                 <div className='w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75 h-95px'>
-                      <Select name='course' label='Cursos'>
-                        <option value='' disabled selected>
-                          Selecione um curso
-                        </option>
-                        {courses?.map((course) => (
-                          <option key={course.id} value={course.name}>
-                            {course.name}
-                          </option>
-                        ))}
-                      </Select>
+                      <Select
+                        name='course'
+                        label='Cursos'
+                        options={
+                          courses &&
+                          courses?.map(({ name }) => ({
+                            label: name,
+                            value: name,
+                          }))
+                        }
+                      />
                     </div>
 
                     <div className='w-50 h-95px'>
@@ -191,16 +192,14 @@ export function ProductsModal({
                 <div className='w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75 h-95px'>
-                      <Select name='training' label='Treinamentos'>
-                        <option value='' disabled selected>
-                          Selecione um treinamento
-                        </option>
-                        {trainings?.map((training) => (
-                          <option key={training.id} value={training.name}>
-                            {training.name}
-                          </option>
-                        ))}
-                      </Select>
+                      <Select
+                        name='training'
+                        label='Treinamentos'
+                        options={trainings?.map(({ name }) => ({
+                          label: name,
+                          value: name,
+                        }))}
+                      />
                     </div>
 
                     <div className='w-50 h-95px'>
@@ -229,16 +228,14 @@ export function ProductsModal({
                 <div className='w-50'>
                   <div className='d-flex align-items-center gap-5'>
                     <div className='w-75 h-95px'>
-                      <Select name='plan' label='Planos'>
-                        <option value='' disabled selected>
-                          Selecione um plano
-                        </option>
-                        {plans?.map((plan) => (
-                          <option key={plan.id} value={plan.name}>
-                            {plan.name}
-                          </option>
-                        ))}
-                      </Select>
+                      <Select
+                        name='plan'
+                        label='Planos'
+                        options={plans?.map(({ name }) => ({
+                          value: name,
+                          label: name,
+                        }))}
+                      />
                     </div>
 
                     <div className='w-50 h-95px'>
@@ -291,7 +288,7 @@ export function ProductsModal({
                       </div>
                       <div className='col align-self-end w-50 h-100 mb-8'>
                         <Tooltip
-                          content='Deletar'
+                          content='Excluir'
                           rounded
                           color='primary'
                           onClick={() => handleDecreaseProduct(selectedProduct.productId)}

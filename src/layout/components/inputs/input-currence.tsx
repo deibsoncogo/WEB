@@ -47,7 +47,7 @@ export function InputCurrence({ name, label, placeholderText, classes, ...rest }
       <div className='form-control d-flex align-items-center form-control-lg p-0 m-0 border-0'>
         <input
           ref={inputRef}
-          className='form-control form-control-lg form-control-solid border-transparent bg-secondary'
+          className='form-control form-control-lg form-control-solid border-transparent'
           type='text'
           name={name}
           placeholder={placeholderText}

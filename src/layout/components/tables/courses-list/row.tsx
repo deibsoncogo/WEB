@@ -37,7 +37,7 @@ export function Row(props: IRow) {
       toast.success('Curso excluído com sucesso!')
       props.handleRefresher()
     } catch {
-      toast.error('Não foi possível deletar o curso!')
+      toast.error('Não foi possível excluir o curso!')
     } finally {
       setLoading(false)
     }
@@ -95,8 +95,8 @@ export function Row(props: IRow) {
             <Tooltip
               content={
                 props.belongsToPlans
-                  ? 'Não é possível deletar, pois pertence a um plano'
-                  : 'Deletar'
+                  ? 'Não é possível excluir, pois pertence a um plano'
+                  : 'Excluir'
               }
               rounded
               color='primary'
@@ -125,7 +125,7 @@ export function Row(props: IRow) {
           }}
           onConfimation={handleDeleteCourse}
           content='Você tem ceterza que deseja excluir este curso?'
-          title='Deletar'
+          title='Excluir'
         />
 
         <ConfirmationModal

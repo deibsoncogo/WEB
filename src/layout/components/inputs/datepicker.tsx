@@ -17,7 +17,15 @@ interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
 }
 
 registerLocale('br', br)
-export function DatePicker({ name, label, classes, mask, minYearAmount = 100, maxYearAmount = 11, ...rest }: Props) {
+export function DatePicker({
+  name,
+  label,
+  classes,
+  mask,
+  minYearAmount = 100,
+  maxYearAmount = 11,
+  ...rest
+}: Props) {
   const datePickerRef = useRef(null)
   const { fieldName, registerField, defaultValue, error, clearError } = useField(name)
   const [enteredDate, setEnteredDate] = useState(defaultValue || undefined)
@@ -37,9 +45,16 @@ export function DatePicker({ name, label, classes, mask, minYearAmount = 100, ma
     registerField({
       ref: datePickerRef,
       name: fieldName,
-      getValue: (ref) => { return ref?.current.props.selected },
-      setValue: (ref: any, value: string) => { setEnteredDate(value); ref.current.value = value },
-      clearValue: () => { setEnteredDate(undefined) },
+      getValue: (ref) => {
+        return ref?.current.props.selected
+      },
+      setValue: (ref: any, value: string) => {
+        setEnteredDate(value)
+        ref.current.value = value
+      },
+      clearValue: () => {
+        setEnteredDate(undefined)
+      },
     })
   }, [fieldName, registerField])
 
@@ -56,7 +71,7 @@ export function DatePicker({ name, label, classes, mask, minYearAmount = 100, ma
       <div>
         <ReactDatePicker
           ref={datePickerRef}
-          className='form-control bg-secondar'
+          className='form-control form-control-solid bg-secondar'
           selected={enteredDate}
           onChange={setEnteredDate}
           dateFormat='dd/MM/yyyy'

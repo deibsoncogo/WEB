@@ -52,7 +52,7 @@ export function Row({
         handleRefresher()
       })
     } catch {
-      toast.error('Não foi possível deletar a notificação!')
+      toast.error('Não foi possível excluir a notificação!')
     } finally {
       setLoading(false)
     }
@@ -121,7 +121,7 @@ export function Row({
           }}
           onConfimation={handleDeleteNotification}
           content='Você tem certeza que deseja excluir esta notificação?'
-          title='Deletar'
+          title='Excluir'
         />
 
         <ConfirmationModal

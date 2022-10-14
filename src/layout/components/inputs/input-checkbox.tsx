@@ -8,33 +8,35 @@ interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   setIsToShowStreaming?: Dispatch<SetStateAction<boolean>>
 }
 
-export function InputCheckbox({ name, label, classes, setIsToShowStreaming, ...rest }: IInputProps) {
+export function InputCheckbox({
+  name,
+  label,
+  classes,
+  setIsToShowStreaming,
+  ...rest
+}: IInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const { fieldName, registerField, clearError } = useField(name)
-  
- 
 
-   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  
-    if (inputRef.current) {      
-        inputRef.current.checked = event.currentTarget.checked       
-        if(setIsToShowStreaming){
-          setIsToShowStreaming(inputRef.current.checked)
-        } 
-        inputRef.current.value = event.currentTarget.checked+''  
-     
-    }   
-}
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (inputRef.current) {
+      inputRef.current.checked = event.currentTarget.checked
+      if (setIsToShowStreaming) {
+        setIsToShowStreaming(inputRef.current.checked)
+      }
+      inputRef.current.value = event.currentTarget.checked + ''
+    }
+  }
 
   useEffect(() => {
     registerField({
       name: fieldName,
       ref: inputRef,
       getValue: (ref) => {
-        return ref.current.value === "true"? true: false
+        return ref.current.value === 'true' ? true : false
       },
-      setValue: (ref, value) => {        
-        ref.current.value =  value
+      setValue: (ref, value) => {
+        ref.current.value = value
       },
       clearValue: (ref) => {
         ref.current.value = false
@@ -43,15 +45,15 @@ export function InputCheckbox({ name, label, classes, setIsToShowStreaming, ...r
   }, [fieldName, registerField])
 
   return (
-    <div className='form-check form-check-inline'>
+    <div className='form-check form-check-inline form-check-solid'>
       <input
         className='form-check-input'
         name={name}
         ref={inputRef}
         onChange={handleOnChange}
         onChangeCapture={clearError}
-        defaultChecked={false}        
-        type='checkbox'     
+        defaultChecked={false}
+        type='checkbox'
         {...rest}
       />
 
