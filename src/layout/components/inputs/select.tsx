@@ -8,7 +8,7 @@ type SelectProps = {
   name: string
   label?: string
   classes?: string
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  onChange?: (value: string) => void
 }
 
 type OptionsState = {
@@ -28,10 +28,13 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
   const { isOpen } = optionsState
 
   const handleOnChangeCapture = async () => {
+    console.log('chamou')
     setOptionsState((oldState) => ({
       ...oldState,
       selectedOption: null,
     }))
+    console.log(textInputRef.current?.value)
+    console.log(selectRef.current?.value)
     clearError()
   }
 
@@ -39,6 +42,9 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
     if (textInputRef.current && selectRef.current) {
       textInputRef.current.value = option.label
       selectRef.current.value = option.value
+    }
+    if (onChange) {
+      onChange(option.value)
     }
     setOptionsState({
       isOpen: false,
@@ -109,7 +115,6 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
             onChangeCapture={handleOnChangeCapture}
             ref={textInputRef}
             onClick={openOptions}
-            onChange={onChange}
           />
         </div>
 
