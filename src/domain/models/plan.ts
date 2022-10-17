@@ -28,6 +28,7 @@ export interface IPlan {
   price: number
   installments?: number
   intervalAccess: number
+  intervalPaymentMonths?: number
   isActive: boolean
   planType: PlanType
   trainings?: ITraining[]
