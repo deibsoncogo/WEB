@@ -48,8 +48,8 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
     })
   }
 
-  const handlePlanTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
-    planTypeChange(e.target.value as PlanType)
+  const handlePlanTypeChange = (value: string) => {
+    planTypeChange(value as PlanType)
   }
 
   return (
@@ -74,6 +74,14 @@ const FormEditPlan = forwardRef<FormHandles, FormEditPlansProps>((props, ref) =>
               options={planTypeOptions}
               onChange={handlePlanTypeChange}
             />
+
+            {planType === PlanType.RECURRING_PAYMENT && (
+              <InputNumber
+                name='intervalPaymentMonths'
+                label='Intervalo de Pagamento (meses)'
+                classes='h-75px'
+              />
+            )}
 
             {planType === PlanType.SINGLE_PAYMENT && (
               <InputNumber name='installments' label='Quantidade de parcelas' classes='h-75px' />
