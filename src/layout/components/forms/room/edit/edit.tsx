@@ -33,13 +33,7 @@ type Props = {
   getZoomUsers: IGetZoomUsers
 }
 
-export function FormUpdateRoom({
-  id,
-  getRoom,
-  updateRoom,
-  getUsers,
-  getZoomUsers,
-}: Props) {
+export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers, getZoomUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [loading, setLoading] = useState(true)
@@ -167,7 +161,10 @@ export function FormUpdateRoom({
         formRef.current?.setFieldValue('discount', maskedToMoney(data.discount))
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)
         formRef.current?.setFieldValue('installments', data.installments)
-        formRef.current?.setFieldValue('zoomUserId', data.zoomUserId)
+        formRef.current?.setFieldValue(
+          'zoomUserId-label',
+          zoomUsersOptions.find(({ value }) => value === data.zoomUserId)?.label
+        )
         formRef.current?.setFieldValue('isActive', data.isActive)
 
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
@@ -231,7 +228,11 @@ export function FormUpdateRoom({
             <InputNumber name='installments' label='Quantidade de Parcelas' />
           </div>
           <div className='w-50'>
-            <TextArea name='description' label='Descrição' style={{ minHeight: '246px', margin: 0 }} />
+            <TextArea
+              name='description'
+              label='Descrição'
+              style={{ minHeight: '246px', margin: 0 }}
+            />
             <Input name='level' label='Nível' />
           </div>
         </div>
