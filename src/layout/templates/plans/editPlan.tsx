@@ -20,6 +20,7 @@ import { FormEditPlan } from '../../components/forms/plans/edit'
 import { planFormSchema } from '../../components/forms/plans/planSchema'
 import { maskedToMoney } from '../../formatters/currenceFormatter'
 import { formatPlanToSubmit } from './utils/formatPlanToSubmit'
+import { planTypeOptions } from '../../components/forms/plans/planTypeOptions'
 
 type Props = {
   remoteGetPlan: IGetPlan
@@ -197,8 +198,9 @@ const EditPlanPageTemplate = ({
         books = [],
         rooms = [],
       } = plan
-
+      
       setFiledValue('planType', planType || defaultPlan)
+      setFiledValue('planType-label', (planTypeOptions.find(pT => pT.value === planType || pT.value === defaultPlan) as ISelectOption).label)
       setPlanType(planType || defaultPlan)
       setFiledValue('name', name)
       setFiledValue('price', maskedToMoney(price))
