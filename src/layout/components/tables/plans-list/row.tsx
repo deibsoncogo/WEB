@@ -41,9 +41,7 @@ const PlanTableRow = ({ plan, togglePlanStatus }: PlanTableRowProps) => {
       </td>
 
       <td className='ps-4' scope='row'>
-        <span className='fw-bold d-block fs-7'>
-          {paymentTypeMap[plan.planType as unknown as PaymentType]}
-        </span>
+        <span className='fw-bold d-block fs-7'>{plan.intervalPaymentMonths}</span>
       </td>
 
       <td className='ps-4' scope='row'>

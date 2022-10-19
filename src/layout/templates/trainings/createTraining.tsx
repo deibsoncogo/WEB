@@ -46,8 +46,6 @@ function CreateTrainingPageTemplate({ remoteGetTeachers, remoteCreateTraining, r
   } = useRequest<IZoomUser[]>(remoteGetZoomUsers.get)
 
   async function handleFormSubmit(data: ITraining) {
-    console.log('data =>', typeof data.level, data.level)
-
     data.price = onlyNums(data.price)
     data.discount = onlyNums(data?.discount)
 

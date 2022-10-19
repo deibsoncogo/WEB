@@ -18,6 +18,7 @@ import { extractSelectOptionsFromArr, getOptionsFromSearchRequest } from '../../
 import { getAsyncCategoiesNoPaginationToSelectInput } from '../../../utils/getAsyncCategoriesNoPaginationToSelectInput'
 import { FormEditPlan } from '../../components/forms/plans/edit'
 import { planFormSchema } from '../../components/forms/plans/planSchema'
+import { planTypeOptions } from '../../components/forms/plans/planTypeOptions'
 import { maskedToMoney } from '../../formatters/currenceFormatter'
 import { formatPlanToSubmit } from './utils/formatPlanToSubmit'
 import { planTypeOptions } from '../../components/forms/plans/planTypeOptions'
@@ -151,6 +152,10 @@ const EditPlanPageTemplate = ({
         setFiledValue('installments', plan.installments)
         setFiledValue('intervalAccess', plan.intervalAccess)
       }
+
+      if (plan.planType === PlanType.RECURRING_PAYMENT) {
+        setFiledValue('intervalPaymentMonths', plan.intervalPaymentMonths)
+      }
     }
   }
 
@@ -200,7 +205,10 @@ const EditPlanPageTemplate = ({
       } = plan
       
       setFiledValue('planType', planType || defaultPlan)
-      setFiledValue('planType-label', (planTypeOptions.find(pT => pT.value === planType || pT.value === defaultPlan) as ISelectOption).label)
+      setFiledValue(
+        'planType-label',
+        planType ? planTypeOptions.find(({ value }) => value === planType)?.label : defaultPlan
+      )
       setPlanType(planType || defaultPlan)
       setFiledValue('name', name)
       setFiledValue('price', maskedToMoney(price))
