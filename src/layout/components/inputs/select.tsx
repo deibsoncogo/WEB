@@ -28,13 +28,10 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
   const { isOpen } = optionsState
 
   const handleOnChangeCapture = async () => {
-    console.log('chamou')
     setOptionsState((oldState) => ({
       ...oldState,
       selectedOption: null,
     }))
-    console.log(textInputRef.current?.value)
-    console.log(selectRef.current?.value)
     clearError()
   }
 
