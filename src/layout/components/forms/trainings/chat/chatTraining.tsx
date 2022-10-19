@@ -12,6 +12,7 @@ import { IGetAllChatTraining } from '../../../../../domain/usecases/interfaces/c
 import { IJoinTrainingChatRoom } from '../../../../../domain/usecases/interfaces/chatTraining/joinTrainingChatRoom'
 import { IUploadFileChatTraining } from '../../../../../domain/usecases/interfaces/chatTraining/uploadFileChatTraining'
 import { KTSVG } from '../../../../../helpers'
+import { debounce } from '../../../../../helpers/debounce'
 import { getSocketConnection } from '../../../../../utils/getSocketConnection'
 import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
@@ -59,9 +60,14 @@ export function ChatInner({ getAllChatTraining, remoteJoinChat, remoteUploadFile
     sendMessage({ message, setLoadingSendMessage, setMessage, socket, trainingId: String(id) })
   }
 
+  const handleSetLoadingSendMessage = debounce(() => {
+    setLoadingSendMessage(false)
+  })
+
   const handleChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
     setLoadingSendMessage(true)
     handleUploadFile({ event, trainingId: String(id), uploadFile })
+    handleSetLoadingSendMessage()
   }
 
   const onEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
