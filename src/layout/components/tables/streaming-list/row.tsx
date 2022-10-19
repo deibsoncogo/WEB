@@ -31,7 +31,7 @@ export function Row({ index, liveDate, time, start, startUrl, removeStreamItem }
         )}
       </td>
 
-      <td className='text-start'>
+      <td className='text-end d-flex justify-content-end'>
         <button
           type='button'
           onClick={() => {
