@@ -16,6 +16,7 @@ import {
 import { IJoinChatRoom } from '../../../../../domain/usecases/interfaces/chatRoom/joinChatRoom'
 import { IUploadFileChatRoom } from '../../../../../domain/usecases/interfaces/chatRoom/uploadFileChatRoom'
 import { KTSVG } from '../../../../../helpers'
+import { debounce } from '../../../../../helpers/debounce'
 import { getSocketConnection } from '../../../../../utils/getSocketConnection'
 import { ChatMessage } from '../../../chatMessage'
 import { FullLoading } from '../../../FullLoading/FullLoading'
@@ -76,6 +77,10 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat, remoteUploadFile }:
     }
   }
 
+  const handleSetLoadingSendMessage = debounce(() => {
+    setLoadingSendMessage(false)
+  })
+
   const handleChangeFile = (event: ChangeEvent<HTMLInputElement>) => {
     setLoadingSendMessage(true)
     uploadFileChatRoomMessage({
@@ -83,6 +88,8 @@ export function ChatInner({ getAllChatRooms, remoteJoinChat, remoteUploadFile }:
       event,
       uploadFile,
     })
+
+    handleSetLoadingSendMessage()
   }
 
   const handleDeleteMessage = () => {
