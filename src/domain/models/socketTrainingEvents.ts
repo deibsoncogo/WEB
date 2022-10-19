@@ -2,7 +2,7 @@ export enum SocketTrainingEvents {
   Training = 'training',
   TrainingChatUpdated = 'trainingChatUpdated',
   CreateMessage = 'createMessage',
-  ReceiveMessage = 'reveiveMessage',
+  ReceiveMessage = 'receiveMessage',
   ViewAllMessages = 'viewAllMessages',
   UpdateMessagesViews = 'updateMessagesViews',
   ViewMessage = 'viewMessage',
