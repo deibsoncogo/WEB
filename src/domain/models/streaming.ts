@@ -5,5 +5,5 @@ export interface IStreaming {
   start?: boolean
   startUrl?: string
   dateISO: string
-  showStartLink?: boolean
+  showStreamingAccess?: boolean
 }

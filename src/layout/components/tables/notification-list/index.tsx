@@ -88,6 +88,7 @@ export function NotificationTable({
       notificationFormRef.current?.setFieldValue('tag', data.tag)
       notificationFormRef.current?.setFieldValue('text', data.text)
       notificationFormRef.current?.setFieldValue('notificationType', data.notificationType)
+      notificationFormRef.current?.setFieldValue('notificationType-label', data.notificationType)
     }
     setIsDrawerNotificationOpen(true)
   }
