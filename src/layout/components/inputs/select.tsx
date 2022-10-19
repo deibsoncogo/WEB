@@ -8,7 +8,7 @@ type SelectProps = {
   name: string
   label?: string
   classes?: string
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  onChange?: (value: string) => void
 }
 
 type OptionsState = {
@@ -40,6 +40,9 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
       textInputRef.current.value = option.label
       selectRef.current.value = option.value
     }
+    if (onChange) {
+      onChange(option.value)
+    }
     setOptionsState({
       isOpen: false,
       selectedOption: option,
@@ -54,6 +57,14 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
   const openOptions = () => {
     setOptionsState((oldState) => ({ ...oldState, isOpen: true }))
   }
+
+  useEffect(() => {
+    document.addEventListener('click', closeOptions)
+
+    return () => {
+      document.removeEventListener('click', closeOptions)
+    }
+  }, [])
 
   useEffect(() => {
     registerField({
@@ -89,7 +100,7 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
 
   return (
     <>
-      {isOpen && <div onClick={closeOptions} className='custom-select-drop' />}
+      {/* {isOpen && <div onClick={closeOptions} className='custom-select-drop' />} */}
       <div className='h-75px fv-row mb-7 position-relative custom-select'>
         {label && (
           <label htmlFor={name} className='form-label fs-6 fw-bolder text-dark'>
@@ -108,8 +119,10 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
             placeholder='Selecione'
             onChangeCapture={handleOnChangeCapture}
             ref={textInputRef}
-            onClick={openOptions}
-            onChange={onChange}
+            onClick={(e) => {
+              e.stopPropagation()
+              openOptions()
+            }}
           />
         </div>
 
@@ -122,7 +135,10 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
                 <div
                   key={option.value}
                   className='option'
-                  onClick={() => handleSelectOptions(option)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleSelectOptions(option)
+                  }}
                   onBlurCapture={closeOptions}
                 >
                   {option.label}

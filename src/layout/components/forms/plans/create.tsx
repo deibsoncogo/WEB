@@ -58,8 +58,8 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
 
   const [planType, setPlanType] = useState<PlanType | ''>('')
 
-  const handlePlanTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPlanType(e.target.value as PlanType)
+  const handlePlanTypeChange = (value: string) => {
+    setPlanType(value as PlanType)
   }
 
   async function fetchData() {
@@ -95,6 +95,14 @@ const FormCreatePlan = forwardRef<FormHandles, FormCreatePlansProps>((props, ref
               options={planTypeOptions}
               onChange={handlePlanTypeChange}
             />
+
+            {planType === PlanType.RECURRING_PAYMENT && (
+              <InputNumber
+                name='intervalPaymentMonths'
+                label='Intervalo de Pagamento (meses)'
+                classes='h-75px'
+              />
+            )}
 
             {planType === PlanType.SINGLE_PAYMENT && (
               <InputNumber name='installments' label='Quantidade de parcelas' classes='h-75px' />

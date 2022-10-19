@@ -21,5 +21,12 @@ export const planFormSchema = Yup.object().shape({
       .integer('Acesso ao conteúdo deve ser um número inteiro')
       .min(1, 'Acesso ao conteúdo deve ser maior que zero'),
   }),
+  intervalPaymentMonths: Yup.number().when('planType', {
+    is: PlanType.RECURRING_PAYMENT,
+    then: Yup.number()
+      .required('Intervalo de pagamento é necessário')
+      .integer('Intervalo de pagamento deve ser um número inteiro')
+      .min(1, 'Intervalo de pagamento deve ser maior que zero'),
+  }),
   categoryId: Yup.string().required('Selecione uma categoria'),
 })
