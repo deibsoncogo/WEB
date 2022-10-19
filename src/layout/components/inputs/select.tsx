@@ -59,6 +59,14 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
   }
 
   useEffect(() => {
+    document.addEventListener('click', closeOptions)
+
+    return () => {
+      document.removeEventListener('click', closeOptions)
+    }
+  }, [])
+
+  useEffect(() => {
     registerField({
       ref: selectRef,
       name: fieldName,
@@ -92,7 +100,7 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
 
   return (
     <>
-      {isOpen && <div onClick={closeOptions} className='custom-select-drop' />}
+      {/* {isOpen && <div onClick={closeOptions} className='custom-select-drop' />} */}
       <div className='h-75px fv-row mb-7 position-relative custom-select'>
         {label && (
           <label htmlFor={name} className='form-label fs-6 fw-bolder text-dark'>
@@ -111,7 +119,10 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
             placeholder='Selecione'
             onChangeCapture={handleOnChangeCapture}
             ref={textInputRef}
-            onClick={openOptions}
+            onClick={(e) => {
+              e.stopPropagation()
+              openOptions()
+            }}
           />
         </div>
 
@@ -124,7 +135,10 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
                 <div
                   key={option.value}
                   className='option'
-                  onClick={() => handleSelectOptions(option)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleSelectOptions(option)
+                  }}
                   onBlurCapture={closeOptions}
                 >
                   {option.label}
