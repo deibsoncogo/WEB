@@ -55,7 +55,7 @@ export function Row({
       <td>
         <span className='text-dark fw-bold d-block fs-7'>{address}</span>
       </td>
-      <td className='d-flex'>
+      <td className='d-flex justify-content-end'>
         <Tooltip content={'Editar'} rounded color='primary'>
           <Link href={`/users/edit/${id}`}>
             <button className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-2'>

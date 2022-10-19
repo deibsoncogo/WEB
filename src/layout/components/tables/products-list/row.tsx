@@ -30,7 +30,7 @@ export function Row({ id, name, expireDate, setGrantedProducts }: Props) {
           {formatDate(expireDate, 'DD/MM/YYYY')}
         </span>
       </td>
-      <td>
+      <td className='d-flex justify-content-end'>
         <Tooltip content={'Remover'} rounded color='primary'>
           <button
             type='button'

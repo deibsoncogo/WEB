@@ -7,11 +7,19 @@ type Props = {
   userId: string
 }
 
-export function Row({ date, transactionId, totalPrice, status, userId }: IPartialPurchaseResponse & Props) {  
+export function Row({
+  date,
+  transactionId,
+  totalPrice,
+  status,
+  userId,
+}: IPartialPurchaseResponse & Props) {
   return (
     <tr>
       <td className='ps-4'>
-        <span className='text-black-50 d-block fs-7'>{formatDate(formatDateToUTC(date), 'DD/MM/YYYY')}</span>
+        <span className='text-black-50 d-block fs-7'>
+          {formatDate(formatDateToUTC(date), 'DD/MM/YYYY')}
+        </span>
       </td>
       <td>
         <span className='text-black-50 d-block fs-7 mw-200px text-overflow-custom'>
@@ -24,15 +32,11 @@ export function Row({ date, transactionId, totalPrice, status, userId }: IPartia
         </span>
       </td>
       <td>
-        <span className='text-black-50 d-block fs-7 mw-200px text-overflow-custom'>
-          {status}
-        </span>
+        <span className='text-black-50 d-block fs-7 mw-200px text-overflow-custom'>{status}</span>
       </td>
-      <td>
+      <td className='d-flex justify-content-end'>
         <Link href={`/users/edit/${userId}/purchase/${transactionId}`}>
-          <a className='btn btn-link btn-sm'>
-            Visualizar
-          </a>
+          <a className='btn btn-link btn-sm'>Visualizar</a>
         </Link>
       </td>
     </tr>

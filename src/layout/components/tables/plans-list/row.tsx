@@ -52,7 +52,7 @@ const PlanTableRow = ({ plan, togglePlanStatus }: PlanTableRowProps) => {
         <Switch active={plan.isActive} setModalUpdate={handlePlanStatusChange} />
       </td>
 
-      <td className='d-flex' style={{ minWidth: '50px' }}>
+      <td className='d-flex justify-content-end' style={{ minWidth: '50px' }}>
         <Tooltip content={'Editar'} rounded color='primary'>
           <Link href={`/plans/edit/${plan.id}`}>
             <span className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'>
