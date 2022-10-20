@@ -65,7 +65,7 @@ const Row = ({
         <Switch active={coupon.isActive} setModalUpdate={handleCouponStatusChange} />
       </td>
 
-      <td className='d-flex' style={{ minWidth: '150px' }}>
+      <td className='d-flex justify-content-end' style={{ minWidth: '150px' }}>
         <Tooltip content={'Editar'} rounded color='primary'>
           <button
             className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'

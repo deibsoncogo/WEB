@@ -45,7 +45,7 @@ export function Row({
           <span className='text-dark fw-bold d-block fs-7'>{status}</span>
         </td>
 
-        <td className='text-end d-flex justify-content-start px-4'>
+        <td className='text-end d-flex justify-content-end px-4'>
           <Link href={`/sales/show/${id}`}>
             <a className='primary border-2 border-bottom border-secondary'>Visualizar</a>
           </Link>

@@ -24,7 +24,7 @@ export function Row({ category, onOpenDeleteCategoryModal, onOpenUpdateCategoryD
         <span className='text-dark fw-bold d-block fs-7'>{name}</span>
       </td>
 
-      <td className='d-flex' style={{ minWidth: '150px' }}>
+      <td className='d-flex justify-content-end' style={{ minWidth: '150px' }}>
         <Tooltip
           content={'Editar'}
           rounded
