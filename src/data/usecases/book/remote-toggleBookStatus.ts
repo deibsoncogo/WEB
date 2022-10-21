@@ -1,5 +1,8 @@
 import { InvalidParamsError, UnexpectedError } from '../../../domain/errors'
-import { IToggleBookStatus, IToggleBookStatusParams } from '../../../domain/usecases/interfaces/book/toggleBookStatus'
+import {
+  IToggleBookStatus,
+  IToggleBookStatusParams,
+} from '../../../domain/usecases/interfaces/book/toggleBookStatus'
 import { HttpClient, HttpStatusCode } from '../../protocols'
 
 export class RemoteToggleBookStatus implements IToggleBookStatus {
@@ -11,10 +14,23 @@ export class RemoteToggleBookStatus implements IToggleBookStatus {
       method: 'patch',
     })
 
+    console.log(httpResponse)
+
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body
       case HttpStatusCode.badRequest:
+        console.log(
+          httpResponse.body.message.includes('must have stock greather than 0 to be a activeted.')
+        )
+        if (
+          httpResponse.body.message.includes('must have stock greather than 0 to be a activeted.')
+        ) {
+          console.log('vaca')
+          throw new InvalidParamsError(
+            'Para ativar o status do livro seu estoque deve ser maior que zero.'
+          )
+        }
         throw new InvalidParamsError(httpResponse.body?.message)
       default:
         throw new UnexpectedError()

@@ -2,6 +2,7 @@ import { Tooltip } from '@nextui-org/react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { InvalidParamsError } from '../../../../domain/errors'
 import { IToggleBookStatus } from '../../../../domain/usecases/interfaces/book/toggleBookStatus'
 import { KTSVG } from '../../../../helpers'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
@@ -63,7 +64,11 @@ export function Row({
       handleRefresher()
       toast.success(`Livro ${!active ? 'ativado' : 'desativado'} com sucesso!`)
     } catch (err) {
-      toast.error('Erro ao atualizar o status do livro!')
+      if (err instanceof InvalidParamsError && typeof err.messages === 'string') {
+        toast.error(err.messages)
+      } else {
+        toast.error('Erro ao atualizar o status do livro!')
+      }
     }
     setIsModalUpdateOpen(false)
     setLoading(false)
