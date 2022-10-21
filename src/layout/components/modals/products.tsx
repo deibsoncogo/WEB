@@ -9,6 +9,7 @@ import { GrantedProduct } from '../../../domain/models/grantedProduct'
 import { Product } from '../../../domain/models/product'
 import { IGetAllProducts } from '../../../domain/usecases/interfaces/product/getAllProducts'
 import { KTSVG } from '../../../helpers'
+import { PlanType } from '../../../interfaces/api-response/planResponse'
 import { DatePicker, Input, Select } from '../inputs'
 
 type NewTransactionModalProps = {
@@ -87,11 +88,21 @@ export function ProductsModal({
     toast.success('Produtos concedidos com sucesso!')
   }
 
+  function checkIfPlanIsDeleted(prod: Product) {
+    if (prod?.plan?.isDeleted) return true
+  }
+
+  function checkIfPlanIsFree(prod: Product) {
+    if (prod?.plan?.planType === PlanType.FREE_PLAN) return true
+  }
+
   function findProducts(type: string) {
-    const selectedProductsIds = selectedProducts.map((selectedProd) => selectedProd.productId)
+    const selectedProductsIds = selectedProducts.map((selectedProd) => selectedProd.productId)    
 
     return products?.filter((prod) => {
-      return prod.type === type && !selectedProductsIds.includes(prod.id!) && !checkIfAProductIsGranted(prod.name, type)
+      const isPlanDeleted = checkIfPlanIsDeleted(prod)
+      const isPlanFree = checkIfPlanIsFree(prod)
+      return prod.type === type && !isPlanDeleted && !isPlanFree && !selectedProductsIds.includes(prod.id!) && !checkIfAProductIsGranted(prod.name, type)
     })
   }
 
