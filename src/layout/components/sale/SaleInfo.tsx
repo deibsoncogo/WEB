@@ -4,6 +4,9 @@ import { toast } from 'react-toastify'
 import { IGetSale } from '../../../domain/usecases/interfaces/sale/getSale'
 import { formatDate, formatDateToUTC, KTSVG } from '../../../helpers'
 import { ISaleInformation } from '../../../interfaces/api-response/saleInformations'
+import { cepMask } from '../../formatters/cepFormatter'
+import { cpfMask } from '../../formatters/cpfFormatter'
+import { phoneMask } from '../../formatters/phoneFormatter'
 import { SaleItems } from '../tables/saleItems-list'
 
 type Props = {
@@ -121,7 +124,7 @@ export function PageSaleInfo({ id, getSale }: Props) {
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 CPF:
-                <span className='text-black-50 fs-5 fw-light'>{sale?.user.cpf}</span>
+                <span className='text-black-50 fs-5 fw-light'>{cpfMask(sale?.user.cpf ?? '')}</span>
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 E-mail:
@@ -129,7 +132,7 @@ export function PageSaleInfo({ id, getSale }: Props) {
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Telefone:
-                <span className='text-black-50 fs-5 fw-light'>{sale?.user.phoneNumber}</span>
+                <span className='text-black-50 fs-5 fw-light'>{phoneMask(sale?.user.phoneNumber ?? '')}</span>
               </span>
             </div>
             <div className={sale?.shipping_address ? 'w-25' : 'w-50'}>
@@ -162,7 +165,7 @@ export function PageSaleInfo({ id, getSale }: Props) {
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 CEP:
                 <span className='text-black-50 fs-5 fw-light'>
-                  {sale?.billing_address.zip_code}
+                  {cepMask(sale?.billing_address.zip_code ?? '')}
                 </span>
               </span>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
