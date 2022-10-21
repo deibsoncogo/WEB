@@ -1,6 +1,7 @@
 export enum PlanType {
   SINGLE_PAYMENT = 'single_payment',
   RECURRING_PAYMENT = 'recurring_payment',
+  FREE_PLAN = 'free_plan'
 }
 
 export interface IPlanResponse {
@@ -13,5 +14,6 @@ export interface IPlanResponse {
   installments: number
   intervalAccess: number
   isActive: boolean
+  isDeleted: boolean
   planType: PlanType
 }
