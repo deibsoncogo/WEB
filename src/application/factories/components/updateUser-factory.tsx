@@ -3,6 +3,7 @@ import { makeRemoteGetAllProducts } from '../usecases/product/remote-getAllProdu
 import { makeRemoteGetUser } from '../usecases/remote-getUser-factory'
 import { makeRemoteVerifyCPF } from '../usecases/remote-getVerifyUserCPF'
 import { makeRemoteUpdateUser } from '../usecases/remote-updateUser-factory'
+import { makeRemoteGetAllUserTransactions } from '../usecases/transactions/remote-getAllUserTransactions-factory'
 
 interface IMakeFormUpdateUser {
   id: string
@@ -16,6 +17,7 @@ export const MakeFormUpdateUser = ({ id }: IMakeFormUpdateUser) => {
       getUser={makeRemoteGetUser(id)}
       isCPFAlreadyRegistered={makeRemoteVerifyCPF()}
       getProducts={makeRemoteGetAllProducts()}
+      remoteGetAllUserTransactions={makeRemoteGetAllUserTransactions()}
     />
   )
 }

@@ -1,0 +1,26 @@
+.custom tbody {
+  display: block;
+  max-height: 180px;
+  overflow: auto;
+}
+
+.custom thead,
+.custom tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* even columns width , fix width of table too*/
+}
+
+.custom tbody::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+.custom tbody::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+
+.custom tbody::-webkit-scrollbar-thumb {
+  background-color: #979797;
+  border-radius: 8px;
+}

@@ -18,15 +18,15 @@ import { DatePicker, Input, InputMasked, Select } from '../../inputs'
 
 import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
 import { GrantedProduct } from '../../../../domain/models/grantedProduct'
+import { ITransaction } from '../../../../domain/models/transaction'
 import { IGetAllProducts } from '../../../../domain/usecases/interfaces/product/getAllProducts'
+import { IGetAllUserTransactions } from '../../../../domain/usecases/interfaces/transactions/getAllUserTransactions'
 import { IGetUser } from '../../../../domain/usecases/interfaces/user/getUser'
 import { IUpdateUser } from '../../../../domain/usecases/interfaces/user/updateUser'
-import { IPartialPurchaseResponse } from '../../../../interfaces/api-response/purchasePartialResponse'
 import { Button } from '../../buttons/CustomButton'
 import { ProductsModal } from '../../modals/products'
 import { ProductsTable } from '../../tables/products-list'
 import { PurchasesTable } from '../../tables/purchashes-list'
-import { isStrongPassword } from '../../../../domain/shared/reggexPatterns/isPasswordStrong'
 
 type IFormEditUser = {
   id: string
@@ -34,6 +34,7 @@ type IFormEditUser = {
   getUser: IGetUser
   getProducts: IGetAllProducts
   isCPFAlreadyRegistered: IUserVerifyCPF
+  remoteGetAllUserTransactions: IGetAllUserTransactions
 }
 
 export function FormEditUser({
@@ -42,6 +43,7 @@ export function FormEditUser({
   getUser,
   isCPFAlreadyRegistered,
   getProducts,
+  remoteGetAllUserTransactions,
 }: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
@@ -54,14 +56,7 @@ export function FormEditUser({
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
   const [grantedProducts, setGrantedProducts] = useState<GrantedProduct[]>([])
 
-  const [purchases, setPurchases] = useState<IPartialPurchaseResponse[]>([
-    {
-      date: '2022-06-22',
-      transactionId: '123456',
-      totalPrice: 1200,
-      status: 'Pago',
-    },
-  ])
+  const [purchases, setPurchases] = useState<ITransaction[]>([])
 
   async function handleOpenModal() {
     try {
@@ -204,9 +199,15 @@ export function FormEditUser({
         formRef.current?.setFieldValue('cpf', newData.cpf)
         formRef.current?.setFieldValue('phoneNumber', newData.phoneNumber)
         formRef.current?.setFieldValue('level', newData.level)
-        formRef.current?.setFieldValue('level-label', levelOptions.find(lvl => lvl.value === newData.level)?.label)
+        formRef.current?.setFieldValue(
+          'level-label',
+          levelOptions.find((lvl) => lvl.value === newData.level)?.label
+        )
         formRef.current?.setFieldValue('role', newData.role)
-        formRef.current?.setFieldValue('role-label', roleOptions.find(role => role.value === newData.role)?.label)
+        formRef.current?.setFieldValue(
+          'role-label',
+          roleOptions.find((role) => role.value === newData.role)?.label
+        )
         formRef.current?.setFieldValue('zipCode', newData.zipCode)
         formRef.current?.setFieldValue('street', newData.street)
         formRef.current?.setFieldValue('neighborhood', newData.neighborhood)
@@ -214,9 +215,21 @@ export function FormEditUser({
         formRef.current?.setFieldValue('number', newData.number)
         formRef.current?.setFieldValue('complement', newData.complement)
         formRef.current?.setFieldValue('state', newData.state)
-        formRef.current?.setFieldValue('state-label', stateOptions.find(state => state.value === newData.state)?.label)
+        formRef.current?.setFieldValue(
+          'state-label',
+          stateOptions.find((state) => state.value === newData.state)?.label
+        )
       })
       .catch((err) => toast.error(err.messages) + '!')
+  }, [])
+
+  useEffect(() => {
+    remoteGetAllUserTransactions
+      .getAll()
+      .then((response) => {
+        setPurchases(response)
+      })
+      .catch((err) => toast.error(err.messages))
   }, [])
 
   function inputAddress(result: ZipCodeProps) {
