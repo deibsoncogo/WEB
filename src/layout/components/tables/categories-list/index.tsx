@@ -79,7 +79,10 @@ export default function CategoriesTable({
                     >
                       Nome
                     </th>
-                    <th className='text-dark text-end rounded-end' style={{ minWidth: '150px' }}>
+                    <th
+                      className='text-dark text-end rounded-end'
+                      style={{ minWidth: '150px', paddingRight: '3rem' }}
+                    >
                       Ação
                     </th>
                   </tr>

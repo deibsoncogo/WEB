@@ -68,7 +68,12 @@ export function FreePlansTable({
                 >
                   Ativo
                 </th>
-                <th className='text-dark text-end rounded-end align-middle'>Ação</th>
+                <th
+                  className='text-dark text-end rounded-end align-middle'
+                  style={{ verticalAlign: 'middle', paddingRight: '3rem' }}
+                >
+                  Ação
+                </th>
               </tr>
             </thead>
 
