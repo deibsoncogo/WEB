@@ -18,7 +18,7 @@ export interface ITransaction {
   id?: string
   type: PaymentMethodEnum
   status: TransactionStatus
-  createdAt?: Date
+  createdAt: string
   pagarMeId?: string
   cartId?: string
   cart?: ICart
