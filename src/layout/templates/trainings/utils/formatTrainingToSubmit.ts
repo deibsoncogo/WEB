@@ -33,6 +33,7 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
     deactiveChatDate,
     installments,
     zoomUserId,
+    zoomUserName
   } = formattedData
 
   const formData = new FormData()
@@ -48,6 +49,7 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
   formData.append('trainingEndDate', String(trainingEndDate))
   formData.append('deactiveChatDate', String(deactiveChatDate))
   formData.append('zoomUserId', String(zoomUserId))
+  formData.append('zoomUserName', String(zoomUserName))
   const streamingsString = JSON.stringify(streamings)
   formData.append('streamings', streamingsString)
 

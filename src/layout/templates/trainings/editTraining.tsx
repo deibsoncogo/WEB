@@ -144,6 +144,7 @@ function EditTrainingPageTemplate({
         imageUrl,
         installments,
         zoomUserId,
+        zoomUserName,
         isActive,
       } = trainingData
       const formattedStreamings = formatStreamingList(streamings)
@@ -163,6 +164,7 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDateNew.setTime(deactiveChatDateNew.getTime() + 1000 * 60 * 60 * 3)))
       formRef.current?.setFieldValue('imagePreview', imageUrl)
       formRef.current?.setFieldValue('zoomUserId', zoomUserId)
+      formRef.current?.setFieldValue('zoomUserId-label', zoomUserName)
       formRef.current?.setFieldValue('active', isActive)
       setStreamList(formattedStreamings)
 

@@ -11,6 +11,7 @@ import { ICreateTraining } from '../../../domain/usecases/interfaces/trainings/c
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
 import { IGetZoomUsers, IZoomUser } from '../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
+import { getZoomUserName } from '../../../utils/getZoomUserName'
 import { FormCreateTraining } from '../../components/forms/trainings/create'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
 import { onlyNums } from '../../formatters/currenceFormatter'
@@ -48,6 +49,8 @@ function CreateTrainingPageTemplate({ remoteGetTeachers, remoteCreateTraining, r
   async function handleFormSubmit(data: ITraining) {
     data.price = onlyNums(data.price)
     data.discount = onlyNums(data?.discount)
+
+    data.zoomUserName = getZoomUserName(zoomUsers!, data.zoomUserId)
 
     const { error, success } = await applyYupValidation<ITraining>(trainingFormSchema(data), { ...data })
 
