@@ -14,19 +14,13 @@ export class RemoteToggleBookStatus implements IToggleBookStatus {
       method: 'patch',
     })
 
-    console.log(httpResponse)
-
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok:
         return httpResponse.body
       case HttpStatusCode.badRequest:
-        console.log(
-          httpResponse.body.message.includes('must have stock greather than 0 to be a activeted.')
-        )
         if (
           httpResponse.body.message.includes('must have stock greather than 0 to be a activeted.')
         ) {
-          console.log('vaca')
           throw new InvalidParamsError(
             'Para ativar o status do livro seu estoque deve ser maior que zero.'
           )
