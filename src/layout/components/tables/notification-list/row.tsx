@@ -43,6 +43,11 @@ export function Row({
     return textLimited.length >= textLimit ? textLimited + ' ...' : textLimited
   }
 
+  function  handleOpenModal() {
+    if(notification.isActive) return
+    setIsModalUpdateOpen(true)
+  }
+
   const handleDeleteNotification = () => {
     try {
       setLoading(true)
@@ -88,7 +93,7 @@ export function Row({
         </td>
 
         <td>
-          <Switch active={notification.isActive} setModalUpdate={setIsModalUpdateOpen} />
+          <Switch active={notification.isActive} setModalUpdate={handleOpenModal} />
         </td>
 
         <td className='text-end d-flex justify-content-end px-4'>
@@ -131,7 +136,7 @@ export function Row({
             setIsModalUpdateOpen(false)
           }}
           onConfimation={handleUpdateNotification}
-          content='Você tem certeza que deseja alterar o status desta notificação?'
+          content='Deseja enviar essa notificação em push?'
           title='Confirmação'
         />
       </tr>

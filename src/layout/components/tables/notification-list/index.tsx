@@ -255,7 +255,7 @@ export function NotificationTable({
                       className={getColumnHeaderClasses('isActive', 'min-w-100px')}
                       onClick={() => handleOrdenation('isActive')}
                     >
-                      Ativo
+                      Push
                     </th>
                     <th
                       className='text-dark min-w-100px text-end rounded-end'
