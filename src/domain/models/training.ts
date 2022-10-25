@@ -5,6 +5,7 @@ export interface ITraining {
   name: string
   image: Blob
   zoomUserId: string
+  zoomUserName: string
   imageUrl: string
   level: string
   teacherId: string

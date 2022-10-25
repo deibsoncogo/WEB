@@ -15,5 +15,6 @@ export interface IRoomResponse{
     level: string;
     teacherName: string;
     zoomUserId: string;
+    zoomUserName: string;
     streamingRooms: IStreamingRoom[]
 }

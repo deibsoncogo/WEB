@@ -1,4 +1,3 @@
-import { string } from "yup";
 import { IStreamingRoom } from "./streamingRoom";
 
 
@@ -15,11 +14,12 @@ export class UpdateRoom{
     userId: string;
     level: string;
     zoomUserId?: string 
+    zoomUserName?: string
     streamingRooms?: IStreamingRoom[]
 
 
     constructor(id: string | undefined, name: string, description: string, discount: string, installments: string,
-        isActive: boolean, isChatActive: boolean, isStreamingRoomActive: boolean,  price: string, userId: string, level: string, zoomUserId?: string, streamings?: IStreamingRoom[])
+        isActive: boolean, isChatActive: boolean, isStreamingRoomActive: boolean,  price: string, userId: string, level: string, zoomUserId?: string, zoomUserName?: string, streamings?: IStreamingRoom[])
     {
         this.id = id;
         this.name = name;
@@ -33,6 +33,7 @@ export class UpdateRoom{
         this.userId = userId;   
         this.level = level;  
         this.zoomUserId = zoomUserId; 
+        this.zoomUserName = zoomUserName;
         this.streamingRooms = streamings;       
         
     }

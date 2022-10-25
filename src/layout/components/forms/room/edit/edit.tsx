@@ -11,12 +11,10 @@ import { ISelectOption } from '../../../../../domain/shared/interface/SelectOpti
 import { IGetRoom } from '../../../../../domain/usecases/interfaces/room/getCourse'
 import { IUpdateRoom } from '../../../../../domain/usecases/interfaces/room/updateRoom'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
-import { IGetZoomUsers } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { startStreamingRoomHelper } from '../../../../../helpers/startStreamingRoomHelper'
 import { maskedToMoney, onlyNums } from '../../../../formatters/currenceFormatter'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { Button } from '../../../buttons/CustomButton'
-import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
 import { FullLoading } from '../../../FullLoading/FullLoading'
 import { Input, InputCurrence, TextArea } from '../../../inputs'
 import { InputCheckbox } from '../../../inputs/input-checkbox'
@@ -30,10 +28,9 @@ type Props = {
   getRoom: IGetRoom
   updateRoom: IUpdateRoom
   getUsers: IGetAllUsers
-  getZoomUsers: IGetZoomUsers
 }
 
-export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers, getZoomUsers }: Props) {
+export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers }: Props) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
   const [loading, setLoading] = useState(true)
@@ -45,9 +42,9 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers, getZoomUsers
 
   const [errorMessage, setMessageError] = useState('')
 
-  const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
   const [zoomUserId, setZoomUserId] = useState<string | null>(null)
+  const [zoomUserName, setZoomUserName] = useState<string | null>(null)
 
   const [idDeletedStreamingRoom] = useState<string[]>([])
   const [streamRoomUpdate] = useState<IStreamingRoom[]>([])
@@ -124,6 +121,7 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers, getZoomUsers
       data.userId,
       data.level,
       data.zoomUserId,
+      data.zoomUserName,
       streamRoomUpdate
     )
 
@@ -161,10 +159,6 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers, getZoomUsers
         formRef.current?.setFieldValue('discount', maskedToMoney(data.discount))
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)
         formRef.current?.setFieldValue('installments', data.installments)
-        formRef.current?.setFieldValue(
-          'zoomUserId-label',
-          zoomUsersOptions.find(({ value }) => value === data.zoomUserId)?.label
-        )
         formRef.current?.setFieldValue('isActive', data.isActive)
 
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
@@ -175,22 +169,9 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers, getZoomUsers
         inputRefRoom.current.value = data.isStreamingRoomActive
         setIsToShowStreaming(data.isStreamingRoomActive)
         setStreamingRoom(startStreamingRoomHelper(data?.streamingRooms))
-        getZoomUsers
-          .get()
-          .then((zoomListUsers) => {
-            if (zoomListUsers) {
-              const options: ISelectOption[] = zoomListUsers.map((user) => ({
-                label: `${user.first_name} ${user.last_name}`,
-                value: user.id,
-              }))
-              setZoomUsersOptions(options)
-            }
-          })
-          .finally(() => {
-            setZoomUserId(data.zoomUserId)
-
-            setLoading(false)
-          })
+        setZoomUserId(data.zoomUserId)
+        setZoomUserName(data.zoomUserName)
+        setLoading(false)
       })
     }
 
@@ -200,10 +181,11 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers, getZoomUsers
   }, [])
 
   useEffect(() => {
-    if (zoomUserId) {
+    if (zoomUserId && zoomUserName) {
       formRef.current?.setFieldValue('zoomUserId', zoomUserId)
+      formRef.current?.setFieldValue('zoomUserId-label', zoomUserName)
     }
-  }, [zoomUserId, zoomUsersOptions])
+  }, [zoomUserId, zoomUserName])
 
   return (
     <>
@@ -263,7 +245,6 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers, getZoomUsers
             <RoomInternalTable
               formRef={formRef}
               streamingRoomArray={streamingRoom}
-              zoomUsersOptions={zoomUsersOptions}
               idDeletedStreamingRoom={idDeletedStreamingRoom}
               streamRoomUpdate={streamRoomUpdate}
             />

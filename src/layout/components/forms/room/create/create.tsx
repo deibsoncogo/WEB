@@ -11,6 +11,7 @@ import { ISelectOption } from '../../../../../domain/shared/interface/SelectOpti
 import { ICreateRoom } from '../../../../../domain/usecases/interfaces/room/createRoom'
 import { IGetAllUsers } from '../../../../../domain/usecases/interfaces/user/getAllUsers'
 import { IGetZoomUsers, IZoomUser } from '../../../../../domain/usecases/interfaces/zoom/getZoomUsers'
+import { getZoomUserName } from '../../../../../utils/getZoomUserName'
 import { onlyNums } from '../../../../formatters/currenceFormatter'
 import { getAsyncTeachersToSelectInput } from '../../../../templates/trainings/utils/getAsyncTeachersToSelectInput'
 import { Button } from '../../../buttons/CustomButton'
@@ -38,6 +39,7 @@ export function FormCreateRoom({ createRoom, getUsers, getZoomUsers }: Props) {
   const [errorMessage, setMessageError] = useState('')
   const [streamingRoom] = useState<IStreamingRoom[]>([])
   const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
+  const [zoomUsersList, setZoomUsersList] = useState<IZoomUser[]>([])
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
 
   async function verifyErrorStreamingRoom(data: IFormRoom) {
@@ -107,6 +109,7 @@ export function FormCreateRoom({ createRoom, getUsers, getZoomUsers }: Props) {
       data.userId,
       data.level,
       data.itemRoom ? data.zoomUserId : undefined,
+      data.itemRoom ? data.zoomUserName = getZoomUserName(zoomUsersList, data.zoomUserId) : undefined,
       data.itemRoom ? streamingRoom : undefined
     )
 
@@ -141,6 +144,7 @@ export function FormCreateRoom({ createRoom, getUsers, getZoomUsers }: Props) {
           value: user.id,
         }))
 
+        setZoomUsersList(zoomUsers)
         setZoomUsersOptions(options)
       }
     } catch (error) {

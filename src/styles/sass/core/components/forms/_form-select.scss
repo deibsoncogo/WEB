@@ -50,4 +50,8 @@
       color: $input-color;
     }
   }
+
+  &.form-select-disabled {
+    background-image: none !important;
+  }
 }

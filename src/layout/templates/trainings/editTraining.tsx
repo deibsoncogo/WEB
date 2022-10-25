@@ -6,11 +6,9 @@ import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
 import { IStreaming } from '../../../domain/models/streaming'
 import { ITraining } from '../../../domain/models/training'
-import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IEditTraining } from '../../../domain/usecases/interfaces/trainings/editTraining'
 import { IGetTraining, IGetTrainingParams } from '../../../domain/usecases/interfaces/trainings/getTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
-import { IGetZoomUsers, IZoomUser } from '../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditTraining } from '../../components/forms/trainings/edit'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
@@ -25,20 +23,17 @@ type EditTrainingPageProps = {
   remoteGetTeachers: IGetAllUsers
   remoteEditTraining: IEditTraining
   remoteGetTraining: IGetTraining
-  remoteGetZoomUsers: IGetZoomUsers
 }
 
 function EditTrainingPageTemplate({
   remoteGetTeachers,
   remoteEditTraining,
-  remoteGetTraining,
-  remoteGetZoomUsers,
+  remoteGetTraining
 }: EditTrainingPageProps) {
   const router = useRouter()
   const { id: trainingId } = router.query
 
   const [streamList, setStreamList] = useState<IStreaming[]>([])
-  const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
   const [loadingPageData, setLoadingPageData] = useState(true)
 
   const formRef = useRef<FormHandles>(null)
@@ -57,13 +52,6 @@ function EditTrainingPageTemplate({
     error: getTrainingError,
     cleanUp: getTrainingCleanUp,
   } = useRequest<ITraining, IGetTrainingParams>(remoteGetTraining.get)
-
-  const {
-    makeRequest: getZoomUsers,
-    data: zoomUsers,
-    error: getZoomUsersError,
-    cleanUp: getZoomUsersCleanUp,
-  } = useRequest<IZoomUser[]>(remoteGetZoomUsers.get)
 
   async function handleFormSubmit(data: ITraining) {
     data.price = onlyNums(data.price)
@@ -120,10 +108,6 @@ function EditTrainingPageTemplate({
   }
 
   useEffect(() => {
-    getZoomUsers()
-  }, [])
-
-  useEffect(() => {
     if (trainingEditedSuccessful) {
       toast.success('Treinamento editado com sucesso!')
       cleanUpGetTraining()
@@ -144,6 +128,7 @@ function EditTrainingPageTemplate({
         imageUrl,
         installments,
         zoomUserId,
+        zoomUserName,
         isActive,
       } = trainingData
       const formattedStreamings = formatStreamingList(streamings)
@@ -163,6 +148,7 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDateNew.setTime(deactiveChatDateNew.getTime() + 1000 * 60 * 60 * 3)))
       formRef.current?.setFieldValue('imagePreview', imageUrl)
       formRef.current?.setFieldValue('zoomUserId', zoomUserId)
+      formRef.current?.setFieldValue('zoomUserId-label', zoomUserName)
       formRef.current?.setFieldValue('active', isActive)
       setStreamList(formattedStreamings)
 
@@ -170,16 +156,8 @@ function EditTrainingPageTemplate({
       getTrainingCleanUp()
     }
 
-    if (zoomUsers) {
-      const options: ISelectOption[] = zoomUsers.map((user) => ({
-        label: `${user.first_name} ${user.last_name}`,
-        value: user.id,
-      }))
-      setZoomUsersOptions(options)
-      getTraining({ id: trainingId as string })
-      getZoomUsersCleanUp()
-    }
-  }, [trainingEditedSuccessful, zoomUsers, trainingData])
+    getTraining({ id: trainingId as string })
+  }, [trainingEditedSuccessful, trainingData])
 
   useEffect(() => {
     if (getTrainingError) {
@@ -191,12 +169,7 @@ function EditTrainingPageTemplate({
       toast.error(editTrainingError + '!')
       setLoadingPageData(false)
     }
-
-    if (getZoomUsersError) {
-      toast.error(getZoomUsersError + '!')
-      setLoadingPageData(false)
-    }
-  }, [editTrainingError, getTrainingError, getZoomUsersError])
+  }, [editTrainingError, getTrainingError])
 
   return (
     <>
@@ -210,7 +183,6 @@ function EditTrainingPageTemplate({
         onCancel={handleCancel}
         searchTeachers={handleGetAsyncTeachersToSelectInput}
         loadingSubmit={loadingTrainingEdition}
-        zoomUsersOptions={zoomUsersOptions}
       />
     </>
   )
