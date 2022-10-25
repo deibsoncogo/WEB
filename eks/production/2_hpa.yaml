@@ -4,8 +4,8 @@ metadata:
   name: atpalex-web-hpa
   namespace: prod
 spec:
-  minReplicas: 1
-  maxReplicas: 2
+  minReplicas: 2
+  maxReplicas: 10
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
