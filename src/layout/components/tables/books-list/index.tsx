@@ -62,7 +62,12 @@ export function BooksTable({ books, paginationHook, getBooks, handleRefresher }:
                     >
                       Ativo
                     </th>
-                    <th className='text-dark min-w-50px text-end rounded-end'>Ação</th>
+                    <th
+                      className='text-dark min-w-50px text-end rounded-end'
+                      style={{ verticalAlign: 'middle', paddingRight: '3.8rem' }}
+                    >
+                      Ação
+                    </th>
                   </tr>
                 </thead>
 

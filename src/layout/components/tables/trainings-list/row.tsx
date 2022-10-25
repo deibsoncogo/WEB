@@ -141,7 +141,7 @@ export function Row({
           setIsDeleteCategoryModalOpen(false)
         }}
         onConfimation={handleDeleteTraining}
-        content='Você tem ceterza que deseja excluir este treinamento??'
+        content='Você tem ceterza que deseja excluir este treinamento?'
         title='Excluir'
       />
 

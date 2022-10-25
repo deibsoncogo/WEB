@@ -228,7 +228,12 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                     >
                       Status
                     </th>
-                    <th className='text-dark min-w-80px text-end rounded-end'>Ação</th>
+                    <th
+                      className='text-dark min-w-80px text-end rounded-end'
+                      style={{ verticalAlign: 'middle', paddingRight: '3rem' }}
+                    >
+                      Ação
+                    </th>
                   </tr>
                 </thead>
 

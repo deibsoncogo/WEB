@@ -166,7 +166,12 @@ export function RoomsTable({ getAllRooms, getAllTeacherRooms, toggleStatus, dele
                     >
                       Ativo
                     </th>
-                    <th className='text-dark min-w-80px text-end rounded-end'>Ação</th>
+                    <th
+                      className='text-dark min-w-80px text-end rounded-end'
+                      style={{ verticalAlign: 'middle', paddingRight: '3.8rem' }}
+                    >
+                      Ação
+                    </th>
                   </tr>
                 </thead>
 

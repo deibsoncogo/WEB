@@ -240,7 +240,10 @@ export function UsersTable({
                       >
                         Endereço
                       </th>
-                      <th className={getColumnHeaderClasses('actions') + ' rounded-end text-end'}>
+                      <th
+                        className='text-dark min-w-50px text-end rounded-end'
+                        style={{ verticalAlign: 'middle', paddingRight: '6.5rem' }}
+                      >
                         Ação
                       </th>
                     </tr>

@@ -95,7 +95,7 @@ export function CouponsTable({
                     </th>
                     <th
                       className='text-dark text-end rounded-end align-middle'
-                      style={{ minWidth: '100px' }}
+                      style={{ minWidth: '100px', paddingRight: '3rem' }}
                     >
                       Ação
                     </th>

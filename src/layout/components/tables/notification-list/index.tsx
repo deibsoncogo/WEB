@@ -40,7 +40,7 @@ let socket: Socket | null
 export function NotificationTable({
   getAllNotification,
   toggleStatus,
-  joinNotification
+  joinNotification,
 }: NotificationTableProps) {
   const paginationHook = usePagination()
   const { pagination, setTotalPage, handleOrdenation, getClassToCurrentOrderColumn } =
@@ -103,13 +103,17 @@ export function NotificationTable({
   const handleCreateNotification = (data: IFormNotification) => {
     try {
       setLoadingAction(true)
-      socket?.emit(SocketNotificationEvents.CreateNotification, { ...data, isActive: false }, () => {
-        router.push(appRoutes.ALERTS)
-        toast.success('Notificação cadastrada com sucesso!')
-        setLoadingAction(false)
-        handleCloseModalNotification()
-        handleRefresher()
-      })
+      socket?.emit(
+        SocketNotificationEvents.CreateNotification,
+        { ...data, isActive: false },
+        () => {
+          router.push(appRoutes.ALERTS)
+          toast.success('Notificação cadastrada com sucesso!')
+          setLoadingAction(false)
+          handleCloseModalNotification()
+          handleRefresher()
+        }
+      )
     } catch {
       toast.error('Não foi possível criar a notificação!')
     }
@@ -118,14 +122,18 @@ export function NotificationTable({
   const handleUpdateNotification = (data: IFormNotification) => {
     try {
       setLoadingAction(true)
-      socket?.emit(SocketNotificationEvents.UpdateNotification, { id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive, ...data }, () => {
-        router.push(appRoutes.ALERTS)
-        toast.success('Notificação editada com sucesso!')
-        setLoadingAction(false)
-        setNotificationToUpdate(undefined)
-        handleCloseModalNotification()
-        handleRefresher()
-      })
+      socket?.emit(
+        SocketNotificationEvents.UpdateNotification,
+        { id: notificationToUpdate?.id, isActive: notificationToUpdate?.isActive, ...data },
+        () => {
+          router.push(appRoutes.ALERTS)
+          toast.success('Notificação editada com sucesso!')
+          setLoadingAction(false)
+          setNotificationToUpdate(undefined)
+          handleCloseModalNotification()
+          handleRefresher()
+        }
+      )
     } catch {
       toast.error('Não foi possível atualizar a notificação!')
     }
@@ -249,7 +257,12 @@ export function NotificationTable({
                     >
                       Ativo
                     </th>
-                    <th className='text-dark min-w-100px text-end rounded-end'>Ação</th>
+                    <th
+                      className='text-dark min-w-100px text-end rounded-end'
+                      style={{ verticalAlign: 'middle', paddingRight: '3.5rem' }}
+                    >
+                      Ação
+                    </th>
                   </tr>
                 </thead>
 
