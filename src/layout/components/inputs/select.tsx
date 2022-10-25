@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { useField } from '@unform/core'
@@ -9,6 +9,7 @@ type SelectProps = {
   label?: string
   classes?: string
   onChange?: (value: string) => void
+  disabled?: boolean
 }
 
 type OptionsState = {
@@ -16,7 +17,7 @@ type OptionsState = {
   selectedOption?: ISelectOption | null
 }
 
-export function Select({ name, options = [], label, onChange }: SelectProps) {
+export function Select({ name, options = [], label, onChange, disabled }: SelectProps) {
   const selectRef = useRef<HTMLInputElement>(null)
   const textInputRef = useRef<HTMLInputElement>(null)
 
@@ -115,7 +116,7 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
             type='text'
             name={labelField}
             style={{ zIndex: 2 }}
-            className='form-select form-select-lg form-select-solid'
+            className={`form-select form-select-lg form-select-solid ${disabled && 'form-select-disabled'}`}
             placeholder='Selecione'
             onChangeCapture={handleOnChangeCapture}
             ref={textInputRef}
@@ -123,6 +124,7 @@ export function Select({ name, options = [], label, onChange }: SelectProps) {
               e.stopPropagation()
               openOptions()
             }}
+            disabled={disabled}
           />
         </div>
 
