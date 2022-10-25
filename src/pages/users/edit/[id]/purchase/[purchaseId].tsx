@@ -8,9 +8,7 @@ import { HeaderWrapper } from '../../../../../layout/components/header/HeaderWra
 
 const Purchase: NextPage = () => {
   const router = useRouter()
-  const { id, purchaseId } = router.query
-
-  useEffect(() => {}, [purchaseId])
+  const { purchaseId } = router.query
 
   return (
     <>
@@ -26,7 +24,7 @@ const Purchase: NextPage = () => {
 
           <div id='kt_content_container' className='container'>
             <div className=' bg-white rounded shadow-sm p-10 p-lg-15 mx-auto'>
-              <MakePurchaseView userId={id as string} transactionId={purchaseId as string} />
+              <MakePurchaseView transactionId={purchaseId as string} />
             </div>
           </div>
         </div>

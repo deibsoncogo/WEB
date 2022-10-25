@@ -1,21 +1,14 @@
 import { useState } from 'react'
+import { Product } from '../../../../domain/models/product'
+import { ITransactionProduct } from '../../../../domain/models/transactionPagarMe'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 import { ItemRow } from './row'
 
 type Props = {
-  items: {
-    id: string
-    name: string
-    price: number
-    quantity: number
-    total: number
-  }[]
+  items: ITransactionProduct[]
 }
 
-export function PurchaseItems({ items }: Props) {
-  const [error, setError] = useState<any>()
-  const [loading, setLoading] = useState(false)
-
+export function PurchaseItems({ items = [] }: Props) {
   return (
     <>
       <table className='table align-middle gs-0 gy-4 mb-10'>
@@ -28,16 +21,15 @@ export function PurchaseItems({ items }: Props) {
           </tr>
         </thead>
         <tbody>
-          {!loading &&
-            items?.map((item) => (
-              <ItemRow
-                key={item.id}
-                name={item.name}
-                price={item.price}
-                quantity={item.quantity}
-                total={item.total}
-              />
-            ))}
+          {items?.map((item, index) => (
+            <ItemRow
+              key={index}
+              name={item.name}
+              price={item.amount}
+              quantity={item.quantity}
+              total={item.total}
+            />
+          ))}
         </tbody>
       </table>
       <div>
