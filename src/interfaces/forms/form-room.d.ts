@@ -12,4 +12,5 @@ interface IFormRoom {
   userId: string;
   level: string;    
   zoomUserId: string 
+  zoomUserName: string
 }
