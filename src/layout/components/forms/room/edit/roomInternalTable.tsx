@@ -1,7 +1,6 @@
 import { FormHandles } from '@unform/core'
 import { RefObject, useState } from 'react'
 import { IStreamingRoom } from '../../../../../domain/models/streamingRoom'
-import { ISelectOption } from '../../../../../domain/shared/interface/SelectOption'
 import { formatDate, formatTime, KTSVG } from '../../../../../helpers'
 import { dateMask } from '../../../../formatters/dateFormatter'
 import { ErrorMandatoryItem } from '../../../errors/errorMandatoryItem'
@@ -11,7 +10,6 @@ import { Row } from './row'
 type props = {
   formRef: RefObject<FormHandles>
   streamingRoomArray: IStreamingRoom[]
-  zoomUsersOptions: ISelectOption[]
 
   idDeletedStreamingRoom: string[]
   streamRoomUpdate: IStreamingRoom[]
@@ -20,7 +18,6 @@ type props = {
 export default function RoomInternalTable({
   formRef,
   streamingRoomArray,
-  zoomUsersOptions,
   idDeletedStreamingRoom,
   streamRoomUpdate,
 }: props) {
@@ -69,7 +66,7 @@ export default function RoomInternalTable({
 
       <div className='d-flex flex-row align-middle gap-5'>
         <div className='col-3'>
-          <Select name='zoomUserId' label='Usuário do Zoom' options={zoomUsersOptions} />
+          <Select name='zoomUserId' label='Usuário do Zoom' disabled />
         </div>
 
         <DatePicker
