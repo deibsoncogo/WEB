@@ -44,6 +44,7 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers }: Props) {
 
   const [defaultTeacherOptions, setDefaultTeacherOptions] = useState<ISelectOption[]>([])
   const [zoomUserId, setZoomUserId] = useState<string | null>(null)
+  const [zoomUserName, setZoomUserName] = useState<string | null>(null)
 
   const [idDeletedStreamingRoom] = useState<string[]>([])
   const [streamRoomUpdate] = useState<IStreamingRoom[]>([])
@@ -120,6 +121,7 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers }: Props) {
       data.userId,
       data.level,
       data.zoomUserId,
+      data.zoomUserName,
       streamRoomUpdate
     )
 
@@ -157,10 +159,6 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers }: Props) {
         formRef.current?.setFieldValue('discount', maskedToMoney(data.discount))
         formRef.current?.setFieldValue('imagePreview', data.imageUrl)
         formRef.current?.setFieldValue('installments', data.installments)
-        formRef.current?.setFieldValue(
-          'zoomUserId-label',
-          'a'
-        )
         formRef.current?.setFieldValue('isActive', data.isActive)
 
         let inputRefChat = formRef.current?.getFieldRef('itemChat')
@@ -172,6 +170,7 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers }: Props) {
         setIsToShowStreaming(data.isStreamingRoomActive)
         setStreamingRoom(startStreamingRoomHelper(data?.streamingRooms))
         setZoomUserId(data.zoomUserId)
+        setZoomUserName(data.zoomUserName)
         setLoading(false)
       })
     }
@@ -182,10 +181,11 @@ export function FormUpdateRoom({ id, getRoom, updateRoom, getUsers }: Props) {
   }, [])
 
   useEffect(() => {
-    if (zoomUserId) {
+    if (zoomUserId && zoomUserName) {
       formRef.current?.setFieldValue('zoomUserId', zoomUserId)
+      formRef.current?.setFieldValue('zoomUserId-label', zoomUserName)
     }
-  }, [zoomUserId])
+  }, [zoomUserId, zoomUserName])
 
   return (
     <>
