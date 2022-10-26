@@ -7,7 +7,10 @@ import { appRoutes } from '../../../application/routing/routes'
 import { IStreaming } from '../../../domain/models/streaming'
 import { ITraining } from '../../../domain/models/training'
 import { IEditTraining } from '../../../domain/usecases/interfaces/trainings/editTraining'
-import { IGetTraining, IGetTrainingParams } from '../../../domain/usecases/interfaces/trainings/getTraining'
+import {
+  IGetTraining,
+  IGetTrainingParams,
+} from '../../../domain/usecases/interfaces/trainings/getTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditTraining } from '../../components/forms/trainings/edit'
@@ -28,7 +31,7 @@ type EditTrainingPageProps = {
 function EditTrainingPageTemplate({
   remoteGetTeachers,
   remoteEditTraining,
-  remoteGetTraining
+  remoteGetTraining,
 }: EditTrainingPageProps) {
   const router = useRouter()
   const { id: trainingId } = router.query
@@ -108,6 +111,12 @@ function EditTrainingPageTemplate({
   }
 
   useEffect(() => {
+    if (trainingId) {
+      getTraining({ id: trainingId as string })
+    }
+  }, [trainingId])
+
+  useEffect(() => {
     if (trainingEditedSuccessful) {
       toast.success('Treinamento editado com sucesso!')
       cleanUpGetTraining()
@@ -144,8 +153,14 @@ function EditTrainingPageTemplate({
       formRef.current?.setFieldValue('level', level)
       formRef.current?.setFieldValue('price', maskedToMoney(price))
       formRef.current?.setFieldValue('discount', maskedToMoney(discount))
-      formRef.current?.setFieldValue('trainingEndDate', new Date(trainingEndDateNew.setTime(trainingEndDateNew.getTime() + 1000 * 60 * 60 * 3)))
-      formRef.current?.setFieldValue('deactiveChatDate', new Date(deactiveChatDateNew.setTime(deactiveChatDateNew.getTime() + 1000 * 60 * 60 * 3)))
+      formRef.current?.setFieldValue(
+        'trainingEndDate',
+        new Date(trainingEndDateNew.setTime(trainingEndDateNew.getTime() + 1000 * 60 * 60 * 3))
+      )
+      formRef.current?.setFieldValue(
+        'deactiveChatDate',
+        new Date(deactiveChatDateNew.setTime(deactiveChatDateNew.getTime() + 1000 * 60 * 60 * 3))
+      )
       formRef.current?.setFieldValue('imagePreview', imageUrl)
       formRef.current?.setFieldValue('zoomUserId', zoomUserId)
       formRef.current?.setFieldValue('zoomUserId-label', zoomUserName)
@@ -155,8 +170,6 @@ function EditTrainingPageTemplate({
       setLoadingPageData(false)
       getTrainingCleanUp()
     }
-
-    getTraining({ id: trainingId as string })
   }, [trainingEditedSuccessful, trainingData])
 
   useEffect(() => {
@@ -170,6 +183,8 @@ function EditTrainingPageTemplate({
       setLoadingPageData(false)
     }
   }, [editTrainingError, getTrainingError])
+
+  console.log('a')
 
   return (
     <>
@@ -189,4 +204,3 @@ function EditTrainingPageTemplate({
 }
 
 export { EditTrainingPageTemplate }
-
