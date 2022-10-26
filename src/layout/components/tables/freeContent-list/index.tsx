@@ -153,9 +153,7 @@ export function FreeContentTable({ getAllFreeContent, deleteFreeContent }: FreeC
 
         {loading && <Loading />}
 
-        <div className='card d-flex flex-row justify-content-between align-items-center ps-9 pe-9 pb-5'>
-          <div />
-
+        <div className='card d-flex flex-row justify-content-end align-items-center ps-9 pe-9 pb-5'>
           <Pagination paginationHook={paginationHook} />
         </div>
       </div>
