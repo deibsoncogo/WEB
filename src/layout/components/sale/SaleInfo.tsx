@@ -46,6 +46,10 @@ export function PageSaleInfo({ id, getSale }: Props) {
     }
   }, [])
 
+  if (!sale) {
+    return null
+  }
+
   return (
     <div className='border border-secondary p-5'>
       <div className='mb-10'>
@@ -111,7 +115,7 @@ export function PageSaleInfo({ id, getSale }: Props) {
                 Pix Copia e Cola:
                 <span className='text-black-50 fs-5 fw-light'>{sale.qr_code}</span>
               </span>
-              
+
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 {sale.qr_code_url && (
                   <Link href={sale.qr_code_url}>
