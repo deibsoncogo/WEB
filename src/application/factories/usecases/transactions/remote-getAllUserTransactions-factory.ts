@@ -4,6 +4,6 @@ import { makeApiUrl, makeAxiosHttpClient } from '../../http'
 
 export const makeRemoteGetAllUserTransactions = (): IGetAllUserTransactions =>
   new RemoteGetAllUserTransactions(
-    makeApiUrl('transaction/currentUser/show'),
+    makeApiUrl('transaction/user'),
     makeAxiosHttpClient()
   )

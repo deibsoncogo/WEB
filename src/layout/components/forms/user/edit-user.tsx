@@ -225,7 +225,7 @@ export function FormEditUser({
 
   useEffect(() => {
     remoteGetAllUserTransactions
-      .getAll()
+      .getAll(id)
       .then((response) => {
         setPurchases(response)
       })
