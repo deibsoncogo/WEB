@@ -74,7 +74,7 @@ export function PageSaleInfo({ id, getSale }: Props) {
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 {sale.pdf && (
                   <Link href={sale?.pdf}>
-                    <a className='fs-4'>Baixar boleto</a>
+                    <a className='fs-4' target='_black'>Baixar boleto</a>
                   </Link>
                 )}
               </span>
@@ -101,7 +101,7 @@ export function PageSaleInfo({ id, getSale }: Props) {
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 {sale.qr_code_url && (
                   <Link href={sale.qr_code_url}>
-                    <a className='fs-4'>Visualizar código QR</a>
+                    <a className='fs-4' target='_black'>Visualizar código QR</a>
                   </Link>
                 )}
               </span>
