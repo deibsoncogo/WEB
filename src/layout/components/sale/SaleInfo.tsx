@@ -17,28 +17,32 @@ type Props = {
 export function PageSaleInfo({ id, getSale }: Props) {
   const [sale, setSale] = useState<ISaleInformation>()
 
+  const saleStatusMap: { [key: string]: string } = {
+    canceled: 'Cancelado',
+    failed: 'Negado',
+    paid: 'Pago',
+    pending: 'Aguardando pagamento',
+  }
+
+  const salePaymentMethodMap: { [key: string]: string } = {
+    multi_method: '2 Cartões de Crédito',
+    credit_card: 'Cartão de Crédito',
+    boleto: 'Boleto',
+    pix: 'Pix'
+  }
+
   useEffect(() => {
     if (typeof id === 'string') {
-      getSale
-        .get(id)
+      getSale.get(id)
         .then((sale) => {
-          const saleStatusMap: {
-            [key: string]: string
-          } = {
-            pending: 'Pendente',
-            failed: 'Falhou',
-            canceled: 'Cancelada',
-            paid: 'Paid',
-          }
-          const salePaymentMethodMap: {
-            [key: string]: string
-          } = { credit_card: 'Cartão de Crédito', boleto: 'Boleto', pix: 'Pix' }
-
           sale.status = saleStatusMap[sale.status] || sale.status
           sale.payment_method = salePaymentMethodMap[sale.payment_method] || sale.payment_method
+
           setSale(sale)
         })
-        .catch(() => toast.error('Não foi possível retornar os detalhes da venda.'))
+        .catch(() => {
+          toast.error('Não foi possível retornar os detalhes da venda')
+        })
     }
   }, [])
 
