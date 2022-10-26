@@ -50,31 +50,37 @@ export function PageSaleInfo({ id, getSale }: Props) {
     <div className='border border-secondary p-5'>
       <div className='mb-10'>
         <span className='text-dark fw-bolder d-block fs-1 mb-10'>Informações da Transação</span>
+
         <div>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Transação:
-            <span className='text-black-50 fs-5 fw-light'>{id}</span>
+            <span style={{ wordBreak: 'break-all' }} className='text-black-50 fs-5 fw-light'>{id}</span>
           </span>
+
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Data:
             <span className='text-black-50 fs-5 fw-light'>
               {sale?.date && formatDate(formatDateToUTC(sale?.date), 'DD/MM/YYYY')}
             </span>
           </span>
+
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Status:
             <span className='text-black-50 fs-5 fw-light'>{sale?.status}</span>
           </span>
+
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Método de pagamento:
             <span className='text-black-50 fs-5 fw-light'>{sale?.payment_method}</span>
           </span>
+
           {sale?.payment_method === 'Boleto' && (
             <>
-              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+              <span style={{ whiteSpace: 'nowrap' }} className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Código de barras:
-                <span className='text-black-50 fs-5 fw-light'>{sale.bar_code}</span>
+                <span style={{ whiteSpace: 'normal', wordBreak: 'break-all' }} className='text-black-50 fs-5 fw-light'>{sale.bar_code}</span>
               </span>
+
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 {sale.pdf && (
                   <Link href={sale?.pdf}>
@@ -84,24 +90,28 @@ export function PageSaleInfo({ id, getSale }: Props) {
               </span>
             </>
           )}
+
           {sale?.payment_method === 'Cartão de Crédito' && (
             <>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Cartão:
                 <span className='text-black-50 fs-5 fw-light'>{`**** **** **** ${sale.last_four_digits}`}</span>
               </span>
+
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Número de Parcelas:
                 <span className='text-black-50 fs-5 fw-light'>{sale.installments}</span>
               </span>
             </>
           )}
+
           {sale?.payment_method === 'Pix' && (
             <>
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Pix Copia e Cola:
                 <span className='text-black-50 fs-5 fw-light'>{sale.qr_code}</span>
               </span>
+              
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 {sale.qr_code_url && (
                   <Link href={sale.qr_code_url}>
@@ -112,6 +122,7 @@ export function PageSaleInfo({ id, getSale }: Props) {
             </>
           )}
         </div>
+
         <div className='w-100'>
           <span className='text-dark fw-bolder d-block fs-1 mb-10'>
             {sale?.shipping_address ? 'Informações do Usuário e Entrega' : 'Informações do Usuário'}
