@@ -19,6 +19,7 @@ export function getStreamingDate(formRef: RefObject<FormHandles>): IStreaming | 
     return
   }
 
+  formRef.current?.clearField('zoomUserId-label')
   formRef.current?.clearField('streamingDate')
   formRef.current?.clearField('streamingHour')
   formRef.current?.setFieldError('streamingDate', '')

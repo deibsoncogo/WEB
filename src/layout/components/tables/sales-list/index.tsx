@@ -237,7 +237,7 @@ export function SalesTable({ getAllSales, exportSalesToXLSX }: SalesTableProps) 
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody className=''>
                   {!loading &&
                     sales?.map((item) => (
                       <Row

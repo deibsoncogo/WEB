@@ -93,7 +93,7 @@ export function TrainingsTable({
               </table>
             </div>
           </div>
-          <div className='ms-auto'>
+          <div className='card d-flex flex-row justify-content-end align-items-center ps-9 pe-9 pb-5'>
             <Pagination paginationHook={paginationHook} />
           </div>
         </>

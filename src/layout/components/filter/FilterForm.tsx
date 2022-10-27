@@ -1,16 +1,15 @@
-import { forwardRef } from 'react'
-import { Form } from '@unform/web'
 import { FormHandles } from '@unform/core'
-
+import { Form } from '@unform/web'
+import { forwardRef } from 'react'
+import { SalesFilter } from '../../../domain/usecases/interfaces/sale/getAllSales'
 import { InputMasked, SelectMulti } from '../inputs'
 import { salesTypeOptions } from '../tables/sales-list/salesTypeOptions'
-import { SalesFilter } from '../../../domain/usecases/interfaces/sale/getAllSales'
 
 type FilterFormProps = {
   handleForm: (data: SalesFilter) => void
 }
 
-const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
+export const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
   const { handleForm } = props
 
   const customStyles = {
@@ -23,38 +22,41 @@ const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) => {
 
   return (
     <>
-      <Form autoComplete='off' ref={ref} onSubmit={handleForm} id='filter-form'>
-        <div className='d-flex flex-row gap-5'>
-          <SelectMulti
-            defaultOptions={salesTypeOptions}
-            name='status'
-            label='Status'
-            classes='h-75px w-50'
-            customStyles={customStyles}
-          />
+      <Form autoComplete='off' ref={ref} onSubmit={handleForm} id='filter-form' className='card'>
+        <div className='card-header border-0 gap-5 m-0 p-0'>
+          <span className='d-flex flex-row gap-5 card-title'>
+            <SelectMulti
+              defaultOptions={salesTypeOptions}
+              name='status'
+              label='Status'
+              classes='h-75px w-50'
+              customStyles={customStyles}
+            />
+          </span>
 
-          <InputMasked
-            style={{ width: '150px' }}
-            classes='h-75px'
-            name='initialDate'
-            label='Data Inicial'
-            placeholder='00/00/0000'
-            mask='99/99/9999'
-          />
+          <span className='d-flex flex-row gap-5 card-title'>
+            <InputMasked
+              style={{ width: '150px' }}
+              classes='h-75px'
+              name='initialDate'
+              label='Data Inicial'
+              placeholder='00/00/0000'
+              mask='99/99/9999'
+            />
 
-          <InputMasked
-            style={{ width: '150px' }}
-            classes='h-75px'
-            name='finalDate'
-            label='Data Final'
-            placeholder='00/00/0000'
-            mask='99/99/9999'
-          />
+            <InputMasked
+              style={{ width: '150px' }}
+              classes='h-75px'
+              name='finalDate'
+              label='Data Final'
+              placeholder='00/00/0000'
+              mask='99/99/9999'
+            />
+          </span>
         </div>
       </Form>
     </>
   )
 })
-FilterForm.displayName = 'FilterForm'
 
-export { FilterForm }
+FilterForm.displayName = 'FilterForm'
