@@ -54,13 +54,6 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
   const streamingsString = JSON.stringify(streamings)
   formData.append('streamings', streamingsString)
 
-  /* for (let p of formData) {
-    let name = p[0];
-    let value = p[1];
-
-    console.log(name, value)
-  } */
-
   return formData
 }
 
