@@ -9,9 +9,9 @@ export class RemoteGetAllUserTransactions implements IGetAllUserTransactions {
     private readonly httpClient: HttpClient<ITransaction[]>
   ) {}
 
-  getAll = async () => {
+  getAll = async (id: string) => {
     const httpResponse = await this.httpClient.request({
-      url: this.url,
+      url: `${this.url}/${id}`,
       method: 'get',
     })
     switch (httpResponse.statusCode) {

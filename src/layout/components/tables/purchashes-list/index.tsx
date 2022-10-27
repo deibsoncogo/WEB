@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { ITransaction } from '../../../../domain/models/transaction'
 import { Row } from './row'
 
