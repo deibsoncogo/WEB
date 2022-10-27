@@ -6,12 +6,11 @@ import { useRequest } from '../../../application/hooks/useRequest'
 import { appRoutes } from '../../../application/routing/routes'
 import { IStreaming } from '../../../domain/models/streaming'
 import { ITraining } from '../../../domain/models/training'
+import { ISelectOption } from '../../../domain/shared/interface/SelectOption'
 import { IEditTraining } from '../../../domain/usecases/interfaces/trainings/editTraining'
-import {
-  IGetTraining,
-  IGetTrainingParams,
-} from '../../../domain/usecases/interfaces/trainings/getTraining'
+import { IGetTraining, IGetTrainingParams } from '../../../domain/usecases/interfaces/trainings/getTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
+import { IGetZoomUsers, IZoomUser } from '../../../domain/usecases/interfaces/zoom/getZoomUsers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditTraining } from '../../components/forms/trainings/edit'
 import { trainingFormSchema } from '../../components/forms/trainings/type'
@@ -26,20 +25,26 @@ type EditTrainingPageProps = {
   remoteGetTeachers: IGetAllUsers
   remoteEditTraining: IEditTraining
   remoteGetTraining: IGetTraining
+  remoteGetZoomUsers: IGetZoomUsers
 }
 
 function EditTrainingPageTemplate({
-  remoteGetTeachers,
-  remoteEditTraining,
-  remoteGetTraining,
+  remoteGetTeachers, remoteEditTraining, remoteGetTraining, remoteGetZoomUsers,
 }: EditTrainingPageProps) {
   const router = useRouter()
   const { id: trainingId } = router.query
 
   const [streamList, setStreamList] = useState<IStreaming[]>([])
   const [loadingPageData, setLoadingPageData] = useState(true)
+  const [zoomUsersOptions, setZoomUsersOptions] = useState<ISelectOption[]>([])
 
   const formRef = useRef<FormHandles>(null)
+
+  const {
+    makeRequest: getZoomUsers,
+    data: zoomUsers,
+    error: getZoomUsersError,
+  } = useRequest<IZoomUser[]>(remoteGetZoomUsers.get)
 
   const {
     makeRequest: editTraining,
@@ -109,6 +114,27 @@ function EditTrainingPageTemplate({
       }
     })
   }
+
+  useEffect(() => {
+    getZoomUsers()
+  }, [])
+
+  useEffect(() => {
+    if (zoomUsers) {
+      const options: ISelectOption[] = zoomUsers.map((user) => ({
+        label: `${user.first_name} ${user.last_name}`,
+        value: user.id,
+      }))
+      
+      setZoomUsersOptions(options)
+    }
+  }, [zoomUsers])
+
+  useEffect(() => {
+    if (getZoomUsersError) {
+      toast.error(getZoomUsersError + '!')
+    }
+  }, [getZoomUsersError])
 
   useEffect(() => {
     if (trainingId) {
@@ -196,6 +222,7 @@ function EditTrainingPageTemplate({
         onCancel={handleCancel}
         searchTeachers={handleGetAsyncTeachersToSelectInput}
         loadingSubmit={loadingTrainingEdition}
+        zoomUsersOptions={zoomUsersOptions}
       />
     </>
   )
