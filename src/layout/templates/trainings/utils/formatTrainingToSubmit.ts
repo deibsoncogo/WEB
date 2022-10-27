@@ -13,6 +13,7 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
 
   const formattedData: ITraining = {
     ...training,
+    zoomUserName: training['zoomUserId-label'],
     price: Number(onlyNums(training.price)),
     discount: Number(onlyNums(training.discount)),
     streamings: formattedStreamings,
@@ -52,6 +53,13 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
   formData.append('zoomUserName', String(zoomUserName))
   const streamingsString = JSON.stringify(streamings)
   formData.append('streamings', streamingsString)
+
+  /* for (let p of formData) {
+    let name = p[0];
+    let value = p[1];
+
+    console.log(name, value)
+  } */
 
   return formData
 }

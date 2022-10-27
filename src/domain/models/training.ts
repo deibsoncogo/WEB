@@ -6,6 +6,7 @@ export interface ITraining {
   image: Blob
   zoomUserId: string
   zoomUserName: string
+  ['zoomUserId-label']: string
   imageUrl: string
   level: string
   teacherId: string
