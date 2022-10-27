@@ -184,8 +184,6 @@ function EditTrainingPageTemplate({
     }
   }, [editTrainingError, getTrainingError])
 
-  console.log('a')
-
   return (
     <>
       {loadingPageData && <FullLoading />}
