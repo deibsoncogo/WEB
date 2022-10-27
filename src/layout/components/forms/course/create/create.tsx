@@ -173,6 +173,7 @@ export function FormCreateCourse({ createCourse, getUsers }: Props) {
         <h5 className='mb-5 mt-5'>Conteúdo Programático do Curso</h5>
 
         <Editor
+          apiKey={process.env.TINY_MCE_KEY}
           init={{
             plugins:
               'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',

@@ -33,6 +33,7 @@ export function TextFreeContentForm({stateEditor, handleChangeStateEditor}: Text
           <div className='col'>
           <label className='form-label fs-6 fw-bolder text-dark'>Conteúdo do Artigo</label>
           <Editor
+          apiKey={process.env.TINY_MCE_KEY}
           init={{
             placeholder: "Insira seu texto aqui...",
             plugins:
