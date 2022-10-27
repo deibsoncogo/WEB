@@ -85,6 +85,7 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
               minYearAmount={0}
             />
           </div>
+
           <div className='col-3'>
             <DatePicker
               name='deactiveChatDate'
@@ -97,51 +98,45 @@ const FormCreateTraining = forwardRef<FormHandles, FormCreateTrainingProps>((pro
           </div>
         </div>
 
-        <div className='row d-flex'>
+        <div className='d-flex row'>
           <div className='col-3'>
             <Select name='zoomUserId' label='Usuário do Zoom' options={zoomUsersOptions} />
           </div>
 
-          <div className='col-9'>
-            <div className='row'>
-              <div className='col-4'>
-                <DatePicker
-                  name='streamingDate'
-                  label='Dia da Transmissão'
-                  placeholderText='00/00/0000'
-                  autoComplete='off'
-                  minDate={new Date()}
-                  minYearAmount={0}
-                />
-              </div>
-
-              <div className='col-4'>
-                <DatePicker
-                  name='streamingHour'
-                  label='Horário'
-                  placeholderText='00:00'
-                  showTimeSelect
-                  showTimeSelectOnly
-                  timeIntervals={15}
-                  timeCaption='Horas'
-                  dateFormat='HH:mm'
-                  autoComplete='off'
-                />
-              </div>
-
-              <div className='col-4 d-flex mb-6'>
-                <button
-                  type='button'
-                  onClick={addStreamingDate}
-                  className='btn btn-lg btn-primary h-45px text-nowrap'
-                  style={{ marginTop: '22px' }}
-                >
-                  <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
-                  Adicionar data
-                </button>
-              </div>
-            </div>
+          <div className='col-3'>
+            <DatePicker
+              name='streamingDate'
+              label='Dia da Transmissão'
+              placeholderText='00/00/0000'
+              autoComplete='off'
+              minDate={new Date()}
+              minYearAmount={0}
+            />
           </div>
+
+          <div className='col-3'>
+            <DatePicker
+              name='streamingHour'
+              label='Horário'
+              placeholderText='00:00'
+              showTimeSelect
+              showTimeSelectOnly
+              timeIntervals={15}
+              timeCaption='Horas'
+              dateFormat='HH:mm'
+              autoComplete='off'
+            />
+          </div>
+
+          <button
+            type='button'
+            onClick={addStreamingDate}
+            className='btn btn-lg btn-primary h-45px text-nowrap col-3'
+            style={{ marginTop: '22px' }}
+          >
+            <KTSVG path='/icons/arr075.svg' className='svg-icon-2' />
+            Adicionar data
+          </button>
         </div>
       </div>
 

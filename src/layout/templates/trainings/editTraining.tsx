@@ -7,10 +7,7 @@ import { appRoutes } from '../../../application/routing/routes'
 import { IStreaming } from '../../../domain/models/streaming'
 import { ITraining } from '../../../domain/models/training'
 import { IEditTraining } from '../../../domain/usecases/interfaces/trainings/editTraining'
-import {
-  IGetTraining,
-  IGetTrainingParams,
-} from '../../../domain/usecases/interfaces/trainings/getTraining'
+import { IGetTraining, IGetTrainingParams } from '../../../domain/usecases/interfaces/trainings/getTraining'
 import { IGetAllUsers } from '../../../domain/usecases/interfaces/user/getAllUsers'
 import { applyYupValidation } from '../../../helpers/applyYupValidation'
 import { FormEditTraining } from '../../components/forms/trainings/edit'
@@ -29,9 +26,7 @@ type EditTrainingPageProps = {
 }
 
 function EditTrainingPageTemplate({
-  remoteGetTeachers,
-  remoteEditTraining,
-  remoteGetTraining,
+  remoteGetTeachers, remoteEditTraining, remoteGetTraining,
 }: EditTrainingPageProps) {
   const router = useRouter()
   const { id: trainingId } = router.query
