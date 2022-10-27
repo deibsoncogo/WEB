@@ -13,6 +13,7 @@ function formatTrainingToSubmit(training: ITraining, streamingList: IStreaming[]
 
   const formattedData: ITraining = {
     ...training,
+    zoomUserName: training['zoomUserId-label'],
     price: Number(onlyNums(training.price)),
     discount: Number(onlyNums(training.discount)),
     streamings: formattedStreamings,
