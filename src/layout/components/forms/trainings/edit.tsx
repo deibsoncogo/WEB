@@ -13,7 +13,6 @@ import { SelectAsync } from '../../inputs/selectAsync'
 import { StreamingTable } from '../../tables/streaming-list'
 
 type FormEditTrainingProps = {
-  zoomUsersOptions: ISelectOption[]
   addStreamingDate: () => void
   onSubmit: (data: any) => void
   onCancel: () => void
@@ -25,7 +24,6 @@ type FormEditTrainingProps = {
 
 const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, ref) => {
   const {
-    zoomUsersOptions,
     addStreamingDate,
     onSubmit,
     onCancel,
@@ -99,7 +97,7 @@ const FormEditTraining = forwardRef<FormHandles, FormEditTrainingProps>((props, 
 
         <div className='d-flex row'>
           <div className='col-3'>
-            <Select name='zoomUserId' label='Usuário do Zoom' options={zoomUsersOptions} />
+            <Select name='zoomUserId' label='Usuário do Zoom' disabled />
           </div>
 
           <div className='col-3'>
