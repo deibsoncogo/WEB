@@ -1,11 +1,9 @@
-import { useState } from 'react'
-import { Product } from '../../../../domain/models/product'
-import { ITransactionProduct } from '../../../../domain/models/transactionPagarMe'
+import { SaleProduct } from '../../../../interfaces/api-response/saleInformations'
 import { maskedToMoney } from '../../../formatters/currenceFormatter'
 import { ItemRow } from './row'
 
 type Props = {
-  items: ITransactionProduct[]
+  items: SaleProduct[]
 }
 
 export function PurchaseItems({ items = [] }: Props) {
@@ -20,6 +18,7 @@ export function PurchaseItems({ items = [] }: Props) {
             <th className='text-dark ps-4 min-w-100px rounded-end cursor-pointer'>Total</th>
           </tr>
         </thead>
+
         <tbody>
           {items?.map((item, index) => (
             <ItemRow
@@ -32,6 +31,7 @@ export function PurchaseItems({ items = [] }: Props) {
           ))}
         </tbody>
       </table>
+      
       <div>
         <span className='d-flex align-items-center gap-2 fw-bolder fs-4'>
           Total do Pedido:

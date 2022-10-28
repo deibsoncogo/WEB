@@ -12,13 +12,13 @@ export function ProductsTable({ grantedProducts, setGrantedProducts }: Props) {
   const [loading, setLoading] = useState(false)
 
   return (
-    <div className='table-responsive border border-secondary mb-6'>
-      <table className='table table-striped align-middle gs-2 gy-4 mb-0'>
+    <div style={{overflow: 'hidden'}} className='table-responsive border border-secondary mb-6 snap-center'>
+      <table className='table table-striped align-middle gs-2 gy-4 mb-0 custom'>
         <thead>
           <tr className='fw-bolder text-muted bg-light'>
             <th className={`text-dark ps-4 min-w-300px rounded-start cursor-pointer`}>Produto</th>
             <th className={`text-dark min-w-100px cursor-pointer`}>Data de Expiração</th>
-            <th className={`text-dark text-end rounded-end cursor-pointer`}>Ação</th>
+            <th className={`text-dark center rounded-end cursor-pointer`}>Ação</th>
           </tr>
         </thead>
 
@@ -30,6 +30,7 @@ export function ProductsTable({ grantedProducts, setGrantedProducts }: Props) {
               </td>
             </tr>
           )}
+
           {!loading &&
             grantedProducts?.map((item) => (
               <Row

@@ -1,219 +1,309 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { ITransaction } from '../../../domain/models/transaction'
-import { ITransactionPagarMe } from '../../../domain/models/transactionPagarMe'
-import { IGetTransactionById } from '../../../domain/usecases/interfaces/transactions/getTransactionById'
+import { IGetSale } from '../../../domain/usecases/interfaces/sale/getSale'
 import { formatDate, formatDateToUTC, KTSVG } from '../../../helpers'
+import { ISaleInformation } from '../../../interfaces/api-response/saleInformations'
 import { cepMask } from '../../formatters/cepFormatter'
 import { cpfMask } from '../../formatters/cpfFormatter'
 import { phoneMask } from '../../formatters/phoneFormatter'
 import { PurchaseItems } from '../tables/purchaseItems-list'
-import { getAddressFromResponse, ITransactionAddress } from './getAddressFromResponse'
 
 type Props = {
-  remoteGetTransactionById: IGetTransactionById
+  saleId: string
+  getSale: IGetSale
 }
 
-type Adresses = {
-  billing?: ITransactionAddress
-  shiping?: ITransactionAddress
-}
+export function PurchaseDetails({ saleId, getSale }: Props) {
+  const [sale, setSale] = useState<ISaleInformation>()
 
-const transactionStatus = {
-  pending: 'Pendente',
-  failed: 'Falhou',
-  paid: 'Pago',
-  canceled: 'Cancelado',
-}
+  const statusMap: { [key: string]: string } = {
+    canceled: 'Cancelado',
+    failed: 'Negado',
+    paid: 'Pago',
+    pending: 'Aguardando pagamento',
+  }
 
-export function PurchaseDetails({ remoteGetTransactionById }: Props) {
-  const [transaction, setTransaction] = useState<ITransactionPagarMe>({} as ITransactionPagarMe)
-
-  const [addresses, setAddresses] = useState<Adresses | null>(null)
+  const paymentMethodMap: { [key: string]: string } = {
+    multi_method: '2 Cartões de Crédito',
+    credit_card: 'Cartão de Crédito',
+    boleto: 'Boleto',
+    pix: 'Pix'
+  }
 
   useEffect(() => {
-    remoteGetTransactionById
-      .get()
-      .then((response) => {
-        setTransaction(response)
+    getSale.get(saleId)
+      .then((sale: any) => {
+        sale.status = statusMap[sale.status] || sale.status
+        sale.payment_method = paymentMethodMap[sale.payment_method] || sale.payment_method
+
+        setSale(sale)
       })
-      .catch((err) => {
-        toast.error(err.message)
+      .catch(() => {
+        toast.error('Não foi possível retornar os detalhes da compra')
       })
   }, [])
 
-  useEffect(() => {
-    if (transaction.billing_address || transaction.shipping_address) {
-      const updatededAddresses: Adresses = {}
-
-      if (transaction.billing_address) {
-        const updatedBillingAddress = getAddressFromResponse(transaction.billing_address)
-        updatededAddresses.billing = { ...updatedBillingAddress }
-      }
-
-      if (transaction.shipping_address) {
-        const updatedShippingAddress = getAddressFromResponse(transaction.shipping_address)
-        updatededAddresses.billing = { ...updatedShippingAddress }
-      }
-
-      setAddresses(updatededAddresses)
-    }
-  }, [transaction])
+  if (!sale) {
+    return null
+  }
 
   return (
     <div className='border border-secondary p-5'>
       <div className='mb-10'>
         <span className='text-dark fw-bolder d-block fs-1 mb-10'>Informações da Transação</span>
+
         <div>
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Transação:
-            <span className='text-black-50 fs-5 fw-light'>{transaction.id}</span>
+            <span style={{ wordBreak: 'break-all' }} className='text-black-50 fs-5 fw-light'>
+              {sale.id}
+            </span>
           </span>
+
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Data:
             <span className='text-black-50 fs-5 fw-light'>
-              {formatDate(formatDateToUTC(transaction.date), 'DD/MM/YYYY')}
+              {formatDate(formatDateToUTC(sale.date), 'DD/MM/YYYY')}
             </span>
           </span>
+
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Status:
             <span className='text-black-50 fs-5 fw-light'>
-              {transactionStatus?.[transaction.status]}
+              {sale.status}
             </span>
           </span>
+
           <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
             Método de pagamento:
-            <span className='text-black-50 fs-5 fw-light'>{transaction.payment_method}</span>
+            <span className='text-black-50 fs-5 fw-light'>
+              {sale.payment_method}
+            </span>
           </span>
-          <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
-            Código de barras:
-            <span className='text-black-50 fs-5 fw-light'>{transaction.bar_code}</span>
-          </span>
-          <Link href='/'>
-            <a className='fs-4'>Baixar boleto</a>
-          </Link>
+
+          {sale.payment_method === paymentMethodMap.boleto && (
+            <>
+              <span style={{ whiteSpace: 'nowrap' }} className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                Código de barras:
+                <span style={{ whiteSpace: 'normal', wordBreak: 'break-all' }} className='text-black-50 fs-5 fw-light'>
+                  {sale.bar_code}
+                </span>
+              </span>
+
+              {sale.pdf && (
+                <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                  <Link href={sale.pdf}>
+                    <a className='fs-4' target='_black'>Baixar boleto</a>
+                  </Link>
+                </span>
+              )}
+            </>
+          )}
+
+          {sale.payment_method === paymentMethodMap.credit_card && (
+            <>
+              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                Cartão:
+                <span className='text-black-50 fs-5 fw-light'>
+                  {`**** **** **** ${sale.last_four_digits}`}
+                </span>
+              </span>
+
+              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                Número de Parcelas:
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale.installments}
+                </span>
+              </span>
+            </>
+          )}
+
+          {sale.payment_method === paymentMethodMap.pix && (
+            <>
+              <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                Pix Copia e Cola:
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale.qr_code}
+                </span>
+              </span>
+
+              {sale.qr_code_url && (
+                <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
+                  <Link href={sale.qr_code_url}>
+                    <a className='fs-4' target='_black'>Visualizar código QR</a>
+                  </Link>
+                </span>
+              )}
+            </>
+          )}
         </div>
       </div>
+
       <div className='w-100'>
         <span className='text-dark fw-bolder d-block fs-1 mb-10'>
-          Informações do Usuário {addresses?.shiping && 'e Entrega'}
+          Informações do Usuário {sale.shipping_address && 'e Entrega'}
         </span>
+
         <div className='d-flex gap-20'>
-          <div className='w-25'>
+          <div className={sale.shipping_address ? 'w-25' : 'w-50'}>
             <span className='text-dark d-flex align-items-center fs-3 mb-5'>
               <KTSVG path='/icons/com006.svg' className='svg-icon-2x me-2' />
               Dados Pessoais
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Nome:
-              <span className='text-black-50 fs-5 fw-light'>{transaction?.user?.name}</span>
+              <span className='text-black-50 fs-5 fw-light'>
+                {sale.user.name}
+              </span>
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               CPF:
               <span className='text-black-50 fs-5 fw-light'>
-                {cpfMask(transaction?.user?.cpf!)}
+                {cpfMask(sale.user.cpf)}
               </span>
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               E-mail:
-              <span className='text-black-50 fs-5 fw-light'>{transaction?.user?.email}</span>
+              <span className='text-black-50 fs-5 fw-light'>
+                {sale.user.email}
+              </span>
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Telefone:
               <span className='text-black-50 fs-5 fw-light'>
-                {phoneMask(transaction?.user?.phoneNumber!)}
+                {phoneMask(sale.user.phoneNumber)}
               </span>
             </span>
           </div>
 
-          <div className='w-25'>
+          <div className={sale.shipping_address ? 'w-25' : 'w-50'}>
             <span className='text-dark d-block fs-3 mb-5'>
               <KTSVG path='/icons/gen018.svg' className='svg-icon-2x me-2' />
               Endereço de Faturamento
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Logradouro:
-              <span className='text-black-50 fs-5 fw-light'>{addresses?.billing?.street}</span>
+              <span className='text-black-50 fs-5 fw-light'>
+                {sale.billing_address.line_1.split(',')[1]}
+              </span>
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Número:
-              <span className='text-black-50 fs-5 fw-light'>{addresses?.billing?.number}</span>
+              <span className='text-black-50 fs-5 fw-light'>
+                {sale.billing_address.line_1.split(',')[0]}
+              </span>
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Complemento:
-              <span className='text-black-50 fs-5 fw-light'>{addresses?.billing?.complement}</span>
+              <span className='text-black-50 fs-5 fw-light'>
+                {sale.billing_address.line_2}
+              </span>
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Bairro:
               <span className='text-black-50 fs-5 fw-light'>
-                {addresses?.billing?.neighborhood}
+                {sale?.billing_address.line_1.split(',')[2]}
               </span>
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               CEP:
               <span className='text-black-50 fs-5 fw-light'>
-                {cepMask(addresses?.billing?.zipCode!!)}
+                {cepMask(sale.billing_address.zip_code)}
               </span>
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Cidade:
-              <span className='text-black-50 fs-5 fw-light'>{addresses?.billing?.city}</span>
+              <span className='text-black-50 fs-5 fw-light'>
+                {sale.billing_address.city}
+              </span>
             </span>
+
             <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
               Estado:
-              <span className='text-black-50 fs-5 fw-light'>{addresses?.billing?.state}</span>
+              <span className='text-black-50 fs-5 fw-light'>
+                {sale.billing_address.state}
+              </span>
             </span>
           </div>
 
-          {addresses?.shiping && (
+          {sale.shipping_address && (
             <div className='w-25'>
               <span className='text-dark d-flex align-items-center fs-3 mb-5'>
                 <KTSVG path='/icons/gen018.svg' className='svg-icon-2x me-2' />
                 Endereço de Entrega
               </span>
+
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Logradouro:
-                <span className='text-black-50 fs-5 fw-light'>{addresses?.shiping?.street}</span>
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale?.shipping_address.line_1.split(',')[1]}
+                </span>
               </span>
+
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Número:
-                <span className='text-black-50 fs-5 fw-light'>{addresses?.shiping?.number}</span>
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale?.shipping_address.line_1.split(',')[0]}
+                </span>
               </span>
+
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Complemento:
                 <span className='text-black-50 fs-5 fw-light'>
-                  {addresses?.shiping?.complement}
+                  {sale.shipping_address.line_2}
                 </span>
               </span>
+
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Bairro:
                 <span className='text-black-50 fs-5 fw-light'>
-                  {addresses?.shiping?.neighborhood}
+                  {sale?.shipping_address.line_1.split(',')[2]}
                 </span>
               </span>
+
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 CEP:
-                <span className='text-black-50 fs-5 fw-light'>{addresses?.shiping?.zipCode}</span>
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale?.shipping_address.zip_code}
+                </span>
               </span>
+
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Cidade:
-                <span className='text-black-50 fs-5 fw-light'>{addresses?.shiping?.city}</span>
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale?.shipping_address.city}
+                </span>
               </span>
+
               <span className='d-flex align-items-center gap-2 fw-bolder fs-4 mb-5'>
                 Estado:
-                <span className='text-black-50 fs-5 fw-light'>{addresses?.shiping?.state}</span>
+                <span className='text-black-50 fs-5 fw-light'>
+                  {sale?.shipping_address.state}
+                </span>
               </span>
             </div>
           )}
         </div>
+
         <div>
           <span className='text-dark fw-bolder d-flex align-items-center fs-1 mb-10'>
             Informações do Pedido
           </span>
-          <PurchaseItems items={transaction?.products} />
+          
+          <PurchaseItems items={sale.products} />
         </div>
       </div>
-    </div>
+    </div >
   )
 }
