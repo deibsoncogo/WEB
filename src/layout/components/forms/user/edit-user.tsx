@@ -27,6 +27,7 @@ import { Button } from '../../buttons/CustomButton'
 import { ProductsModal } from '../../modals/products'
 import { ProductsTable } from '../../tables/products-list'
 import { PurchasesTable } from '../../tables/purchashes-list'
+import { getStateNameByUF } from '../../../../utils/getStateNameByUF'
 
 type IFormEditUser = {
   id: string
@@ -190,6 +191,8 @@ export function FormEditUser({
           complement: res?.address[0]?.complement || '',
         }
 
+        console.log(newData)
+
         setGrantedProducts(res.grantedProduct)
         setCPF(newData.cpf)
 
@@ -251,6 +254,8 @@ export function FormEditUser({
   async function handleInputZipCode() {
     const zipCode = formRef.current?.getData().zipCode
     const result = await findCEP(zipCode)
+    const stateName = getStateNameByUF(stateOptions, result?.state as string)
+    formRef.current?.setFieldValue('state-label', stateName);
     if (result) inputAddress(result)
   }
 

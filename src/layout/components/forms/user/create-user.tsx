@@ -22,6 +22,7 @@ import { DatePicker, Input, InputMasked, Select } from '../../inputs'
 import { ProductsModal } from '../../modals/products'
 import { ProductsTable } from '../../tables/products-list'
 import { isStrongPassword } from '../../../../domain/shared/reggexPatterns/isPasswordStrong'
+import { getStateNameByUF } from '../../../../utils/getStateNameByUF'
 
 type Props = {
   userRegister: IUserSignUp
@@ -191,6 +192,8 @@ export function FormCreateUser({
   async function handleInputZipCode() {
     const zipCode = formRef.current?.getData().zipCode
     const result = await findCEP(zipCode)
+    const stateName = getStateNameByUF(stateOptions, result?.state as string)
+    formRef.current?.setFieldValue('state-label', stateName);
     setDefaultValue(result)
   }
 
