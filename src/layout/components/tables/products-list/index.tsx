@@ -12,7 +12,7 @@ export function ProductsTable({ grantedProducts, setGrantedProducts }: Props) {
   const [loading, setLoading] = useState(false)
 
   return (
-    <div className='table-responsive border border-secondary mb-6'>
+    <div style={{overflow: 'hidden'}} className='table-responsive border border-secondary mb-6 snap-center'>
       <table className='table table-striped align-middle gs-2 gy-4 mb-0 custom'>
         <thead>
           <tr className='fw-bolder text-muted bg-light'>
