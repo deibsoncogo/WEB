@@ -137,7 +137,7 @@ const EditCoupon = ({
   useEffect(() => {
     if (coupon) {
       const expirationDate = new Date(coupon.expirationDate)
-      expirationDate.setDate(expirationDate.getDay() + 1)
+      expirationDate.setDate(expirationDate.getDate() + 1)
 
       if (coupon.type === 'value') {
         setCurrentTypeSelected('value')
