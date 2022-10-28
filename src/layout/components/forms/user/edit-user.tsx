@@ -191,8 +191,6 @@ export function FormEditUser({
           complement: res?.address[0]?.complement || '',
         }
 
-        console.log(newData)
-
         setGrantedProducts(res.grantedProduct)
         setCPF(newData.cpf)
 
