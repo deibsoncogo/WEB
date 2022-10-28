@@ -1,21 +1,9 @@
-import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
-
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
+import { useRouter } from 'next/router'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
-
-import {
-  formatDateToUTC,
-  validateIfCPFIsValid,
-  validateStringWithNumber,
-} from '../../../../helpers'
-import { findCEP, ZipCodeProps } from '../../../../utils/findCEP'
-import { levelOptions, roleOptions, stateOptions } from '../../../../utils/selectOptions'
-
-import { DatePicker, Input, InputMasked, Select } from '../../inputs'
-
 import { UnexpectedError } from '../../../../domain/errors/unexpected-error'
 import { GrantedProduct } from '../../../../domain/models/grantedProduct'
 import { ITransaction } from '../../../../domain/models/transaction'
@@ -23,11 +11,15 @@ import { IGetAllProducts } from '../../../../domain/usecases/interfaces/product/
 import { IGetAllUserTransactions } from '../../../../domain/usecases/interfaces/transactions/getAllUserTransactions'
 import { IGetUser } from '../../../../domain/usecases/interfaces/user/getUser'
 import { IUpdateUser } from '../../../../domain/usecases/interfaces/user/updateUser'
+import { formatDateToUTC, validateIfCPFIsValid, validateStringWithNumber } from '../../../../helpers'
+import { findCEP, ZipCodeProps } from '../../../../utils/findCEP'
+import { getStateNameByUF } from '../../../../utils/getStateNameByUF'
+import { levelOptions, roleOptions, stateOptions } from '../../../../utils/selectOptions'
 import { Button } from '../../buttons/CustomButton'
+import { DatePicker, Input, InputMasked, Select } from '../../inputs'
 import { ProductsModal } from '../../modals/products'
 import { ProductsTable } from '../../tables/products-list'
 import { PurchasesTable } from '../../tables/purchashes-list'
-import { getStateNameByUF } from '../../../../utils/getStateNameByUF'
 
 type IFormEditUser = {
   id: string
@@ -39,24 +31,16 @@ type IFormEditUser = {
 }
 
 export function FormEditUser({
-  id,
-  userRegister,
-  getUser,
-  isCPFAlreadyRegistered,
-  getProducts,
-  remoteGetAllUserTransactions,
+  id, userRegister, getUser, isCPFAlreadyRegistered, getProducts, remoteGetAllUserTransactions,
 }: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
   const [updateUser, setUpdateUser] = useState(false)
   const [defaultValue, setDefaultValue] = useState<ZipCodeProps>()
-
   const [cpf, setCPF] = useState()
-
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
   const [grantedProducts, setGrantedProducts] = useState<GrantedProduct[]>([])
-
   const [purchases, setPurchases] = useState<ITransaction[]>([])
 
   async function handleOpenModal() {
@@ -279,25 +263,26 @@ export function FormEditUser({
             <h3 className='mb-5'>Dados Pessoais</h3>
 
             <Input classes='h-75px' name='name' label='Nome' />
-            <Input classes='h-75px' name='email' label='E-mail' type='email' disabled={true} />
+
+            <Input classes='h-75px' name='email' label='E-mail' type='email' />
+
             <DatePicker
               classes='h-75px'
               name='birthDate'
               label='Data de Nascimento'
-              maxDate={
-                new Date(dateBase.getFullYear() - 18, dateBase.getMonth(), dateBase.getDate())
-              }
+              maxDate={new Date(dateBase.getFullYear() - 18, dateBase.getMonth(), dateBase.getDate())}
               maxYearAmount={-17}
             />
+
             <InputMasked
               classes='h-75px'
               name='cpf'
               label='CPF'
               type='text'
               mask='999.999.999-99'
-              disabled={!!cpf}
               onChange={handleInputCPF}
             />
+
             <InputMasked
               classes='h-75px'
               name='phoneNumber'
@@ -314,6 +299,7 @@ export function FormEditUser({
 
             <Select classes='h-75px' name='role' label='Permissão' options={roleOptions} />
           </div>
+
           <div className='w-100'>
             <h3 className='mb-5'>Endereço</h3>
 
@@ -324,10 +310,15 @@ export function FormEditUser({
               mask='99999-999'
               onChange={handleInputZipCode}
             />
+
             <Input classes='h-75px' name='street' label='Logradouro' />
+
             <Input classes='h-75px' name='number' label='Número' type='number' />
+
             <Input classes='h-75px' name='complement' label='Complemento' />
+
             <Input classes='h-75px' name='neighborhood' label='Bairro' />
+
             <Input classes='h-75px' name='city' label='Cidade' />
 
             <Select classes='h-75px' name='state' label='Estado' options={stateOptions} />
@@ -353,9 +344,7 @@ export function FormEditUser({
           <button
             type='button'
             className='btn btn-outline-primary border border-primary w-180px mb-5'
-            onClick={() => {
-              setIsProductsModalOpen(true)
-            }}
+            onClick={() => { setIsProductsModalOpen(true) }}
           >
             Adicionar produto grátis
           </button>
@@ -366,9 +355,7 @@ export function FormEditUser({
             title='Cancelar'
             type='button'
             customClasses={['btn-secondary', 'px-20', 'ms-auto', 'me-10']}
-            onClick={() => {
-              router.push('/users')
-            }}
+            onClick={() => { router.push('/users') }}
           />
 
           <Button
@@ -385,9 +372,7 @@ export function FormEditUser({
         isOpen={isProductsModalOpen}
         modalTitle='Adicionar Produto Grátis'
         action={handleOpenModal}
-        onRequestClose={() => {
-          setIsProductsModalOpen(false)
-        }}
+        onRequestClose={() => { setIsProductsModalOpen(false) }}
         grantedProducts={grantedProducts}
         onAddProduct={setGrantedProducts}
         getProducts={getProducts}
