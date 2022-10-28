@@ -7,6 +7,13 @@ type Props = {
 }
 
 export function PurchasesTable({ userId, purchases }: Props) {
+  const statusMap: { [key: string]: string } = {
+    canceled: 'Cancelado',
+    failed: 'Negado',
+    paid: 'Pago',
+    pending: 'Aguardando pagamento',
+  }
+
   return (
     <div className='table-responsive border border-secondary mb-6'>
       <table className='table table-striped align-middle gs-2 gy-4 mb-0 custom'>
@@ -28,9 +35,10 @@ export function PurchasesTable({ userId, purchases }: Props) {
               </td>
             </tr>
           )}
-          {purchases?.map((item) => (
-            <Row key={item.id} userId={userId} {...item} />
-          ))}
+          {purchases?.map((item: any) => {
+            item.status = statusMap[item.status] || item.status
+            return (<Row key={item.id} userId={userId} {...item} />)
+          })}
         </tbody>
       </table>
     </div>
