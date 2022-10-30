@@ -126,7 +126,7 @@ export default function RoomInternalTable({
                       index={index}
                       liveDate={dateMask(item.date)}
                       time={item.hour}
-                      start={item.showStartLink}
+                      start={item.showStreamingAccess}
                       startUrl={item.startUrl}
                       streamingRoomArray={streamingRoomArray}
                       idDeletedStreamingRoom={idDeletedStreamingRoom}
