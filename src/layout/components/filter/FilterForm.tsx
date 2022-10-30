@@ -24,7 +24,7 @@ export const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) 
     <>
       <Form autoComplete='off' ref={ref} onSubmit={handleForm} id='filter-form' className='card'>
         <div className='card-header border-0 gap-5 m-0 p-0'>
-          <span className='d-flex flex-row gap-5 card-title'>
+          <span className='d-flex flex-row gap-5 card-title' style={{ width: 300 }}>
             <SelectMulti
               defaultOptions={salesTypeOptions}
               name='status'
