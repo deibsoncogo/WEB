@@ -144,14 +144,16 @@ export function FormEditUser({
 
     if (data.email !== email) {
       const hasEmailRegistered = await emailIsAlreadyRegistered(data.email)
-      hasEmailRegistered && formRef?.current?.setFieldError('email', 'E-mail já registrado')
+      if (hasEmailRegistered)
+        formRef?.current?.setFieldError('email', 'E-mail já registrado')
     } else {
       delete data.email
     }
 
     if (data.cpf !== cpf) {
       const hasCPFRegistered = await isCPFAlreadyRegistered.verifyUserCPF(data.cpf)
-      hasCPFRegistered && formRef?.current?.setFieldError('cpf', 'CPF já registrado')
+      if (hasCPFRegistered)
+        formRef?.current?.setFieldError('cpf', 'CPF já registrado')
     } else {
       delete data.cpf
     }
@@ -166,8 +168,6 @@ export function FormEditUser({
       await verifyEmail.verifyUserEmail(email)
       return false
     } catch (err: any) {
-      if (!formRef.current) return
-      formRef.current.setFieldError('email', 'Email já registrado')
       return true
     }
   }
