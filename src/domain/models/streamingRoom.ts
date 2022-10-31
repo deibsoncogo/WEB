@@ -1,9 +1,9 @@
 export interface IStreamingRoom {
-  id?: string  
+  id?: string
   date: string
   hour: string
   start?: boolean
   startUrl?: string
   dateISO?: string
-  showStartLink?: boolean
+  showStreamingAccess?: boolean
 }
