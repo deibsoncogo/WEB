@@ -56,6 +56,7 @@ const SelectMulti = ({
       },
     })
   }, [fieldName, registerField])
+
   return (
     <div className={`${classes} fv-row mb-7`}>
       {label && (
@@ -63,6 +64,7 @@ const SelectMulti = ({
           {label}
         </label>
       )}
+
       <AsyncSelect
         ref={selectRef}
         isMulti
@@ -71,23 +73,15 @@ const SelectMulti = ({
         defaultOptions={defaultOptions ? defaultOptions : true}
         defaultValue={defaultValues}
         loadOptions={loadOptions}
-        className='basic-multi-select'
+        className={`basic-multi-select`}
         classNamePrefix='select'
         placeholder='Selecione'
         onFocus={clearError}
         onChange={handleInputChange}
         value={inputValues}
-        styles={
-          customStyles
-            ? customStyles
-            : {
-                control: (styles) => ({
-                  ...styles,
-                  backgroundColor: '#f5f8fa',
-                }),
-              }
-        }
+        styles={customStyles ? customStyles : { control: (styles) => ({ ...styles, backgroundColor: '#f5f8fa' }) }}
       />
+
       {error && <span className='text-danger'>{error}</span>}
     </div>
   )
