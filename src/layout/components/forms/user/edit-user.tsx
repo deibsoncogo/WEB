@@ -28,17 +28,19 @@ type IFormEditUser = {
   getProducts: IGetAllProducts
   isCPFAlreadyRegistered: IUserVerifyCPF
   remoteGetAllUserTransactions: IGetAllUserTransactions
+  verifyEmail: IUserVerifyEmail
 }
 
 export function FormEditUser({
-  id, userRegister, getUser, isCPFAlreadyRegistered, getProducts, remoteGetAllUserTransactions,
+  id, userRegister, getUser, isCPFAlreadyRegistered, getProducts, remoteGetAllUserTransactions, verifyEmail,
 }: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
 
   const [updateUser, setUpdateUser] = useState(false)
   const [defaultValue, setDefaultValue] = useState<ZipCodeProps>()
-  const [cpf, setCPF] = useState()
+  const [email, setEmail] = useState<string>('')
+  const [cpf, setCPF] = useState<string>('')
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
   const [grantedProducts, setGrantedProducts] = useState<GrantedProduct[]>([])
   const [purchases, setPurchases] = useState<ITransaction[]>([])
@@ -139,16 +141,34 @@ export function FormEditUser({
 
   async function handleUpdateUser(data: any) {
     setUpdateUser(true)
-    let hasAlreadyCPF = false
-    if (data.cpf) {
-      hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)
+
+    if (data.email !== email) {
+      const hasEmailRegistered = await emailIsAlreadyRegistered(data.email)
+      if (hasEmailRegistered)
+        formRef?.current?.setFieldError('email', 'E-mail já registrado')
+    } else {
+      delete data.email
     }
 
-    if (cpf || !hasAlreadyCPF) {
-      updateUserRequest(data)
+    if (data.cpf !== cpf) {
+      const hasCPFRegistered = await isCPFAlreadyRegistered.verifyUserCPF(data.cpf)
+      if (hasCPFRegistered)
+        formRef?.current?.setFieldError('cpf', 'CPF já registrado')
     } else {
-      formRef?.current?.setFieldError('cpf', 'CPF já registrado')
-      setUpdateUser(false)
+      delete data.cpf
+    }
+
+    await updateUserRequest(data)
+
+    setUpdateUser(false)
+  }
+
+  async function emailIsAlreadyRegistered(email: string) {
+    try {
+      await verifyEmail.verifyUserEmail(email)
+      return false
+    } catch (err: any) {
+      return true
     }
   }
 
@@ -176,6 +196,7 @@ export function FormEditUser({
         }
 
         setGrantedProducts(res.grantedProduct)
+        setEmail(newData.email)
         setCPF(newData.cpf)
 
         formRef.current?.setFieldValue('name', newData.name)
