@@ -39,7 +39,8 @@ export function FormEditUser({
 
   const [updateUser, setUpdateUser] = useState(false)
   const [defaultValue, setDefaultValue] = useState<ZipCodeProps>()
-  const [cpf, setCPF] = useState()
+  const [email, setEmail] = useState<string>('')
+  const [cpf, setCPF] = useState<string>('')
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false)
   const [grantedProducts, setGrantedProducts] = useState<GrantedProduct[]>([])
   const [purchases, setPurchases] = useState<ITransaction[]>([])
@@ -141,14 +142,21 @@ export function FormEditUser({
   async function handleUpdateUser(data: any) {
     setUpdateUser(true)
 
-    const hasEmailRegistered = await emailIsAlreadyRegistered(data.email)
-    const hasCPFRegistered = data?.cpf ? await isCPFAlreadyRegistered.verifyUserCPF(data.cpf) : false
-
-    if (!hasEmailRegistered && !hasCPFRegistered) {
-      await updateUserRequest(data)
+    if (data.email !== email) {
+      const hasEmailRegistered = await emailIsAlreadyRegistered(data.email)
+      hasEmailRegistered && formRef?.current?.setFieldError('email', 'E-mail já registrado')
     } else {
-      formRef?.current?.setFieldError('cpf', 'CPF já registrado')
+      delete data.email
     }
+
+    if (data.cpf !== cpf) {
+      const hasCPFRegistered = await isCPFAlreadyRegistered.verifyUserCPF(data.cpf)
+      hasCPFRegistered && formRef?.current?.setFieldError('cpf', 'CPF já registrado')
+    } else {
+      delete data.cpf
+    }
+
+    await updateUserRequest(data)
 
     setUpdateUser(false)
   }
@@ -188,6 +196,7 @@ export function FormEditUser({
         }
 
         setGrantedProducts(res.grantedProduct)
+        setEmail(newData.email)
         setCPF(newData.cpf)
 
         formRef.current?.setFieldValue('name', newData.name)
