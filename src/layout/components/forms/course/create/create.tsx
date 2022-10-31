@@ -76,7 +76,7 @@ export function FormCreateCourse({ createCourse, getUsers }: Props) {
         description: Yup.string()
           .required('Descriçao é necessária')
           .max(65535, 'Descrição muito longa'),
-        level: Yup.string().required('Nível é necessário').max(50, 'No máximo 50 caracteres'),
+        level: Yup.string().required('Nível é necessário'),
       })
 
       data.content = stateEditor.content
