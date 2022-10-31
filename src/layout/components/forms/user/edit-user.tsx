@@ -28,10 +28,11 @@ type IFormEditUser = {
   getProducts: IGetAllProducts
   isCPFAlreadyRegistered: IUserVerifyCPF
   remoteGetAllUserTransactions: IGetAllUserTransactions
+  verifyEmail: IUserVerifyEmail
 }
 
 export function FormEditUser({
-  id, userRegister, getUser, isCPFAlreadyRegistered, getProducts, remoteGetAllUserTransactions,
+  id, userRegister, getUser, isCPFAlreadyRegistered, getProducts, remoteGetAllUserTransactions, verifyEmail,
 }: IFormEditUser) {
   const router = useRouter()
   const formRef = useRef<FormHandles>(null)
@@ -139,16 +140,27 @@ export function FormEditUser({
 
   async function handleUpdateUser(data: any) {
     setUpdateUser(true)
-    let hasAlreadyCPF = false
-    if (data.cpf) {
-      hasAlreadyCPF = await isCPFAlreadyRegistered.verifyUserCPF(data?.cpf)
-    }
 
-    if (cpf || !hasAlreadyCPF) {
-      updateUserRequest(data)
+    const hasEmailRegistered = await emailIsAlreadyRegistered(data.email)
+    const hasCPFRegistered = data?.cpf ? await isCPFAlreadyRegistered.verifyUserCPF(data.cpf) : false
+
+    if (!hasEmailRegistered && !hasCPFRegistered) {
+      await updateUserRequest(data)
     } else {
       formRef?.current?.setFieldError('cpf', 'CPF já registrado')
-      setUpdateUser(false)
+    }
+
+    setUpdateUser(false)
+  }
+
+  async function emailIsAlreadyRegistered(email: string) {
+    try {
+      await verifyEmail.verifyUserEmail(email)
+      return false
+    } catch (err: any) {
+      if (!formRef.current) return
+      formRef.current.setFieldError('email', 'Email já registrado')
+      return true
     }
   }
 
