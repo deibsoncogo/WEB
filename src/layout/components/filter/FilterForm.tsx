@@ -22,22 +22,18 @@ export const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) 
 
   return (
     <>
-      <Form autoComplete='off' ref={ref} onSubmit={handleForm} id='filter-form' className='card'>
+      <Form autoComplete='off' ref={ref} onSubmit={handleForm} id='filter-form' className='card m-0 p-0'>
         <div className='card-header border-0 gap-5 m-0 p-0'>
-          <span className='d-flex flex-row gap-5 card-title' style={{ width: 300 }}>
-            <SelectMulti
-              defaultOptions={salesTypeOptions}
-              name='status'
-              label='Status'
-              classes='h-75px w-50'
-              customStyles={customStyles}
-            />
-          </span>
+          <SelectMulti
+            defaultOptions={salesTypeOptions}
+            name='status'
+            label='Status'
+            customStyles={customStyles}
+          />
 
-          <span className='d-flex flex-row gap-5 card-title'>
+          <span className='d-flex flex-row gap-5 card-title m-0 p-0'>
             <InputMasked
               style={{ width: '150px' }}
-              classes='h-75px'
               name='initialDate'
               label='Data Inicial'
               placeholder='00/00/0000'
@@ -46,7 +42,6 @@ export const FilterForm = forwardRef<FormHandles, FilterFormProps>((props, ref) 
 
             <InputMasked
               style={{ width: '150px' }}
-              classes='h-75px'
               name='finalDate'
               label='Data Final'
               placeholder='00/00/0000'
